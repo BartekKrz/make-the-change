@@ -11,17 +11,6 @@ Recherches et analyses pour informer les décisions produit et stratégiques.
 | Document | Description | Status | Dernière MAJ |
 |----------|-------------|--------|--------------|
 | [market-analysis.md](./market-analysis.md) | Étude de marché investissement impact France | ✅ Complété | 2025-08-21 |
-| [synthesis-insights.md](./synthesis-insights.md) | Synthèse insights recherche et recommandations | ✅ Complété | 2025-08-21 |
-| **user-research/** | Recherche utilisateurs | | |
-| [user-research/personas-interviews.md](./user-research/personas-interviews.md) | Guide entretiens validation personas | ✅ Complété | 2025-08-21 |
-| [user-research/usability-tests.md](./user-research/usability-tests.md) | Tests d'utilisabilité prototypes | ✅ Complété | 2025-08-21 |
-| [user-research/surveys.md](./user-research/surveys.md) | Enquêtes quantitatives | 📋 À créer | - |
-| [user-research/survey-quantitative.md](./user-research/survey-quantitative.md) | Survey validation hypothèses (1000 répondants) | ✅ Complété | 2025-08-21 |
-| **competitor-analysis/** | Analyse concurrentielle | | |
-| [competitor-analysis/lendosphere.md](./competitor-analysis/lendosphere.md) | Analyse Lendosphere (crowdfunding énergie) | ✅ Complété | 2025-08-21 |
-| [competitor-analysis/yuka.md](./competitor-analysis/yuka.md) | Analyse Yuka (app notation produits) | ✅ Complété | 2025-08-21 |
-| [competitor-analysis/wiseed.md](./competitor-analysis/wiseed.md) | Analyse Wiseed (investissement PME) | ✅ Complété | 2025-08-21 |
-| [competitor-analysis/green-fintech-analysis.md](./competitor-analysis/green-fintech-analysis.md) | Analyse neo-banques vertes (Helios, Green-Got) | ✅ Complété | 2025-08-21 |
 
 ## 🎯 Objectifs Recherche
 
