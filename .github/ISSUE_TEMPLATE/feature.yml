@@ -1,0 +1,208 @@
+name: 🚀 Feature Request
+description: Créer une nouvelle fonctionnalité pour Make the CHANGE
+title: "[FEATURE] "
+labels: ["enhancement"]
+projects: ["BartekKrz/3"]
+assignees:
+  - BartekKrz
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🎯 Business Objective
+        Merci de décrire l'objectif business et l'impact sur les KPIs.
+        
+  - type: textarea
+    id: business-objective
+    attributes:
+      label: Objectif Business
+      description: Pourquoi cette feature? Impact sur quels KPIs?
+      placeholder: "Cette feature va améliorer [KPI] de [%] en permettant aux utilisateurs de..."
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: user-level
+    attributes:
+      label: Niveau d'Utilisateur Ciblé
+      description: Quel niveau d'utilisateur bénéficiera le plus de cette feature?
+      options:
+        - Explorateur (Gratuit)
+        - Protecteur (Investissements)
+        - Ambassadeur (Abonnements)
+        - Admin/Partenaires
+        - Tous les niveaux
+    validations:
+      required: true
+      
+  - type: textarea
+    id: user-stories
+    attributes:
+      label: 📋 User Stories
+      description: Décrivez les user stories principales
+      placeholder: |
+        - En tant que [persona], je veux [action] pour [bénéfice]
+        - En tant que [persona], je veux [action] pour [bénéfice]
+      value: |
+        - En tant que , je veux  pour 
+        - En tant que , je veux  pour 
+    validations:
+      required: true
+      
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: 🎨 Acceptance Criteria
+      description: Critères mesurables de succès
+      placeholder: |
+        - [ ] Critère mesurable 1
+        - [ ] Critère mesurable 2
+        - [ ] Performance: [metric] < [target]
+      value: |
+        - [ ] 
+        - [ ] 
+        - [ ] Performance: 
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 🛠️ Plateforme Concernée
+      description: Quelle plateforme sera impactée?
+      options:
+        - Mobile (React Native + Expo)
+        - Web Admin (Next.js + Vercel)
+        - Web E-commerce (Next.js + Vercel)
+        - Backend API (tRPC + Vercel Edge)
+        - Database (Supabase)
+        - Infrastructure (DevOps)
+        - Cross-platform
+    validations:
+      required: true
+      
+  - type: textarea
+    id: technical-requirements
+    attributes:
+      label: 🔧 Technical Requirements
+      description: Spécifications techniques détaillées
+      placeholder: |
+        ### Architecture
+        - Frontend: [technology/patterns]
+        - Backend: [APIs needed] 
+        - Database: [schema changes]
+        
+        ### Dependencies
+        - Issues: #[number]
+        - External: [APIs, services]
+        - Team: [decisions needed]
+      value: |
+        ### Architecture
+        - Frontend: 
+        - Backend: 
+        - Database: 
+        
+        ### Dependencies
+        - Issues: 
+        - External: 
+        - Team: 
+        
+  - type: dropdown
+    id: business-value
+    attributes:
+      label: 💰 Business Value
+      description: Quel est l'impact business attendu?
+      options:
+        - 🔥 Game Changer (Révolutionnaire)
+        - 🚀 High Impact (Impact majeur KPIs)
+        - 📈 Medium Impact (Amélioration mesurable)
+        - 🔧 Technical Debt (Nécessaire mais pas visible)
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: effort-estimate
+    attributes:
+      label: ⏱️ Estimation Effort
+      description: Estimation de l'effort requis
+      options:
+        - ⚡ Quick Win (< 4h)
+        - 📅 Standard (1-3 jours)
+        - 🏗️ Complex (1+ semaine)
+        - 🏔️ Epic (Multi-semaines)
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: risk-level
+    attributes:
+      label: ⚠️ Niveau de Risque
+      description: Niveau de complexité/risque technique
+      options:
+        - ✅ Low Risk (Patterns connus)
+        - 🔶 Medium Risk (Quelques incertitudes)
+        - ⚠️ High Risk (Complexe, nouvelles techno)
+    validations:
+      required: true
+      
+  - type: textarea
+    id: success-metrics
+    attributes:
+      label: 📊 Success Metrics
+      description: Métriques de succès quantifiables
+      placeholder: |
+        - KPI 1: [current] → [target]
+        - KPI 2: [current] → [target]
+        - Performance: [metric] < [target]
+      value: |
+        - KPI 1: [current] → [target]
+        - KPI 2: [current] → [target]
+        - Performance: 
+        
+  - type: textarea
+    id: definition-of-done
+    attributes:
+      label: ✅ Definition of Done
+      description: Checklist standardisée de completion
+      placeholder: |
+        - [ ] Code reviewed & merged
+        - [ ] Tests written (unit + integration) 
+        - [ ] Documentation updated
+        - [ ] Performance targets met
+        - [ ] Accessibility verified
+        - [ ] Staging deployment validated
+        - [ ] Product Owner approval
+      value: |
+        - [ ] Code reviewed & merged
+        - [ ] Tests written (unit + integration)
+        - [ ] Documentation updated  
+        - [ ] Performance targets met
+        - [ ] Accessibility verified
+        - [ ] Staging deployment validated
+        - [ ] Product Owner approval
+        
+  - type: textarea
+    id: testing-plan
+    attributes:
+      label: 🧪 Testing Plan
+      description: Plan de tests manuel et automatisé
+      placeholder: |
+        ### Manual Testing
+        - [ ] Happy path scenarios
+        - [ ] Edge cases
+        - [ ] Error handling
+        
+        ### Automated Testing
+        - [ ] Unit tests coverage >80%
+        - [ ] Integration tests key flows
+        - [ ] E2E critical user journeys
+      value: |
+        ### Manual Testing
+        - [ ] Happy path scenarios
+        - [ ] Edge cases
+        - [ ] Error handling
+        
+        ### Automated Testing
+        - [ ] Unit tests coverage >80%
+        - [ ] Integration tests key flows
+        - [ ] E2E critical user journeys

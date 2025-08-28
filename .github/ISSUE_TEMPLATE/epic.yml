@@ -1,0 +1,185 @@
+name: 🏔️ Epic
+description: Créer une épique majeure pour Make the CHANGE
+title: "[EPIC] "
+labels: ["epic", "effort-epic"]
+projects: ["BartekKrz/3"]
+assignees:
+  - BartekKrz
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🏔️ Epic - Initiative Majeure
+        Une épique représente un objectif business majeur décomposé en plusieurs stories/tasks.
+        
+  - type: textarea
+    id: epic-vision
+    attributes:
+      label: 🎯 Vision de l'Épique
+      description: Quelle est la vision business de cette épique?
+      placeholder: "Cette épique va permettre à Make the CHANGE de..."
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: strategic-pillar
+    attributes:
+      label: 🏛️ Pilier Stratégique
+      description: À quel pilier stratégique cette épique contribue-t-elle?
+      options:
+        - 🎯 User Acquisition (Acquisition utilisateurs)
+        - 💰 Revenue Growth (Croissance revenus)
+        - 🚀 User Engagement (Engagement utilisateurs)
+        - 🔧 Technical Excellence (Excellence technique)
+        - 🤝 Partner Success (Succès partenaires)
+        - 📊 Data & Analytics (Données et analyses)
+    validations:
+      required: true
+      
+  - type: textarea
+    id: business-outcomes
+    attributes:
+      label: 📈 Business Outcomes Attendus
+      description: Quels sont les résultats business mesurables attendus?
+      placeholder: |
+        - Augmentation MRR de X% 
+        - Amélioration conversion de Y%
+        - Réduction churn de Z%
+        - Nouvelle source de revenus: €X/mois
+      value: |
+        - 
+        - 
+        - 
+    validations:
+      required: true
+      
+  - type: textarea
+    id: user-personas-impacted
+    attributes:
+      label: 👥 Personas Utilisateurs Impactés
+      description: Quels personas bénéficieront de cette épique?
+      placeholder: |
+        - 👩‍💼 Claire (27 ans - Jeune professionnelle): Impact X
+        - 👨‍💼 Marc (42 ans - Investisseur diversificateur): Impact Y  
+        - 👩‍👧‍👦 Fatima (35 ans - Mère éducatrice): Impact Z
+      value: |
+        - 👩‍💼 Claire (27 ans - Jeune professionnelle): 
+        - 👨‍💼 Marc (42 ans - Investisseur diversificateur): 
+        - 👩‍👧‍👦 Fatima (35 ans - Mère éducatrice): 
+        
+  - type: dropdown
+    id: epic-timeline
+    attributes:
+      label: ⏰ Timeline Estimée
+      description: Quelle est la durée estimée pour cette épique?
+      options:
+        - 🚀 1 mois (Sprint simple)
+        - 📅 2-3 mois (Épique moyenne)
+        - 🏗️ 3-6 mois (Épique majeure)
+        - 🏔️ 6+ mois (Transformation)
+    validations:
+      required: true
+      
+  - type: textarea
+    id: high-level-requirements
+    attributes:
+      label: 📋 High-Level Requirements
+      description: Principales fonctionnalités ou capacités requises
+      placeholder: |
+        1. Capacité de [fonction principale]
+        2. Interface pour [interaction utilisateur]
+        3. Intégration avec [système externe]
+        4. Analytics pour [métriques spécifiques]
+      value: |
+        1. 
+        2. 
+        3. 
+        4. 
+        
+  - type: textarea
+    id: success-criteria
+    attributes:
+      label: 🎯 Critères de Succès
+      description: Comment mesurer le succès de cette épique?
+      placeholder: |
+        ### Métriques Quantitatives
+        - KPI 1: baseline → target
+        - KPI 2: baseline → target
+        
+        ### Métriques Qualitatives  
+        - User satisfaction: target score
+        - Partner feedback: target rating
+        
+        ### Technical Metrics
+        - Performance: target benchmark
+        - Quality: target threshold
+      value: |
+        ### Métriques Quantitatives
+        - 
+        - 
+        
+        ### Métriques Qualitatives
+        - 
+        - 
+        
+        ### Technical Metrics
+        - 
+        - 
+        
+  - type: textarea
+    id: epic-breakdown
+    attributes:
+      label: 🗂️ Décomposition en Stories
+      description: Liste des stories principales qui composeront cette épique
+      placeholder: |
+        - [ ] Story 1: [Titre de la story]
+        - [ ] Story 2: [Titre de la story] 
+        - [ ] Story 3: [Titre de la story]
+        - [ ] Technical Story: [Infrastructure/setup]
+        
+        Note: Les issues détaillées seront créées séparément et liées à cette épique.
+      value: |
+        - [ ] Story 1: 
+        - [ ] Story 2: 
+        - [ ] Story 3: 
+        - [ ] Technical Story: 
+        
+  - type: textarea
+    id: dependencies-risks
+    attributes:
+      label: ⚠️ Dépendances & Risques
+      description: Dépendances critiques et risques identifiés
+      placeholder: |
+        ### Dépendances
+        - Épique/Story bloquante: #[numéro]
+        - Décision business: [description]
+        - Ressource externe: [description]
+        
+        ### Risques Identifiés  
+        - Risque technique: [description + mitigation]
+        - Risque business: [description + mitigation]
+        - Risque timeline: [description + mitigation]
+      value: |
+        ### Dépendances
+        - 
+        - 
+        - 
+        
+        ### Risques Identifiés
+        - 
+        - 
+        - 
+        
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: ❌ Out of Scope
+      description: Ce qui ne sera PAS inclus dans cette épique
+      placeholder: |
+        - Fonctionnalité X (sera traitée dans épique future)
+        - Plateforme Y (hors périmètre actuel)
+        - Intégration Z (complexité trop élevée pour MVP)
+      value: |
+        - 
+        - 
+        - 

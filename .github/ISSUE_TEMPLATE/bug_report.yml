@@ -1,0 +1,150 @@
+name: 🐛 Bug Report
+description: Signaler un bug dans Make the CHANGE
+title: "[BUG] "
+labels: ["bug", "status-needs-info"]
+projects: ["BartekKrz/3"]
+assignees:
+  - BartekKrz
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🐛 Bug Report
+        Merci de fournir des informations détaillées pour nous aider à reproduire et corriger le bug.
+        
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 🚨 Severité
+      description: Quel est l'impact de ce bug?
+      options:
+        - 🔥 Critical (Bloque MVP/Production)
+        - ⚠️ High (Impact utilisateur majeur)
+        - 🔶 Medium (Gêne utilisateur)
+        - 🟡 Low (Cosmétique)
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: platform-affected
+    attributes:
+      label: 📱 Plateforme Affectée
+      description: Sur quelle plateforme le bug apparaît-il?
+      options:
+        - Mobile iOS (React Native)
+        - Mobile Android (React Native)
+        - Web Admin Dashboard
+        - Web E-commerce Site
+        - API Backend
+        - Database
+        - Multiple platforms
+    validations:
+      required: true
+      
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 📝 Description du Bug
+      description: Description claire et concise du bug
+      placeholder: "Le bug se manifeste quand..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: 🔄 Étapes pour Reproduire
+      description: Étapes détaillées pour reproduire le bug
+      placeholder: |
+        1. Aller sur...
+        2. Cliquer sur...
+        3. Saisir...
+        4. Observer...
+      value: |
+        1. 
+        2. 
+        3. 
+        4. 
+    validations:
+      required: true
+      
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: ✅ Comportement Attendu
+      description: Que devrait-il se passer normalement?
+      placeholder: "L'application devrait..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: ❌ Comportement Actuel
+      description: Que se passe-t-il réellement?
+      placeholder: "Au lieu de cela, l'application..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: environment
+    attributes:
+      label: 🌍 Environnement
+      description: Détails de l'environnement où le bug apparaît
+      placeholder: |
+        - OS: [iOS 17.0, Android 14, macOS Sonoma]
+        - Device: [iPhone 15, Samsung Galaxy S24, MacBook Pro M3]
+        - Browser: [Safari 17, Chrome 120, Firefox 121]
+        - App Version: [1.0.0]
+        - Network: [WiFi, 4G, 5G]
+      value: |
+        - OS: 
+        - Device: 
+        - Browser: 
+        - App Version: 
+        - Network: 
+        
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 📸 Screenshots/Videos
+      description: Ajouter des captures d'écran ou vidéos si applicable
+      placeholder: "Glisser-déposer les images ici ou coller les URLs..."
+      
+  - type: textarea
+    id: console-logs
+    attributes:
+      label: 📋 Console Logs/Error Messages
+      description: Messages d'erreur ou logs de console pertinents
+      placeholder: |
+        ```
+        Coller les logs d'erreur ici...
+        ```
+        
+  - type: dropdown
+    id: user-impact
+    attributes:
+      label: 👥 Impact Utilisateur
+      description: Combien d'utilisateurs sont potentiellement affectés?
+      options:
+        - 🎯 Tous les utilisateurs
+        - 📊 Majorité des utilisateurs
+        - 👥 Certains utilisateurs
+        - 🔍 Cas d'usage rare
+        - 🧪 Environnement de test uniquement
+    validations:
+      required: true
+      
+  - type: textarea
+    id: workaround
+    attributes:
+      label: 🔧 Workaround Temporaire
+      description: Y a-t-il un moyen de contourner temporairement ce bug?
+      placeholder: "Les utilisateurs peuvent temporairement..."
+      
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📋 Contexte Additionnel
+      description: Toute autre information pertinente
+      placeholder: "Ce bug pourrait être lié à..."
