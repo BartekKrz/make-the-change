@@ -50,5 +50,5 @@ console.log('   1. Configurez SUPABASE_URL et SUPABASE_ANON_KEY');
 console.log('   2. Implémentez la vérification avec @supabase/supabase-js');
 console.log('   3. Ou vérifiez manuellement dans le Dashboard Supabase\n');
 
-console.log('🔗 Dashboard: https://supabase.com/dashboard/project/krnlmdlyymwdrjxbstxe');
-console.log('📊 Tables: https://supabase.com/dashboard/project/krnlmdlyymwdrjxbstxe/editor');
+console.log('🔗 Dashboard: https://supabase.com/dashboard/project/ebmjxinsyyjwshnynwwu');
+console.log('📊 Tables: https://supabase.com/dashboard/project/ebmjxinsyyjwshnynwwu/editor');
