@@ -22,8 +22,9 @@ echo "   📄 Migration 002 - E-commerce Tables:"
 echo "   Copiez le contenu de: packages/database/migrations/002_create_ecommerce_tables.sql"
 echo ""
 
-echo "   📄 Migration 003 - RLS Policies:"
-echo "   Copiez le contenu de: packages/database/migrations/003_create_rls_policies.sql"
+echo "   📄 Migration 003 - RLS Policies (Simple):"
+echo "   Copiez le contenu de: packages/database/migrations/003_create_rls_policies_simple.sql"
+echo "   (Version sans fonctions personnalisées pour éviter les erreurs de permissions)"
 echo ""
 
 echo "4. Vérifiez que toutes les tables sont créées et RLS est activé"

@@ -1,6 +1,6 @@
--- Migration 003: Row Level Security Policies - Make the CHANGE
--- Sécurisation de l'accès aux données selon les rôles utilisateurs
--- Based on docs/03-technical/database-schema.md
+-- Migration 003 (Simplifiée): Row Level Security Policies - Make the CHANGE
+-- Version sans fonctions personnalisées pour éviter les erreurs de permissions
+-- À appliquer en premier, puis 003_create_rls_policies.sql pour les fonctions avancées
 
 -- =============================================
 -- ACTIVATION RLS SUR LES TABLES SENSIBLES
@@ -209,54 +209,3 @@ CREATE POLICY "Service role can access all inventory" ON inventory
 -- STOCK_MOVEMENTS: Admin seulement
 CREATE POLICY "Service role can access all stock movements" ON stock_movements
     FOR ALL USING (auth.role() = 'service_role');
-
--- =============================================
--- FONCTIONS UTILITAIRES POUR RLS
--- =============================================
-
--- Fonction pour vérifier le niveau KYC minimum (dans le schéma public)
-CREATE OR REPLACE FUNCTION public.has_kyc_level(required_level INTEGER)
-RETURNS BOOLEAN AS $$
-BEGIN
-    RETURN (
-        SELECT COALESCE(
-            (SELECT kyc_level FROM public.users WHERE id = auth.uid()),
-            0
-        ) >= required_level
-    );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- =============================================
--- POLITIQUES BASÉES SUR LES NIVEAUX KYC
--- =============================================
-
--- Exemple: Investissements limités selon le niveau KYC
--- Les utilisateurs peuvent investir selon leur niveau KYC :
--- - Explorateur (niveau 0): pas d'investissement
--- - Protecteur (niveau 1): investissements jusqu'à 100€
--- - Ambassadeur (niveau 2): investissements illimités
-
-CREATE POLICY "KYC level restricts investment amounts" ON investments
-    FOR INSERT WITH CHECK (
-        auth.uid() = user_id AND (
-            (public.has_kyc_level(1) AND amount_eur_equivalent <= 100) OR
-            (public.has_kyc_level(2))
-        )
-    );
-
--- =============================================
--- COMMENTAIRES ET DOCUMENTATION
--- =============================================
-
-COMMENT ON POLICY "Users can view own data" ON users IS 
-'Permet aux utilisateurs de voir uniquement leurs propres données utilisateur';
-
-COMMENT ON POLICY "Anyone can view active projects" ON projects IS 
-'Permet à tous de voir les projets actifs et financés pour la transparence';
-
-COMMENT ON POLICY "KYC level restricts investment amounts" ON investments IS 
-'Limite les montants d''investissement selon le niveau KYC: 100€ max pour Protecteur, illimité pour Ambassadeur';
-
-COMMENT ON FUNCTION public.has_kyc_level(INTEGER) IS 
-'Fonction utilitaire pour vérifier si l''utilisateur a le niveau KYC requis';
