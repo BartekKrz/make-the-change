@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@make-the-change/shared": "workspace:*",
-    "@tanstack/react-query": "^5.62.2",
+    "@supabase/supabase-js": "^2.48.0",
+    "@tanstack/react-query": "^5.85.6",
+    "@tanstack/react-query-devtools": "^5.85.6",
     "@trpc/client": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.0",

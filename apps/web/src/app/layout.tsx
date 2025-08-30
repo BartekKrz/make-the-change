@@ -37,6 +37,9 @@ export default function RootLayout({
                     <a href="/dashboard" className="text-muted hover:text-text">
                       Dashboard
                     </a>
+                    <a href="/test" className="text-muted hover:text-text">
+                      🧪 Test Auth
+                    </a>
                   </div>
                 </nav>
               </div>
