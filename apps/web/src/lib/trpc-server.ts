@@ -6,6 +6,7 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
+import { calculateInvestmentPoints, calculateSubscriptionPoints } from './business/points-calculator';
 
 // Configuration Supabase
 const supabaseUrl = process.env.SUPABASE_URL!;
@@ -69,8 +70,8 @@ export const authRouter = router({
   register: publicProcedure
     .input(
       z.object({
-        email: z.string().email(),
-        password: z.string().min(8),
+        email: z.string().email('Invalid email'),
+        password: z.string().min(6, 'Password must be at least 6 characters'),
       })
     )
     .mutation(async ({ input, ctx }) => {

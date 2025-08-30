@@ -7,7 +7,14 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "test:unit": "vitest --run test/unit",
+    "test:integration": "vitest --run test/integration",
+    "test:e2e": "playwright test",
+    "test:ci": "vitest --run --coverage"
   },
   "dependencies": {
     "@make-the-change/shared": "workspace:*",
@@ -28,10 +35,19 @@
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "^2.1.8",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
     "eslint-config-next": "15.4.0",
+    "jsdom": "^25.0.1",
+    "msw": "^2.6.5",
+    "playwright": "^1.49.1",
     "postcss": "^8.5.1",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^2.1.8"
   }
 }
