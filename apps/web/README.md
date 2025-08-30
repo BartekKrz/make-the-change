@@ -102,3 +102,5 @@ Configurez les variables d'environnement dans Vercel Dashboard :
 - **Supabase Dashboard**: https://supabase.com/dashboard/project/ebmjxinsyyjwshnynwwu
 - **Vercel Dashboard**: https://vercel.com/dashboard
 - **Documentation**: ../../docs/
+
+

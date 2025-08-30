@@ -208,3 +208,5 @@ local.properties
 # Stripe test keys (if any)
 sk_test_*
 pk_test_*
+.vercel
+.env*.local
