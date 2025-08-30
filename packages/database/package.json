@@ -1,0 +1,17 @@
+{
+  "name": "@make-the-change/database",
+  "version": "0.1.0",
+  "description": "Database migrations and schema for Make the CHANGE",
+  "private": true,
+  "scripts": {
+    "migrate": "./apply-migrations.sh",
+    "verify": "node verify-schema.js",
+    "generate-types": "node generate-types.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.48.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2"
+  }
+}
