@@ -67,9 +67,11 @@ Gérer l'économie de points Make the CHANGE : attribution, expiry, bonus, conve
 │ • 30 jours : 14,560 pts (51 users)                         │
 │                                                             │
 │ 🛠️ Actions Bulk                                            │
-│ [Étendre tous +30j] [Notifications masse] [Export liste]   │
+│ [Notifications masse] [Export liste]                        │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+Note: par politique (voir Pricing Master), l’extension de la date d’expiration est interdite en production. Une action d’extension (+30j) peut exister derrière un feature flag "emergency_only" pour cas exceptionnels (désactivé par défaut).
 
 ## 📱 Composants UI
 
@@ -282,7 +284,7 @@ const transactionColumns: ColumnDef<PointsTransaction>[] = [
       <DialogDescription>
         Utilisateur: {selectedUser?.name} ({selectedUser?.email})
         <br />
-        Solde actuel: {selectedUser?.points_balance} pts
+        Solde actuel: {selectedUser?.pointsBalance} pts
       </DialogDescription>
     </DialogHeader>
     
@@ -568,43 +570,43 @@ admin.points.audit_trail: {
 ```typescript
 interface PointsTransaction {
   id: string;
-  user_id: string;
+  userId: string;
   user: User;
   type: PointsTransactionType;
   status: PointsStatus;
   amount: number;
   description: string;
-  reference_id?: string; // ID investissement/commande
-  reference_type?: 'investment' | 'order' | 'bonus';
-  earned_date: Date;
-  expiry_date?: Date;
-  used_date?: Date;
-  created_at: Date;
+  referenceId?: string; // ID investissement/commande
+  referenceType?: 'investment' | 'order' | 'bonus';
+  earnedDate: Date;
+  expiryDate?: Date;
+  usedDate?: Date;
+  createdAt: Date;
 }
 
 interface PointsAdjustment {
   id: string;
-  transaction_id: string;
-  admin_id: string;
+  transactionId: string;
+  adminId: string;
   admin: Admin;
   type: 'add' | 'remove' | 'extend' | 'reset';
-  amount_before: number;
-  amount_after: number;
-  expiry_before?: Date;
-  expiry_after?: Date;
+  amountBefore: number;
+  amountAfter: number;
+  expiryBefore?: Date;
+  expiryAfter?: Date;
   reason: string;
-  created_at: Date;
+  createdAt: Date;
 }
 
 interface PointsAuditLog {
   id: string;
-  user_id: string;
-  admin_id?: string;
+  userId: string;
+  adminId?: string;
   action: string;
   details: any;
-  ip_address: string;
-  user_agent: string;
-  created_at: Date;
+  ipAddress: string;
+  userAgent: string;
+  createdAt: Date;
 }
 ```
 

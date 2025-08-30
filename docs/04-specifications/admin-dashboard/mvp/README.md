@@ -1,6 +1,6 @@
 # 💼 Admin Dashboard MVP - Spécifications
 
-**📍 VERSION: MVP** | **🗓️ TIMELINE: Mois 1-4** | **⭐️ PRIORITÉ: Critique**
+**📍 VERSION: MVP** | **🗓️ TIMELINE: 5 Mois (20 Semaines)** | **⭐️ PRIORITÉ: Critique**
 
 ## 🎯 Scope MVP (Phase 1)
 
@@ -10,38 +10,40 @@ Le dashboard admin MVP implémente la **stratégie "Admin-First"** : l'équipe p
 - **Authentification admin** : Connexion sécurisée, gestion sessions
 - **CRUD Projets complets** : Création, édition, gestion des projets de biodiversité
 - **Gestion utilisateurs** : Supervision, métriques, support
+- **NOUVEAU: Dual billing management** : Gestion abonnements mensuel/annuel, Stripe integration
 - **CRUD Produits** : Catalogue e-commerce, stock, pricing en points
 - **Gestion commandes** : Suivi, fulfillment, états livraison
 
 ### ⚡ **Workflow Admin-First**
 ```
-Semaine 5-6  : Admin crée projets → Mobile découvre et s'abonne
-Semaine 13-14: Admin crée produits → Mobile achète avec points
+Semaines 5-8  : Admin crée projets → Mobile découvre et investit (Semaines 9-12)
+Semaines 13-14: Admin crée produits → Mobile achète avec points (Semaines 13-16)
 ```
 
 ## 📁 Structure des Spécifications
 
 ### 🔐 Authentication Admin (`/auth/`)
-**Mois 1 - Semaine 3**
+**Semaines 1-4**
 - [`auth.md`](./auth/auth.md) 🚧 **À développer** - Connexion admin sécurisée
 
 ### 🏗️ Gestion Projets (`/projects/`)
-**Mois 2 - Semaines 5-6 - PRIORITÉ MAXIMALE**
+**Semaines 5-8 - PRIORITÉ MAXIMALE**
 - [`projects.md`](./projects/projects.md) 🚧 **À développer** - CRUD projets complet
 - [`dashboard.md`](./projects/dashboard.md) 🚧 **À développer** - Vue d'ensemble projets
 - [`partners.md`](./projects/partners.md) 🚧 **À développer** - Gestion producteurs/partenaires
 
 ### 👥 Gestion Utilisateurs (`/users/`)
-**Mois 3 - Semaines 9-10**
+**Semaines 9-12**
 - [`users.md`](./users/users.md) 🚧 **À développer** - Gestion utilisateurs + métriques
 - [`points.md`](./users/points.md) 🚧 **À développer** - Gestion système points
+- **NOUVEAU: Subscriptions management** : Panel admin gestion abonnements dual billing
 
 ### 🛒 Gestion Produits (`/products/`)
-**Mois 4 - Semaine 13 - PRIORITÉ MAXIMALE**
+**Semaines 13-14 - PRIORITÉ MAXIMALE**
 - [`products.md`](./products/products.md) 🚧 **À développer** - CRUD produits e-commerce
 
 ### 📦 Gestion Commandes (`/orders/`)
-**Mois 4 - Semaines 15-16**
+**Semaines 15-16**
 - [`orders.md`](./orders/orders.md) 🚧 **À développer** - Fulfillment commandes
 
 ## 🎯 Objectifs MVP Admin
@@ -58,36 +60,33 @@ Semaine 13-14: Admin crée produits → Mobile achète avec points
 - **Search performance** : <2s pour recherche complexe
 - **Mobile responsiveness** : Utilisable sur tablette
 
-## 🚀 Plan d'Implémentation Admin MVP
+## 🚀 Plan d'Implémentation Admin MVP (20 Semaines)
 
-### **Mois 1 : Setup & Auth (Semaines 1-4)**
+### **Semaines 1-4 : Setup & Auth Foundation**
 ```yaml
-Semaine 1-2: Setup Vercel Edge Functions + Auth système
-Semaine 3-4: Interface admin de base + connexion sécurisée
+Semaines 1-2: Setup Next.js 15.5 + tRPC + Supabase Auth
+Semaines 3-4: Interface admin de base + connexion sécurisée + dashboard
 ```
 
-### **Mois 2 : Projects Management (Semaines 5-8)**
+### **Semaines 5-8 : Projects Management (PRIORITÉ MAXIMALE)**
 ```yaml
-Semaine 5: CRUD projets complet (création, édition, suppression)
-Semaine 6: Interface projets avancée (images, géolocation, producteurs)
-Semaine 7: Tableau de bord projets (métriques, investissements)
-Semaine 8: Intégration mobile (API projets disponible)
+Semaine 5-6: CRUD projets complet (création, édition, images, géolocation)
+Semaine 7: Tableau de bord projets (métriques, financement, producteurs)
+Semaine 8: API projets pour mobile + intégrations partenaires
 ```
 
-### **Mois 3 : Users & Analytics (Semaines 9-12)**
+### **Semaines 9-12 : Users & Analytics**
 ```yaml
-Semaine 9: Interface utilisateurs (liste, profils, métriques)
-Semaine 10: Système points (gestion, historique, ajustements)
-Semaine 11: Analytics basiques (KPIs, exports, rapports)
-Semaine 12: Tools support client (messages, assistance)
+Semaine 9-10: Interface utilisateurs (profils, niveaux, métriques business)
+Semaine 11: Système points (gestion, historique, ajustements, expiration)
+Semaine 12: Analytics basiques (KPIs, exports, support client)
 ```
 
-### **Mois 4 : E-commerce Admin (Semaines 13-16)**
+### **Semaines 13-16 : E-commerce Admin (PRIORITÉ MAXIMALE)**
 ```yaml
 Semaine 13: CRUD produits (création, catégories, pricing points)
-Semaine 14: Gestion stock (inventaire, alerts, réassort)
-Semaine 15: Gestion commandes (statuts, fulfillment, tracking)
-Semaine 16: Rapports e-commerce (ventes, conversion, rentabilité)
+Semaine 14: Intégrations partenaires (HABEEBEE API, commissions, tracking)
+Semaine 15-16: Gestion commandes (fulfillment, statuts, rapports ventes)
 ```
 
 ## 💼 Fonctionnalités Phares MVP
@@ -120,7 +119,7 @@ interface ProjectAdmin {
 }
 ```
 
-### 👥 **User Management Dashboard**
+### 👥 **User Management Dashboard - DUAL BILLING**
 ```typescript
 interface UserAdminView {
   profile: UserProfile
@@ -132,7 +131,21 @@ interface UserAdminView {
     joinDate: Date
     lastActivity: Date
   }
-  subscriptions: SubscriptionSummary[]
+  // NOUVEAU: Dual Billing Management
+  subscriptions: {
+    current: SubscriptionSummary[]
+    billing: {
+      frequency: 'monthly' | 'annual'
+      nextBillingDate: Date
+      stripeSubscriptionId?: string  // pour monthly
+      stripePaymentIntentId?: string // pour annual
+      billingHistory: BillingHistoryItem[]
+    }
+    mrr: {
+      monthlyValue: number  // MRR equivalent
+      annualValue: number   // Annual contract value
+    }
+  }
   orders: OrderSummary[]
   support: {
     tickets: SupportTicket[]
@@ -142,6 +155,10 @@ interface UserAdminView {
     adjustPoints: (amount: number, reason: string) => void
     sendMessage: (message: string) => void
     updateKYC: (status: KYCStatus) => void
+    // NOUVEAU: Dual Billing Actions
+    changeSubscriptionFrequency: (frequency: 'monthly' | 'annual') => void
+    openStripeCustomerPortal: () => void
+    processRefund: (amount: number, reason: string) => void
   }
 }
 ```
@@ -189,7 +206,7 @@ interface ProductAdmin {
 - [../mobile-app/v1/navigation/rewards.md](../mobile-app/v1/navigation/rewards.md) consomme produits admin
 
 ### **Architecture Technique**
-- [../../../03-technical/architecture-overview.md](../../../03-technical/architecture-overview.md) - Stack Vercel Edge Functions
+- [../../../03-technical/architecture-overview.md](../../../03-technical/architecture-overview.md) - Stack Next.js (App Router) sur Vercel
 - [../../../07-project-management/sprint-planning.md](../../../07-project-management/sprint-planning.md) - Planning détaillé
 
 ---

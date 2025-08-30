@@ -5,79 +5,76 @@ Ce document définit les termes et concepts clés utilisés dans le projet pour 
 ---
 
 ### **Modèle Hybride Biodiversité**
-Modèle économique révolutionnaire à 3 niveaux d'engagement progressifs : exploration gratuite, investissements dans des projets spécifiques, et abonnements premium avec allocation flexible.
+Modèle économique à 3 niveaux d'engagement progressifs : exploration gratuite, contribution à des projets spécifiques, et abonnements premium avec allocation flexible.
 
-### **Points**
-Unité de compte virtuelle de la plateforme. Les points sont gagnés via investissements ou abonnements et peuvent être utilisés pour acquérir des produits à prix négociés. 
-- **Génération :** Investissements et abonnements avec bonus 30-50%
-- **Valeur d'échange :** 1 point = 1€ de valeur produit à prix négocié
-- **Expiration :** 18 mois après leur génération
+### **Points de Récompense**
+Unité de valeur virtuelle de la plateforme. Les points sont obtenus via des contributions ou des abonnements et peuvent être échangés contre des produits des partenaires.
+- **Obtention :** Principalement via les **Investissements** et **Abonnements**. Des points peuvent également être gagnés via des actions d'engagement comme le **parrainage**, le **partage social** ou des **quiz éducatifs**.
+- **Valeur d'échange :** 1 point = 1€ de valeur produit.
+- **Expiration :** 18 mois après leur obtention.
 
-### **Niveaux d'Engagement Hybrides**
-Système progressif à 3 niveaux selon l'engagement utilisateur.
+### **Niveaux d'Engagement**
+Système progressif à 3 niveaux selon l'engagement de l'utilisateur.
 
 **Niveau 1 - Explorateur (Gratuit)**
-- Exploration complète application et projets
-- Consultation catalogue à prix retail normaux
-- Aucun investissement requis
+- Exploration complète de l'application et des projets.
+- Consultation du catalogue.
+- Aucune contribution requise.
 
-**Niveau 2 - Protecteur (Investissements)**  
-- 1 ruche HABEEBEE : 50€ → 65 points (bonus 30%)
-- 1 olivier ILANGA : 80€ → 105 points (bonus 31%)
-- Parcelle familiale : 150€ → 210 points (bonus 40%)
-- Suivi personnalisé de ses projets spécifiques
+**Niveau 2 - Protecteur (Contribution)**
+- **Parrainage Ruche HABEEBEE :** 50€ → 65 points (bonus 30%)
+- **Parrainage Olivier ILANGA :** 80€ → 112 points (bonus 40%)
+- **Parrainage Parcelle familiale :** 150€ → 225 points (bonus 50%)
+- Suivi personnalisé des projets soutenus.
 
-**Niveau 3 - Ambassadeur (Abonnements)**
-- Standard : 200€/an → 280 points (bonus 40%)
-- Premium : 350€/an → 525 points (bonus 50%)
-- Allocation flexible sur tous projets
+**Niveau 3 - Ambassadeur (Abonnement)**
+- **Standard :** 180€/an → 252 points (bonus 40%)
+- **Premium :** 320€/an → 480 points (bonus 50%)
+- Allocation flexible des contributions sur tous les projets.
 
 ### **Partenaires**
-Producteurs ou organisations qui fournissent à la fois les projets à financer et les produits disponibles dans la boutique de récompenses. Ils sont au cœur de l'écosystème.
+Producteurs ou organisations qui fournissent à la fois les projets à soutenir et les produits disponibles dans la boutique.
 - **HABEEBEE :** Partenaire belge spécialisé dans les produits de la ruche.
-- **ILANGA NATURE :** Partenaire malgache spécialisé dans les projets d'agroforesterie (oliviers) et les produits naturels.
+- **ILANGA NATURE :** Partenaire malgache spécialisé dans les projets d'agroforesterie et les produits naturels.
 - **PROMIEL :** Partenaire luxembourgeois spécialisé dans les miels premium.
 
+### **Commission Marketplace**
+Pourcentage du prix de vente d'un produit qui revient à Make the CHANGE pour son rôle d'intermédiaire et de gestion de la plateforme. Le reste (la majorité) est versé au partenaire producteur.
+- **Taux indicatif :** 15-25% pour MTC.
+- **Usage :** "Sur un produit à 20€, MTC perçoit une commission de 4€ (20%) et le partenaire reçoit 16€."
+
 ### **Impact**
-Bénéfices environnementaux et sociaux générés par les abonnements des membres. L'impact est mesuré via des KPIs concrets (ex: tonnes de CO₂ compensées, nombre d'arbres plantés, etc.).
+Bénéfices environnementaux et sociaux générés par les contributions des membres (ex: tonnes de CO₂ compensées, nombre d'arbres plantés, etc.).
 
 ---
 
 ## 🔧 **Termes Techniques Spécifiques**
 
 ### **tRPC v11**
-Framework API type-safe utilisé pour assurer la cohérence des types entre client et serveur avec auto-complétion complète et validation runtime.
+Framework API type-safe utilisé pour assurer la cohérence des types entre client et serveur.
 
 ### **Admin-First Approach**
-Stratégie de développement où les outils d'administration sont créés avant les interfaces utilisateur pour permettre la création de contenu dès le début du développement.
+Stratégie de développement où les outils d'administration sont créés avant les interfaces utilisateur.
 
-### **KYC Seuils**
-Vérification d'identité progressive selon les montants : €0-100 (email), €100-3000 (téléphone + âge), +€3000 (documents officiels).
+### **KYC (Know Your Customer)**
+Processus de vérification de l'identité des utilisateurs, obligatoire pour la conformité légale.
 
 ### **Materialized Views**
-Cache PostgreSQL natif utilisant des vues matérialisées pour optimiser les performances analytics sans infrastructure Redis externe.
+Cache PostgreSQL natif pour optimiser les performances analytics.
 
 ### **Points Expiry**
-Mécanisme d'expiration des points 18 mois après génération avec alertes automatiques 60 jours avant expiration pour maintenir l'engagement.
+Mécanisme d'expiration des points 18 mois après leur obtention, avec des alertes automatiques pour encourager leur utilisation.
 
 ---
 
 ## 🎯 **Acronymes Projet**
 
 ### **MVP/V1/V2**
-Phases de développement : MVP (Mois 1-4 fonctionnalités critiques), V1 (Mois 5-8 améliorations), V2 (Mois 9+ innovations).
+Phases de développement : MVP (fonctionnalités critiques), V1 (améliorations), V2 (innovations).
 
-### **CAC/LTV/ROI**
-Métriques business : Cost of Acquisition Customer (€150 target), Lifetime Value (€400+), Return on Investment (garanti >120% en produits).
+### **LTV/CAC**
+Métriques business :
+- **LTV (Lifetime Value) :** Valeur vie client (cible > 400€).
+- **CAC (Customer Acquisition Cost) :** Coût d'acquisition client (cible < 22€).
 
-### **ROI (Retour sur Investissement)**
-Dans le contexte de Make the CHANGE, le ROI désigne la **valeur totale des produits récupérables** via le système de points, comparée à la contribution initiale. Il est **garanti supérieur à 100%** (de 120% à 130% selon le niveau d'abonnement).
-
-### **Admin-First (Stratégie)**
-Approche de développement qui consiste à construire les outils d'administration (création de projets, de produits) *avant* les interfaces de consommation (application mobile). Cela permet de peupler la plateforme avec du contenu réel et de découpler les équipes de développement.
-
-### **KYC (Know Your Customer)**
-Processus de vérification de l'identité des utilisateurs, obligatoire pour la conformité légale et la lutte contre le blanchiment d'argent. Les niveaux de vérification dépendent des montants des abonnements.
-
-### **MVP (Minimum Viable Product)**
-La première version du produit contenant uniquement les fonctionnalités essentielles pour valider le concept de base et la proposition de valeur auprès des premiers utilisateurs.
+> **Note de terminologie :** Le terme **ROI (Retour sur Investissement)** ne doit pas être utilisé dans les communications publiques. Il est remplacé par la notion de **valeur d'usage** ou de **valeur perçue** (produits obtenus grâce aux points).

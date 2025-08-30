@@ -53,7 +53,7 @@ BESOINS MAKE THE CHANGE:
 
 PARCOURS TYPE MODÈLE HYBRIDE:
 Découverte plateforme → Exploration gratuite approfondie (Explorateur) → 
-Analyse métriques projets & ROI potentiel → Investissements multiples ou upgrade direct Ambassadeur → 
+Analyse de la valeur et de l'impact des projets → Investissements multiples ou upgrade direct Ambassadeur → 
 Sélection Ambassadeur Premium 350€ (allocation flexible projets) → Monitoring impact global → 
 Recommandation réseau professionnel
 
@@ -429,13 +429,15 @@ const PERSONA_UX_CONFIG = {
   claire: {
     onboarding: { steps: 3, personalization: true, education: 'basic', gamification: true },
     subscription: { discovery: 'map', filtering: ['price', 'impact'], calculation: 'simple', validation: 'quick' },
+    billing: { preference: 'monthly', annual_conversion_timing: '6_months', discount_sensitivity: 'low' },
     tracking: { dashboard: 'simple', notifications: 'standard', gamification: true, analytics: 'basic' },
     commerce: { discovery: 'browsing', filtering: ['price', 'eco'], checkout: 'one-click', personalization: 'high' }
   },
   
   marc: {
     onboarding: { steps: 2, personalization: false, education: 'advanced', gamification: false },
-    subscription: { discovery: 'analytics', filtering: ['roi', 'risk', 'location'], calculation: 'professional', validation: 'thorough' },
+    subscription: { discovery: 'analytics', filtering: ['impact', 'risk', 'location'], calculation: 'professional', validation: 'thorough' },
+    billing: { preference: 'annual', discount_appeal: 'high', roi_focus: true },
     tracking: { dashboard: 'advanced', notifications: 'minimal', gamification: false, analytics: 'professional' },
     commerce: { discovery: 'search', filtering: ['quality', 'origin'], checkout: 'standard', personalization: 'medium' }
   },
@@ -443,6 +445,7 @@ const PERSONA_UX_CONFIG = {
   fatima: {
     onboarding: { steps: 4, personalization: true, education: 'basic', gamification: false },
     subscription: { discovery: 'recommendations', filtering: ['family-safe', 'educational'], calculation: 'detailed', validation: 'standard' },
+    billing: { preference: 'flexible', monthly_start: true, annual_upgrade_potential: 'high', budget_sensitivity: 'high' },
     tracking: { dashboard: 'balanced', notifications: 'detailed', gamification: false, analytics: 'intermediate' },
     commerce: { discovery: 'curated', filtering: ['family', 'safe', 'practical'], checkout: 'validated', personalization: 'high' }
   },
@@ -450,6 +453,7 @@ const PERSONA_UX_CONFIG = {
   maxime: {
     onboarding: { steps: 3, personalization: true, education: 'scientific', gamification: true },
     subscription: { discovery: 'list', filtering: ['learning', 'data-rich'], calculation: 'detailed', validation: 'standard' },
+    billing: { preference: 'monthly_only', student_pricing: true, pause_resume: true },
     tracking: { dashboard: 'scientific', notifications: 'detailed', gamification: true, analytics: 'intermediate' },
     commerce: { discovery: 'search', filtering: ['student-price', 'authentic'], checkout: 'standard', personalization: 'medium' }
   },
@@ -457,6 +461,7 @@ const PERSONA_UX_CONFIG = {
   amelie: {
     onboarding: { steps: 2, personalization: false, education: 'advanced', gamification: false },
     subscription: { discovery: 'curated', filtering: ['premium', 'exclusive'], calculation: 'professional', validation: 'thorough' },
+    billing: { preference: 'annual_premium', commitment_mindset: true, exclusive_access: 'annual_only' },
     tracking: { dashboard: 'premium', notifications: 'minimal', gamification: false, analytics: 'professional' },
     commerce: { discovery: 'curated', filtering: ['premium', 'exclusive', 'limited'], checkout: 'validated', personalization: 'high' }
   }
@@ -494,7 +499,7 @@ CLAIRE & MAXIME (Gamification High):
 
 MARC & AMÉLIE (Gamification Low):
   focus-performance:
-    - ROI tracking sophisticated
+    - Suivi de performance avancé
     - Impact metrics detailed
     - Exclusive access based on volume
     - VIP status recognition

@@ -1,4 +1,14 @@
-# Pages Légales - Site E-commerce
+# Pages Légales - Implémentation Site E-commerce
+
+**📍 VERSION: MVP** | **PRIORITÉ: CRITIQUE**
+
+## 🎯 Objectif
+
+Définir l'implémentation **spécifique à la plateforme web** des écrans légaux. Ce document détaille l'interface utilisateur (UI) et l'expérience utilisateur (UX) pour les pages légales sur le site e-commerce, en se basant sur le contenu et les règles définis dans le document central [`legal-screens-spec.md`](../../legal-screens-spec.md).
+
+L'approche web privilégie des pages dédiées avec des URL uniques pour le SEO, une navigation claire via le footer, et une présentation adaptée aux grands écrans.
+
+---
 
 ## 🎯 Objectif
 
@@ -945,6 +955,6 @@ const CookieConsent = () => {
 
 ---
 
-**Stack Technique** : Vercel Edge Functions + Tailwind CSS + Framer Motion  
+**Stack Technique** : Next.js 15.5 (App Router) sur Vercel + Tailwind CSS + Framer Motion  
 **Priorité** : 🔥 Critique - Conformité légale obligatoire  
 **Estimation** : 3-4 jours rédaction + développement

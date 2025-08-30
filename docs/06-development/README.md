@@ -13,7 +13,7 @@ Guides pratiques pour développeurs couvrant setup, standards, testing et workfl
 | [setup-guide.md](./setup-guide.md) | Installation environnement complet | 📋 À créer | - |
 | [development-workflow.md](./development-workflow.md) | Git flow, PR process, conventions | 📋 À créer | - |
 | [coding-standards.md](./coding-standards.md) | Standards code TypeScript/React | 📋 À créer | - |
-| [testing-strategy.md](./testing-strategy.md) | Tests unitaires, E2E, coverage | 📋 À créer | - |
+| [tdd-strategy.md](./tdd-strategy.md) | Stratégie TDD pragmatique 3 niveaux | ✅ Terminé | 2025-01-XX |
 | [deployment-guide.md](./deployment-guide.md) | Process déploiement environments | 📋 À créer | - |
 | [troubleshooting.md](./troubleshooting.md) | Problèmes courants et solutions | 📋 À créer | - |
 
@@ -55,10 +55,35 @@ pnpm test
 - **Git Hooks** : Husky + lint-staged
 
 ### Testing Stack
-- **Unit Tests** : Vitest + @testing-library
+- **Unit/Integration** : Vitest + Testing Library + MSW
 - **E2E Tests** : Playwright
-- **Coverage** : c8 (built into Vitest)
-- **Mocking** : MSW (Mock Service Worker)
+- **Coverage** : c8 (intégré à Vitest)
+
+## 🤖 Snippets IA dorés (guides d’implémentation)
+
+- RSC + Hydratation Query:
+  - Récupère les données côté serveur via `appRouter.createCaller(ctx)` (pas d’HTTP, types 100%).
+  - Préhydrate TanStack Query avec `dehydrate(qc)` et passe `initialData` aux `useQuery` côté client.
+  - Pour les listes publiques, utilise `revalidate`/`tags` côté Next.
+
+- Mutations tRPC + invalidations:
+  - Côté client: `useMutation` + `queryClient.invalidateQueries(['key'])` (optimistic si besoin).
+  - Côté serveur: après mutation via Server Action, appelle `revalidateTag('key')` si la page RSC est cachée.
+
+- Conventions clés Query:
+  - Préfixe stable: `['resource', { filters… }]`.
+  - Pas d’objets non‑sérialisables dans les clés.
+  - Définis `staleTime` raisonnable (p.ex. 60s pour listes publiques).
+
+- Accès DB Edge‑safe:
+  - Utilise `@supabase/supabase-js` (HTTP) avec header `Authorization` pour RLS.
+  - Évite Prisma/clients TCP en Edge.
+
+- Sécurité/Auth:
+  - Crée un contexte tRPC avec `cookies()/headers()`.
+  - `protectedProcedure` vérifie la session Supabase avant tout accès.
+
+Ces patterns maximisent la cohérence web/mobile (tRPC + TanStack Query) et facilitent l’assistance IA (snippets stables et réutilisables).
 
 ## 📝 Standards de Code
 
@@ -93,7 +118,7 @@ apps/
 │   │   └── utils/        # Utilitaires
 ├── web/
 │   ├── src/
-│   │   ├── routes/       # TanStack Router file-based routing
+│   │   ├── app/          # Next.js App Router
 │   │   ├── components/   # Composants UI
 │   │   ├── lib/          # Utilitaires & config
 │   │   ├── server/       # Server functions
@@ -102,7 +127,7 @@ apps/
     ├── src/
     │   ├── routers/      # tRPC routers
     │   ├── services/     # Business logic
-    │   ├── db/           # Database & Prisma
+    │   ├── db/           # Database (Supabase utils & SQL)
     │   └── utils/        # Helper functions
 ```
 
@@ -118,7 +143,7 @@ apps/
 
 ### Conventional Commits
 ```bash
-feat: add user authentication with Vercel Edge Functions
+ feat: add user authentication with Next.js (App Router)
 fix: resolve investment calculation edge case
 docs: update API documentation for points system
 refactor: simplify database query logic
@@ -127,16 +152,17 @@ test: add E2E tests for investment flow
 
 ## 🧪 Testing Strategy
 
-### Test Pyramid
-- **E2E** : Critical user journeys (5-10 tests)
-- **Integration** : API routes + database (50+ tests)
-- **Unit** : Business logic + utilities (200+ tests)
+**📖 Voir la stratégie complète : [TDD Strategy](./tdd-strategy.md)**
 
-### Coverage Targets
-- **Statements** : >90%
-- **Branches** : >85%
-- **Functions** : >90%
-- **Lines** : >90%
+### Approche 3 Niveaux
+- **🔴 Critique (TDD Obligatoire)** : Business logic, API, sécurité - Coverage 95%+
+- **🟡 Important (TDD Conditionnel)** : Composants complexes, hooks - Coverage 80%+
+- **🟢 Standard (Tests Après)** : UI pure, layouts - Coverage 60%+
+
+### Stack Technique
+- **Unit/Integration** : Vitest + Testing Library + MSW
+- **E2E** : Playwright sur parcours critiques
+- **Mocking** : MSW pour isolation API
 
 ## 🔗 Liens Connexes
 
@@ -149,9 +175,9 @@ test: add E2E tests for investment flow
 
 ### Documentation
 - [Expo SDK 53](https://docs.expo.dev/) - Mobile development
-- [Vercel Edge Functions](https://tanstack.com/start/latest/docs) - Web framework
+- [Next.js (App Router)](https://nextjs.org/docs) - Web framework
 - [tRPC v11](https://trpc.io/docs) - Type-safe APIs
-- [Prisma v6](https://www.prisma.io/docs) - Database ORM
+- [Supabase](https://supabase.com/docs) - Database/Auth/Storage
 
 ### Communities
 - **Discord** : Expo, TanStack, tRPC communities

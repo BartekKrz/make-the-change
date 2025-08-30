@@ -71,7 +71,7 @@ Rassurer l'utilisateur que sa commande a été traitée avec succès et lui donn
             <div>
               <p className="text-slate-500">Date</p>
               <p className="font-medium text-slate-900">
-                {new Date(order.created_at).toLocaleDateString('fr-FR')}
+                {new Date(order.createdAt).toLocaleDateString('fr-FR')}
               </p>
             </div>
             <div>
@@ -89,10 +89,10 @@ Rassurer l'utilisateur que sa commande a été traitée avec succès et lui donn
           <div>
             <p className="text-slate-500 text-sm mb-2">Adresse de livraison</p>
             <p className="text-slate-900 text-sm">
-              {order.shipping_address.name}<br />
-              {order.shipping_address.line1}<br />
-              {order.shipping_address.line2 && `${order.shipping_address.line2}\n`}
-              {order.shipping_address.postal_code} {order.shipping_address.city}
+              {order.shippingAddress.name}<br />
+              {order.shippingAddress.line1}<br />
+              {order.shippingAddress.line2 && `${order.shippingAddress.line2}\n`}
+              {order.shippingAddress.postalCode} {order.shippingAddress.city}
             </p>
           </div>
         </div>
@@ -174,11 +174,11 @@ interface OrderConfirmation {
   user_id: string;
   total_points: number;
   items: OrderItem[];
-  shipping_address: Address;
+  shippingAddress: Address;
   status: OrderConfirmationStatus;
   estimated_delivery: Date;
   tracking_number?: string;
-  created_at: Date;
+  createdAt: Date;
 }
 ```
 
@@ -285,7 +285,7 @@ const sendOrderConfirmation = async (order: OrderConfirmation) => {
       order_id: order.id,
       total_points: order.total_points,
       items: order.items,
-      shipping_address: order.shipping_address,
+      shippingAddress: order.shippingAddress,
       tracking_url: `${APP_URL}/dashboard/commandes/${order.id}`,
       estimated_delivery: order.estimated_delivery
     }
@@ -387,6 +387,6 @@ const confirmationErrors = {
 
 ---
 
-**Stack Technique** : Vercel Edge Functions + shadcn/ui + tRPC + Email Service  
+**Stack Technique** : Next.js 15.5 (App Router) sur Vercel + shadcn/ui + tRPC + Email Service  
 **Priorité** : 🔥 Critique - Fin du tunnel d'achat  
 **Estimation** : 3-4 jours développement + intégration email

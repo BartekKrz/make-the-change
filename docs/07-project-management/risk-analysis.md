@@ -17,6 +17,7 @@ Cette analyse identifie **12 risques majeurs** répartis sur 4 domaines critique
 | 🟠 **ÉLEVÉ** | Performance base de données | Élevé | Moyen | Structuration JSONB + indexation GIN |
 | 🟠 **ÉLEVÉ** | Gestion attentes utilisateurs | Élevé | Élevé | Onboarding pédagogique + communication |
 | 🟠 **ÉLEVÉ** | Périmètre ambitieux MVP | Moyen | Élevé | Priorisation impitoyable + validation continue |
+| 🟡 **NOUVEAU** | Monthly churn higher than annual | Moyen | Moyen | Retention strategies monthly subscribers |
 
 ---
 
@@ -84,10 +85,10 @@ Monitoring & Alertes:
 - Plan escalade si sous-performance
 ```
 
-### 🟡 **Risque Moyen #3 : Conformité Légale (KYC & Finance)**
+### 🟡 **Risque Moyen #3 : Conformité Légale (KYC & Finance) - DUAL BILLING**
 
 #### Description du Risque
-Approche "légère" conformité (KYC >€100) mais régulateurs européens de plus en plus stricts. Le modèle "récompenses" pourrait être requalifié si communication ambiguë.
+Approche "légère" conformité (KYC >€100) mais régulateurs européens de plus en plus stricts. Le modèle "récompenses" pourrait être requalifié si communication ambiguë. **NOUVEAU:** Dual billing ajoute complexité réglementaire (monthly subscriptions = services récurrents).
 
 #### Plan de Mitigation
 ```yaml
@@ -95,11 +96,43 @@ Validation Juridique:
 - Audit parcours utilisateur par avocat spécialisé
 - Validation termes & conditions avant Phase 1
 - Review communication "contribution" vs "investissement"
+- NOUVEAU: Validation légale dual billing (monthly vs annual)
 
 Automatisation KYC:
 - Intégration Stripe Identity dès le début
 - Processus automatisé pour éviter goulot manuel
 - Documentation compliance complète
+- NOUVEAU: Compliance monthly billing (GDPR, cancellation rights)
+```
+
+### 🟡 **NOUVEAU Risque #11 : Monthly Churn vs Annual Retention**
+
+#### Description du Risque
+Les abonnés mensuels ont généralement un taux de churn plus élevé que les annuels. Si trop d'abonnés choisissent mensuel sans convertir vers annuel, impact négatif sur LTV et prévisibilité revenus.
+
+#### Impact Potentiel
+- **Financial** : MRR instabilité, prévisions revenus difficiles
+- **Growth** : LTV plus faible, CAC plus difficile à optimiser
+- **Operations** : Plus de gestion billing failures monthly
+
+#### Plan de Mitigation
+```yaml
+Retention Monthly Subscribers:
+- Upgrade prompts intelligents après 3-6 mois d'abonnement mensuel
+- Notifications économies annuelles (36€/an saved)
+- Gamification: bonus points pour passage annuel
+- Onboarding: highlight benefits annual (discount + engagement)
+
+Analytics & Monitoring:
+- Track monthly vs annual retention rates
+- Cohort analysis par billing frequency
+- A/B test upgrade prompts et incentives
+- Monitor churn reasons (price sensitivity vs engagement)
+
+Product Incentives:
+- Exclusive content/products pour annual subscribers
+- Priority customer support pour annuels
+- Bonus points systématiques pour engagement long-terme
 ```
 
 ---

@@ -8,7 +8,7 @@
 ```typescript
 MOBILE STACK DÉCISIF:
 Framework: Expo SDK 53 + React Native
-Language: TypeScript 5.7+ (strict mode)
+Language: TypeScript 5.9+ (strict mode)
 Server State: TanStack Query v5 (data fetching & offline caching)
 Navigation: Expo Router v4 (file-based routing)
 UI Framework: NativeWind v4 + Tailwind CSS v4
@@ -23,44 +23,53 @@ JUSTIFICATION DES CHOIX:
 ✅ AsyncStorage: Cache local simple et performant
 ```
 
-### Web Dashboard & E-commerce (Vercel Edge Functions)
+### Web Dashboard & E-commerce (Next.js 15.1 + Vercel)
 ```typescript
 WEB STACK DÉCISIF:
-Framework: Vercel Edge Functions (full-stack React framework)
-Language: TypeScript 5.7+ (strict mode)
+Framework: Next.js 15.1 + React Server Components
+Hosting: Vercel (Edge + Node runtimes)
+Language: TypeScript 5.9+ (strict mode)
 Server State: TanStack Query v5 (cohérence stack mobile)
 UI Framework: shadcn/ui v2 + Tailwind CSS v4
-Forms: TanStack Form (cohérence stack mobile)
+Forms: React Hook Form (simple et performant)
 Charts: recharts (pour analytics)
 Tables: @tanstack/react-table v8
-Payment: Stripe Elements v3
-Analytics: Custom analytics + Google Analytics 4
+Payment: Stripe Elements v3 + Stripe Subscriptions (dual billing)
+Billing Portal: Stripe Customer Portal (subscription management)
+Analytics: Vercel Analytics + Google Analytics 4
 
-AVANTAGES TANSTACK START:
-✅ Type-safe routing avec TanStack Router
-✅ Server functions 100% typées
-✅ Cohérence écosystème avec mobile (TanStack Query + Form)
-✅ SSR + streaming intégré
-✅ Client-first approach (SPA by default)
+AVANTAGES NEXT.JS 15.5:
+✅ App Router mature avec Server Components
+✅ API Routes intégrées avec type safety
+✅ Cohérence écosystème TanStack Query côté client
+✅ SSR + ISR + streaming intégré natif
+✅ Performance optimisée avec Turbopack
+✅ Déploiement Vercel optimisé et gratuit Phase 1
 ```
 
 ### Backend & Infrastructure
 ```typescript
 BACKEND STACK MVP:
-Runtime: Vercel Edge Functions + TypeScript 5.7+
-API Framework: tRPC v11 (type-safe end-to-end)
+Runtime: Vercel Edge (tRPC) + Node (webhooks Stripe) + TypeScript 5.9+
+API Framework: tRPC v11.5.0 (type-safe end-to-end)
 Database: Supabase Free Tier (PostgreSQL 15 + native cache)
 Cache: PostgreSQL materialized views (pas de Redis externe)
 Auth: Supabase Auth (intégré)
+Billing: Stripe Subscriptions + Payment Intents (dual model)
+Customer Portal: Stripe Billing Portal integration
 Queue: Traitement synchrone (pas de BullMQ)
 File Storage: Vercel Blob Store (1GB gratuit)
 Monitoring: Vercel Analytics gratuit
 
-JUSTIFICATION MVP:
+ JUSTIFICATION MVP + DUAL BILLING:
 ✅ tRPC v11: Type safety end-to-end + optimisation automatique
 ✅ Supabase Free: PostgreSQL géré + auth intégré
-✅ Vercel Edge Functions: Serverless + coût zéro
-✅ PostgreSQL natif: Cache via materialized views
+✅ Vercel (Edge + Node): Serverless + coût zéro
+✅ Stripe Subscriptions: Monthly recurring payments native
+✅ Stripe Payment Intents: Annual one-time payments
+✅ Customer Portal: Self-service billing management
+✅ PostgreSQL natif: Cache via materialized views + dual billing tracking
+ ⚠️ Stripe Webhooks: utiliser un route handler en Node runtime (pas Edge) pour la vérification de signature Stripe
 ```
 
 ## 🏗️ Architecture Système
@@ -69,8 +78,8 @@ JUSTIFICATION MVP:
 ```mermaid
 graph TD
     A[Mobile App - Expo] --> B[API Gateway - tRPC]
-    C[Dashboard - Vercel Edge Functions] --> B
-    D[E-commerce - Vercel Edge Functions] --> B
+    C[Dashboard - Next.js (Vercel)] --> B
+    D[E-commerce - Next.js (Vercel)] --> B
     E[Partner App - React Native] --> B
     B --> F[Backend Services Hybrides]
     F --> G[PostgreSQL 15 + Native Cache]
@@ -188,9 +197,9 @@ Uptime: Custom health checks
 │   │   ├── app.config.ts
 │   │   └── package.json
 │   │
-│   ├── web/             # Vercel Edge Functions dashboard + e-commerce
+│   ├── web/             # Next.js 15.1 (App Router) dashboard + e-commerce
 │   │   ├── src/
-│   │   │   ├── routes/  # TanStack Router file-based routing
+│   │   │   ├── app/     # Next.js App Router
 │   │   │   ├── components/
 │   │   │   ├── hooks/   # TanStack Query hooks
 │   │   │   ├── lib/
@@ -203,13 +212,13 @@ Uptime: Custom health checks
 │       │   ├── routes/  # tRPC routers + partner app + inventory
 │       │   ├── services/ # Hybrid fulfillment + stock management
 │       │   ├── utils/
-│       │   └── db/      # Prisma setup + nouvelles tables
+│       │   └── db/      # Database utils / SQL migrations (Supabase)
 │       └── package.json
 │
 ├── packages/
 │   ├── shared/          # Shared utilities & types
 │   ├── ui/              # Shared UI components  
-│   ├── database/        # Prisma schema & migrations
+│   ├── database/        # Supabase SQL migrations
 │   └── config/          # Shared config (ESLint, TS, etc.)
 │
 ├── tools/               # Build tools & scripts
@@ -313,13 +322,13 @@ module.exports = {
 };
 ```
 
-## 🌐 Web Architecture (Vercel Edge Functions + shadcn/ui)
+## 🌐 Web Architecture (Next.js 15.1 + shadcn/ui)
 
-### Vercel Edge Functions App Structure  
+### Next.js 15.1 App Structure  
 ```typescript
 // apps/web/src/ structure optimisée
 src/
-├── app/                # Vercel Edge Functions App Router
+├── app/                # Next.js 15.1 App Router
 │   ├── (auth)/        # Auth group
 │   │   ├── login/
 │   │   ├── register/
@@ -681,7 +690,7 @@ BUNDLE OPTIMIZATION:
 }
 ```
 
-#### **Web (Vercel Edge Functions + React)**
+#### **Web (Next.js + React)**
 ```typescript
 PERFORMANCE WEB:
 - SSR/SSG: Pages statiques pré-générées
@@ -726,6 +735,41 @@ VERCEL OPTIMIZATIONS:
 }
 ```
 
+#### **Intégration tRPC avec Next.js: createCaller (RSC) vs HTTP**
+```ts
+// RSC (Server Component) – Data fetching côté serveur avec tRPC sans HTTP
+import { cookies, headers } from 'next/headers'
+import { appRouter } from '@/server/routers/app'
+import { createTRPCContext } from '@/server/trpc'
+
+export async function loadProjectsServer() {
+  const ctx = await createTRPCContext({ cookies: cookies(), headers: headers() })
+  const caller = appRouter.createCaller(ctx)
+  return caller.projects.list({ q: '' })
+}
+
+// HTTP (client/browser) – via @trpc/react-query + TanStack Query
+// Avantages: cache client, invalidations, optimistic updates, offline
+// Utiliser pour l'interactif post-hydratation.
+
+// Mutation pattern – côté client
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { trpc } from '@/lib/trpc'
+
+export function useCreateProject() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (input: any) => trpc.admin.projects.create.mutate(input),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['projects'] })
+    },
+  })
+}
+
+// Invalidation côté serveur (si pages RSC taguées)
+// Dans une Server Action après mutation, appelez revalidateTag('projects').
+```
+
 ### **Optimisations Backend**
 
 #### **Database Performance (PostgreSQL)**
@@ -759,42 +803,43 @@ GROUP BY user_id;
 REFRESH MATERIALIZED VIEW CONCURRENTLY user_stats;
 ```
 
-#### **tRPC Optimizations**
+#### **tRPC Optimizations (Edge-safe avec Supabase)**
 ```typescript
-// Connection pooling
-const db = postgres(process.env.DATABASE_URL!, {
-  max: 20,                    // Connection pool size
-  idle_timeout: 20,          // Close idle connections
-  connect_timeout: 10,       // Connection timeout
-  prepare: false             // Disable prepared statements for edge
-});
+// Client Supabase (HTTP, compatible Edge). En pratique, créez le client
+// dans le contexte tRPC avec le token utilisateur pour profiter des RLS.
+import { createClient } from '@supabase/supabase-js'
 
-// Query optimizations
-export const getUserInvestmentsOptimized = async (userId: string) => {
-  // Single query with joins vs multiple queries
-  return db`
-    SELECT 
-      i.*,
-      p.name as project_name,
-      p.location,
-      pr.name as producer_name
-    FROM investments i
-    JOIN projects p ON i.project_id = p.id  
-    JOIN producers pr ON p.producer_id = pr.id
-    WHERE i.user_id = ${userId}
-    AND i.status = 'active'
-    ORDER BY i.created_at DESC
-    LIMIT 20
-  `;
-};
+export function createSupabaseForUser(accessToken?: string) {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: { persistSession: false },
+      global: { headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {} }
+    }
+  );
+}
 
-// Response caching
-import { cache } from '@vercel/edge';
-export const getCachedProjects = cache(
-  async () => getActiveProjects(),
-  ['projects-active'],
-  { revalidate: 300 } // 5min cache
-);
+// Requête optimisée (colonnes nécessaires, tri, limite)
+export async function getUserInvestmentsOptimized(db: ReturnType<typeof createSupabaseForUser>, userId: string) {
+  const { data, error } = await db
+    .from('investments')
+    .select(`
+      id, project_id, amount_eur, points_generated, created_at,
+      project:projects(name, location),
+      producer:producers(name)
+    `)
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .order('created_at', { ascending: false })
+    .limit(20);
+
+  if (error) throw error;
+  return data;
+}
+
+// Côté Next.js (pages publiques), utilisez le cache RSC (`fetch` + revalidate/tags).
+// Côté client, utilisez TanStack Query et l'hydratation pour éviter les double-fetchs.
 ```
 
 ### **Monitoring & Alerting**
@@ -1060,8 +1105,8 @@ API PERFORMANCE:
 ### **Deployment Stack Final (DÉCISIONS EXPERTES)**
 ```yaml
 INFRASTRUCTURE FINALISÉE:
-- Frontend: Vercel (Vercel Edge Functions optimized performance)
-- API: Vercel Edge Functions (Node.js/tRPC optimized)
+- Frontend: Vercel (Next.js optimisé)
+- API: Vercel Edge (tRPC optimisé)
 - Database: Supabase (PostgreSQL + auth intégré)
 - Cache: PostgreSQL materialized views (€0/mois natif)
 - Storage: Vercel Blob Store (50€/mois images/assets)
@@ -1079,7 +1124,7 @@ WEB DEPLOYMENT:
 - Analytics: Vercel Analytics + Google Analytics 4
 
 BACKEND DEPLOYMENT:
-- API: Vercel Edge Functions (€0 MVP, scaling pay-as-you-go)
+- API: Vercel Edge (€0 MVP, scaling pay-as-you-go)
 - Database: Supabase Free Tier (€0 MVP, évolutif Pro 25€/mois)
 - Cache: PostgreSQL materialized views (natif)
 - Files: Vercel Blob Store (€0 MVP, 1GB gratuit)
@@ -1139,7 +1184,7 @@ MONTH 2: Core Mobile App
 - Subscription tiers + Stripe integration
 
 MONTH 3: Web Dashboard
-- Vercel Edge Functions app setup
+- Next.js (App Router) app setup sur Vercel
 - Admin panel foundation
 - Partner management
 - Subscription management

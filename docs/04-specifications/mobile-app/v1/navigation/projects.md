@@ -1,5 +1,7 @@
 # Projets - Navigation Adaptative par Niveau
 
+> **💡 RÉFÉRENCE** : Voir [../../mobile-conventions/03-conventions-patterns.md](../../mobile-conventions/03-conventions-patterns.md) pour les patterns complets d'utilisation des composants Screen et les conventions de hooks.
+
 ## 🎯 Objectif
 
 Interface de découverte des projets qui s'adapte au niveau d'engagement utilisateur : exploration libre pour les Explorateurs, suivi personnalisé pour les Protecteurs, allocation flexible pour les Ambassadeurs.

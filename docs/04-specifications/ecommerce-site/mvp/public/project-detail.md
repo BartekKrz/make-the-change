@@ -109,13 +109,13 @@ Convaincre l'utilisateur d'investir dans un projet spécifique en présentant to
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
           <span className="text-2xl font-bold text-slate-900">
-            {project.funding_progress}%
+            {project.fundingProgress}%
           </span>
           <span className="text-sm text-slate-500">
             {project.days_remaining} jours restants
           </span>
         </div>
-        <Progress value={project.funding_progress} className="h-3 mb-2" />
+        <Progress value={project.fundingProgress} className="h-3 mb-2" />
         <div className="flex justify-between text-sm text-slate-600">
           <span>€{project.current_funding.toLocaleString()}</span>
           <span>€{project.funding_goal.toLocaleString()}</span>
@@ -252,7 +252,7 @@ Convaincre l'utilisateur d'investir dans un projet spécifique en présentant to
               </p>
               <div className="flex items-center justify-between mt-1">
                 <span className="text-xs text-slate-500">
-                  {similarProject.funding_progress}% financé
+                  {similarProject.fundingProgress}% financé
                 </span>
                 <Button size="xs" variant="ghost" asChild>
                   <Link href={`/projets/${similarProject.id}`}>
@@ -462,7 +462,7 @@ Convaincre l'utilisateur d'investir dans un projet spécifique en présentant to
                     {update.title}
                   </h3>
                   <span className="text-sm text-slate-500">
-                    {formatDate(update.created_at)}
+                    {formatDate(update.createdAt)}
                   </span>
                 </div>
                 <div className="prose prose-slate prose-sm max-w-none">
@@ -609,8 +609,8 @@ const handleInvestment = async () => {
     // Création PaymentIntent
     const { client_secret } = await createPaymentIntent({
       amount: selectedTier * 100, // En centimes
-      project_id: project.id,
-      user_id: user.id
+      projectId: project.id,
+      userId: user.id
     });
     
     // Confirmation paiement Stripe
@@ -643,36 +643,36 @@ const handleInvestment = async () => {
 ```typescript
 // Détail projet
 ecommerce.projects.getById: {
-  input: { id: string; user_id?: string };
+  input: { id: string; userId?: string };
   output: {
     project: ProjectDetails;
-    similar_projects: Project[];
-    user_investment?: UserInvestment;
+    similarProjects: Project[];
+    userInvestment?: UserInvestment;
   };
 }
 
 // Création PaymentIntent
 ecommerce.investments.createPaymentIntent: {
   input: {
-    project_id: string;
+    projectId: string;
     amount: number;
-    user_id: string;
+    userId: string;
   };
   output: {
-    client_secret: string;
-    payment_intent_id: string;
+    clientSecret: string;
+    paymentIntentId: string;
   };
 }
 
 // Confirmation investissement
 ecommerce.investments.confirm: {
   input: {
-    payment_intent_id: string;
-    project_id: string;
+    paymentIntentId: string;
+    projectId: string;
   };
   output: {
     investment: Investment;
-    points_earned: number;
+    pointsEarned: number;
     success: boolean;
   };
 }
@@ -696,7 +696,7 @@ const validateInvestment = async (data: InvestmentData) => {
   }
   
   // Vérifier que l'utilisateur existe
-  const user = await getUser(data.user_id);
+  const user = await getUser(data.userId);
   if (!user) {
     throw new Error('Utilisateur non trouvé');
   }
@@ -725,6 +725,6 @@ const validateInvestment = async (data: InvestmentData) => {
 
 ---
 
-**Stack Technique** : Vercel Edge Functions + Stripe + shadcn/ui + tRPC  
+**Stack Technique** : Next.js 15.5 (App Router) sur Vercel + Stripe + shadcn/ui + tRPC  
 **Priorité** : 🔥 Critique - Cœur du business model  
 **Estimation** : 12-15 jours développement + intégration Stripe

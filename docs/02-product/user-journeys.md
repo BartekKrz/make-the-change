@@ -52,7 +52,7 @@ Logo + Titre + Description + [Créer compte | Se connecter]
 Titre + Email Input + Password Input + Checkbox + Button
 ```
 
-#### 🎨 Optimisations Form UX
+#### 🎨 Optimisations Form UX - DUAL BILLING INTEGRATION
 
 **Layout Spacing Optimisé :**
 ```
@@ -61,6 +61,20 @@ Titre + Email Input + Password Input + Checkbox + Button
 [Vertical spacing 20px]
 [Input Password - mêmes specs]
 [Vertical spacing 24px]
+
+[NOUVEAU: Billing Frequency Section - margin 24px vertical]
+  [Titre "Choisissez votre formule" - 16px medium, margin-bottom 16px]
+  [Toggle Component - height 56px, background gris clair, radius 28px]
+    [Option Monthly - padding 8px 16px, radius 24px]
+      [Text "Mensuel" - 14px medium]
+      [Price "18€/mois" - 12px regular, opacity 0.8]
+    [Option Annual - même structure]
+      [Badge "-17%" - absolute top-right, background rouge, text blanc]
+      [Text "Annuel" - 14px medium] 
+      [Price "180€/an (15€/mois)" - 12px regular, opacity 0.8]
+  [Savings Text - 12px regular, couleur primaire, center, margin-top 8px]
+    "Économisez 36€ par an avec l'abonnement annuel"
+
 [Checkbox + Label - touch area 48px]
 [Vertical spacing 32px]
 [Submit Button - height 48px, full width]
@@ -71,10 +85,13 @@ Titre + Email Input + Password Input + Checkbox + Button
 - **Error state** : Bordure rouge + message sous l'input
 - **Success state** : Checkmark vert + bordure verte
 - **Disabled state** : Opacity 0.5 + cursor not-allowed
+- **NOUVEAU: Billing Toggle** : Active state avec background primaire + slide animation
 
-**Validation en Temps Réel :**
+**Validation en Temps Réel - DUAL BILLING :**
 - Email : Validation format instantanée
 - Password : Force indicator visuel
+- **NOUVEAU: Billing Choice** : Defaulted à "monthly" pour accessibility
+- **NOUVEAU: Price Calculator** : Real-time update du total selon frequency
 - Submit : Disabled tant que form invalide
 
 ### 🏠 **Dashboard Principal (Onglet Accueil)**
@@ -152,14 +169,14 @@ Header + Liste cards projets
 - **Cell reuse** : Optimisation mémoire
 - **Infinite scroll** : Pagination seamless
 
-### 💰 **Détail Projet & Investment Flow**
+### 💰 **Détail Projet & Investment Flow - DUAL BILLING INTEGRATION**
 
 #### Layout Actuel
 ```
 Galerie + Titre + Tags + Description + Producteur + Map + CTA
 ```
 
-#### 🎨 Optimisations Layout Complexe
+#### 🎨 Optimisations Layout Complexe - SUBSCRIPTION JOURNEY
 
 **Structure Hiérarchique :**
 ```
@@ -182,16 +199,43 @@ Galerie + Titre + Tags + Description + Producteur + Map + CTA
     
     [Map Container - height 200px, radius 12px, margin 24px vertical]
     
+    [NOUVEAU: Subscription Options Section - background primaire léger, padding 20px, radius 16px]
+      [Titre "Soutenez ce projet" - 20px semibold, margin-bottom 16px]
+      
+      [Billing Frequency Toggle - height 52px, background blanc, radius 26px, margin-bottom 20px]
+        [Monthly Option - active by default pour accessibility]
+          [Text "Mensuel" - 16px medium] 
+          [Price "18€/mois" - 14px regular, opacity 0.8]
+        [Annual Option]
+          [Badge "-17%" - absolute, background rouge]
+          [Text "Annuel" - 16px medium]
+          [Price "180€/an" - 14px regular, opacity 0.8]
+      
+      [Savings Highlight - 14px medium, couleur primaire, center align]
+        "💰 Économisez 36€/an avec l'abonnement annuel"
+      
+      [Points Preview Card - background blanc, padding 16px, radius 12px, margin-top 16px]
+        [Text "Points générés" - 14px medium, opacity 0.7]
+        [Dynamic Points Display - 24px bold, couleur success]
+          "Mensuel: +280 pts" ou "Annuel: +280 pts" 
+        [Value Explanation - 12px regular, opacity 0.6]
+          "Valeur garantie: +40% bonus vs investissement direct"
+    
     [Sticky Footer - safe area bottom]
-      [Prix + Button CTA full width]
+      [Prix + Button CTA full width avec billing frequency display]
 ```
 
-**Sticky Footer Optimisé :**
+**Sticky Footer Optimisé - DUAL BILLING :**
 ```
 [Container - background blanc, shadow top, safe area bottom aware]
   [Content - padding 16px horizontal, 12px vertical]
-    [Prix text - 16px medium, opacity 0.8]
+    [Pricing Display Row - flex, space-between, margin-bottom 8px]
+      [Selected Plan Text - 14px medium, opacity 0.8]
+        "Plan mensuel" ou "Plan annuel (-17%)"
+      [Price Display - 16px semibold, couleur primaire]
+        "18€/mois" ou "180€/an"
     [Button - height 48px, radius 12px, full width]
+      [Text "Souscrire maintenant" - 16px semibold]
     [Safe area bottom: 34pt iOS home indicator + tab bar]
 ```
 

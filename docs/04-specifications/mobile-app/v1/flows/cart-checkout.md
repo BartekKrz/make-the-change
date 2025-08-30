@@ -1,5 +1,7 @@
 # Panier & Checkout
 
+> **💡 RÉFÉRENCE** : Voir [../../mobile-conventions/03-conventions-patterns.md](../../mobile-conventions/03-conventions-patterns.md) pour les patterns complets d'utilisation des composants Screen et les conventions de hooks.
+
 ## 🎯 Objectif
 
 Permettre à l'utilisateur de finaliser ses achats en points avec un processus de checkout simplifié, sécurisé et optimisé pour les récompenses.
@@ -944,44 +946,44 @@ interface OfflineCheckoutCapabilities {
 ```typescript
 const cartCheckoutEvents = {
   'cart_viewed': {
-    cart_id: string,
-    items_count: number,
-    total_points: number,
+    cartId: string,
+    itemsCount: number,
+    totalPoints: number,
     timestamp: number
   },
   'item_removed_from_cart': {
-    cart_id: string,
-    product_id: string,
+    cartId: string,
+    productId: string,
     quantity: number,
     reason: 'user_action' | 'out_of_stock' | 'price_change',
     timestamp: number
   },
   'checkout_started': {
-    cart_id: string,
-    items_count: number,
-    total_points: number,
-    user_points: number,
+    cartId: string,
+    itemsCount: number,
+    totalPoints: number,
+    userPoints: number,
     timestamp: number
   },
   'checkout_step_completed': {
-    cart_id: string,
+    cartId: string,
     step: string,
-    step_number: number,
-    time_spent: number,
+    stepNumber: number,
+    timeSpent: number,
     timestamp: number
   },
   'order_placed': {
-    order_id: string,
-    cart_id: string,
-    total_points: number,
-    items_count: number,
-    checkout_duration: number,
+    orderId: string,
+    cartId: string,
+    totalPoints: number,
+    itemsCount: number,
+    checkoutDuration: number,
     timestamp: number
   },
   'expiring_points_used': {
-    cart_id: string,
-    points_amount: number,
-    days_until_expiry: number,
+    cartId: string,
+    pointsAmount: number,
+    daysUntilExpiry: number,
     timestamp: number
   }
 }
@@ -1033,6 +1035,76 @@ interface CheckoutOptimization {
     enabled: boolean
     requiresConfirmation: boolean
     maxOrderValue: number
+  }
+}
+```
+
+### NOUVEAU: Subscription Changes Mid-Cycle Integration
+
+```typescript
+interface SubscriptionMidCycleChanges {
+  // Integration avec le checkout pour les changements d'abonnement
+  subscriptionUpgrade: {
+    duringCheckout: boolean // Proposer upgrade durant checkout si monthly
+    discountHighlight: boolean // Montrer économies annual
+    prorationLogic: SubscriptionProrationConfig
+  }
+  
+  billingFrequencyChange: {
+    allowDuringOrder: boolean // Permettre changement frequency durant order
+    effectiveDate: 'immediate' | 'next_cycle'
+    priceAdjustment: boolean // Ajuster prix si changement immédiat
+  }
+  
+  pointsAdjustment: {
+    recalculateForNewTier: boolean
+    bonusPointsForUpgrade: number // Points bonus si upgrade annual
+    effectiveImmediately: boolean
+  }
+}
+
+interface CheckoutSubscriptionIntegration {
+  showUpgradePrompt: {
+    condition: 'monthly_subscriber' | 'high_cart_value' | 'points_shortage'
+    timing: 'cart_review' | 'payment_step' | 'confirmation'
+    incentive: {
+      immediateDiscount: boolean
+      bonusPoints: number
+      extendedTrial: boolean
+    }
+  }
+  
+  subscriptionUpsell: {
+    cartValueThreshold: number // 300+ points → suggest upgrade
+    frequentBuyerDetection: boolean // Si achats fréquents → suggest subscription
+    seasonalPromotion: boolean // Périodes spéciales upgrade
+  }
+}
+```
+
+### NOUVEAU: Advanced Billing Management
+
+```typescript
+interface AdvancedBillingIntegration {
+  proration: {
+    // Gestion proration lors changements mid-cycle
+    calculateProratedUpgrade: (currentPlan: string, newPlan: string, daysRemaining: number) => number
+    applyImmediateDiscount: boolean
+    creditUnusedPortion: boolean
+  }
+  
+  billingPortalAccess: {
+    // Accès Stripe Customer Portal depuis checkout
+    directLinkInCheckout: boolean
+    manageSubscriptionDuringOrder: boolean
+    updatePaymentMethodFlow: boolean
+  }
+  
+  failedPaymentRecovery: {
+    // Si paiement monthly échoue durant checkout
+    retryLogic: PaymentRetryConfig
+    fallbackToAnnual: boolean // Proposer annual si monthly fail
+    gracePeriod: number // jours
   }
 }
 ```

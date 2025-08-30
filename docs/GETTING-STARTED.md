@@ -9,7 +9,7 @@ Bienvenue dans l'équipe ! Ce guide est conçu pour vous rendre opérationnel le
 - **Modèle :** Hybride Biodiversity Platform (3 niveaux d'engagement)  
 - **Niveau 1 - Explorateur :** Gratuit - exploration libre des projets
 - **Niveau 2 - Protecteur :** Investissements 50€-150€ dans projets spécifiques  
-- **Niveau 3 - Ambassadeur :** Abonnements 200€-350€ avec allocation flexible
+- **Niveau 3 - Ambassadeur :** Abonnements 180€-320€ avec allocation flexible
 - **Points Bonus :** 30% à 50% de valeur supplémentaire selon niveau
 
 ## 2. Points d'Entrée par Rôle
@@ -19,7 +19,7 @@ Pour vous plonger dans la documentation, commencez ici :
 | Rôle | Point d'Entrée Recommandé | Objectif | 
 |---|---|---|
 | **🔧 Développeur** | [03-technical/architecture-overview.md](./03-technical/architecture-overview.md) | Comprendre la stack et l'architecture. | 
-| **💼 Business/PM** | [Modèle Hybride](./01-strategy/business-model-adaptive.md) | Maîtriser le modèle économique hybride et les KPIs. | 
+| **💼 Business/PM** | [Modèle Hybride](./01-strategy/business-model-definitive.md) | Maîtriser le modèle économique hybride et les KPIs. | 
 | **🎨 Designer** | [02-product/design-system/foundations.md](./02-product/design-system/foundations.md) | S'imprégner de l'identité visuelle. | 
 | **📦 Opérations** | [05-operations/README.md](./05-operations/README.md) | Comprendre les processus métier. | 
 

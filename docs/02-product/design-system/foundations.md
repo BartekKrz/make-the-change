@@ -398,7 +398,7 @@ REQUIREMENTS:
 - Auto-completion et validation temps réel
 ```
 
-### **Composants Business Molecules**
+### **Composants Business Molecules - DUAL BILLING COMPONENTS**
 
 #### **PointsWidget**
 ```typescript
@@ -418,6 +418,85 @@ ACCESSIBILITY:
 - Balance annoncée par screen reader
 - Trend avec contexte temporel explicite
 - Navigation keyboard complète
+```
+
+#### **NOUVEAU: BillingFrequencyToggle**
+```typescript
+STRUCTURE:
+- Container: Rounded pill background (height 56px, padding 4px)
+- Options: Two touch targets (monthly/annual)
+- Active state: Highlighted background + slide animation
+- Savings badge: "-17%" indicator sur annual option
+
+VARIANTS:
+- Default: Monthly selected (accessibility first)
+- Annual: Shows savings prominently
+- Disabled: During processing/loading
+
+STATES:
+- Default: Monthly active, neutral colors
+- Annual Active: Emerald background + savings highlight
+- Transition: Smooth slide animation (300ms ease)
+- Loading: Skeleton toggle during price calculation
+
+ACCESSIBILITY:
+- Role="radiogroup" avec labels clairs
+- Keyboard navigation (arrow keys)
+- Screen reader announce savings amount
+- Focus indicators visibles
+```
+
+#### **NOUVEAU: PricingCard**
+```typescript
+STRUCTURE:
+- Header: Plan name (Standard/Premium) + tier badge
+- Pricing display: Dynamic selon billing frequency
+- Features list: Plan benefits avec checkmarks
+- CTA: Prominent "Choisir ce plan" button
+- Savings highlight: Pour annual plans
+
+VARIANTS:
+- Monthly: Show monthly price prominently
+- Annual: Highlight savings (-17%) + annual equivalent
+- Recommended: Border highlight + "Plus populaire" badge
+- Current: "Plan actuel" state avec manage button
+
+RESPONSIVE:
+- Mobile: Full width cards, stack vertically
+- Tablet: 2 columns side by side
+- Desktop: 3 columns avec recommended center
+
+MICRO-INTERACTIONS:
+- Hover: Subtle elevation increase
+- Price switch: Smooth number transitions
+- Feature reveals: Progressive disclosure
+```
+
+#### **NOUVEAU: SubscriptionManagement**
+```typescript
+STRUCTURE:
+- Current plan: Active subscription info card
+- Next billing: Date + amount + frequency
+- Upgrade prompt: Pour monthly → annual conversion
+- Billing portal: Stripe customer portal access
+
+COMPONENTS:
+- SubscriptionInfoCard: Current plan summary
+- NextBillingInfo: Date + amount display
+- UpgradePrompt: Annual savings calculator
+- BillingHistory: Expandable payment history
+
+STATES:
+- Active subscription: Current plan + next billing
+- Expired: Reactivation flow
+- Canceled: Retention attempt
+- Payment failed: Retry payment flow
+
+ACTIONS:
+- Change plan: Modal avec billing frequency choice
+- Update payment: Stripe portal redirect  
+- Cancel subscription: Confirmation + retention
+- Download invoices: Direct PDF access
 ```
 
 #### **ProjectCard**

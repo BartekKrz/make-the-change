@@ -811,6 +811,6 @@ const faqAnalytics = {
 
 ---
 
-**Stack Technique** : Vercel Edge Functions + Fuse.js + Framer Motion + Analytics  
+**Stack Technique** : Next.js 15.5 (App Router) sur Vercel + Fuse.js + Framer Motion + Analytics  
 **Priorité** : 🔥 Importante - Réduction charge support  
 **Estimation** : 5-6 jours développement + rédaction contenu

@@ -106,7 +106,7 @@ font-weights: 400, 500
 </Pressable>
 ```
 
-### Web (Vercel Edge Functions + Tailwind + shadcn/ui)
+### Web (Next.js 15.5 App Router sur Vercel + Tailwind + shadcn/ui)
 ```tsx
 // Composants shadcn/ui customisés
 import { Button } from '@/components/ui/button'

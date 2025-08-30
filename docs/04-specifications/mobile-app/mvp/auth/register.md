@@ -1,12 +1,12 @@
-# Inscription (Register)
+# Inscription (Register) - Optimisée 2025
 
 ## 🎯 Objectif
 
-Permettre une création de compte simple et rapide, avec une expérience utilisateur fluide et sécurisée. Convertir les visiteurs en utilisateurs actifs avec un minimum de friction.
+Permettre une création de compte simple et rapide, avec une expérience utilisateur fluide et sécurisée. Convertir les visiteurs en utilisateurs actifs avec un minimum de friction, en appliquant les principes du "Zero Friction Discovery".
 
 ## 🎨 Design & Layout
 
-### Structure Visuelle
+### Structure Visuelle (Intégrant les concepts 2025)
 
 ```text
 ┌─────────────────────────┐
@@ -26,6 +26,11 @@ Permettre une création de compte simple et rapide, avec une expérience utilisa
 │                         │
 │ ☐ J'accepte les CGU     │
 │   et Politique          │
+│                         │
+│ NOUVEAU: Choix Billing  │
+│ ○ Mensuel  ○ Annuel     │
+│ (18€/mois) (180€/an)    │
+│ └─ Économisez 17% ──┘   │
 │                         │
 │   [S'inscrire]          │
 │                         │
@@ -91,7 +96,7 @@ interface PasswordStrengthProps {
     hasUppercase: boolean // A-Z
     hasLowercase: boolean // a-z  
     hasNumber: boolean    // 0-9
-    hasSpecial: boolean   // !@#$%
+    hasSpecial: boolean   // !@#$% 
   }
 }
 ```
@@ -122,7 +127,7 @@ interface LegalCheckboxProps {
 
 ```typescript
 const emailValidation = {
-  pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  pattern: /^[^\s@]+\@[^\s@]+\\.[^\s@]+$/,
   required: true,
   maxLength: 254,
   blockedDomains: ['tempmail.org', '10minutemail.com']
@@ -188,6 +193,11 @@ interface RegisterRequest {
   password: string
   acceptedTerms: boolean
   acceptedPrivacy: boolean
+  
+  // NOUVEAU: Dual Billing Choice
+  billingFrequency: 'monthly' | 'annual'
+  subscriptionTier?: 'ambassadeur_standard' | 'ambassadeur_premium'
+  
   source?: 'mobile' | 'web'
   deviceInfo?: {
     platform: 'ios' | 'android'
@@ -232,7 +242,7 @@ Response: {
 
 ## ✅ Validations
 
-### Validation Frontend
+### Validation Frontend - DUAL BILLING
 
 ```typescript
 interface ValidationRules {
@@ -248,10 +258,72 @@ interface ValidationRules {
     complexity: 'medium' | 'high'
     realTime: boolean
   }
+  // NOUVEAU: Billing Frequency Validation
+  billing: {
+    frequencyRequired: boolean
+    defaultFrequency: 'monthly' // Accessibility first
+    showSavings: boolean // Highlight annual discount
+  }
   legal: {
     termsRequired: boolean
     privacyRequired: boolean
   }
+}
+```
+
+### NOUVEAU: Billing Frequency UI Component
+
+```typescript
+interface BillingFrequencyChoiceProps {
+  selectedFrequency: 'monthly' | 'annual'
+  onFrequencyChange: (frequency: 'monthly' | 'annual') => void
+  showDiscount: boolean
+}
+
+const BillingFrequencyChoice = ({
+  selectedFrequency,
+  onFrequencyChange,
+  showDiscount = true
+}: BillingFrequencyChoiceProps) => {
+  const monthlyPrice = 18
+  const annualPrice = 180
+  const annualSavings = (monthlyPrice * 12) - annualPrice // 36€
+  const discountPercentage = Math.round((annualSavings / (monthlyPrice * 12)) * 100) // 17%
+  
+  return (
+    <View style={styles.billingContainer}>
+      <Text style={styles.sectionTitle}>Choisissez votre formule</Text>
+      
+      <TouchableOpacity 
+        style={[styles.option, selectedFrequency === 'monthly' && styles.selectedOption]}
+        onPress={() => onFrequencyChange('monthly')}
+      >
+        <View style={styles.optionHeader}>
+          <Text style={styles.optionTitle}>Mensuel</Text>
+          <Text style={styles.optionPrice}>{monthlyPrice}€/mois</Text>
+        </View>
+        <Text style={styles.optionSubtext}>Flexibilité maximum</Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity 
+        style={[styles.option, selectedFrequency === 'annual' && styles.selectedOption]}
+        onPress={() => onFrequencyChange('annual')}
+      >
+        <View style={styles.optionHeader}>
+          <Text style={styles.optionTitle}>Annuel</Text>
+          <Text style={styles.optionPrice}>{annualPrice}€/an</Text>
+          {showDiscount && (
+            <View style={styles.savingsBadge}>
+              <Text style={styles.savingsText}>-{discountPercentage}%</Text>
+            </View>
+          )}
+        </View>
+        <Text style={styles.optionSubtext}>
+          Économisez {annualSavings}€ • {Math.round(annualPrice/12)}€/mois équivalent
+        </Text>
+      </TouchableOpacity>
+    </View>
+  )
 }
 ```
 
@@ -357,6 +429,40 @@ const deepLinks = {
 }
 ```
 
+## 📝 Implémentation avec TanStack Form
+
+### Exemple d'implémentation
+
+> **💡 RÉFÉRENCE** : Voir [../mobile-conventions/03-conventions-patterns.md](../mobile-conventions/03-conventions-patterns.md) pour les patterns complets de gestion de formulaires avec TanStack Form.
+
+```typescript
+// Hook de registration avec TanStack Form - Convention arrow function directe
+export const useRegisterForm = () => useForm({
+  defaultValues: {
+    email: '',
+    password: '',
+    acceptedTerms: false,
+    billingFrequency: 'monthly' as 'monthly' | 'annual',
+  },
+  onSubmit: async ({ value }) => {
+    try {
+      const result = await registerUser(value);
+      // Navigation vers dashboard après succès
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Dashboard' }]
+      });
+    } catch (error) {
+      throw new Error('Échec de l\'inscription');
+    }
+  },
+  validatorAdapter: zodValidator,
+  validators: {
+    onChange: registerSchema,
+  },
+});
+```
+
 ## 📝 Tests Utilisateur
 
 ### Scénarios de Test
@@ -439,4 +545,4 @@ const registrationEvents = {
     timestamp: number
   }
 }
-```
+```}

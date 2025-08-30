@@ -193,14 +193,14 @@ const columns: ColumnDef<User>[] = [
     cell: ({ row }) => `€${row.original.total_invested}`,
   },
   {
-    accessorKey: "points_balance",
+    accessorKey: "pointsBalance",
     header: "Points",
-    cell: ({ row }) => `${row.original.points_balance} pts`,
+    cell: ({ row }) => `${row.original.pointsBalance} pts`,
   },
   {
-    accessorKey: "created_at",
+    accessorKey: "createdAt",
     header: "Inscription",
-    cell: ({ row }) => formatDate(row.original.created_at),
+    cell: ({ row }) => formatDate(row.original.createdAt),
   },
   {
     id: "actions",
@@ -243,7 +243,7 @@ const columns: ColumnDef<User>[] = [
     <SheetHeader>
       <SheetTitle>{selectedUser?.name}</SheetTitle>
       <SheetDescription>
-        Inscrit le {formatDate(selectedUser?.created_at)}
+        Inscrit le {formatDate(selectedUser?.createdAt)}
       </SheetDescription>
     </SheetHeader>
     
@@ -271,6 +271,25 @@ const columns: ColumnDef<User>[] = [
             <div className="text-xl font-bold">€{selectedUser?.total_invested}</div>
           </Card>
         </div>
+        
+        {/* NOUVEAU: Dual Billing Stats */}
+        {selectedUser?.subscription && (
+          <div className="mt-4">
+            <h4 className="font-medium mb-2 text-blue-600">Abonnement</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <Card className="p-3">
+                <div className="text-sm text-muted-foreground">Formule</div>
+                <div className="text-xl font-bold capitalize">{selectedUser.subscription.billing_frequency}</div>
+                <div className="text-xs text-muted-foreground">{selectedUser.subscription.tier}</div>
+              </Card>
+              <Card className="p-3">
+                <div className="text-sm text-muted-foreground">MRR Équivalent</div>
+                <div className="text-xl font-bold">€{selectedUser.subscription.mrr_equivalent}/mois</div>
+                <div className="text-xs text-muted-foreground">Prochaine facturation: {formatDate(selectedUser.subscription.next_billing_date)}</div>
+              </Card>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* KYC Status */}
@@ -321,6 +340,29 @@ const columns: ColumnDef<User>[] = [
           <Key className="mr-2 h-4 w-4" />
           Reset mot de passe
         </Button>
+        
+        {/* NOUVEAU: Dual Billing Actions */}
+        {selectedUser?.subscription && (
+          <div className="mt-4 pt-4 border-t">
+            <h4 className="font-medium mb-2 text-blue-600">Gestion Abonnement</h4>
+            <div className="space-y-2">
+              <Button variant="outline" className="w-full" onClick={openStripeCustomerPortal}>
+                <CreditCard className="mr-2 h-4 w-4" />
+                Stripe Customer Portal
+              </Button>
+              {selectedUser.subscription.billing_frequency === 'monthly' && (
+                <Button variant="outline" className="w-full" onClick={promptAnnualUpgrade}>
+                  <TrendingUp className="mr-2 h-4 w-4" />
+                  Proposer passage annuel
+                </Button>
+              )}
+              <Button variant="outline" className="w-full" onClick={viewBillingHistory}>
+                <Receipt className="mr-2 h-4 w-4" />
+                Historique facturation
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Gestion RGPD */}
@@ -456,10 +498,19 @@ interface User {
   kyc_status: 'none' | 'pending' | 'verified' | 'rejected';
   total_invested: number;
   investment_count: number;
-  points_balance: number;
+  pointsBalance: number;
   orders_count: number;
-  created_at: Date;
+  createdAt: Date;
   last_login?: Date;
+  // NOUVEAU: Dual Billing Fields
+  subscription?: {
+    tier: 'ambassadeur_standard' | 'ambassadeur_premium';
+    billing_frequency: 'monthly' | 'annual';
+    mrr_equivalent: number;
+    next_billing_date: Date;
+    stripe_subscription_id?: string;
+    stripe_customer_id: string;
+  };
 }
 
 interface UserDetail extends User {
@@ -469,6 +520,9 @@ interface UserDetail extends User {
   orders: Order[];
   points_history: PointsTransaction[];
   support_notes: SupportNote[];
+  // NOUVEAU: Dual Billing Detail
+  billing_history?: BillingHistoryItem[];
+  subscription_changes?: SubscriptionChangeLog[];
 }
 
 interface KYCData {

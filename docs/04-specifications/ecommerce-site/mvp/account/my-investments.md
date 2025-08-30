@@ -134,7 +134,7 @@ Permettre aux membres de suivre leurs investissements dans des projets spécifiq
             <SelectContent>
               <SelectItem value="newest">Plus récents</SelectItem>
               <SelectItem value="oldest">Plus anciens</SelectItem>
-              <SelectItem value="project_type">Type de projet</SelectItem>
+              <SelectItem value="projectType">Type de projet</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -256,15 +256,15 @@ interface UserInvestment {
 }
 
 interface ImpactStats {
-  total_contributed: number;
-  total_points_earned: number;
-  projects_supported_count: number;
-  active_investments_count: number;
-  total_co2_offset: number;
-  trees_planted: number;
-  water_saved: number;
-  jobs_supported: number;
-  biodiversity_score: number;
+  totalContributed: number;
+  totalPointsEarned: number;
+  projectsSupportedCount: number;
+  activeInvestmentsCount: number;
+  totalCo2Offset: number;
+  treesPlanted: number;
+  waterSaved: number;
+  jobsSupported: number;
+  biodiversityScore: number;
 }
 ```
 
@@ -273,36 +273,28 @@ interface ImpactStats {
 ### Endpoints tRPC
 
 ```typescript
-// Liste des investissements utilisateur
-ecommerce.investments.getUserInvestments: {
+// Liste des investissements utilisateur (standardisé tRPC)
+investments.list: {
   input: {
-    user_id: string;
-    page: number;
-    limit: number;
-    filters: InvestmentFilters; // { status: 'active' | 'all', project_type: string }
-    sort_by: string;
+    page?: number;
+    limit?: number;
+    status?: 'active' | 'expired' | 'cancelled';
+    search?: string;
+    sort?: 'newest' | 'oldest' | 'project_type';
   };
-  output: {
-    investments: UserInvestment[];
-    total: number;
-    stats: ImpactStats;
-  };
+  output: Paginated<UserInvestment> & { meta?: { stats?: ImpactStats } };
 }
 
-// Statistiques d'impact globales
-ecommerce.impact.getStats: {
-  input: { user_id: string };
-  output: {
-    global_stats: ImpactStats;
-    timeline_data: Array<{ date: Date; co2_offset: number }>;
-    milestones: Array<{ achievement: string; date: Date }>;
-  };
+// Statistiques d'impact (utilisateur)
+investments.analytics: {
+  input: { from?: Date; to?: Date };
+  output: ImpactStats;
 }
 
-// Export données
-ecommerce.investments.exportData: {
-  input: { user_id: string; format: 'csv' | 'pdf' };
-  output: { download_url: string; expires_at: Date };
+// Export des données investissements
+analytics.export: {
+  input: { format: 'csv' | 'xlsx' | 'pdf'; report: 'investments' };
+  output: { jobId: string; status: 'queued' | 'running' | 'completed' | 'failed'; downloadUrl?: string };
 }
 ```
 

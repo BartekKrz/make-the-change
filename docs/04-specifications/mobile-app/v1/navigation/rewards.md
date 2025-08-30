@@ -1,5 +1,7 @@
 # Récompenses (Catalogue E-commerce)
 
+> **💡 RÉFÉRENCE** : Voir [../../mobile-conventions/03-conventions-patterns.md](../../mobile-conventions/03-conventions-patterns.md) pour les patterns complets d'utilisation des composants Screen et les conventions de hooks.
+
 ## 🎯 Objectif
 
 Permettre aux utilisateurs d'échanger leurs points contre des produits premium (miel, huile d'olive, cosmétiques naturels) avec une expérience e-commerce optimisée et gamifiée.
@@ -572,28 +574,28 @@ const rewardsEvents = {
     source: 'tab_switch' | 'deep_link'
   },
   'product_viewed': {
-    product_id: string,
+    productId: string,
     category: string,
-    position_in_list?: number,
+    positionInList?: number,
     timestamp: number
   },
   'add_to_cart': {
-    product_id: string,
-    points_price: number,
-    cart_value_before: number,
-    cart_value_after: number,
+    productId: string,
+    pointsPrice: number,
+    cartValueBefore: number,
+    cartValueAfter: number,
     timestamp: number
   },
   'cart_viewed': {
-    items_count: number,
-    total_points: number,
+    itemsCount: number,
+    totalPoints: number,
     can_afford: boolean,
     timestamp: number
   },
   'points_expiry_warning_shown': {
-    expiring_amount: number,
-    days_left: number,
-    warning_type: 'banner' | 'notification',
+    expiringAmount: number,
+    daysLeft: number,
+    warningType: 'banner' | 'notification',
     timestamp: number
   }
 }

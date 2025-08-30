@@ -1,5 +1,7 @@
 # 👑 User Level Management System - Modèle Hybride
 
+> **💡 RÉFÉRENCE** : Voir [../mobile-conventions/03-conventions-patterns.md](../mobile-conventions/03-conventions-patterns.md) pour les patterns complets d'utilisation des composants Screen et les conventions de hooks.
+
 **📍 VERSION: MVP** | **🗓️ TIMELINE: Mois 1-4** | **⭐️ PRIORITÉ: CRITIQUE**
 
 ## 🎯 Objectif
@@ -102,7 +104,9 @@ interface AmbassadeurLevel {
   key: 'ambassadeur';
   requirements: {
     subscriptionTier: 'standard' | 'premium';
-    monthlyPayment: 200 | 350;       // €200 ou €350 /mois
+    billingFrequency: 'monthly' | 'annual';
+    monthlyPayment: 18 | 32;         // €18 ou €32 /mois
+    annualPayment: 180 | 320;        // €180 ou €320 /an
     activeSubscription: true;
   };
   permissions: {
@@ -117,14 +121,14 @@ interface AmbassadeurLevel {
   };
   subscriptionTiers: {
     standard: {
-      monthlyFee: 200;
-      pointsGenerated: 280;          // 40% bonus
+      monthly: { fee: 18, points: 24 };     // 33% bonus
+      annual: { fee: 180, points: 252 };    // 40% bonus
       maxProjectAllocations: 10;
       exclusiveProducts: 'tier_1';
     };
     premium: {
-      monthlyFee: 350;
-      pointsGenerated: 525;          // 50% bonus
+      monthly: { fee: 32, points: 40 };     // 25% bonus
+      annual: { fee: 320, points: 480 };    // 50% bonus
       maxProjectAllocations: 'unlimited';
       exclusiveProducts: 'tier_1_and_2';
       personalizedConsultation: true;
@@ -266,7 +270,7 @@ interface AdaptiveNavigation {
     mainTabs: [
       { key: 'dashboard', label: 'Dashboard', icon: 'home' },
       { key: 'projects', label: 'Mes Projets', icon: 'leaf', badge: 'investment_count' },
-      { key: 'rewards', label: 'Récompenses', icon: 'gift', badge: 'points_balance' },
+      { key: 'rewards', label: 'Récompenses', icon: 'gift', badge: 'pointsBalance' },
       { key: 'profile', label: 'Profil', icon: 'user' }
     ];
     headerWidget: {
@@ -277,7 +281,7 @@ interface AdaptiveNavigation {
     upgradePrompt: {
       trigger: 'after_3rd_investment';
       placement: 'dashboard_hero';
-      message: "Ambassadeur : plus de flexibilité pour 200€/mois";
+      message: "Ambassadeur : plus de flexibilité dès 18€/mois";
     };
   };
   
@@ -404,11 +408,11 @@ interface LevelNotifications {
     };
     purchaseRecommendations: {
       frequency: 'monthly';
-      content: "Nouveaux produits disponibles avec vos {points_balance} points";
+      content: "Nouveaux produits disponibles avec vos {pointsBalance} points";
     };
     upgradeNudges: {
       triggers: ['total_investment_200', 'frequent_usage'];
-      content: "Ambassadeur : allocation flexible pour 200€/mois";
+      content: "Ambassadeur : allocation flexible dès 18€/mois";
     };
   };
   

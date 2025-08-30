@@ -1,5 +1,7 @@
 # 🔔 Push Notification System - Modèle Hybride
 
+> **💡 RÉFÉRENCE** : Voir [../mobile-conventions/03-conventions-patterns.md](../mobile-conventions/03-conventions-patterns.md) pour les patterns complets d'utilisation des composants Screen et les conventions de hooks.
+
 **📍 VERSION: MVP** | **🗓️ TIMELINE: Mois 2-4** | **⭐️ PRIORITÉ: CRITIQUE**
 
 ## 🎯 Objectif
@@ -145,7 +147,7 @@ interface ExplorateurReEngagement {
 interface ProtecteurPointsAlerts {
   points_expiry_60d: {
     timing: '60_days_before_expiry';
-    condition: 'points_balance > 20';
+    condition: 'pointsBalance > 20';
     title: "Vos points expirent dans 2 mois ⏰";
     body: "{points_count} points · Découvrez nos produits";
     action: 'open_rewards_catalog';
@@ -155,7 +157,7 @@ interface ProtecteurPointsAlerts {
   
   points_expiry_30d: {
     timing: '30_days_before_expiry';
-    condition: 'points_balance > 20';
+    condition: 'pointsBalance > 20';
     title: "⚠️ {points_count} points expirent bientôt";
     body: "Utilisez-les avant le {expiry_date}";
     action: 'quick_shop_flow';
@@ -165,7 +167,7 @@ interface ProtecteurPointsAlerts {
   
   points_expiry_7d: {
     timing: '7_days_before_expiry';
-    condition: 'points_balance > 10';
+    condition: 'pointsBalance > 10';
     title: "🚨 DERNIÈRE SEMAINE pour vos points !";
     body: "{points_count} points expirent le {expiry_date}";
     action: 'emergency_shopping_flow';
@@ -254,7 +256,7 @@ interface ProtecteurUpgradeNudges {
   high_investment_trigger: {
     timing: 'when_total_investment_reaches_200';
     title: "Passez Ambassadeur pour plus de flexibilité 👑";
-    body: "200€/mois · Allocation libre · Produits exclusifs";
+    body: "Dès 18€/mois · Allocation libre · Produits exclusifs";
     action: 'learn_about_ambassador';
     frequency_limit: 'once_per_month';
   };
@@ -262,7 +264,7 @@ interface ProtecteurUpgradeNudges {
   frequent_user_trigger: {
     timing: 'when_high_engagement_detected';
     title: "Vous utilisez beaucoup l'app ! 📱";
-    body: "Ambassadeur : fonctionnalités avancées pour 200€/mois";
+    body: "Ambassadeur : fonctionnalités avancées dès 18€/mois";
     action: 'ambassador_features_preview';
     condition: 'sessions_per_month > 15';
   };

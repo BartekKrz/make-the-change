@@ -1,5 +1,7 @@
 # 🎯 Mobile App Hybride - Spécifications
 
+> **💡 CONVENTIONS** : Voir [../mobile-conventions/](../mobile-conventions/) pour les conventions de code unifiées (TanStack Form, composants Screen, patterns de hooks).
+
 **📍 VERSION: Hybride** | **🗓️ TIMELINE: Mois 1-4** | **⭐️ PRIORITÉ: Core**
 
 ## 🎯 Modèle Hybride à 3 Niveaux
@@ -9,7 +11,7 @@ Cette application révolutionnaire propose **3 niveaux d'engagement progressifs*
 ### 🎯 **Architecture à 3 Niveaux**
 - **Niveau 1 - Explorateur** : Accès gratuit, découverte libre des projets et producteurs
 - **Niveau 2 - Protecteur** : Investissements unitaires dans projets spécifiques (50€-150€)
-- **Niveau 3 - Ambassadeur** : Abonnements premium avec allocation flexible (200€-350€)
+- **Niveau 3 - Ambassadeur** : Abonnements premium avec allocation flexible (180€-320€)
 
 ### ✅ **Fonctionnalités Core Hybrides**
 - **Exploration gratuite** : App complète accessible sans barrière financière
@@ -29,7 +31,7 @@ Cette application révolutionnaire propose **3 niveaux d'engagement progressifs*
 ### 🆓 **Niveau Explorateur** (`/flows/exploration/`)
 **Mois 1-2 - Accès gratuit et découverte**
 - [`onboarding-gratuit.md`](./flows/onboarding-gratuit.md) 🚧 **À développer** - Première ouverture sans friction
-- [`projets-decouverte.md`](./navigation/projects.md) 🚧 **À développer** - Navigation projets libre
+- [`projets-decouverte.md`](./navigation/projects.md) ✅ **Existe** - Navigation projets libre
 - [`catalogue-consultation.md`](./flows/catalogue-consultation.md) 🚧 **À créer** - Catalogue en lecture seule
 
 ### 🐝 **Niveau Protecteur** (`/flows/investments/`)

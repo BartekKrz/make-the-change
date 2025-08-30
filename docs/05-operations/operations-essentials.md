@@ -6,12 +6,14 @@
 
 ## 🏪 MODÈLE HYBRIDE PHASE 1
 
-### **Stratégie Dual : Micro-Stock + Dropshipping**
+### **Stratégie d'Amorçage Hybride**
+
+Pour garantir une expérience premium et maîtriser la qualité dès le premier jour, nous adoptons une stratégie hybride en deux temps :
 
 | Modèle | Produits | Avantages | Gestion |
 |--------|----------|-----------|---------|
-| **Micro-Stock** | 2-3 "héros produits" premium | Marge +15%, Livraison J+1, Contrôle qualité | Stock 200-300 unités, 2-3k€ immobilisé |
-| **Dropshipping** | Reste catalogue partenaires | 0€ stock, Catalogue large, Partenaires gèrent | Commission 20-25%, Délais partenaires |
+| **Micro-Stock (Amorçage)** | 2-3 "héros produits" premium | Marge +15%, Livraison J+1, Qualité maîtrisée | Stock initial auto-financé pour les ~10 premiers utilisateurs. |
+| **Dropshipping (Croissance)** | Reste du catalogue partenaires | 0€ stock, Catalogue large, Scalabilité | Commission 15-25%, Délais partenaires, Modèle principal post-amorçage. |
 
 ### **Sélection Produits Héros**
 - **ILANGA** : 1 miel 250g consensus + 1 mini-coffret épices
@@ -55,7 +57,7 @@ Commande Mixte (Exemple):
 | **FAQ dynamique** | Questions récurrentes | Immédiat | Auto |
 | **WhatsApp** (futur) | Support premium abonnés | <1h | Équipe |
 
-### **Scripts Type - Situations Courantes**
+### **Scripts Type - Situations Courantes - DUAL BILLING INTEGRATION**
 
 #### **Retard Livraison Dropshipping**
 ```
@@ -80,6 +82,42 @@ L'équipe Make the CHANGE"
 🛒 Voir catalogue : [lien direct points válides]
 
 Besoin d'aide pour choisir ? Nous sommes là !"
+```
+
+#### **NOUVEAU: Questions Abonnement Dual Billing**
+
+**Changement Fréquence Billing :**
+```
+"Bien sûr ! Vous pouvez modifier votre fréquence de paiement à tout moment :
+
+💰 Économies annuelles : -17% soit 36€ d'économie/an en passant à l'annuel
+📅 Changement effectif : Dès votre prochain cycle de facturation
+🔗 Gérer votre abonnement : [lien Stripe Customer Portal]
+
+Souhaitez-vous que je vous aide à faire le changement ?"
+```
+
+**Échec Paiement Monthly :**
+```
+"Nous n'avons pas pu prélever votre abonnement mensuel du [date].
+
+🔄 Tentative automatique : Dans 3 jours
+💳 Mettre à jour : [lien Stripe portal]
+💰 Alternative : Passer à l'abonnement annuel (-17% d'économie)
+
+Votre compte reste actif pendant 7 jours. Besoin d'aide ?"
+```
+
+**Résiliation/Pause Abonnement :**
+```
+"Je comprends que vous souhaitiez faire une pause.
+
+⏸️ Options disponibles :
+- Pause 3 mois (gratuit, points préservés)
+- Passage mensuel si vous étiez en annuel
+- Résiliation avec conservation points (18 mois)
+
+Quelle option vous convient le mieux ? Je vous accompagne !"
 ```
 
 ---
@@ -116,11 +154,15 @@ Process 4 étapes:
 - **Ruptures** : <2% du temps
 - **Marge brute** : >50% sur héros produits
 
-### **Service Client**
+### **Service Client - DUAL BILLING KPIs**
 - **CSAT** : >4.5/5.0
 - **Temps réponse** : <2h chat, <24h email
 - **Résolution 1er contact** : >80%
 - **NPS** : >50 (référence e-commerce)
+- **NOUVEAU: Billing support efficiency** : 
+  - Failed payment recovery rate: >75%
+  - Monthly → Annual conversion rate: >20%
+  - Stripe portal adoption: >60%
 
 ### **Fulfillment Hybride**
 - **Délai moyen** : J+1 micro-stock, J+3 dropshipping

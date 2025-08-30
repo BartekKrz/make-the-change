@@ -30,3 +30,5 @@ Ces analyses servent de **référence pour l'évolution** de l'app mobile après
 ## 🔗 Relations
 
 Ces documents complètent les spécifications MVP sans les remplacer. Utiliser en référence pour l'évolution continue de l'UX mobile.
+
+> **💡 CONVENTIONS** : Voir [../mobile-conventions/](../mobile-conventions/) pour les conventions de code unifiées (TanStack Form, composants Screen, patterns de hooks).

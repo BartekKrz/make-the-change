@@ -10,7 +10,7 @@
 ```yaml
 Framework: Expo SDK 53 + React Native (Expo Go)
 Development: Expo Go (gratuit, sans build nécessaire)
-Language: TypeScript 5.7+ (strict mode)
+Language: TypeScript 5.9+ (strict mode)
 Navigation: Expo Router v4 (file-based routing)
 UI Framework: NativeWind v4 + Tailwind CSS v4
 State Management: TanStack Query v5 + AsyncStorage
@@ -20,21 +20,25 @@ Maps: react-native-maps (Google Maps gratuit tier)
 
 #### Web Dashboard Minimal (Vercel Free)
 ```yaml
-Framework: Next.js 15 + React Server Components
+Framework: Next.js 15.4 App Router + React Server Components
 Hosting: Vercel Hobby (gratuit 100GB bandwidth)
-Language: TypeScript 5.7+ (strict mode)
+Language: TypeScript 5.9+ (strict mode)
 UI Framework: shadcn/ui v2 + Tailwind CSS v4
-Forms: React Hook Form (simple)
-Payment: Stripe Elements v3
+Forms: TanStack Form (simple)
+Payment: Stripe Elements v3 + Stripe Subscriptions (dual billing)
+Billing: Stripe Customer Portal + Subscription management
 Analytics: Vercel Analytics (gratuit)
 ```
 
 #### Backend Bootstrap (Gratuit)
 ```yaml
-API Framework: tRPC v11 (type-safe)
+API Framework: tRPC v11.5.0 (type-safe)
 Runtime: Vercel Edge Functions (gratuit 100GB)
 Database: Supabase Free Tier (500MB PostgreSQL)
 Authentication: Supabase Auth (gratuit)
+Billing: Stripe Subscriptions (monthly) + Payment Intents (annual)
+Customer Portal: Stripe Customer Portal integration
+Webhooks: Stripe webhooks pour subscription lifecycle (route handler en Node runtime, pas Edge)
 Storage: Supabase Storage (1GB gratuit)
 Cache: Browser cache + PostgreSQL views
 Email: Resend gratuit (100 emails/jour)
@@ -58,7 +62,7 @@ Hosting: Vercel Pro (20€/mois)
 Performance: Edge Functions scaling
 CDN: Vercel Edge Network worldwide
 Monitoring: Advanced error tracking
-SEO: Next.js App Router optimizations
+SEO: Next.js 15.1 App Router optimizations
 ```
 
 #### Backend Production
@@ -87,10 +91,37 @@ Advanced monitoring & alerting
 ```yaml
 Package Manager: pnpm v9+ (fastest, required)
 Node Version: 22 LTS (latest stable)
-TypeScript: 5.7+ (strict mode)
+TypeScript: 5.9+ (strict mode)
 Database: PostgreSQL 15 (local + production)
 Monorepo: Turborepo v2 (optimisation builds)
 ```
+
+## 🎯 Justification Choix Technique Web
+
+### Next.js 15.1 vs TanStack Start
+**DÉCISION FINALE : Next.js 15.1**
+
+#### Pourquoi Next.js 15.1 ?
+```yaml
+✅ Maturité: Framework stable, production-ready
+✅ Écosystème: Vaste communauté, packages, ressources
+✅ Expertise équipe: Connaissance approfondie du framework
+✅ Vercel Integration: Optimisation native déploiement gratuit
+✅ App Router: Routing avancé avec Server Components
+✅ Performance: Turbopack, optimisations intégrées
+✅ Documentation: Complète et maintenue
+```
+
+#### Pourquoi pas TanStack Start ?
+```yaml
+❌ Beta Status: Encore en développement (v1.0 pas sortie)
+❌ Écosystème limité: Communauté et resources moins établies  
+❌ Courbe d'apprentissage: Framework moins connu équipe
+❌ Risque: Changements breaking potentiels en beta
+❌ Support: Moins de ressources d'aide disponibles
+```
+
+**Cette décision élimine tout risque technique et assure une base solide pour le projet.**
 
 ## 🔧 Outils de Développement
 
@@ -211,6 +242,70 @@ module.exports = {
     }
   ]
 }
+```
+
+### Pattern Doré: RSC + TanStack Query + revalidateTag
+```tsx
+// app/projects/page.tsx (Server Component - RSC)
+import { HydrationBoundary, dehydrate, QueryClient } from '@tanstack/react-query'
+import { ProjectsClient } from '@/components/projects-client'
+import { cookies, headers } from 'next/headers'
+import { appRouter } from '@/server/routers/app'
+import { createTRPCContext } from '@/server/trpc'
+
+export const revalidate = 60
+export const dynamic = 'force-static'
+export const fetchCache = 'force-cache'
+
+export default async function ProjectsPage() {
+  // Préchargement via tRPC côté serveur (type-safe, pas d'overfetch)
+  const ctx = await createTRPCContext({ cookies: cookies(), headers: headers() })
+  const caller = appRouter.createCaller(ctx)
+  const initial = await caller.projects.list({ q: '' })
+
+  // Option Hydration (si vous prévoyez d'utiliser Query côté client)
+  const qc = new QueryClient()
+  await qc.prefetchQuery({ queryKey: ['projects', { q: '' }], queryFn: () => initial })
+  const state = dehydrate(qc)
+
+  return (
+    <HydrationBoundary state={state}>
+      <ProjectsClient initialData={initial} />
+    </HydrationBoundary>
+  )
+}
+
+// components/projects-client.tsx (Client Component)
+'use client'
+import { useQuery } from '@tanstack/react-query'
+import { trpc } from '@/lib/trpc'
+
+export function ProjectsClient({ initialData }: { initialData: any[] }) {
+  const { data } = useQuery({
+    queryKey: ['projects', { q: '' }],
+    queryFn: () => trpc.projects.list.query({ q: '' }),
+    initialData,
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+  })
+  return <ProjectsList projects={data ?? []} />
+}
+
+// app/projects/actions.ts (Server Action) – Invalidation serveur Next
+'use server'
+import { revalidateTag } from 'next/cache'
+import { appRouter } from '@/server/routers/app'
+import { createTRPCContext } from '@/server/trpc'
+
+export async function createProjectAction(input: any) {
+  const ctx = await createTRPCContext()
+  const caller = appRouter.createCaller(ctx)
+  await caller.admin.projects.create(input)
+  revalidateTag('projects') // Taguez aussi vos fetch RSC avec { tags: ['projects'] }
+}
+
+// Côté client après mutation via tRPC + Query
+// queryClient.invalidateQueries({ queryKey: ['projects'] }) // garde le cache client cohérent
 ```
 
 ### shadcn/ui Configuration
@@ -355,7 +450,7 @@ Performance: Lighthouse CI budgets
 ### Documentation Officielle
 - [Expo SDK 53](https://docs.expo.dev/versions/v53.0.0/)
 - [Vercel Edge Functions](https://nextjs.org/docs)
-- [tRPC v11](https://trpc.io/docs/v11)
+- [tRPC v11.5.0](https://trpc.io/docs/v11)
 - [TanStack Query v5](https://tanstack.com/query/latest)
 - [Supabase](https://supabase.com/docs)
 

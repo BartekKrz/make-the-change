@@ -1,5 +1,7 @@
 # Gestion d'Erreurs & Messages
 
+> **💡 RÉFÉRENCE** : Voir [../mobile-conventions/03-conventions-patterns.md](../mobile-conventions/03-conventions-patterns.md) pour les patterns complets d'utilisation du composant Screen.Error et les conventions de hooks.
+
 ## 🎯 Objectif
 
 Fournir une gestion d'erreurs cohérente, des messages utilisateur clairs et des mécanismes de récupération efficaces pour maintenir une expérience utilisateur fluide.

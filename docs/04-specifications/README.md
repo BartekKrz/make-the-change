@@ -36,7 +36,7 @@ mobile-app/
 └── shared/       🔧 Composants réutilisés entre versions
 ```
 
-### 💼 **Admin Dashboard (Vercel Edge Functions)**
+### 💼 **Admin Dashboard (Next.js 15.5 App Router sur Vercel)**
 ```
 admin-dashboard/
 ├── mvp/          🚀 Mois 1-4 - CRUD essentiel (Admin-First)
@@ -57,7 +57,7 @@ admin-dashboard/
 └── shared/
 ```
 
-### 🛒 **E-commerce Site (Vercel Edge Functions)**
+### 🛒 **E-commerce Site (Next.js 15.5 App Router sur Vercel)**
 ```
 ecommerce-site/
 ├── mvp/          🚀 Mois 4 - Vitrine + E-commerce basique

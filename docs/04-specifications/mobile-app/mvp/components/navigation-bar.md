@@ -1,5 +1,7 @@
 # Navigation Bar Component
 
+> **💡 RÉFÉRENCE** : Voir [../mobile-conventions/03-conventions-patterns.md](../mobile-conventions/03-conventions-patterns.md) pour les patterns complets d'utilisation du composant Screen et les conventions de hooks.
+
 ## 🎯 Objectif
 
 Composant de navigation principale qui permet aux utilisateurs de naviguer entre les sections principales de l'application via une barre d'onglets en bas d'écran.

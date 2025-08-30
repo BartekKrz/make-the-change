@@ -1,5 +1,7 @@
 # Profil Utilisateur
 
+> **💡 RÉFÉRENCE** : Voir [../../mobile-conventions/03-conventions-patterns.md](../../mobile-conventions/03-conventions-patterns.md) pour les patterns complets d'utilisation des composants Screen et les conventions de hooks.
+
 ## 🎯 Objectif
 
 Interface de gestion du profil utilisateur permettant de consulter ses informations personnelles, historiques d'activité, paramètres de compte et fonctionnalités avancées.
@@ -27,12 +29,21 @@ Interface de gestion du profil utilisateur permettant de consulter ses informati
 │ │ 📜 Historique Points  │ │
 │ └───────────────────────┘ │
 │                         │
+│ 🏆 Gamification         │
+│ ┌───────────────────────┐ │
+│ │ 🏅 Mes Badges         │ │
+│ │ 🎯 Défis en cours     │ │
+│ │ 🤝 Parrainage         │ │
+│ │ 🌍 Classement Impact  │ │
+│ └───────────────────────┘ │
+│                         │
 │ ⚙️ Paramètres           │
 │ ┌───────────────────────┐ │
 │ │ 👤 Informations       │ │
 │ │ 🔔 Notifications      │ │
 │ │ 🔒 Sécurité           │ │
 │ │ 💳 Moyens de paiement │ │
+│ │ 💰 Gestion abonnement │ │
 │ │ 📍 Adresses           │ │
 │ │ 🎯 Préférences        │ │
 │ └───────────────────────┘ │
@@ -297,7 +308,7 @@ GET /api/user/activities
 Query Parameters:
 - page: number
 - limit: number
-- type?: 'investment' | 'points' | 'orders' | 'reviews'
+- type?: 'investment' | 'points' | 'orders' | 'reviews' | 'achievement'
 - dateFrom?: string
 - dateTo?: string
 
@@ -476,7 +487,7 @@ const navigationRoutes = {
 }
 ```
 
-#### Settings Submenu
+#### Settings Submenu - DUAL BILLING INTEGRATION
 
 ```typescript
 const settingsNavigation = {
@@ -484,6 +495,7 @@ const settingsNavigation = {
   'Notifications': 'NotificationSettingsScreen',
   'Security': 'SecuritySettingsScreen',
   'PaymentMethods': 'PaymentMethodsScreen',
+  'SubscriptionManagement': 'SubscriptionManagementScreen', // NOUVEAU
   'Addresses': 'AddressesScreen',
   'Preferences': 'PreferencesScreen',
   'Privacy': 'PrivacySettingsScreen',
@@ -492,13 +504,49 @@ const settingsNavigation = {
 }
 ```
 
-### Deep Links
+#### NOUVEAU: Subscription Management Screen
+
+```typescript
+interface SubscriptionManagementProps {
+  currentSubscription?: {
+    tier: 'ambassadeur_standard' | 'ambassadeur_premium'
+    billingFrequency: 'monthly' | 'annual'
+    nextBillingDate: Date
+    amount: number
+    stripeSubscriptionId?: string
+    stripeCustomerId: string
+  }
+  
+  billingPreferences: {
+    // Préférences billing frequency pour futures actions
+    preferredFrequency: 'monthly' | 'annual'
+    autoUpgradeToAnnual: boolean // Après X mois
+    upgradeThreshold: number // Mois avant suggestion annual
+  }
+  
+  availableActions: {
+    changeBillingFrequency: boolean
+    upgradeToAnnual: boolean
+    downgradeToMonthly: boolean
+    cancelSubscription: boolean
+    pauseSubscription: boolean
+  }
+  
+  onChangeFrequency: (newFrequency: 'monthly' | 'annual') => void
+  onOpenStripePortal: () => void
+  onContactSupport: () => void
+}
+```
+
+### Deep Links - DUAL BILLING
 
 ```typescript
 const profileDeepLinks = {
   'makethechange://profile': 'ProfileScreen',
   'makethechange://profile/edit': 'EditProfileScreen',
   'makethechange://profile/settings': 'SettingsScreen',
+  'makethechange://profile/subscription': 'SubscriptionManagementScreen', // NOUVEAU
+  'makethechange://profile/billing': 'SubscriptionManagementScreen', // NOUVEAU
   'makethechange://profile/investments': 'MyInvestmentsScreen',
   'makethechange://profile/points': 'PointsHistoryScreen',
   'makethechange://profile/achievements': 'AchievementsScreen'
@@ -676,7 +724,7 @@ interface AccessibilityFeatures {
 }
 ```
 
-### Notification Management
+### Notification Management - DUAL BILLING EXTENSION
 
 ```typescript
 interface NotificationManagement {
@@ -696,10 +744,20 @@ interface NotificationManagement {
       profileUpdates: boolean
       loginNotifications: boolean
     }
+    // NOUVEAU: Billing & Subscription notifications
+    billing: {
+      upcomingRenewal: boolean // 7 jours avant renouvellement
+      paymentSuccess: boolean
+      paymentFailed: boolean
+      annualUpgradePrompts: boolean // Pour monthly subscribers
+      billingFrequencyChanges: boolean
+      stripePortalAccess: boolean
+    }
     marketing: {
       newsletters: boolean
       promotions: boolean
       surveys: boolean
+      annualDiscountOffers: boolean // NOUVEAU: Promotions annual billing
     }
   }
   delivery: {

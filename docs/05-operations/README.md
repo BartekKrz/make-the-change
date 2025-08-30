@@ -95,7 +95,7 @@ Documentation des processus m√©tier, gestion des stocks, support client et proc√
 - **PROMIEL** : +352 XXX XXX XXX (Luxembourg)
 
 ### Support Technique
-- **Infrastructure** : Vercel Edge Functions support
+- **Infrastructure** : Vercel (Edge + Node runtimes) support
 - **Monitoring** : Vercel Analytics alerts
 - **Database** : Supabase managed support
 

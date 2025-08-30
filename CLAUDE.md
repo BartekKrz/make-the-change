@@ -4,191 +4,186 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Make the CHANGE** is a revolutionary biodiversity support platform with a hybrid engagement model. The platform offers 3 progressive levels: free exploration, specific project investments (€50-150), and premium subscriptions (€200-350). Users invest in specific biodiversity projects (beehives, olive trees) and receive points for premium sustainable products via commission-based partnerships.
+Make the CHANGE is a revolutionary biodiversity platform with a hybrid 3-level model:
+- **Level 1 - Explorateur:** Free exploration of projects
+- **Level 2 - Protecteur:** €50-150 investments in specific projects
+- **Level 3 - Ambassadeur:** €180-320 subscriptions with flexible allocation
 
-This repository contains comprehensive documentation for the platform but **no actual implementation code yet**. The project is currently in the **Ready for Implementation** phase with all technical decisions finalized.
+The platform includes mobile app, admin dashboard, e-commerce site, and partner management.
 
 ## Architecture & Tech Stack
 
-### Core Technology Decisions
-- **Frontend Mobile**: Expo SDK 53 with React Native, NativeWind v4, TypeScript 5.7+
-- **Frontend Web**: Vercel Edge Functions with React, shadcn/ui v2, Tailwind CSS v4  
-- **Backend**: tRPC v11 on Vercel Edge Functions (serverless Node.js)
-- **Database**: Supabase (PostgreSQL 15) with native caching via materialized views
-- **State Management**: TanStack Query v5 across all platforms
-- **Monorepo**: Turborepo v2 with pnpm workspaces
-- **Auth**: Supabase Auth v5 integration
+This is a **monorepo** managed by **Turborepo v2** and **pnpm workspaces**.
 
-### Project Structure (Future Implementation)
+### Core Technologies
+- **Mobile App:** Expo SDK 53 + React Native + NativeWind v4 + TanStack Query v5
+- **Web Apps:** Next.js 15.1 (App Router) + shadcn/ui v2 + Tailwind CSS v4 + TanStack Query v5
+- **Backend API:** tRPC v11.5.0 + TypeScript 5.9+ (strict mode)
+- **Database & Auth:** Supabase (PostgreSQL 15 + Auth)
+- **Hosting:** Vercel (Edge + Node runtimes)
+- **State Management:** TanStack Query v5 (unified across platforms)
+- **Package Manager:** pnpm v9+ (required)
+
+### Project Structure
 ```
-apps/
-├── mobile/          # Expo React Native app
-├── web/            # Vercel Edge Functions dashboard + e-commerce  
-└── api/            # tRPC backend services
-packages/
-├── shared/         # Shared utilities & types
-├── ui/             # Shared UI components
-├── database/       # Database schema & migrations
-└── config/         # Shared configuration
+/
+├── apps/
+│   ├── mobile/          # Expo React Native app (users)
+│   ├── partner-app/     # Expo React Native app (partners)
+│   ├── web/            # Next.js 15.1 (Admin + E-commerce)
+│   └── api/            # tRPC backend
+├── packages/
+│   ├── shared/         # Shared utilities & types
+│   ├── ui/            # Shared UI components
+│   ├── database/      # Supabase migrations
+│   └── config/        # Shared config
+├── docs/              # Comprehensive documentation
+└── scripts/           # Development & GitHub management scripts
 ```
 
-## Development Commands
+## Common Development Commands
 
-**Note**: Since no code is implemented yet, these are the planned commands:
+**Note: This is currently a documentation-only repository. When code is implemented:**
 
 ```bash
-# Setup (when implemented)
-pnpm install              # Install dependencies
-pnpm dev                  # Start all apps in development
-pnpm build               # Build all applications
-pnpm test                # Run all tests
-pnpm lint                # Lint all packages
-pnpm typecheck          # TypeScript checking
+# Install dependencies
+pnpm install
 
-# Mobile specific (utilisateurs finaux)
-pnpm mobile:dev         # Start Expo development server
-pnpm mobile:ios         # Run on iOS simulator
-pnpm mobile:android     # Run on Android emulator
+# Development
+pnpm dev                # Start all apps in development
+pnpm dev:mobile         # Mobile app only
+pnpm dev:web           # Web dashboard only
+pnpm dev:api           # API server only
 
-# Partner app specific (NOUVEAU - App native partenaires)
-pnpm partner-app:dev    # Start Expo partner app dev server
-pnpm partner-app:ios    # Run partner app on iOS simulator
-pnpm partner-app:android # Run partner app on Android emulator
+# Building
+pnpm build             # Build all apps
+pnpm build:mobile      # Build mobile app
+pnpm build:web         # Build web apps
 
-# Web specific  
-pnpm web:dev           # Start Vercel Edge Functions dev server
-pnpm web:build         # Build web application
+# Testing
+pnpm test              # Run all tests (Vitest + Playwright)
+pnpm test:unit         # Unit tests only (Vitest)
+pnpm test:e2e          # E2E tests only (Playwright)
+pnpm test:mobile       # Mobile tests (Maestro)
+
+# Code Quality
+pnpm lint              # ESLint all projects
+pnpm lint:fix          # Fix linting issues
+pnpm type-check        # TypeScript checking
+pnpm format            # Prettier formatting
 
 # Database
-pnpm db:migrate        # Run database migrations
+pnpm db:generate       # Generate database types
+pnpm db:migrate        # Run migrations
 pnpm db:seed           # Seed development data
-pnpm db:studio         # Open database studio
 ```
 
-## Core Business Logic - Hybrid Engagement Model
+## Key Architecture Patterns
 
-### 3-Level Progressive System
-- **Level 1 - Explorateur (Free)**: App exploration, project discovery, normal pricing
-- **Level 2 - Protecteur (Investments)**: Specific project investments (€50 beehive, €80 olive tree, €150 family plot)
-- **Level 3 - Ambassadeur (Subscriptions)**: Premium subscriptions (€200-350/an) with flexible allocation
+### tRPC + TanStack Query Integration
+- **Server-side (RSC):** Use `appRouter.createCaller(ctx)` for type-safe server data fetching
+- **Client-side:** Use `@trpc/react-query` with TanStack Query for caching and mutations
+- **Hydration:** Prefetch server data and hydrate client queries using `dehydrate()`
 
-### Investment & Points System
-- **Investment Tiers**: €50 beehive (65 points), €80 olive tree (105 points), €150 plot (210 points)
-- **Subscription Tiers**: €200 Ambassadeur (280 points), €350 Ambassadeur Premium (525 points)
-- **Points Generation**: 30-50% bonus value over investment/subscription amount
-- **Points Expiry**: 18 months after generation
-- **Partners**: Commission-based dropshipping (HABEEBEE, ILANGA NATURE, PROMIEL)
+### Database Access (Supabase)
+- Use `@supabase/supabase-js` HTTP client (Edge-compatible)
+- Leverage Row Level Security (RLS) for data isolation
+- Use materialized views for analytics and caching
+- Avoid TCP-based database clients in Edge runtime
 
-### Key Features to Implement
-1. **Mobile App** (Expo): Free exploration, project investments, user dashboard, points redemption, adaptive UI by user level
-2. **Partner App** (NOUVEAU - Expo): Native app pour partenaires avec upload photos/vidéos, gestion projets, updates terrain
-3. **Admin Dashboard** (Vercel Edge Functions): Investment management, partner management, user analytics, project tracking, modération updates partenaires
-4. **E-commerce Site** (Vercel Edge Functions): Product catalog hybride (micro-stock + dropshipping), points-based checkout, user accounts
+### Performance Optimization
+- **Mobile:** Bundle splitting, image optimization, offline support via TanStack Query
+- **Web:** SSR/SSG, code splitting, Vercel Edge Network caching
+- **API:** Edge Functions for low latency, PostgreSQL query optimization
 
-## Database Schema
+## Development Standards
 
-Key entities to implement:
-- `users` - User accounts with user_level (explorateur/protecteur/ambassadeur) and points balance
-- `investments` - Individual project investments with specific tracking (beehive_id, olive_tree_id, etc.)
-- `subscriptions` - Premium subscriptions (ambassadeur tiers) with flexible project allocation
-- `projects` - Specific biodiversity projects (beehives, olive trees) with real-time updates
-- `partners` - Partner producers with commission rates and product catalog
-- `partner_users` - NOUVEAU: Comptes utilisateurs app partenaires (Owner, Staff roles)
-- `project_updates` - NOUVEAU: Updates partenaires (photos, vidéos, notes) avec modération
-- `points_transactions` - Points system with expiry tracking and source (investment/subscription)
-- `products` - E-commerce catalog with points pricing from partners (stock vs dropshipping)
-- `inventory` - NOUVEAU: Gestion micro-stock héros (2-3 SKUs) avec seuils réassort
-- `orders` - Points-based order system avec fulfillment hybride (stock MTC + dropshipping partenaires)
-- `shipments` - NOUVEAU: Tracking expéditions hybrides (micro-hub MTC + partenaires)
+### TypeScript
+- Strict mode enabled across all projects
+- Shared types in `packages/shared`
+- API types auto-generated from tRPC routers
 
-## Code Quality Standards
+### Code Style
+- **Files:** kebab-case (`user-service.ts`)
+- **Components:** PascalCase (`UserProfile.tsx`)
+- **Functions:** camelCase (`calculatePoints()`)
+- **Constants:** SCREAMING_SNAKE_CASE (`MAX_INVESTMENT_AMOUNT`)
 
-- **TypeScript**: Strict mode required across all packages
-- **Testing**: Vitest for unit tests, Playwright for E2E testing
-- **Linting**: ESLint + Prettier with strict configuration
-- **Git Hooks**: Husky + lint-staged for pre-commit checks
-- **Coverage**: Minimum 80% test coverage, 100% for critical paths (auth, payments)
+### Git Workflow
+1. Feature branches: `feature/feature-name`
+2. Conventional commits: `feat:`, `fix:`, `docs:`, etc.
+3. Pre-commit hooks: lint + format + type check
+4. Squash merge to `main`
 
-## Important Documentation
+## Testing Strategy
 
-### Business Context
-- `/docs/README.md` - Complete project overview and navigation
-- Root analysis files (STRATEGIE-3-PHASES-FINANCEMENT.md, PHASE-1-BOOTSTRAP-DETAILLEE.md) - Economic model details
-- `/docs/01-strategy/user-personas.md` - Target user profiles
+Three-tier approach:
+- **🔴 Critical (95%+ coverage):** Business logic, API endpoints, auth, payments
+- **🟡 Important (80%+ coverage):** Complex components, custom hooks
+- **🟢 Standard (60%+ coverage):** UI components, layouts
 
-### Technical Implementation
-- `/docs/03-technical/architecture-overview.md` - Detailed technical architecture
-- `/docs/03-technical/tech-stack.md` - Complete technology stack specifications
-- `/docs/03-technical/database-schema.md` - Database design and relationships
+**Tools:**
+- **Unit/Integration:** Vitest + React Testing Library + MSW
+- **E2E:** Playwright (web) + Maestro (mobile)
+- **API Mocking:** MSW for consistent API simulation
 
-### Implementation Specifications
-- `/docs/04-specifications/mobile-app/` - Mobile app detailed specifications
-- `/docs/04-specifications/admin-dashboard/` - Admin panel specifications
-- `/docs/04-specifications/ecommerce-site/` - E-commerce site specifications
+## Documentation Structure
 
-### Development Guidelines
-- `/docs/06-development/README.md` - Development workflow and standards
-- `/docs/09-architecture-decisions/0001-choix-monorepo-stack-technique.md` - Key technical decisions
+The `docs/` folder contains comprehensive documentation:
+- **01-strategy/**: Business model, user personas, KPIs
+- **02-product/**: Design system, UX research, roadmap
+- **03-technical/**: Architecture, database schema, tech stack
+- **04-specifications/**: Detailed specs for mobile, web, and admin apps
+- **05-operations/**: Business processes, partner management
+- **06-development/**: Setup guides, coding standards, TDD strategy
+- **07-project-management/**: Sprint planning, risk analysis
 
-## Performance & Security Requirements
+Key entry points:
+- `docs/README.md`: Main documentation index
+- `docs/GETTING-STARTED.md`: Quick start guide
+- `docs/03-technical/architecture-overview.md`: Technical architecture
+- `docs/03-technical/tech-stack.md`: Complete technology stack
 
-### Performance Targets
-- **Mobile**: Cold start <2s, navigation <500ms, API calls <1s
-- **Web**: FCP <1.5s, LCP <2.5s, TTI <3s, CLS <0.1
-- **API**: P95 response time <200ms, P99 <500ms
-- **Database**: Simple queries <50ms, complex queries <200ms
+## Business Context
 
-### Security Requirements
-- **KYC**: Stripe Identity integration with tiered verification
-- **Data Protection**: GDPR compliance, data retention policies
-- **API Security**: Rate limiting, input validation, CORS configuration
-- **Authentication**: Secure session management, password policies
+### Core Features
+- **Investment System:** Users invest in specific beehives/olive trees (€50-150)
+- **Subscription Model:** Premium tier with flexible project allocation (€180-320)
+- **Points Economy:** Bonus points (30-50%) for premium product purchases
+- **Partner Integration:** HABEEBEE (Belgium), ILANGA NATURE (Madagascar), PROMIEL (Luxembourg)
+- **E-commerce:** Hybrid fulfillment (micro-stock + dropshipping)
 
-## Partner Integrations
+### Key User Levels
+- **Explorateur:** Free tier with project exploration
+- **Protecteur:** Investment-based engagement
+- **Ambassadeur:** Subscription-based with maximum benefits
 
-### Key Partners (Commission-Based Dropshipping)
-- **HABEEBEE** (habeebee.be) - 150 beekeepers in Belgium (20% commission confirmed)
-- **ILANGA NATURE** - Madagascar olive groves with social impact (future products 2027+)
-- **PROMIEL** (promiel.lu) - 20 beekeepers in Luxembourg (partnership planned)
+## Security & Compliance
 
-### External APIs to Integrate
-- **Stripe**: Payments and KYC verification
-- **Google Maps**: Project location and mapping
-- **SendGrid**: Transactional emails
-- **Partner APIs**: Production tracking and impact metrics
+- **Authentication:** Supabase Auth with RLS
+- **KYC:** Stripe Identity integration (€100+ threshold)
+- **GDPR:** Full compliance with data protection
+- **Payments:** Stripe for both investments and subscriptions
+- **Security Headers:** CSP, HSTS, CSRF protection
 
-## Development Workflow
+## Deployment
 
-When implementation begins:
+### Environments
+- **Development:** Local development with Docker PostgreSQL
+- **Staging:** Vercel preview deployments
+- **Production:** Vercel Pro + Supabase Pro
 
-1. **Setup**: Use Turborepo v2 monorepo with pnpm workspaces
-2. **Branching**: Feature branches from `main`, squash merge on approval
-3. **Testing**: Unit tests required for all business logic, E2E for critical paths
-4. **Deployment**: Auto-deploy to staging, manual production releases
-5. **Monitoring**: Vercel Analytics, error tracking, performance monitoring
+### Infrastructure Costs
+- **Phase 1 (MVP):** ~€0/month (free tiers)
+- **Phase 2 (Growth):** ~€145/month (Vercel Pro + Supabase Pro)
+- **Phase 3 (Scale):** €500-2000/month depending on usage
 
-## Current Status
+## Important Notes
 
-- **Phase**: Ready for Implementation (362/370 expert decisions finalized)
-- **Next Steps**: Monorepo setup, authentication system, core mobile app
-- **Timeline**: 4-month MVP development plan documented in `/docs/07-project-management/sprint-planning.md`
-- **Budget**: €0/month MVP Phase 1 Bootstrap scaling to €145/month Phase 2 Growth infrastructure
+- **Package Manager:** Always use `pnpm` - other package managers will cause issues
+- **Node Version:** Use Node.js 22 LTS for compatibility
+- **Database:** Local development uses Docker PostgreSQL, production uses Supabase
+- **Deployment:** Web apps deploy to Vercel, mobile uses EAS Build
+- **Environment Variables:** Managed through Vercel dashboard with proper isolation
 
-## Key Reminders
-
-- This is a **documentation-only repository** - no implementation exists yet
-- All technical decisions are finalized and documented
-- Follow the exact tech stack specified (Expo SDK 53, Vercel Edge Functions, tRPC v11, etc.)
-- Prioritize type safety with TypeScript strict mode across all packages
-- Implement robust error handling and user feedback systems
-- Focus on performance from day one with the specified targets
-- Security and compliance are critical due to financial transactions
-
-For questions about business logic or requirements, refer to the comprehensive documentation in `/docs/`. For Phase 1 Bootstrap implementation guidance, follow `/docs/03-technical/tech-stack.md` (Phase 1 section) and simplified MVP specifications in `/docs/04-specifications/`.
-
-**IMPORTANT PHASE 1 CONSTRAINTS:**
-
-- Start with Phase 1 Bootstrap model (€30-150 subscriptions, commission-based)
-- Use minimal tech stack (Supabase Free, Expo Go, no EAS Build)
-- Focus on essential MVP features only (auth, catalog, points, checkout)
-- Avoid premature optimization for Phase 2-3 features
+When implementing features, always consider the hybrid business model and multi-platform architecture. Prioritize type safety and performance across all platforms.

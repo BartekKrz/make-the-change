@@ -11,6 +11,7 @@ Le site e-commerce MVP complète l'écosystème Make the CHANGE en offrant une *
 - **E-commerce basique** : Catalogue, fiches produit, panier avec points
 - **Espace utilisateur web** : Dashboard, investissements, commandes
 - **Parcours d'investissement web** : Découverte projets + souscription investissement Stripe
+- **NOUVEAU: Dual billing web** : Choix mensuel/annuel + gestion abonnements Stripe Portal
 
 ### 🎯 **Positionnement Stratégique**
 - **Complément mobile** : Pas de concurrence, mais complémentarité
@@ -39,6 +40,7 @@ Le site e-commerce MVP complète l'écosystème Make the CHANGE en offrant une *
 **Mois 4 - Semaine 16**
 - [`dashboard.md`](./account/dashboard.md) 🚧 **À développer** - Dashboard web utilisateur
 - [`my-investments.md`](./account/my-investments.md) 🚧 **À développer** - Portfolio des projets soutenus
+- **NOUVEAU: Subscription management** : Stripe Customer Portal integration, changement plan mensuel/annuel
 
 ## 🎯 Objectifs MVP Site
 
@@ -63,7 +65,7 @@ Le site e-commerce MVP complète l'écosystème Make the CHANGE en offrant une *
 
 ### **Semaine 13 : Foundation & Public Pages**
 ```yaml
-Setup: Vercel Edge Functions + shadcn/ui + Tailwind
+Setup: Next.js 15.5 (App Router) sur Vercel + shadcn/ui + Tailwind
 Homepage: Hero section + value proposition + CTA
 Catalog: Grid produits + search basique + filters
 SEO: Meta tags + structured data + sitemap
@@ -156,7 +158,7 @@ interface DesktopEcommerce {
 }
 ```
 
-### 💰 **Subscription Flow Web**
+### 💰 **Subscription Flow Web - DUAL BILLING**
 ```typescript
 interface WebSubscriptionFlow {
   projectDiscovery: {
@@ -170,14 +172,26 @@ interface WebSubscriptionFlow {
     subscriptionWidget: {
       position: 'sticky_sidebar'
       tiers: SubscriptionTier[]
+      // NOUVEAU: Dual Billing Choice
+      billingToggle: {
+        monthly: { ambassadeur: '18€/mois', premium: '32€/mois' }
+        annual: { ambassadeur: '180€/an', premium: '320€/an', savings: '17%' }
+      }
       calculator: PointsPreview
       cta: StripeCheckout
     }
   }
   checkoutExperience: {
     stripeModal: true  // No redirect, modal overlay
+    billingConfirmation: 'selected_frequency_display'  // NOUVEAU
     confirmation: 'inline_success_message'
     followUp: 'dashboard_redirect'
+  }
+  // NOUVEAU: Subscription Management
+  subscriptionManagement: {
+    customerPortal: 'stripe_customer_portal_integration'
+    planChanges: 'monthly_to_annual_upgrade_prompts'
+    billingHistory: 'stripe_invoice_integration'
   }
 }
 ```

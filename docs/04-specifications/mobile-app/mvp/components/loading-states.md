@@ -1,5 +1,7 @@
 # États de Chargement & Transitions
 
+> **💡 RÉFÉRENCE** : Voir [../mobile-conventions/03-conventions-patterns.md](../mobile-conventions/03-conventions-patterns.md) pour les patterns complets d'utilisation du composant Screen.Loading et les conventions de hooks.
+
 ## 🎯 Objectif
 
 Fournir des états de chargement cohérents et des animations fluides pour améliorer l'expérience utilisateur lors des transitions et des opérations asynchrones.

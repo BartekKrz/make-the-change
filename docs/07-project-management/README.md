@@ -34,7 +34,7 @@ Semaine N+1 : Mobile consomme contenus + tests réels
 
 | Semaine | Backend | Mobile | Admin Web |
 |---------|---------|--------|-----------|
-| 1 | Setup monorepo + Prisma users | Setup Expo + navigation | Setup Vercel Edge Functions + layout |
+| 1 | Setup monorepo + Supabase users | Setup Expo + navigation | Setup Next.js (App Router) + layout |
 | 2 | Route auth.register + validation | Formulaire inscription | Composants forms |
 | 3 | Route auth.login + Supabase Auth | Formulaire connexion | Page login admin |
 | 4 | Logout + déploiement staging | Navigation protégée | Dashboard admin protégé |
@@ -44,7 +44,7 @@ Semaine N+1 : Mobile consomme contenus + tests réels
 
 | Semaine | Backend | Mobile | Admin Web |
 |---------|---------|--------|-----------|
-| 5 | Prisma projects + routes admin | Maintenance auth | **Gestion projets CRUD** |
+| 5 | Supabase projects + routes admin | Maintenance auth | **Gestion projets CRUD** |
 | 6 | Routes projects.list + byId | **Découverte projets** | Finalisation interface |
 | 7 | Investment + Stripe integration | **Tunnel investissement** | Vue investissements |
 | 8 | Points generation + tests | **Confirmation + points** | Support données |
@@ -64,7 +64,7 @@ Semaine N+1 : Mobile consomme contenus + tests réels
 
 | Semaine | Backend | Mobile | Admin Web |
 |---------|---------|--------|-----------|
-| 13 | Prisma products + admin routes | Maintenance | **Gestion produits** |
+| 13 | Supabase products + admin routes | Maintenance | **Gestion produits** |
 | 14 | Products.list + purchase logic | **Catalogue produits** | Vue commandes |
 | 15 | Points → Products + fulfillment | **Achat avec points** | Gestion fulfillment |
 | 16 | Testing + optimizations | **Confirmation commandes** | Analytics finales |

@@ -87,7 +87,7 @@ Expliquer clairement le modèle hybride à 3 niveaux de Make the CHANGE et conva
         </h3>
         <p className="text-slate-600 mb-6">
           Choisissez un projet de biodiversité qui vous tient à cœur et investissez 
-          Explorez gratuitement, puis adoptez une ruche (50€), un olivier (80€), ou souscrivez un abonnement premium (200€-350€).
+          Explorez gratuitement, puis adoptez une ruche (50€), un olivier (80€), ou souscrivez un abonnement premium (18€-32€/mois ou 180€-320€/an avec -17% d'économie).
         </p>
         <div className="bg-green-50 rounded-lg p-4">
           <p className="text-sm text-green-800 font-medium">
@@ -183,7 +183,7 @@ Expliquer clairement le modèle hybride à 3 niveaux de Make the CHANGE et conva
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="w-4 h-4 bg-green-500 rounded-full mr-3"></div>
-              <span className="text-sm">Votre engagement 50€-350€</span>
+              <span className="text-sm">Votre engagement 50€-320€</span>
             </div>
             <ArrowRight className="w-4 h-4 text-slate-400" />
             <span className="text-sm text-slate-600">Projets biodiversité</span>
@@ -574,7 +574,7 @@ const staggerContainer = {
       <div className="flex justify-between text-xs text-slate-500 mt-1">
         <span>50€ Ruche</span>
         <span>80€ Olivier</span>
-        <span>200€ Ambassadeur</span>
+        <span>18€/mois Ambassadeur</span>
       </div>
     </div>
     
@@ -650,6 +650,6 @@ const optimizedImages = {
 
 ---
 
-**Stack Technique** : Vercel Edge Functions + Framer Motion + shadcn/ui + Recharts  
+**Stack Technique** : Next.js 15.5 (App Router) sur Vercel + Framer Motion + shadcn/ui + Recharts  
 **Priorité** : 🔥 Important - Conversion et éducation  
 **Estimation** : 6-8 jours développement + animations

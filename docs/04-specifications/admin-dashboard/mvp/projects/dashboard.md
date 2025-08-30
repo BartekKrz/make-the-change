@@ -362,6 +362,6 @@ interface DashboardPrefs {
 
 ---
 
-**Stack Technique** : Vercel Edge Functions + Recharts + Tanstack Query + shadcn/ui  
+**Stack Technique** : Next.js 15.5 (App Router) sur Vercel + Recharts + TanStack Query + shadcn/ui  
 **Priorité** : 🔥 Critique - Page principale admin  
 **Estimation** : 5-7 jours développement + intégration APIs

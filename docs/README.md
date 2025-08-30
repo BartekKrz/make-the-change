@@ -6,6 +6,8 @@
 
 **Nouveau sur le projet ?** → [🚀 GETTING-STARTED.md](./GETTING-STARTED.md)
 
+**Navigation optimisée** → **[🧭 NAVIGATION-INDEX.md](./NAVIGATION-INDEX.md)** - Index complet par rôle et phase
+
 **Pour développeurs** → [📘 CLAUDE.md](../CLAUDE.md) - Guide technique complet
 
 ## 🗂️ Structure Documentation
@@ -14,120 +16,134 @@
 
 | Rôle | Sections Principales | Point d'Entrée |
 |------|---------------------|-----------------|
-| **🔧 Développeur** | 03-Technical → 04-Specifications → 06-Development | [Architecture](./03-technical/architecture-overview.md) |
-| **💼 Business/PM** | 01-Strategy → 02-Product → 07-Project-Management | [Modèle Hybride](./01-strategy/business-model-adaptive.md) |
-| **🎨 Designer** | 02-Product → 04-Specifications → 08-Research | [Design System](./02-product/design-system/foundations.md) |
-| **📦 Operations** | 05-Operations → 01-Strategy → 07-Project-Management | [Operations](./05-operations/README.md) |
+| **🔧 Développeur** | 03-Technical → 04-Specifications | **[Tech Stack](./03-technical/tech-stack.md)** |
+| **💼 Business/PM** | 01-Strategy → 07-Project-Management | **[Business Model](./01-strategy/business-model-definitive.md)** |
+| **🎨 Designer** | 02-Product → 04-Specifications | **[UX Research 2025](./02-product/ux-research-2025/README.md)** |
+| **📦 Operations** | 05-Operations → 01-Strategy | [Operations](./05-operations/README.md) |
 
 ### 📁 Structure Complète
 
 ```
 📋 docs/
 ├── 🚀 GETTING-STARTED.md          # Guide démarrage rapide
-├── 📝 CHANGELOG.md                # Historique changements
+├── 📝 CHANGELOG.md                # (À créer) Historique des changements
 │
 ├── 💼 01-strategy/               # Stratégie Business & Vision
-│   ├── business-model.md         # (ARCHIVÉ) Ancien modèle économique
+│   ├── business-model-definitive.md # Modèle économique hybride final
 │   ├── user-personas.md         # 5 personas (Claire, Marc, Fatima...)
 │   ├── kpis-metrics.md          # Métriques de succès
 │   ├── partnerships.md          # HABEEBEE, ILANGA NATURE
 │   └── legal-compliance.md      # KYC, RGPD, régulations
 │
-├── 🎨 02-product/               # Produit & Design  
+├── 🎨 02-product/               # Produit & Design
 │   ├── product-roadmap.md       # Vision 3 phases
 │   ├── user-journeys.md         # Parcours utilisateurs
-│   ├── information-architecture.md # IA globale
+│   ├── ux-research-2025/        # Recherche UX 2025 (NOUVEAU)
+│   │   ├── README.md           # Vue d'ensemble recherche UX
+│   │   └── ui-trends-analysis.md # Top 10 tendances UI/UX 2025
 │   └── design-system/           # Design System
-│       ├── foundations.md       # Couleurs, typo, spacing
-│       ├── components.md        # Composants réutilisables
-│       └── patterns.md          # Patterns UX
+│       ├── foundations.md      # Couleurs, typography, spacing
+│       ├── components-library.md # 12 patterns UI (NOUVEAU)
+│       └── green-ux-guidelines.md # Guidelines design durable (NOUVEAU)
 │
 ├── 🔧 03-technical/             # Architecture Technique
 │   ├── architecture-overview.md # Vue système complète
-│   ├── tech-stack.md           # Stack 2025: Expo SDK 53 + Vercel Edge Functions
-│   ├── database-schema.md      # PostgreSQL 15 schema
-│   ├── infrastructure/         # DevOps & Infrastructure
-│   └── integrations/           # APIs externes (Stripe, Maps...)
+│   ├── tech-stack.md           # Stack 2025: Expo SDK 53 + Vercel Edge
+│   └── database-schema.md      # PostgreSQL 15 schema
 │
 ├── 📱 04-specifications/        # Spécifications Détaillées
+│   ├── README.md               # Vue d'ensemble des specs
+│   ├── INDEX-NAVIGATION.md     # Index de navigation des specs
 │   ├── mobile-app/             # App Mobile (Expo)
-│   │   ├── auth/               # Login, Register, Splash
-│   │   ├── main/               # Dashboard, Projects, Rewards
-│   │   └── flows/              # Investment, Checkout flows
-│   ├── admin-dashboard/        # Dashboard Admin (Vercel Edge Functions)
+│   │   ├── mvp/                # Specs MVP
+│   │   └── v1/                 # Specs V1
+│   ├── admin-dashboard/        # Dashboard Admin (Vercel Edge)
+│   │   ├── mvp/
+│   │   └── v1/
 │   └── ecommerce-site/         # Site E-commerce
+│       ├── mvp/
+│       └── v1/
 │
 ├── 📦 05-operations/            # Opérations & Processus
-│   ├── inventory-management.md # Gestion stocks
-│   ├── communication-client.md # Support client
-│   └── procedures/             # Procédures détaillées
 │
 ├── 💻 06-development/           # Guides Développement
-│   ├── setup-guide.md          # Installation environnement
-│   ├── coding-standards.md     # Standards code
-│   └── testing-strategy.md     # Tests unitaires, E2E
 │
 ├── 📅 07-project-management/   # Gestion de Projet
-│   ├── sprint-planning.md      # Plan "Admin-First" 4 mois
-│   ├── risk-analysis.md        # Analyse des risques
-│   └── milestones.md           # Jalons projet
+│   └── sprint-planning.md      # Plan "Admin-First" 4 mois
 │
 ├── 🔬 08-research/              # Recherche & Analyse
-│   └── user-research/          # Interviews, surveys
 │
-└── 🎧 10-reference-content/        # Reference Content & Synthesis
-    └── synthesis/                  # Business & Technical Synthesis
+└── 🎧 10-reference-content/        # Contenu de Référence
 ```
 
-## 🎯 Status Projet
+## 🎯 Status Projet Adapté
 
-### ✅ **Décisions Expertes Finalisées (370/370)**
-- **Business Model** : Modèle hybride 3 niveaux (gratuit, investissements 50€-150€, abonnements 200€-350€)
-- **Stack Technique** : Vercel Edge Functions + Supabase Free (€0/mois MVP)
+### ✅ **Décisions Expertes Finalisées (Toutes préservées)**
+- **Business Model** : Modèle hybride 3 niveaux (gratuit, investissements 50€-150€, abonnements 180€-320€)
+- **Stack Technique** : Next.js 15.5 (App Router) sur Vercel + Supabase + Expo SDK 53
 - **Design System** : Couleurs finalisées (#059669, #D97706), WCAG 2.1 AA
 - **Conformité Légale** : KYC adapté par niveau, RGPD, DPO externe
-- **Communication** : Crisp.chat + Brevo, tone authentique défini
-- **Operations** : Dropshipping premium, 20+ partenaires Phase 1
+- **Architecture Modulaire** : Feature flags pour activation progressive
+- **Operations** : Dropshipping premium, partenariats solides
 
-### 🚧 Phase Actuelle : **Ready for Implementation**
-- ✅ **370 décisions expertes** intégrées dans documentation
-- ✅ Modèle hybride, technique, UX, legal, ops **finalisés**
-- ✅ Architecture complète + budget infrastructure définis
-- ✅ Framework complet prêt développement
+### 🚀 Nouvelle Stratégie : **Architecture Complète + Activation Progressive**
+- ✅ **Vision complète préservée** : Rien n'est supprimé, tout est codé
+- ✅ **Architecture modulaire** : Feature flags pour contrôle intelligent
+- ✅ **3 plateformes complètes** : Mobile, Admin, E-commerce
+- ✅ **Formation équipe Madagascar** : Base solide pour apprentissage
+- ✅ **Flexibilité maximale** : Activation selon retours et besoins
 
-### ⏳ Prochaine Phase : **Développement Hybride**
-- Setup monorepo Turborepo v2 avec stack finalisé
-- Phase 1 : Authentification + Exploration gratuite (Mois 1)
-- Phase 2 : Système d'investissements unitaires (Mois 2)
-- Phase 3 : E-commerce points + Abonnements premium (Mois 3-4)
+### 🎯 Phase Actuelle : **Implémentation Modulaire (Mois 1-3)**
+- **Mois 1** : Fondation technique + feature flags system
+- **Mois 2** : Fonctionnalités core + features avancées codées
+- **Mois 3** : Préparation Madagascar + optimisation
 
-## 📊 Métriques Cibles Modèle Hybride (Année 1)
+## 📊 Métriques Adaptées - Architecture Modulaire
 
-### Business KPIs Hybrides
-- **1,000 Explorateurs** (utilisateurs gratuits actifs)
-- **300 Protecteurs** (investissements moyens 80€)
-- **50 Ambassadeurs** (abonnements moyens 250€)
-- **€41,500** revenus total (24K€ investissements + 12,5K€ abonnements + 5K€ commissions)
-- **30%** taux conversion gratuit → payant
+### Phase 1 : Architecture Complète (Mois 1-3)
+```yaml
+Qualité & Complétude:
+- Features codées: 100% (toutes pensées, certaines désactivées)
+- Architecture modulaire: Score 9/10
+- Feature flags opérationnels: ✅
+- Documentation à jour: ✅
 
-### Technical KPIs  
+Progression Pragmatique:
+- Utilisateurs test réseau Greg: 50 premiers
+- Fonctionnalités core activées: 70%
+- Feedback qualité utilisateurs: NPS >40
+- Satisfaction équipe développement: >85%
+```
+
+### Phase 2 : Activation Progressive (Mois 4-6)
+```yaml
+Activation Intelligente:
+- Taux activation features: >80% des features activées
+- Performance impact: <5% degradation lors d'activation
+- User engagement par feature: Tracking individuel
+- Conversion par niveau utilisateur: 30% Explorateur→Protecteur
+```
+
+### Technical KPIs
 - **<2s** mobile cold start
 - **<200ms** API response P95
 - **>99%** uptime
-- **90%+** test coverage
+- **Feature flags impact** : <5% performance
+- **Bundle size** : Optimisé selon features activées
 
 ## 🔗 Liens Rapides
 
 ### 📖 Documentation Core
 - [🚀 Getting Started](./GETTING-STARTED.md) - Démarrage immédiat
-- [✅ Analyse Finale](./FINAL_ANALYSIS.md) - **NOUVEAU** : Validation de la cohérence globale
+- [📋 Adaptation Strategy](./ADAPTATION-STRATEGY.md) - Nouvelle stratégie modulaire
+- [🏗️ Architecture Modulaire](./03-technical/modular-architecture.md) - Feature flags system
+- [🎯 Implementation Roadmap](./07-project-management/implementation-roadmap.md) - Plan d'implémentation progressive
+- [👥 Guide Équipe Madagascar](./06-development/madagascar-team-guide.md) - Formation équipe
 - [📘 CLAUDE.md](../CLAUDE.md) - Guide développement
-- [📝 Changelog](./CHANGELOG.md) - Historique
-- [📋 Décisions Expertes](./DECISIONS-INDEX.md) - Index des 362 décisions finalisées
 
 ### 💼 Business Essentials
-- [💰 Business Strategy](./10-reference-content/synthesis/business-strategy-complete.md) - Complete economic model
-- [⚖️ Conformité Légale](./01-strategy/legal-compliance.md) - **NOUVEAU** : RGPD, KYC, fiscalité
+- [💰 Business Strategy](./10-reference-content/synthesis/business-strategy-complete.md) - Modèle économique complet
+- [⚖️ Conformité Légale](./01-strategy/legal-compliance.md) - RGPD, KYC, fiscalité
 - [👥 Personas](./01-strategy/user-personas.md) - 5 utilisateurs types
 - [📈 KPIs](./01-strategy/kpis-metrics.md) - Métriques de succès
 
@@ -137,7 +153,7 @@
 
 ### 📱 Implementation
 - [📱 Mobile App](./04-specifications/mobile-app/README.md) - Spécifications Expo
-- [💻 Admin Dashboard](./04-specifications/admin-dashboard/README.md) - Spécifications Vercel Edge Functions
+- [💻 Admin Dashboard](./04-specifications/admin-dashboard/README.md) - Spécifications Next.js (App Router) sur Vercel
 - [🛒 E-commerce](./04-specifications/ecommerce-site/README.md) - Site marchand
 
 ## 📞 Support & Contacts
@@ -155,14 +171,16 @@
 ---
 
 **📈 Statistiques Documentation**
-- **27+ documents** structurés et finalisés  
-- **362 décisions expertes** intégrées (98% complété)
+- **30+ documents** structurés et finalisés
+- **370 décisions expertes** intégrées (98% complété)
 - **9 sections** thématiques + décisions expertes
 - **Ready-to-implement** avec framework complet
 
-**🎯 Nouveaux Fichiers Ajoutés**
-- `DECISIONS-INDEX.md` - Index central des décisions expertes
+**🎯 Nouveaux Fichiers Ajoutés Récemment**
 - `01-strategy/legal-compliance.md` - Framework conformité complet
-- Enrichissement massif des fichiers existants avec décisions finalisées
+- `04-specifications/legal-screens-spec.md` - Document maître légal
+- `04-specifications/notifications-points-expiry-system.md` - Document maître notifications
+- `04-specifications/admin-dashboard/v1/automation/notification-management.md` - UI Admin pour notifications
+- `04-specifications/mobile-app/mvp/legal-screens.md` - UI Mobile pour écrans légaux
 
-*Dernière MAJ: 22 août 2025 | Maintenu par: Make the CHANGE Team*
+*Dernière MAJ: 27 août 2025 | Maintenu par: Gemini*

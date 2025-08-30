@@ -567,7 +567,7 @@ interface ModerationDashboard {
     media_urls: string[];
     title: string;
     description: string;
-    created_at: Date;
+    createdAt: Date;
     priority: 'high' | 'medium' | 'low';
   }[];
   

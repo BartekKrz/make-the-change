@@ -43,9 +43,9 @@ Notre approche privilégie les technologies matures avec écosystèmes riches, l
 - **React Native CLI** : Écarté pour overhead configuration native et maintenance complexity
 - **Native iOS/Android** : Impossible avec ressources équipe limitées, 2x le temps développement
 
-### Web Dashboard : Vercel Edge Functions + React - Full-Stack Moderne
+### Web Dashboard : Next.js 15.5 (App Router) sur Vercel - Full-Stack Moderne
 
-**Décision** : Vercel Edge Functions pour dashboard admin et e-commerce avec React côté client.
+**Décision** : Next.js 15.5 (App Router) sur Vercel pour dashboard admin et e-commerce.
 
 **Rationale Technique** :
 - **Type Safety End-to-End** : Code client/serveur dans same project avec TypeScript shared

@@ -6,6 +6,67 @@ Les KPIs évoluent selon la phase de développement, chaque phase ayant ses mét
 
 ---
 
+## 📊 **MRR (Monthly Recurring Revenue) Tracking**
+
+### **Structure MRR Dual Model**
+```yaml
+MRR Components:
+  Monthly Subscriptions:
+    - Ambassadeur Standard: 18€/mois
+    - Ambassadeur Premium: 32€/mois
+    - Sous-total MRR Mensuel: (nb_users_std × 18) + (nb_users_prem × 32)
+  
+  Annual Subscriptions (MRR equivalent):
+    - Ambassadeur Standard Annuel: 15€/mois équivalent (180€/12)
+    - Ambassadeur Premium Annuel: 26,67€/mois équivalent (320€/12)
+    - Sous-total MRR Annuel: (nb_users_std_ann × 15) + (nb_users_prem_ann × 26,67)
+  
+  Total MRR: MRR Mensuel + MRR Annuel équivalent
+```
+
+### **Métriques MRR par Billing Frequency**
+```yaml
+Monthly Subscribers:
+  - MRR Growth Rate: Target 20%/mois
+  - Churn Rate: <12% mensuel
+  - Upgrade Rate: Monthly → Annual >20% après 6 mois
+  - ARPU (Average Revenue Per User): 25€ target
+
+Annual Subscribers:
+  - ARR (Annual Recurring Revenue): Target 60% total subscribers
+  - Churn Rate: <8% annuel
+  - Retention Rate: >92% renouvellement
+  - ARPU Annual: 250€ target
+  
+Conversion Metrics:
+  - Monthly → Annual Conversion: >20% après 6 mois
+  - Annual Discount Impact: 17% savings = main driver
+  - Billing Mix Target: 60% Annual / 40% Monthly
+```
+
+### **Cohort Analysis par Billing Frequency**
+```yaml
+Monthly Cohort Tracking:
+  - Month 1 Retention: >85%
+  - Month 3 Retention: >70%
+  - Month 6 Retention: >60%
+  - Month 12 Retention: >50%
+  - Lifetime Value: 300€ average
+
+Annual Cohort Tracking:
+  - Month 12 Retention: >92%
+  - Month 24 Retention: >80%
+  - Month 36 Retention: >70%
+  - Lifetime Value: 500€ average
+  
+Upgrade Analysis:
+  - Temps moyen Monthly → Annual: 4-6 mois
+  - Trigger principal: Discount awareness (17%)
+  - Seasonal Effect: +25% conversions en fin d'année
+```
+
+---
+
 ## 📊 PHASE 1 : Bootstrap Metrics (0€ - 5K€)
 
 ### **Business KPIs Phase 1**
@@ -30,45 +91,63 @@ Customer Acquisition:
   Organic Ratio: >70% (viralité du modèle d'investissement)
 ```
 
-#### **Unit Economics Bootstrap - Modèle Hybride**
+#### **Unit Economics Bootstrap - Modèle Hybride Dual Billing**
 ```yaml
-CAC (Customer Acquisition Cost) par Niveau:
+CAC (Customer Acquisition Cost) par Niveau & Billing:
   Explorateur (Gratuit): 5€ (marketing + onboarding)
   Protecteur (Investissements): 15€ (conversion + support)
-  Ambassadeur (Abonnements): 25€ (service premium)
+  Ambassadeur Monthly: 22€ (acquisition + onboarding)
+  Ambassadeur Annual: 28€ (higher touch conversion process)
   
-  Blended CAC Target: <20€ (optimisé modèle hybride)
+  Blended CAC Target: <20€ (optimisé modèle hybride dual)
   
-LTV (Lifetime Value) par Niveau:
+LTV (Lifetime Value) par Niveau & Billing:
   Explorateur: 0€ direct (acquisition + engagement pour conversion)
   Protecteur: 150€ (2-3 investissements moyens sur 2 ans)
-  Ambassadeur: 400€ (2 ans rétention moyenne, abo moyen 250€)
+  Ambassadeur Monthly: 300€ (12 mois rétention moyenne, 25€/mois ARPU)
+  Ambassadeur Annual: 500€ (24 mois rétention moyenne, discount loyalty)
   
-  Blended LTV Target: >280€ (mix réaliste 70% Protecteurs, 30% Ambassadeurs)
+  Blended LTV Target: >320€ (amélioration avec annual subscribers)
 
-Ratios Modèle Hybride:
-  LTV/CAC Global: >14 (excellent grâce au modèle gratuit → conversion)
-  Payback Period: <8 mois (accéléré par investissements)
+Ratios Modèle Hybride Dual:
+  LTV/CAC Global: >16 (amélioration grâce annual subscribers)
+  Payback Period Monthly: <8 mois
+  Payback Period Annual: <6 mois (payment upfront)
   Funnel Conversion: Explorateur→Protecteur 30%, Protecteur→Ambassadeur 15%
+  Monthly→Annual Upgrade: 20% après 6 mois
 ```
 
-#### **Retention & Engagement**
+#### **Retention & Engagement par Billing Frequency**
 ```yaml
-Ambassador Churn Rate:
-  - Monthly churn: <8%
-  - Annual churn: <50%
+Ambassador Churn Rate Dual:
+  Monthly Subscribers:
+    - Monthly churn: <12% (higher due to commitment flexibility)
+    - Quarterly churn: <25%
+    - Annual churn: <60%
+  
+  Annual Subscribers:
+    - Annual churn: <8% (lower due to upfront commitment)
+    - Renewal Rate: >92%
+    - Multi-year Retention: >80%
+
+Billing Frequency Conversion:
+  - Monthly → Annual Rate: >20% après 6 mois
+  - Primary Driver: 17% discount awareness
+  - Retention Post-Conversion: >95% annual renewal
 
 Protector Re-investment Rate:
-  - Target: >30% des Protecteurs ré-investissent dans les 12 mois.
+  - Target: >30% des Protecteurs ré-investissent dans les 12 mois
+  - Subscription Upgrade: 15% Protecteur → Ambassadeur
 
 Points Metrics:
   - Redemption rate: >70% (points utilisés pour des achats)
   - Average order value (points): 30-40 pts
   - Expiry rate: <10%
 
-Customer Satisfaction:
-  NPS (Net Promoter Score): >50
-  App rating: >4.5/5 
+Customer Satisfaction par Billing:
+  Monthly Subscribers: NPS >45 (flexibility valued)
+  Annual Subscribers: NPS >55 (value recognition)
+  Overall App rating: >4.5/5 
   Support satisfaction: >90%
 ```
 
@@ -177,6 +256,22 @@ Profitability Metrics Hybrides:
   Gross Margin: >78% target (modèle asset-light optimisé)
   Contribution Margin: >65% target (économies échelle)
   EBITDA: >25% target (efficacité modèle hybride)
+```
+
+#### **Viral & Engagement KPIs (Phase 2)**
+```yaml
+Referral Program:
+  - Referral Rate: % d'utilisateurs envoyant une invitation/mois (Target: >15%)
+  - Referral Conversion Rate: % d'invités devenant Protecteur (Target: >20%)
+  - K-Factor (Viral Coefficient): (Invitations * Conversion Rate) (Target: >0.3)
+
+Social Sharing:
+  - Sharing Rate: % d'utilisateurs partageant un impact/badge/mois (Target: >10%)
+  - Clicks per Share: Nombre de clics générés par un partage (Target: >5)
+
+Learn & Earn:
+  - Content Engagement Rate: % d'utilisateurs complétant un quiz/avis (Target: >25%)
+  - Points Earned via Engagement: Total de points générés hors investissement
 ```
 
 ### **Product & Team KPIs Phase 2**

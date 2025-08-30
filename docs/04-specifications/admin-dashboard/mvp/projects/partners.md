@@ -653,8 +653,8 @@ interface Partner {
   vat_number?: string;
   address?: string;
   
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface CommissionDetail {
@@ -666,7 +666,7 @@ interface CommissionDetail {
   commission_rate: number;
   commission_amount: number;
   status: 'pending' | 'paid' | 'disputed';
-  created_at: Date;
+  createdAt: Date;
 }
 
 interface PartnerPortalAccess {

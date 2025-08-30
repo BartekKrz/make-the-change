@@ -460,8 +460,8 @@ const dependencies = {
   '@react-native-async-storage/async-storage': 'Session storage',
   'expo-local-authentication': 'Biometric auth',
   'expo-secure-store': 'Credential storage',
-  'react-hook-form': 'Form validation',
-  '@hookform/resolvers/zod': 'Schema validation'
+  '@tanstack/react-form': 'Form validation',
+  '@tanstack/zod-form-adapter': 'Schema validation'
 }
 ```
 

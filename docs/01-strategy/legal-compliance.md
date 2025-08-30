@@ -249,7 +249,7 @@ HEADERS SÉCURITÉ OBLIGATOIRES:
 - Referrer-Policy: strict-origin-when-cross-origin
 
 CERTIFICATS SSL:
-- Automatique: Let's Encrypt via Vercel/Vercel Edge Functions
+- Automatique: Let's Encrypt via Vercel (Edge + Node runtimes)
 - Renouvellement: Automatique
 - Grade: A+ sur SSL Labs
 ```
@@ -272,19 +272,28 @@ AUDIT EXTERNE:
 
 ## 📞 **Support & Réclamations**
 
-### **Service Client Légal**
+### **Service Client Légal - DUAL BILLING COMPLIANCE**
 ```yaml
 OBLIGATIONS SUPPORT:
 - Délai réponse: <24h email, <2h chat (SLA interne)
 - Langues: Français obligatoire, anglais optionnel
 - Escalation: Process clair niveau 1 → niveau 2
 - Satisfaction: Mesure CSAT >85%
+- NOUVEAU: Billing support specialized (subscription management)
 
 MÉDIATION CONSOMMATION:
 - Obligatoire: Plateforme médiation européenne
 - Information: Mention sur site + CGV
 - Process: Tentative résolution amiable d'abord
 - Coût: Gratuit pour consommateurs
+- NOUVEAU: Monthly billing disputes (SEPA, cancellation rights)
+
+BILLING COMPLIANCE (NOUVEAU):
+- Monthly subscriptions: SEPA mandate + droit de rétractation 14 jours
+- Failed payment recovery: Max 3 attempts, clear communication
+- Cancellation rights: Clear process, no barriers
+- Stripe Customer Portal: Direct access pour self-service
+- Proration transparency: Clear calculation si changement plan
 ```
 
 ### **Traitement Réclamations**
@@ -353,7 +362,7 @@ Soit 1500€/mois pour conformité complète
 
 ---
 
-## ✅ **Checklist Lancement MVP**
+## ✅ **Checklist Lancement MVP - DUAL BILLING**
 
 ### **Pré-lancement Obligatoire**
 ```yaml
@@ -362,18 +371,30 @@ DOCUMENTS:
 □ CGU/CGV validées avocat
 □ Mentions légales complètes
 □ DPO déclaré et contactable
+□ NOUVEAU: Terms specific dual billing (monthly vs annual)
 
 TECHNIQUE:
 □ HTTPS activé et forcé
 □ Security headers implémentés
 □ Cookie banner RGPD-compliant
 □ API export/suppression données
+□ NOUVEAU: Stripe webhooks security validated
 
 PROCESSUS:
 □ KYC testé tous niveaux
 □ Support client opérationnel
 □ Process réclamations documenté
 □ Registre RGPD à jour
+□ NOUVEAU: Billing support scripts trained
+□ NOUVEAU: Failed payment recovery process tested
+□ NOUVEAU: Cancellation rights clearly communicated
+
+DUAL BILLING COMPLIANCE:
+□ SEPA mandates properly configured
+□ Proration calculations transparent et accurate
+□ Customer Portal access functional
+□ Monthly subscription cancellation tested
+□ Annual subscription refund policy defined
 
 ASSURANCES:
 □ RC Professionnelle souscrite

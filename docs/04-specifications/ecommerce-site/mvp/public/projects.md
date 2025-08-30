@@ -201,7 +201,7 @@ Permettre aux utilisateurs de découvrir les projets de biodiversité qu'ils peu
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="newest">Plus récents</SelectItem>
-        <SelectItem value="funding_progress">Progression financement</SelectItem>
+        <SelectItem value="fundingProgress">Progression financement</SelectItem>
         <SelectItem value="alphabetical">Ordre alphabétique</SelectItem>
         <SelectItem value="ending_soon">Se termine bientôt</SelectItem>
       </SelectContent>
@@ -249,7 +249,7 @@ Permettre aux utilisateurs de découvrir les projets de biodiversité qu'ils peu
       <div className="absolute bottom-3 right-3">
         <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
           <span className="text-sm font-medium text-slate-900">
-            {project.funding_progress}%
+            {project.fundingProgress}%
           </span>
         </div>
       </div>
@@ -282,7 +282,7 @@ Permettre aux utilisateurs de découvrir les projets de biodiversité qu'ils peu
               €{project.current_funding.toLocaleString()} / €{project.funding_goal.toLocaleString()}
             </span>
           </div>
-          <Progress value={project.funding_progress} className="h-2" />
+          <Progress value={project.fundingProgress} className="h-2" />
         </div>
         
         {/* Stats */}
@@ -357,7 +357,7 @@ interface ProjectFilters {
   status: ProjectStatus[];
   type: string[];
   region: string;
-  funding_progress: number;
+  fundingProgress: number;
 }
 ```
 
@@ -397,30 +397,30 @@ ecommerce.projects.list: {
     page: number;
     limit: number;
     filters: ProjectFilters;
-    sort_by: string;
+    sortBy: string;
   };
   output: {
     projects: Project[];
     total: number;
-    global_stats: GlobalStats;
-    filters_count: number;
+    globalStats: GlobalStats;
+    filtersCount: number;
   };
 }
 
 // Stats globales
 ecommerce.projects.globalStats: {
   output: {
-    total_projects: number;
-    total_funding: number;
-    total_members: number;
-    co2_offset: number;
+    totalProjects: number;
+    totalFunding: number;
+    totalMembers: number;
+    co2Offset: number;
   };
 }
 
 // Suggestions basées sur l'historique
 ecommerce.projects.recommendations: {
-  input: { user_id?: string };
-  output: { recommended_projects: Project[] };
+  input: { userId?: string };
+  output: { recommendedProjects: Project[] };
 }
 ```
 
@@ -442,7 +442,7 @@ interface Project {
   // Financement
   funding_goal: number;
   current_funding: number;
-  funding_progress: number;
+  fundingProgress: number;
   supporters_count: number;
   
   // Impact
@@ -459,7 +459,7 @@ interface Project {
   
   // Métadonnées
   is_featured: boolean;
-  created_at: Date;
+  createdAt: Date;
   funding_deadline: Date;
 }
 
@@ -497,10 +497,10 @@ interface GlobalStats {
               {getStatusLabel(project.status)}
             </Badge>
             <span className="text-sm font-medium">
-              {project.funding_progress}%
+              {project.fundingProgress}%
             </span>
           </div>
-          <Progress value={project.funding_progress} className="h-1 mb-2" />
+          <Progress value={project.fundingProgress} className="h-1 mb-2" />
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate-500">
               €{project.current_funding.toLocaleString()}
@@ -572,6 +572,6 @@ export const generateMetadata = ({ searchParams }: Props): Metadata => {
 
 ---
 
-**Stack Technique** : Vercel Edge Functions + shadcn/ui + tRPC + Search Algolia  
+**Stack Technique** : Next.js 15.5 (App Router) sur Vercel + shadcn/ui + tRPC + Search Algolia  
 **Priorité** : 🔥 Critique - Cœur découverte projets  
 **Estimation** : 8-10 jours développement + optimisation search

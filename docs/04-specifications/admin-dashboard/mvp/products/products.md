@@ -1,701 +1,503 @@
-# 📦 Gestion des Produits
+# 🛒 Admin Dashboard - Gestion Produits MVP
 
-**CRUD complet pour le catalogue produits avec gestion stock, prix points, et intégration partenaires.**
+**📍 PRIORITÉ: ⭐️⭐️⭐️ CRITIQUE** | **🗓️ SEMAINES 13-14** | **🎯 E-COMMERCE HYBRIDE**
 
-## 🎯 Objectif
+## 🎯 Objectifs
 
-Gérer le catalogue complet des produits e-commerce : création, édition, pricing en points, gestion stock, et coordination avec les partenaires producteurs.
+Interface administrative pour gérer le catalogue e-commerce hybride (micro-stock + dropshipping) avec pricing en points. Support des commissions partenaires et gestion inventaire temps réel.
 
-## 👤 Utilisateurs Cibles
+## 📋 Vue d'Ensemble - Catalogue Hybride
 
-- **Gestionnaires catalogue** : CRUD produits et pricing
-- **Équipe stock** : Gestion inventaire et réapprovisionnement
-- **Partenaires** : HABEEBEE, ILANGA NATURE (mise à jour produits)
-- **Marketing** : Descriptions, images, promotions
-
-## 🎨 Design & Layout
-
-### Page Catalogue Produits
-```text
-┌─────────────────────────────────────────────────────────────┐
-│ Catalogue | 247 produits                     [+ Nouveau]    │
-├─────────────────────────────────────────────────────────────┤
-│ 🔍 [Recherche] [Catégorie ▼] [Partenaire ▼] [Stock ▼] [🏷️] │
-├─────────────────────────────────────────────────────────────┤
-│ Grid/Liste Toggle    [⊞ Grid] [☰ Liste]    [📊 Analytics]   │
-├─────────────────────────────────────────────────────────────┤
-│ Cards Grid Produits                                         │
-│ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ │
-│ │ 🍯 Miel Lavande │ │ 🧼 Savon Bio    │ │ 🫒 Huile Olive  │ │
-│ │ [📷 Image]      │ │ [📷 Image]      │ │ [📷 Image]      │ │
-│ │ 80 pts • Stock: │ │ 45 pts • Stock: │ │ 120 pts • ⚠️   │ │
-│ │ 42 unités      │ │ 156 unités     │ │ Stock: 3       │ │
-│ │ HABEEBEE       │ │ HABEEBEE       │ │ ILANGA NATURE  │ │
-│ │ [Voir][Edit]   │ │ [Voir][Edit]   │ │ [Voir][Edit]   │ │
-│ └─────────────────┘ └─────────────────┘ └─────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Modal Création/Édition Produit
-```text
-┌─────────────────────────────────────────────────────────────┐
-│ Nouveau Produit                                        [✕]  │
-├─────────────────────────────────────────────────────────────┤
-│ 📋 Informations Générales                                   │
-│ Nom: [Miel de Lavande Bio 250g__________________]           │
-│ Catégorie: [Miels ▼]  Partenaire: [HABEEBEE ▼]             │
-│ SKU: [MLV250______]  Statut: [Actif ▼]                     │
-│                                                             │
-│ 💰 Pricing Points                                           │
-│ Prix: [80____] points  Prix Euro équivalent: €68           │
-│ Marge: [35%] Coût partenaire: €44.20                       │
-│                                                             │
-│ 📦 Stock & Logistique                                       │
-│ Stock initial: [100___] Seuil alerte: [10___]              │
-│ Poids: [250g] Dimensions: [8x8x12 cm]                      │
-│                                                             │
-│ 📝 Description                                              │
-│ Description courte:                                         │
-│ [Miel de lavande artisanal récolté en Provence___]         │
-│                                                             │
-│ Description détaillée:                                      │
-│ [Rich text editor avec formatting_____________]             │
-│                                                             │
-│ 🖼️ Médias                                                   │
-│ [📷 Upload Images] [Galerie: 0/10 images]                  │
-│ Image principale: [Pas d'image sélectionnée]               │
-│                                                             │
-│ 🏷️ Métadonnées                                              │
-│ Tags: [bio, provence, artisanal]                           │
-│ Origine: [France, Provence]                                │
-│ Ingrédients: [Miel de lavande 100%]                        │
-│                                                             │
-│ [Annuler] [Sauvegarder brouillon] [Publier]                │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## 📱 Composants UI
-
-### Header Catalogue avec Métriques
-```tsx
-<div className="mb-6">
-  <div className="flex justify-between items-center mb-4">
-    <div>
-      <h1 className="text-3xl font-bold">Catalogue Produits</h1>
-      <p className="text-muted-foreground">
-        {totalProducts} produits • {activeProducts} actifs • {lowStockCount} stocks faibles
-      </p>
-    </div>
-    <div className="flex gap-2">
-      <Button variant="outline" onClick={bulkImport}>
-        <Upload className="h-4 w-4 mr-2" />
-        Import CSV
-      </Button>
-      <Button variant="outline" onClick={exportCatalog}>
-        <Download className="h-4 w-4 mr-2" />
-        Export
-      </Button>
-      <Button onClick={createProduct}>
-        <Plus className="h-4 w-4 mr-2" />
-        Nouveau Produit
-      </Button>
-    </div>
-  </div>
-  
-  {/* Alertes stock */}
-  {lowStockCount > 0 && (
-    <Alert variant="warning" className="mb-4">
-      <AlertTriangle className="h-4 w-4" />
-      <AlertTitle>Alertes Stock</AlertTitle>
-      <AlertDescription>
-        {lowStockCount} produits ont un stock faible
-        <Button size="sm" variant="outline" className="ml-2" onClick={viewLowStock}>
-          Voir détails
-        </Button>
-      </AlertDescription>
-    </Alert>
-  )}
-</div>
-```
-
-### Filtres et Vue Toggle
-```tsx
-<div className="flex justify-between items-center mb-6">
-  <div className="flex gap-4">
-    <Input
-      placeholder="Rechercher produits..."
-      value={searchQuery}
-      onChange={setSearchQuery}
-      className="max-w-md"
-    />
-    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-      <SelectTrigger className="w-40">
-        <SelectValue placeholder="Catégorie" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="all">Toutes</SelectItem>
-        <SelectItem value="honey">🍯 Miels</SelectItem>
-        <SelectItem value="cosmetics">🧴 Cosmétiques</SelectItem>
-        <SelectItem value="oils">🫒 Huiles</SelectItem>
-        <SelectItem value="gift_sets">🎁 Coffrets</SelectItem>
-      </SelectContent>
-    </Select>
-    <Select value={partnerFilter} onValueChange={setPartnerFilter}>
-      <SelectTrigger className="w-40">
-        <SelectValue placeholder="Partenaire" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="all">Tous</SelectItem>
-        <SelectItem value="habeebee">HABEEBEE</SelectItem>
-        <SelectItem value="ilanga">ILANGA NATURE</SelectItem>
-        <SelectItem value="promiel">PROMIEL</SelectItem>
-      </SelectContent>
-    </Select>
-    <Select value={stockFilter} onValueChange={setStockFilter}>
-      <SelectTrigger className="w-32">
-        <SelectValue placeholder="Stock" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="all">Tous</SelectItem>
-        <SelectItem value="in_stock">En stock</SelectItem>
-        <SelectItem value="low_stock">Stock faible</SelectItem>
-        <SelectItem value="out_of_stock">Rupture</SelectItem>
-      </SelectContent>
-    </Select>
-  </div>
-  
-  <div className="flex gap-2">
-    <ToggleGroup type="single" value={viewMode} onValueChange={setViewMode}>
-      <ToggleGroupItem value="grid">
-        <Grid3X3 className="h-4 w-4" />
-      </ToggleGroupItem>
-      <ToggleGroupItem value="list">
-        <List className="h-4 w-4" />
-      </ToggleGroupItem>
-    </ToggleGroup>
-    <Button variant="outline" size="sm" onClick={openAnalytics}>
-      <BarChart className="h-4 w-4 mr-2" />
-      Analytics
-    </Button>
-  </div>
-</div>
-```
-
-### Card Produit (Vue Grid)
-```tsx
-<Card className="group hover:shadow-lg transition-shadow">
-  <CardContent className="p-4">
-    <div className="aspect-square mb-3 relative overflow-hidden rounded-lg bg-gray-100">
-      {product.images.length > 0 ? (
-        <img
-          src={product.images[0].url}
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-        />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center">
-          <Package className="h-12 w-12 text-gray-400" />
-        </div>
-      )}
-      
-      {/* Badges */}
-      <div className="absolute top-2 right-2 space-y-1">
-        {product.stock_quantity <= product.low_stock_threshold && (
-          <Badge variant="destructive" className="text-xs">
-            Stock faible
-          </Badge>
-        )}
-        {product.is_featured && (
-          <Badge variant="default" className="text-xs">
-            Vedette
-          </Badge>
-        )}
-      </div>
-    </div>
+### Modèle E-commerce Hybride
+```yaml
+Stratégie Catalogue:
+  micro_stock:
+    description: "2-3 SKUs héros en stock MTC"
+    examples: ["Miel Signature MTC", "Coffret Découverte Premium"]
+    margin: "40-60%"
+    fulfillment: "Direct MTC (24-48h)"
     
-    <div className="space-y-2">
-      <div>
-        <h3 className="font-medium line-clamp-2">{product.name}</h3>
-        <p className="text-sm text-muted-foreground">{product.partner.name}</p>
-      </div>
-      
-      <div className="flex items-center justify-between">
-        <span className="text-lg font-bold">{product.price_points} pts</span>
-        <span className="text-sm text-muted-foreground">
-          ≈ €{(product.price_points * 0.85).toFixed(2)}
-        </span>
-      </div>
-      
-      <div className="flex items-center justify-between text-sm">
-        <span className={`${
-          product.stock_quantity <= product.low_stock_threshold 
-            ? 'text-red-600' 
-            : 'text-green-600'
-        }`}>
-          Stock: {product.stock_quantity}
-        </span>
-        <Badge variant={product.status === 'active' ? 'success' : 'secondary'}>
-          {product.status}
-        </Badge>
-      </div>
-    </div>
-  </CardContent>
-  
-  <CardFooter className="p-4 pt-0 flex gap-2">
-    <Button variant="outline" size="sm" className="flex-1" onClick={() => viewProduct(product.id)}>
-      <Eye className="h-4 w-4 mr-2" />
-      Voir
-    </Button>
-    <Button variant="outline" size="sm" className="flex-1" onClick={() => editProduct(product.id)}>
-      <Edit className="h-4 w-4 mr-2" />
-      Modifier
-    </Button>
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm">
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem onClick={() => duplicateProduct(product.id)}>
-          <Copy className="mr-2 h-4 w-4" />
-          Dupliquer
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => updateStock(product.id)}>
-          <Package className="mr-2 h-4 w-4" />
-          Ajuster stock
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => viewAnalytics(product.id)}>
-          <BarChart className="mr-2 h-4 w-4" />
-          Analytics
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem 
-          onClick={() => archiveProduct(product.id)}
-          className="text-destructive"
-        >
-          <Archive className="mr-2 h-4 w-4" />
-          Archiver
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  </CardFooter>
-</Card>
-```
-
-### Formulaire Création/Édition
-```tsx
-<Dialog open={showProductDialog} onOpenChange={setShowProductDialog}>
-  <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-    <DialogHeader>
-      <DialogTitle>
-        {isEditing ? 'Modifier Produit' : 'Nouveau Produit'}
-      </DialogTitle>
-    </DialogHeader>
+  partner_dropship:
+    description: "150+ produits partenaires"
+    partners: ["HABEEBEE", "ILANGA NATURE", "PROMIEL"]
+    commission: "15-25%"
+    fulfillment: "Partner direct (3-7 jours)"
     
-    <Form {...productForm}>
-      <form onSubmit={productForm.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Informations générales */}
-        <div className="grid grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <FormField
-              control={productForm.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nom du produit</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Miel de Lavande Bio 250g" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={productForm.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Catégorie</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="honey">🍯 Miels</SelectItem>
-                        <SelectItem value="cosmetics">🧴 Cosmétiques</SelectItem>
-                        <SelectItem value="oils">🫒 Huiles</SelectItem>
-                        <SelectItem value="gift_sets">🎁 Coffrets</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={productForm.control}
-                name="partner_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Partenaire</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="habeebee">HABEEBEE</SelectItem>
-                        <SelectItem value="ilanga">ILANGA NATURE</SelectItem>
-                        <SelectItem value="promiel">PROMIEL</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-          
-          <div className="space-y-4">
-            <FormField
-              control={productForm.control}
-              name="price_points"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Prix (points)</FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="80" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Équivalent: €{(field.value * 0.85 || 0).toFixed(2)}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={productForm.control}
-                name="stock_quantity"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Stock initial</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="100" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={productForm.control}
-                name="low_stock_threshold"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Seuil alerte</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="10" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Description */}
-        <div className="space-y-4">
-          <FormField
-            control={productForm.control}
-            name="short_description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description courte</FormLabel>
-                <FormControl>
-                  <Input placeholder="Description pour listing produit" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={productForm.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description détaillée</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    placeholder="Description complète du produit..."
-                    rows={4}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* Images */}
-        <div>
-          <FormLabel>Images produit</FormLabel>
-          <div className="mt-2">
-            <ImageUpload
-              value={productImages}
-              onChange={setProductImages}
-              maxImages={10}
-              accept="image/*"
-            />
-          </div>
-        </div>
-
-        {/* Actions */}
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => setShowProductDialog(false)}>
-            Annuler
-          </Button>
-          <Button type="button" variant="outline" onClick={saveDraft}>
-            Sauvegarder brouillon
-          </Button>
-          <Button type="submit">
-            {isEditing ? 'Mettre à jour' : 'Créer produit'}
-          </Button>
-        </DialogFooter>
-      </form>
-    </Form>
-  </DialogContent>
-</Dialog>
+  hybrid_orders:
+    description: "Commandes mixtes stock+dropshipping"
+    handling: "Expéditions séparées avec tracking unifié"
+    customer_info: "Communication transparente SLA"
 ```
 
-## 🔄 États & Interactions
-
-### États Produit
-```typescript
-type ProductStatus = 
-  | 'draft'      // Brouillon en cours
-  | 'active'     // Disponible à la vente
-  | 'inactive'   // Temporairement indisponible
-  | 'archived';  // Archivé définitivement
-
-type StockStatus = 
-  | 'in_stock'     // Stock normal
-  | 'low_stock'    // Stock faible (≤ seuil)
-  | 'out_of_stock' // Rupture (= 0)
-  | 'discontinued'; // Produit arrêté
+### Pricing & Points System
+```yaml
+Points Pricing:
+  rule: "1 point = 1€ valeur produit"
+  sources: 
+    - Investissements projets (65/112/225 points + bonus)
+    - Abonnements Ambassadeur (252/480 points/an)
+  expiry: "18 mois après génération"
+  alerts: "60/30/7 jours avant expiration"
 ```
 
-### Calculs Automatiques
+## 🖼️ Interface Utilisateur
+
+### 1. Liste des Produits
 ```typescript
-// Prix euro équivalent (pour information)
-const calculateEuroEquivalent = (points: number) => {
-  return points * 0.85; // 1 point = €0.85 en valeur produit
-};
-
-// Marge calcul
-const calculateMargin = (pricePoints: number, costPrice: number) => {
-  const euroPrice = calculateEuroEquivalent(pricePoints);
-  return ((euroPrice - costPrice) / euroPrice) * 100;
-};
-
-// Stock status automatique
-const getStockStatus = (quantity: number, threshold: number): StockStatus => {
-  if (quantity === 0) return 'out_of_stock';
-  if (quantity <= threshold) return 'low_stock';
-  return 'in_stock';
-};
-```
-
-## 📡 API & Données
-
-### Routes tRPC
-```typescript
-// CRUD Produits
-admin.products.list: {
-  input: {
-    page: number;
-    limit: number;
-    search?: string;
-    category?: string;
-    partner_id?: string;
-    status?: ProductStatus;
-    stock_status?: StockStatus;
-  };
-  output: {
-    products: Product[];
-    total: number;
-    categories: Category[];
-    stock_alerts: StockAlert[];
-  };
-}
-
-admin.products.create: {
-  input: CreateProductInput;
-  output: { product: Product; success: boolean };
-}
-
-admin.products.update: {
-  input: { id: string; data: UpdateProductInput };
-  output: { product: Product; success: boolean };
-}
-
-// Gestion stock
-admin.products.update_stock: {
-  input: { 
-    id: string; 
-    quantity: number; 
-    reason: string;
-    type: 'restock' | 'adjustment' | 'sold';
-  };
-  output: { success: boolean; new_quantity: number };
-}
-
-admin.products.stock_alerts: {
-  output: {
-    alerts: Array<{
-      product: Product;
-      current_stock: number;
-      threshold: number;
-      days_until_stockout: number;
-    }>;
-  };
-}
-
-// Analytics
-admin.products.analytics: {
-  input: { product_id?: string; date_range?: [Date, Date] };
-  output: {
-    sales_data: Array<{ date: Date; quantity: number; points: number }>;
-    top_products: Array<{ product: Product; sales_count: number }>;
-    conversion_rates: Array<{ product: Product; view_to_purchase: number }>;
-  };
-}
-```
-
-### Modèles de Données
-```typescript
-interface Product {
-  id: string;
-  name: string;
-  short_description: string;
-  description: string;
-  sku: string;
-  category: ProductCategory;
-  partner: Partner;
-  price_points: number;
-  status: ProductStatus;
-  stock_quantity: number;
-  low_stock_threshold: number;
-  stock_status: StockStatus;
-  images: ProductImage[];
-  tags: string[];
-  weight?: number;
-  dimensions?: string;
-  ingredients?: string;
-  origin?: string;
-  is_featured: boolean;
-  created_at: Date;
-  updated_at: Date;
-}
-
-interface ProductImage {
-  id: string;
-  url: string;
-  alt_text: string;
-  is_primary: boolean;
-  sort_order: number;
-}
-
-interface StockMovement {
-  id: string;
-  product_id: string;
-  type: 'restock' | 'sale' | 'adjustment' | 'return';
-  quantity_change: number;
-  quantity_before: number;
-  quantity_after: number;
-  reason: string;
-  admin_id?: string;
-  created_at: Date;
-}
-```
-
-## ✅ Validations
-
-### Contraintes Business
-- **Prix minimum** : 10 points par produit
-- **Prix maximum** : 1000 points par produit
-- **Stock initial** : 1-10,000 unités
-- **Images** : 1-10 images, 5MB max chacune
-- **SKU unique** : Par partenaire
-
-### Permissions
-- **Catalog Manager** : CRUD produits + stock
-- **Partner** : Update ses produits + stock
-- **Admin** : Toutes actions + pricing
-- **Support** : Lecture seule + ajustements stock
-
-### Validation Pricing
-```typescript
-const validateProductPricing = (product: Product) => {
-  const euroEquivalent = product.price_points * 0.85;
-  const partnerCost = product.partner.cost_price || 0;
-  const margin = ((euroEquivalent - partnerCost) / euroEquivalent) * 100;
-  
-  if (margin < 20) {
-    throw new Error('Marge insuffisante (minimum 20%)');
+interface ProductsListView {
+  filters: {
+    category: ProductCategory[]
+    fulfillment: 'all' | 'stock' | 'dropship'
+    partner: string[]
+    status: 'all' | 'active' | 'draft' | 'out_of_stock' | 'discontinued'
+    pointsRange: [number, number]
   }
   
-  if (product.price_points < 10 || product.price_points > 1000) {
-    throw new Error('Prix hors limites autorisées');
+  columns: {
+    thumbnail: string           // Image produit
+    name: string               // Nom du produit
+    category: ProductCategory  // Catégorie avec badge
+    pointsPrice: number        // Prix en points
+    eurEquivalent: number      // Équivalent € (= pointsPrice)
+    partner: string | null     // Partenaire (si dropship)
+    fulfillment: 'stock' | 'dropship' // Type fulfillment
+    inventory: {
+      currentStock?: number    // Stock actuel (si stock)
+      status: InventoryStatus  // Statut stock/disponibilité
+    }
+    performance: {
+      sales30d: number         // Ventes 30 derniers jours
+      conversionRate: number   // Taux conversion produit
+    }
+    status: ProductStatus      // Statut avec badge
+    actions: ActionButtons     // Éditer, Dupliquer, Archiver
   }
-};
+  
+  bulk_actions: {
+    update_status: (ids: string[], status: ProductStatus) => void
+    adjust_points_price: (ids: string[], adjustment: PriceAdjustment) => void
+    export_catalog: (ids: string[], format: 'csv' | 'json') => void
+    sync_partner_data: (partner_ids: string[]) => void
+  }
+}
 ```
 
-## 🚨 Gestion d'Erreurs
-
-### Scenarios Problématiques
+### 2. Création/Édition de Produit
 ```typescript
-const productErrors = {
-  STOCK_NEGATIVE: "Le stock ne peut pas être négatif",
-  DUPLICATE_SKU: "SKU déjà utilisé par ce partenaire",
-  INVALID_PRICING: "Prix points invalide",
-  IMAGE_UPLOAD_FAILED: "Échec upload image",
-  PARTNER_MISMATCH: "Produit non associé à ce partenaire"
-};
+interface ProductEditor {
+  // Section 1: Informations de Base
+  basic_info: {
+    name: string              // Nom produit (requis)
+    slug: string              // URL slug (auto-généré)
+    short_description: string // Description courte (requis, 160 chars)
+    long_description: string  // Description détaillée (markdown supporté)
+    category_id: string       // Catégorie (requis)
+    tags: string[]            // Tags pour filtrage
+    status: ProductStatus     // draft, active, out_of_stock, discontinued
+  }
+  
+  // Section 2: Pricing & Points
+  pricing: {
+    pointsPrice: number        // Prix en points (requis)
+    eurEquivalent: number      // Auto-calculé (= pointsPrice)
+    costBasis?: number         // Coût interne (si stock MTC)
+    marginPercentage?: number  // Marge calculée (si stock MTC)
+    partnerCommission?: number // Commission partenaire (si dropship)
+  }
+  
+  // Section 3: Fulfillment & Inventaire
+  fulfillment: {
+    type: 'stock' | 'dropship' // Type fulfillment (requis)
+    partnerId?: string        // Partenaire (si dropship)
+    
+    // Si stock MTC
+    stock_config?: {
+      currentStock: number
+      lowStockThreshold: number
+      maxStockCapacity: number
+      reorderPoint: number
+      supplierInfo: string
+      warehouseLocation: string
+    }
+    
+    // Si dropshipping
+    dropship_config?: {
+      partnerSku: string        // SKU partenaire
+      partnerPriceEur: number   // Prix partenaire
+      commissionRate: number    // Taux commission
+      estimatedDelivery: string // Délai livraison
+      stockSyncEnabled: boolean // Sync stock temps réel
+    }
+  }
+  
+  // Section 4: Médias & Contenu
+  media: {
+    hero_image: string        // Image principale (requis)
+    gallery: string[]         // Galerie (2-8 images)
+    video_url?: string        // Vidéo produit
+    documents?: string[]      // Fiches techniques/certifications
+  }
+  
+  // Section 5: Spécifications Produit
+  specifications: {
+    dimensions?: {
+      weight?: number         // Poids en grammes
+      size?: string           // Dimensions (L×l×H)
+      volume?: number         // Volume en ml/cl
+    }
+    
+    characteristics: {
+      origin_country?: string // Pays origine
+      organic_certified?: boolean // Bio certifié
+      certifications?: string[] // Labels/certifications
+      ingredients?: string[]   // Ingrédients (si applicable)
+      allergens?: string[]     // Allergènes
+    }
+    
+    usage: {
+      target_audience?: string // Public cible
+      usage_instructions?: string // Instructions usage
+      storage_conditions?: string // Conditions stockage
+      expiry_info?: string     // Info péremption
+    }
+  }
+  
+  // Section 6: SEO & Marketing
+  marketing: {
+    featured: boolean         // Produit mis en avant
+    bestseller: boolean       // Badge bestseller
+    new_product: boolean      // Badge nouveau
+    exclusive: boolean        // Exclusif Ambassadeurs
+    
+    seo: {
+      meta_title?: string
+      meta_description?: string
+      keywords?: string[]
+    }
+    
+    cross_sell: string[]      // Produits recommandés
+    related_projects?: string[] // Projets liés
+  }
+  
+  // Section 7: Configuration Avancée
+  advanced: {
+    min_order_quantity: number // Quantité minimum commande
+    max_order_quantity?: number // Quantité maximum commande
+    seasonal: boolean         // Produit saisonnier
+    season_months?: number[]  // Mois disponibilité (1-12)
+    
+    restrictions: {
+      geographic_restrictions?: string[] // Zones livraison restreinte
+      age_restriction?: number // Restriction âge minimum
+      special_handling?: string // Manutention spéciale
+    }
+  }
+}
 ```
 
-### Auto-corrections
-- **Stock négatif** : Bloqué à 0 avec alerte
-- **Images manquantes** : Placeholder automatique
-- **Prix incohérent** : Suggestion automatique
+## 🔧 Fonctionnalités Critiques
 
-## 📝 Tests Utilisateur
+### 1. Gestion Inventaire Hybride
+```typescript
+interface InventoryManager {
+  stock_products: {
+    current_tracking: {
+      quantity_available: number
+      quantity_reserved: number    // Commandes en attente
+      quantity_allocated: number   // Expéditions en cours
+    }
+    
+    thresholds: {
+      low_stock_alert: number     // Seuil alerte stock bas
+      auto_reorder_point: number  // Réassort automatique
+      safety_stock: number        // Stock sécurité
+    }
+    
+    movements: {
+      track_all_movements: boolean // Traçabilité complète
+      adjustment_reasons: string[] // Motifs ajustements
+      audit_trail: boolean         // Historique modifications
+    }
+  }
+  
+  dropship_products: {
+    partner_sync: {
+      real_time_stock: boolean    // Sync stock temps réel
+      sync_frequency: string      // Fréquence sync (15min/1h/4h)
+      fallback_behavior: 'hide' | 'show_unavailable' | 'backorder'
+    }
+    
+    availability_check: {
+      pre_order_validation: boolean // Vérif disponibilité avant commande
+      timeout_seconds: number       // Timeout API partenaire
+      retry_attempts: number        // Tentatives en cas d'échec
+    }
+  }
+  
+  unified_display: {
+    show_stock_levels: boolean    // Afficher niveaux stock mobile
+    estimated_delivery: boolean   // Délais livraison par type
+    mixed_cart_handling: string   // Gestion paniers mixtes
+  }
+}
+```
 
-### Scénarios Critiques
-1. **Création produit** : Workflow complet <3min
-2. **Upload images** : Batch upload fluide
-3. **Ajustement stock** : Mass update rapide
-4. **Recherche/filtrage** : Résultats instantanés
-5. **Analytics** : Génération rapports <5s
+### 2. Pricing & Commission Engine
+```typescript
+interface PricingEngine {
+  points_calculation: {
+    base_rule: "1 point = 1€ value"
+    
+    price_validation: {
+      min_points: number          // Prix minimum (ex: 5 points)
+      max_points: number          // Prix maximum (ex: 500 points)
+      increment_step: number      // Incrément prix (ex: 1 point)
+    }
+    
+    dynamic_adjustments: {
+      seasonal_modifiers?: number[] // Ajustements saisonniers
+      volume_discounts?: VolumeDiscount[] // Remises volume
+      exclusive_pricing?: boolean   // Prix spéciaux Ambassadeurs
+    }
+  }
+  
+  commission_management: {
+    partner_rates: Map<string, number> // Taux par partenaire
+    
+    calculation_rules: {
+      commission_base: 'points_price' | 'partner_wholesale' // Base calcul
+      payment_terms: string           // Conditions paiement
+      minimum_commission: number      // Commission minimum
+    }
+    
+    tracking: {
+      commission_earned: number       // Commission générée
+      payment_status: PaymentStatus   // Statut paiement partenaire
+      reconciliation_period: string   // Période réconciliation
+    }
+  }
+}
+```
 
-### Performance
-- **Liste produits** : <1s pour 500 produits
-- **Image upload** : <10s par image
-- **Stock update** : <2s response
-- **Search** : <300ms results
+### 3. Workflows Partenaires
+```typescript
+interface PartnerWorkflows {
+  onboarding: {
+    product_import: {
+      csv_template: string          // Template import produits
+      field_mapping: FieldMapping[] // Correspondance champs
+      validation_rules: ValidationRule[] // Règles validation
+      bulk_operations: boolean      // Import en masse
+    }
+    
+    api_integration: {
+      webhook_endpoints: string[]   // URLs webhooks partenaire
+      authentication_method: string // Méthode auth API
+      rate_limiting: RateLimit      // Limites appels API
+    }
+  }
+  
+  ongoing_operations: {
+    product_updates: {
+      auto_sync: boolean           // Sync auto modifications
+      approval_required: boolean   // Approbation changements
+      conflict_resolution: string  // Gestion conflits
+    }
+    
+    order_fulfillment: {
+      order_forwarding: boolean    // Transfer commandes auto
+      status_sync: boolean         // Sync statuts livraison  
+      return_handling: string      // Gestion retours
+    }
+    
+    reporting: {
+      sales_reports: boolean       // Rapports ventes partenaire
+      commission_statements: boolean // Relevés commissions
+      performance_analytics: boolean // Analytics performance
+    }
+  }
+}
+```
+
+## 📊 Analytics E-commerce
+
+### Métriques Produits
+```typescript
+interface ProductMetrics {
+  sales_performance: {
+    total_revenue_points: number    // CA total en points
+    orders_count: number           // Nombre commandes
+    units_sold: number            // Unités vendues
+    conversion_rate: number       // Taux conversion produit
+    cart_abandonment_rate: number // Taux abandon panier
+  }
+  
+  inventory_metrics: {
+    stock_turnover: number        // Rotation stock
+    stockout_frequency: number    // Fréquence ruptures
+    carrying_cost: number         // Coût possession stock
+    obsolescence_rate: number     // Taux obsolescence
+  }
+  
+  customer_insights: {
+    repeat_purchase_rate: number  // Taux rachat
+    avg_order_value_points: number // Panier moyen points
+    customer_segments: CustomerSegment[] // Segments acheteurs
+    satisfaction_score: number    // Score satisfaction
+  }
+  
+  partner_performance: {
+    fulfillment_time: number      // Délai traitement partenaire
+    quality_score: number         // Score qualité
+    return_rate: number          // Taux retour
+    commission_efficiency: number // Efficacité commission
+  }
+}
+```
+
+### Reporting Avancé
+```typescript
+interface AdvancedReporting {
+  business_intelligence: {
+    product_profitability: ProfitabilityReport[]
+    category_performance: CategoryReport[]
+    seasonal_trends: SeasonalAnalysis[]
+    partner_comparison: PartnerComparison[]
+  }
+  
+  operational_reports: {
+    inventory_valuation: InventoryReport
+    commission_reconciliation: CommissionReport
+    fulfillment_performance: FulfillmentReport
+    customer_lifetime_value: CLVReport
+  }
+  
+  export_capabilities: {
+    formats: ['csv', 'excel', 'pdf', 'json']
+    scheduled_reports: boolean
+    automated_distribution: boolean
+    api_access: boolean
+  }
+}
+```
+
+## 🔗 Intégration Mobile & E-commerce
+
+### APIs Générées
+```typescript
+interface ProductsAPI {
+  // Public (mobile & web)
+  getPublicCatalog: (filters?: CatalogFilters) => PublicProduct[]
+  getProductDetails: (slug: string) => ProductDetails
+  searchProducts: (query: string, filters?: SearchFilters) => SearchResults
+  getRecommendations: (product_id?: string, user_id?: string) => PublicProduct[]
+  
+  // Panier & Commandes
+  validateCart: (items: CartItem[]) => CartValidation
+  calculateShipping: (items: CartItem[], address: Address) => ShippingOptions
+  createOrder: (cart: Cart, payment_info: PaymentInfo) => Order
+  
+  // Admin uniquement
+  createProduct: (data: ProductEditor) => Product
+  updateProduct: (id: string, data: Partial<ProductEditor>) => Product
+  bulkUpdatePricing: (updates: PricingUpdate[]) => BulkResult
+  syncPartnerInventory: (partner_ids: string[]) => SyncResult
+  
+  // Analytics & Reporting
+  getProductMetrics: (id: string, timeRange: DateRange) => ProductMetrics
+  generateReport: (type: ReportType, params: ReportParams) => Report
+}
+
+interface PublicProduct {
+  id: string
+  slug: string
+  name: string
+  short_description: string
+  hero_image: string
+  gallery: string[]
+  
+  pricing: {
+    points_price: number
+    eur_equivalent: number
+    volume_discounts?: VolumeDiscount[]
+  }
+  
+  availability: {
+    in_stock: boolean
+    estimated_delivery: string
+    max_quantity: number
+  }
+  
+  details: {
+    category: Category
+    specifications: ProductSpecs
+    partner?: PartnerInfo
+  }
+  
+  marketing: {
+    featured: boolean
+    bestseller: boolean
+    new_product: boolean
+    badges: Badge[]
+  }
+}
+```
+
+## ✅ Critères de Validation MVP
+
+### Tests d'Acceptation
+```yaml
+Fonctionnalités Core:
+  ✓ Créer un produit stock complet en <5min
+  ✓ Importer 50 produits partenaire via CSV <15min
+  ✓ Ajuster prix par catégorie en masse <2min
+  ✓ Sync inventaire partenaire temps réel <30s
+  ✓ Générer rapport performance mensuel <1min
+  
+Performance:
+  ✓ Afficher catalogue 500+ produits <3s
+  ✓ Recherche produit avec filtres <1s
+  ✓ Validation panier mixte <2s
+  ✓ Export CSV 1000+ produits <30s
+  
+E-commerce:
+  ✓ Commande produit → visible mobile immédiatement
+  ✓ Stock bas → alerte admin automatique
+  ✓ Commande mixte → tracking unifié généré
+  ✓ Commission partenaire → calculée automatiquement
+```
+
+## 🎨 Design System
+
+### Statuts & Badges
+```css
+.product-status {
+  active: #22c55e (vert)
+  draft: #94a3b8 (gris)
+  out_of_stock: #f59e0b (ambre)
+  discontinued: #ef4444 (rouge)
+}
+
+.fulfillment-types {
+  stock: #3b82f6 (bleu) + 📦
+  dropshipping: #8b5cf6 (violet) + 🚚
+}
+
+.product-badges {
+  featured: #f59e0b (ambre) + ⭐
+  bestseller: #22c55e (vert) + 🔥
+  new: #3b82f6 (bleu) + ✨
+  exclusive: #8b5cf6 (violet) + 👑
+}
+
+.inventory-levels {
+  high: #22c55e (vert) + 📈
+  medium: #f59e0b (ambre) + 📊
+  low: #ef4444 (rouge) + ⚠️
+  out: #6b7280 (gris) + ❌
+}
+```
 
 ---
 
-**Stack Technique** : React Hook Form + Vercel Blob Store + TanStack Query  
-**Priorité** : 🔥 Critique - Cœur catalogue e-commerce  
-**Estimation** : 8-12 jours développement + intégration images
+**🎯 RÉSULTAT ATTENDU**: Interface admin complète pour gérer le catalogue e-commerce hybride avec pricing en points, gestion d'inventaire temps réel, intégrations partenaires automatisées, et analytics poussées.

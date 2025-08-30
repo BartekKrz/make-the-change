@@ -4,21 +4,24 @@ Ce document présente la stratégie de développement produit alignée sur le no
 
 ## 🎯 Phase 1 : Bootstrap Hybride - Validation 3 Niveaux (Mois 1-6, Budget 0€-5K€)
 
-**Objectif Principal :** Valider le modèle hybride avec exploration gratuite, investissements unitaires (ex: Ruche 50€, Olivier 80€) dans projets spécifiques, et abonnements premium (200€-350€).
+**Objectif Principal :** Valider le modèle hybride avec exploration gratuite, investissements unitaires (ex: Ruche 50€, Olivier 80€) dans projets spécifiques, et abonnements premium (180€-320€).
 
 ### Livrables Clés :
 
 #### Plateforme Fondamentale :
-- Infrastructure backend (tRPC, PostgreSQL, Prisma)
+- Infrastructure backend (tRPC, Supabase PostgreSQL)
 - Système d'authentification unifié (Supabase Auth)
 - Logique de base pour la création de projets et la gestion des utilisateurs
 
-#### Parcours Utilisateur Hybride (Application Mobile - Expo) :
+#### Parcours Utilisateur Hybride - DUAL BILLING INTEGRATION (Application Mobile - Expo) :
 - Onboarding gratuit sans friction (exploration libre)
 - 3 niveaux d'engagement : Explorateur → Protecteur → Ambassadeur
 - Investissements unitaires : Ruche 50€, Olivier 80€, Parcelle 150€
-- Abonnements premium : Standard 200€, Premium 350€
-- Dashboard adaptatif selon niveau utilisateur
+- **NOUVEAU: Abonnements dual billing** : 
+  - **Mensuel** : Standard 18€/mois, Premium 32€/mois
+  - **Annuel** : Standard 180€/an, Premium 320€/an (-17% économies)
+  - Choice par défaut mensuel pour accessibility, upgrade prompts annuel
+- Dashboard adaptatif selon niveau utilisateur + subscription management UI
 
 #### Système de Points Hybride :
 - Génération par investissement OU abonnement
@@ -26,7 +29,7 @@ Ce document présente la stratégie de développement produit alignée sur le no
 - Utilisation sur catalogue complet à prix négociés
 - Expiration 18 mois, alertes intelligentes
 
-#### Gestion Admin Hybride (Dashboard Web - Vercel Edge Functions) :
+#### Gestion Admin Hybride (Dashboard Web - Next.js 15.5 App Router sur Vercel) :
 - CRUD investissements individuels avec tracking spécifique
 - Gestion projets avec updates personnalisés (photos, nouvelles)
 - Allocation flexible abonnements ambassadeurs
@@ -51,9 +54,11 @@ Ce document présente la stratégie de développement produit alignée sur le no
 - Fulfillment optimisé multi-pays
 
 #### Engagement et Gamification :
-- Système de badges et de niveaux
-- Notifications push personnalisées (nouvelle récolte, points expirant, etc.)
-- Contenu éducatif et "mode famille" pour Fatima
+- Système de gamification avancé : **Classement d'Impact**, badges, et niveaux.
+- Fonctionnalités sociales et virales : **Programme de parrainage** et **partage d'impact** sur les réseaux.
+- Engagement "Learn & Earn" : **Quiz éducatifs** et récompenses pour les avis produits.
+- Notifications push personnalisées (nouvelle récolte, points expirant, etc.).
+- Contenu éducatif et "mode famille" pour Fatima.
 
 #### Dashboard Admin Complet :
 - Analytiques business (revenus, conversions)
@@ -270,12 +275,15 @@ Exit Strategy Options:
 
 #### **Revenue Model Evolution Phases 2-3**
 
-**Phase 2 Revenue Streams:**
+**Phase 2 Revenue Streams - DUAL BILLING EVOLUTION:**
 ```yaml
-Abonnements Ambassadeur (Évolution):
-  - Standard: 200€/an
-  - Premium: 350€/an
-  - Corporate: Nouveaux tiers pour entreprises (ex: 500€-2000€)
+Abonnements Ambassadeur (Évolution DUAL BILLING):
+  - NOUVEAU: Dual frequency choice par défaut
+  - Standard: 18€/mois (216€/an équivalent) ou 180€/an (-17%)
+  - Premium: 32€/mois (384€/an équivalent) ou 320€/an (-17%)
+  - Corporate: Nouveaux tiers pour entreprises (ex: 45€/mois ou 500€/an)
+  - MRR focus: Monthly subscribers pour cash flow predictability
+  - Annual conversion: Upgrade prompts après 3-6 mois
 
 Commissions Marketplace (25% revenue):
   - Commission rate: 15-20% (vs 20-25% Phase 1)
@@ -288,12 +296,14 @@ Services Premium (5% revenue):
   - Educational workshops
 ```
 
-**Phase 3 Revenue Diversification:**
+**Phase 3 Revenue Diversification - MATURE DUAL BILLING:**
 ```yaml
 Subscription Evolution (50% revenue):
-  - Elite tier: €800/an with concierge
-  - Family plans: Multi-user discounts
-  - Corporate enterprise: €2,000-10,000/an
+  - Elite tier: 70€/mois ou 800€/an (-15%) with concierge
+  - Family plans: Multi-user discounts (4 users: 60€/mois ou 650€/an)
+  - Corporate enterprise: 180€/mois ou 2,000€/an per team
+  - NOUVEAU: Dynamic pricing selon market conditions
+  - NOUVEAU: Seasonal promotions annual subscriptions
 
 Technology Licensing (20% revenue):
   - B2B platform licensing: €50,000/an per client
@@ -311,4 +321,4 @@ Marketplace Expansion (15% revenue):
   - Exclusive product collaborations
 ```
 
-Cette expansion détaillée transforme le bootstrap Phase 1 en leadership européen avec options d'exit multiples et diversification revenue mature.
+Cette expansion détaillée transforme le bootstrap Phase 1 en leadership européen avec options d'exit multiples et diversification revenue mature, **avec dual billing comme foundation stable pour toutes phases**.

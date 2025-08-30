@@ -29,28 +29,28 @@ Documentation technique complète couvrant architecture, stack, database, API de
 ```
 Turborepo v2 + pnpm workspaces
 ├── apps/mobile/     # Expo SDK 53 + React Native
-├── apps/web/        # Vercel Edge Functions 15 + React 19  
-├── apps/api/        # tRPC v11 + Vercel Edge Functions
+├── apps/web/        # Next.js 15.1 (App Router) + React 19  
+├── apps/api/        # tRPC v11.5.0 (Edge) sur Vercel
 └── packages/shared/ # Types, utils, components
 ```
 
 ### Core Technologies
 
 #### Frontend
-- **Mobile** : Expo SDK 53 + TypeScript 5.7+
-- **Web** : Vercel Edge Functions 15 + React 19 + shadcn/ui v2
+- **Mobile** : Expo SDK 53 + TypeScript 5.9+
+- **Web** : Next.js 15.1 (App Router) + React 19 + shadcn/ui v2
 - **Styling** : Tailwind CSS v4 + NativeWind v4
 - **State** : TanStack Query v5 + Zustand
 
 #### Backend  
-- **Runtime** : Vercel Edge Functions + TypeScript 5.7+
+- **Runtime** : Vercel Edge (tRPC) + Node (webhooks Stripe) + TypeScript 5.9+
 - **API** : tRPC v11 (type-safe end-to-end)
 - **Database** : Supabase Free Tier (PostgreSQL 15)
 - **Cache** : PostgreSQL natif (materialized views)
 - **Auth** : Supabase Auth
 
 #### Infrastructure
-- **Deployment** : Vercel Edge Functions (full-stack)
+- **Deployment** : Vercel (Edge + Node runtimes)
 - **Storage** : Vercel Blob Store (1GB gratuit)
 - **Monitoring** : Vercel Analytics gratuit
 - **CI/CD** : GitHub Actions
@@ -60,8 +60,8 @@ Turborepo v2 + pnpm workspaces
 ```mermaid
 graph TD
     A[Mobile App - Expo] --> B[API Gateway - tRPC]
-    C[Dashboard - Vercel Edge Functions] --> B
-    D[E-commerce - Vercel Edge Functions] --> B
+    C[Dashboard - Next.js (Vercel)] --> B
+    D[E-commerce - Next.js (Vercel)] --> B
     B --> E[Core Services]
     E --> F[PostgreSQL 15]
     E --> G[PostgreSQL Native Cache]
@@ -117,7 +117,7 @@ interface CoreServices {
 ### Monitoring & Debug
 - **Logs** : Sentry + Console aggregation
 - **Performance** : Lighthouse + Web Vitals
-- **Database** : Prisma Studio + pgAdmin
+- **Database** : Supabase Studio + pgAdmin
 - **API** : tRPC panel + Postman
 
 ---

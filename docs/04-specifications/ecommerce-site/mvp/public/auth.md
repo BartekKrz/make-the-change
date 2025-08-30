@@ -518,31 +518,30 @@ auth.register: {
     lastName: string;
     email: string;
     password: string;
-    birthDate: string;
-    newsletter: boolean;
+    marketingConsent: boolean;
   };
   output: {
     user: User;
-    verification_required: boolean;
+    session?: Session;
+    emailVerificationRequired?: boolean;
   };
 }
 
-auth.forgotPassword: {
-  input: { email: string };
-  output: { 
-    sent: boolean; 
-    message: string 
-  };
-}
-
+// Envoi email de réinitialisation
 auth.resetPassword: {
+  input: { email: string };
+  output: { sent: boolean; message: string };
+}
+
+// Confirmation réinitialisation avec token
+auth.confirmPasswordReset: {
   input: {
     token: string;
     password: string;
   };
   output: {
     success: boolean;
-    redirect_url: string;
+    redirectUrl: string;
   };
 }
 ```

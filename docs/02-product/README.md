@@ -14,9 +14,14 @@ Documentation centralisée du produit, design system, parcours utilisateurs et a
 | [feature-list.md](./feature-list.md) | Catalogue features par phase | 📋 À créer | - |
 | [user-journeys.md](./user-journeys.md) | Parcours utilisateurs optimisés | ✅ Final | 2025-01-XX |
 | [information-architecture.md](./information-architecture.md) | IA globale plateforme | ✅ Final | 2025-01-XX |
-| **design-system/** | Système de design complet | | |
+| **ux-research-2025/** | **Recherche UX Stratégique 2025** ⭐ **NOUVEAU** | | |
+| [ux-research-2025/README.md](./ux-research-2025/README.md) | Hub recherche UX 2025 | ✅ **Final** | 2025-08-27 |
+| [ux-research-2025/ui-trends-analysis.md](./ux-research-2025/ui-trends-analysis.md) | Top 10 tendances UI/UX 2025 | ✅ **Final** | 2025-08-27 |
+| **design-system/** | **Système de design étendu** | | |
 | [design-system/README.md](./design-system/README.md) | Vue d'ensemble design system | ✅ Final | 2025-01-XX |
 | [design-system/foundations.md](./design-system/foundations.md) | Couleurs, typo, spacing | ✅ Final | 2025-01-XX |
+| [design-system/components-library.md](./design-system/components-library.md) | **12 patterns UI production-ready** ⭐ **NOUVEAU** | ✅ **Final** | 2025-08-27 |
+| [design-system/green-ux-guidelines.md](./design-system/green-ux-guidelines.md) | **Guidelines design éco-responsable** ⭐ **NOUVEAU** | ✅ **Final** | 2025-08-27 |
 | [design-system/components.md](./design-system/components.md) | Composants réutilisables | 📋 À créer | - |
 | [design-system/patterns.md](./design-system/patterns.md) | Patterns UX | 📋 À créer | - |
 | [design-system/accessibility.md](./design-system/accessibility.md) | Guidelines WCAG | 📋 À créer | - |

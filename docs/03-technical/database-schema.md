@@ -23,7 +23,6 @@ Performance: Indexes optimisés + query monitoring
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR UNIQUE NOT NULL,
-    encrypted_password VARCHAR NOT NULL,
     profile JSONB DEFAULT '{}',
     points_balance INTEGER DEFAULT 0,
     user_level VARCHAR(20) DEFAULT 'explorateur', -- explorateur, protecteur, ambassadeur
@@ -35,6 +34,9 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
+
+-- IMPORTANT: Auth géré par Supabase (auth.users). Aucune colonne password ici.
+-- L'ID de cette table correspond à auth.users.id.
 
 -- Profils utilisateurs étendus
 CREATE TABLE user_profiles (
@@ -62,6 +64,27 @@ CREATE TABLE user_sessions (
     expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+-- Adresses utilisateurs (persistance checkout)
+CREATE TABLE user_addresses (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    label VARCHAR(100), -- ex: Domicile, Bureau
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    street VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    postal_code VARCHAR(20) NOT NULL,
+    country VARCHAR(2) NOT NULL,
+    phone VARCHAR(20),
+    is_default BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Un seul default par utilisateur
+CREATE UNIQUE INDEX idx_user_addresses_one_default 
+ON user_addresses(user_id) WHERE is_default = TRUE;
 
 -- Investissements individuels dans des projets spécifiques  
 CREATE TABLE investments (
@@ -135,21 +158,28 @@ CREATE TABLE project_updates (
 
 #### Subscriptions & Points
 ```sql
--- Abonnements des membres (Niveau Ambassadeur)
+-- Abonnements des membres (Niveau Ambassadeur) - DUAL BILLING
 CREATE TABLE subscriptions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id),
-    subscription_type VARCHAR(30) NOT NULL, -- 'ambassadeur_standard', 'ambassadeur_premium'
-    amount_eur INTEGER NOT NULL, -- montant en euros (200, 350)
-    points_total INTEGER NOT NULL, -- total points générés par l'abonnement (280, 525)
-    bonus_percentage DECIMAL(5,2) NOT NULL, -- Pourcentage bonus (40%, 50%)
-    project_allocation JSONB DEFAULT '{}', -- Allocation flexible projets soutenus
-    payment_intent_id VARCHAR, -- Stripe payment intent
-    payment_status VARCHAR(20) DEFAULT 'pending', -- pending, completed, failed
+    subscription_tier VARCHAR(30) NOT NULL CHECK (subscription_tier IN ('ambassadeur_standard', 'ambassadeur_premium')),
+    billing_frequency VARCHAR(10) NOT NULL CHECK (billing_frequency IN ('monthly', 'annual')),
+    amount_eur INTEGER NOT NULL, -- 18€, 32€ monthly OU 180€, 320€ annual
+    points_total INTEGER NOT NULL, -- total points générés par l'abonnement
+    bonus_percentage DECIMAL(5,2) NOT NULL, -- Pourcentage bonus (30-50%)
+    project_allocation JSONB DEFAULT '{
+        "allocations": [],
+        "lastModified": null,
+        "totalAllocated": 0,
+        "maxProjects": 10
+    }', -- Allocation flexible projets soutenus avec structure enrichie
+    stripe_subscription_id VARCHAR, -- Stripe subscription ID pour monthly/annual
+    payment_status VARCHAR(20) DEFAULT 'pending', -- pending, active, past_due, canceled
+    next_billing_date TIMESTAMP, -- Prochaine facturation (monthly/annual cycle)
     start_date TIMESTAMP DEFAULT NOW(),
-    end_date TIMESTAMP NOT NULL, -- start_date + 1 an
-    points_expiry_date TIMESTAMP NOT NULL, -- 18 mois après start_date
-    status VARCHAR(20) DEFAULT 'active', -- active, expired, cancelled
+    end_date TIMESTAMP, -- NULL pour monthly, set pour annual
+    points_expiry_date TIMESTAMP NOT NULL, -- 18 mois après génération points
+    status VARCHAR(20) DEFAULT 'active', -- active, expired, cancelled, paused
     auto_renew BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
@@ -186,6 +216,39 @@ CREATE TABLE points_expiry_schedule (
     status VARCHAR(20) DEFAULT 'active', -- active, expired, used
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+-- Historique facturation abonnements (pour MRR tracking et analytics)
+CREATE TABLE subscription_billing_history (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    subscription_id UUID REFERENCES subscriptions(id) ON DELETE CASCADE,
+    billing_period_start TIMESTAMP NOT NULL,
+    billing_period_end TIMESTAMP NOT NULL,
+    amount_eur INTEGER NOT NULL, -- Montant facturé cette période
+    points_awarded INTEGER NOT NULL, -- Points attribués cette période
+    stripe_invoice_id VARCHAR, -- Stripe invoice reference
+    payment_status VARCHAR(20) NOT NULL, -- paid, payment_pending, payment_failed
+    payment_date TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Changements d'abonnements (upgrades, downgrades, billing frequency changes)
+CREATE TABLE subscription_changes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    subscription_id UUID REFERENCES subscriptions(id) ON DELETE CASCADE,
+    change_type VARCHAR(30) NOT NULL, -- 'upgrade', 'downgrade', 'billing_change', 'pause', 'resume'
+    old_tier VARCHAR(30),
+    new_tier VARCHAR(30),
+    old_billing_frequency VARCHAR(10),
+    new_billing_frequency VARCHAR(10),
+    old_amount_eur INTEGER,
+    new_amount_eur INTEGER,
+    proration_credit INTEGER DEFAULT 0, -- Crédit de proratisation si applicable
+    effective_date TIMESTAMP DEFAULT NOW(),
+    reason TEXT, -- Raison du changement pour analytics
+    created_by UUID REFERENCES users(id), -- User ou admin qui a effectué le changement
+    created_at TIMESTAMP DEFAULT NOW()
+);
+```
 
 -- Statistiques points par utilisateur (materialized view)
 CREATE MATERIALIZED VIEW user_points_summary AS
@@ -301,6 +364,9 @@ CREATE TABLE orders (
     tracking_number VARCHAR,
     carrier VARCHAR(50),
     
+    -- Créneau de livraison (optionnel)
+    delivery_slot VARCHAR(50),
+    
     -- Statuts et dates
     confirmed_at TIMESTAMP,
     shipped_at TIMESTAMP,
@@ -344,6 +410,24 @@ CREATE TABLE order_status_history (
     notes TEXT,
     created_by UUID REFERENCES users(id), -- admin qui a changé le statut
     created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Panier persistant (si endpoints cart utilisés)
+CREATE TABLE carts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE cart_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    cart_id UUID REFERENCES carts(id) ON DELETE CASCADE,
+    product_id UUID REFERENCES products(id),
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(cart_id, product_id)
 );
 ```
 
@@ -542,6 +626,140 @@ CREATE TABLE producer_metrics (
 
 ## 🚀 Performance Optimizations
 
+### Materialized Views pour Cache
+
+```sql
+-- Vue des abonnements (Ambassadeurs) par utilisateur
+CREATE MATERIALIZED VIEW user_subscription_summary AS
+SELECT 
+    user_id,
+    COUNT(*) as total_subscriptions,
+    SUM(amount_eur) as total_spent_eur,
+    SUM(points_total) as total_points_earned,
+    MIN(start_date) as first_subscription_date,
+    MAX(end_date) as last_subscription_end_date,
+    COUNT(CASE WHEN status = 'active' THEN 1 END) as active_subscriptions
+FROM subscriptions 
+GROUP BY user_id;
+
+CREATE UNIQUE INDEX idx_user_subscription_summary_user ON user_subscription_summary(user_id);
+
+-- Vue des projets populaires
+CREATE MATERIALIZED VIEW popular_projects AS
+SELECT 
+    p.*,
+    COUNT(s.id) as subscriber_count,
+    SUM(s.amount_eur) as total_raised_cents,
+    MAX(s.start_date) as last_subscription_date
+FROM projects p
+-- Jointure à affiner : les Ambassadeurs ont une allocation flexible, les Protecteurs un lien direct via la table 'investments'
+-- CORRIGÉ : Jointure remplacée par logique allocation flexible (voir ligne 851+)
+WHERE p.status = 'active'
+GROUP BY p.id
+ORDER BY subscriber_count DESC, total_raised_cents DESC;
+
+CREATE UNIQUE INDEX idx_popular_projects_id ON popular_projects(id);
+
+-- Vue pour le classement d'impact (V1)
+CREATE MATERIALIZED VIEW user_impact_summary AS
+SELECT
+    u.id as user_id,
+    u.profile ->> 'first_name' as first_name,
+    u.profile ->> 'last_name' as last_name,
+    u.profile ->> 'avatar_url' as avatar_url,
+    COALESCE(SUM(
+        CASE
+            WHEN i.investment_type = 'ruche' THEN 100
+            WHEN i.investment_type = 'olivier' THEN 150
+            WHEN i.investment_type = 'parcelle_familiale' THEN 300
+            ELSE 0
+        END
+    ), 0) as total_impact_score,
+    COUNT(CASE WHEN i.investment_type = 'ruche' THEN 1 END) as ruches_count,
+    COUNT(CASE WHEN i.investment_type = 'olivier' THEN 1 END) as oliviers_count,
+    COUNT(CASE WHEN i.investment_type = 'parcelle_familiale' THEN 1 END) as parcelles_count
+FROM
+    users u
+LEFT JOIN
+    investments i ON u.id = i.user_id
+WHERE
+    i.status = 'active'
+GROUP BY
+    u.id;
+
+CREATE UNIQUE INDEX idx_user_impact_summary_user_id ON user_impact_summary(user_id);
+
+-- Vue métriques hybrides stock + dropshipping (NOUVEAU)
+CREATE MATERIALIZED VIEW hybrid_performance_metrics AS
+SELECT 
+    'stock' as fulfillment_type,
+    COUNT(DISTINCT p.id) as product_count,
+    COUNT(DISTINCT oi.order_id) as order_count,
+    SUM(oi.total_points) as total_points_revenue,
+    AVG(oi.price_points) as avg_points_per_item,
+    SUM(i.cost_price_cents * oi.quantity) / 100.0 as total_cost_eur,
+    (SUM(oi.total_points) - SUM(i.cost_price_cents * oi.quantity) / 100.0) / SUM(oi.total_points) * 100 as margin_percentage
+FROM products p
+JOIN inventory i ON p.id = i.product_id
+JOIN order_items oi ON p.id = oi.product_id
+JOIN orders o ON oi.order_id = o.id
+WHERE p.fulfillment_method = 'stock' 
+  AND o.status NOT IN ('cancelled')
+  AND o.created_at >= NOW() - INTERVAL '30 days'
+UNION ALL
+SELECT 
+    'dropship' as fulfillment_type,
+    COUNT(DISTINCT p.id) as product_count,
+    COUNT(DISTINCT oi.order_id) as order_count,
+    SUM(oi.total_points) as total_points_revenue,
+    AVG(oi.price_points) as avg_points_per_item,
+    SUM(oi.total_points * 0.22) as total_commission_eur, -- 22% commission moyenne
+    (1.0 - 0.22) * 100 as margin_percentage -- 78% margin après commission
+FROM products p
+JOIN order_items oi ON p.id = oi.product_id
+JOIN orders o ON oi.order_id = o.id
+WHERE p.fulfillment_method = 'dropship' 
+  AND o.status NOT IN ('cancelled')
+  AND o.created_at >= NOW() - INTERVAL '30 days';
+
+-- Vue alertes stock (NOUVEAU)
+CREATE MATERIALIZED VIEW inventory_status_overview AS
+SELECT 
+    i.id,
+    p.name as product_name,
+    p.is_hero_product,
+    i.quantity_available,
+    i.reorder_threshold,
+    CASE 
+        WHEN i.quantity_available <= 0 THEN 'out_of_stock'
+        WHEN i.quantity_available <= i.reorder_threshold THEN 'low_stock'
+        ELSE 'ok'
+    END as stock_status,
+    i.rotation_days,
+    CASE 
+        WHEN i.rotation_days > 90 THEN 'slow_rotation'
+        WHEN i.rotation_days > 60 THEN 'medium_rotation'
+        ELSE 'fast_rotation'
+    END as rotation_status,
+    i.last_restock_date,
+    i.expiry_date,
+    CASE 
+        WHEN i.expiry_date IS NOT NULL AND i.expiry_date <= NOW() + INTERVAL '30 days' THEN true
+        ELSE false
+    END as expiry_warning
+FROM inventory i
+JOIN products p ON i.product_id = p.id
+WHERE p.is_active = true;
+
+-- Refresh automatique via cron jobs
+-- SELECT cron.schedule('refresh-user-summary', '0 2 * * *', 'REFRESH MATERIALIZED VIEW CONCURRENTLY user_subscription_summary;');
+-- SELECT cron.schedule('refresh-popular-projects', '0 3 * * *', 'REFRESH MATERIALIZED VIEW CONCURRENTLY popular_projects;');
+-- SELECT cron.schedule('refresh-hybrid-metrics', '0 4 * * *', 'REFRESH MATERIALIZED VIEW CONCURRENTLY hybrid_performance_metrics;');
+-- SELECT cron.schedule('refresh-inventory-status', '0 */6 * * *', 'REFRESH MATERIALIZED VIEW CONCURRENTLY inventory_status_overview;');
+-- SELECT cron.schedule('refresh-impact-summary', '0 1 * * *', 'REFRESH MATERIALIZED VIEW CONCURRENTLY user_impact_summary;');
+```
+
+
 ### Indexes Critiques
 ```sql
 -- Users
@@ -555,10 +773,22 @@ CREATE INDEX idx_projects_type_status ON projects(type, status);
 CREATE INDEX idx_projects_featured ON projects(featured, status) WHERE featured = true;
 CREATE INDEX idx_projects_funding ON projects(funding_progress, status);
 
--- Subscriptions
+-- Subscriptions (DUAL BILLING)
 CREATE INDEX idx_subscriptions_user ON subscriptions(user_id);
-CREATE INDEX idx_subscriptions_status_end_date ON subscriptions(status, end_date);
-CREATE INDEX idx_subscriptions_type ON subscriptions(subscription_type);
+CREATE INDEX idx_subscriptions_status_billing ON subscriptions(status, next_billing_date);
+CREATE INDEX idx_subscriptions_tier_frequency ON subscriptions(subscription_tier, billing_frequency);
+CREATE INDEX idx_subscriptions_stripe ON subscriptions(stripe_subscription_id) WHERE stripe_subscription_id IS NOT NULL;
+CREATE INDEX idx_subscriptions_expiry ON subscriptions(points_expiry_date);
+
+-- Subscription Billing History (for MRR analytics)
+CREATE INDEX idx_billing_history_subscription ON subscription_billing_history(subscription_id, billing_period_start DESC);
+CREATE INDEX idx_billing_history_period ON subscription_billing_history(billing_period_start, payment_status);
+CREATE INDEX idx_billing_history_stripe ON subscription_billing_history(stripe_invoice_id) WHERE stripe_invoice_id IS NOT NULL;
+
+-- Subscription Changes (for conversion analytics)
+CREATE INDEX idx_subscription_changes_subscription ON subscription_changes(subscription_id, effective_date DESC);
+CREATE INDEX idx_subscription_changes_type ON subscription_changes(change_type, effective_date DESC);
+CREATE INDEX idx_subscription_changes_billing_freq ON subscription_changes(old_billing_frequency, new_billing_frequency) WHERE change_type = 'billing_change';
 
 -- Points
 CREATE INDEX idx_points_user_type ON points_transactions(user_id, type);
@@ -626,7 +856,7 @@ SELECT
     MAX(s.start_date) as last_subscription_date
 FROM projects p
 -- Jointure à affiner : les Ambassadeurs ont une allocation flexible, les Protecteurs un lien direct via la table 'investments'
--- LEFT JOIN subscriptions s ON p.id = s.project_id AND s.status = 'active'
+-- CORRIGÉ : Jointure remplacée par logique allocation flexible (voir ligne 851+)
 WHERE p.status = 'active'
 GROUP BY p.id
 ORDER BY subscriber_count DESC, total_raised_cents DESC;
@@ -751,6 +981,9 @@ ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE points_transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_addresses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE carts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE cart_items ENABLE ROW LEVEL SECURITY;
 
 -- Politiques RLS pour users
 CREATE POLICY "Users can view own profile" ON users FOR SELECT USING (auth.uid() = id);
@@ -763,6 +996,26 @@ CREATE POLICY "Admins can view all subscriptions" ON subscriptions FOR ALL USING
 -- Politiques RLS pour points_transactions
 CREATE POLICY "Users can view own points" ON points_transactions FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "System can insert points" ON points_transactions FOR INSERT WITH CHECK (true);
+
+-- Politiques RLS pour user_addresses
+CREATE POLICY "Users manage own addresses" ON user_addresses
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- Politiques RLS pour carts
+CREATE POLICY "Users manage own cart" ON carts
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- Politiques RLS pour cart_items (via cart.user_id)
+CREATE POLICY "Users manage own cart items" ON cart_items
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM carts c WHERE c.id = cart_id AND c.user_id = auth.uid()
+    )
+  ) WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM carts c WHERE c.id = cart_id AND c.user_id = auth.uid()
+    )
+  );
 ```
 
 ### Audit Trail

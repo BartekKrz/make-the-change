@@ -126,11 +126,11 @@ Gérer le cycle complet des commandes passées avec des points : traitement, ful
 ```tsx
 const orderColumns: ColumnDef<Order>[] = [
   {
-    accessorKey: "order_number",
+    accessorKey: "orderNumber",
     header: "N° Commande",
     cell: ({ row }) => (
       <span className="font-mono font-medium">
-        #{row.original.order_number}
+        #{row.original.orderNumber}
       </span>
     ),
   },
@@ -168,11 +168,11 @@ const orderColumns: ColumnDef<Order>[] = [
     ),
   },
   {
-    accessorKey: "total_points",
+    accessorKey: "totalPoints",
     header: "Total",
     cell: ({ row }) => (
       <span className="font-medium">
-        {row.original.total_points} pts
+        {row.original.totalPoints} pts
       </span>
     ),
   },
@@ -209,9 +209,9 @@ const orderColumns: ColumnDef<Order>[] = [
     },
   },
   {
-    accessorKey: "created_at",
+    accessorKey: "createdAt",
     header: "Date",
-    cell: ({ row }) => formatDate(row.original.created_at),
+    cell: ({ row }) => formatDate(row.original.createdAt),
   },
   {
     id: "actions",
@@ -267,9 +267,9 @@ const orderColumns: ColumnDef<Order>[] = [
 <Sheet open={selectedOrder !== null} onOpenChange={closeOrderPanel}>
   <SheetContent className="w-96 overflow-y-auto">
     <SheetHeader>
-      <SheetTitle>Commande #{selectedOrder?.order_number}</SheetTitle>
+      <SheetTitle>Commande #{selectedOrder?.orderNumber}</SheetTitle>
       <SheetDescription>
-        {selectedOrder?.customer.name} • {formatDate(selectedOrder?.created_at)}
+        {selectedOrder?.customer.name} • {formatDate(selectedOrder?.createdAt)}
       </SheetDescription>
     </SheetHeader>
     
@@ -319,12 +319,12 @@ const orderColumns: ColumnDef<Order>[] = [
       <div>
         <h3 className="font-medium mb-2">Livraison</h3>
         <div className="text-sm space-y-1">
-          <div>{selectedOrder?.shipping_address.name}</div>
-          <div>{selectedOrder?.shipping_address.street}</div>
+          <div>{selectedOrder?.shippingAddress.name}</div>
+          <div>{selectedOrder?.shippingAddress.street}</div>
           <div>
-            {selectedOrder?.shipping_address.postal_code} {selectedOrder?.shipping_address.city}
+            {selectedOrder?.shippingAddress.postalCode} {selectedOrder?.shippingAddress.city}
           </div>
-          <div>{selectedOrder?.shipping_address.country}</div>
+          <div>{selectedOrder?.shippingAddress.country}</div>
         </div>
       </div>
 
@@ -337,18 +337,18 @@ const orderColumns: ColumnDef<Order>[] = [
               <div>
                 <div className="font-medium text-sm">{item.product.name}</div>
                 <div className="text-xs text-muted-foreground">
-                  Qté: {item.quantity} • {item.points_per_unit} pts/unité
+                  Qté: {item.quantity} • {item.pointsPerUnit} pts/unité
                 </div>
               </div>
               <div className="text-sm font-medium">
-                {item.total_points} pts
+                {item.totalPoints} pts
               </div>
             </div>
           ))}
         </div>
         <div className="flex justify-between font-medium mt-2 pt-2 border-t">
           <span>Total</span>
-          <span>{selectedOrder?.total_points} points</span>
+          <span>{selectedOrder?.totalPoints} points</span>
         </div>
       </div>
 
@@ -539,8 +539,8 @@ admin.orders.export: {
 }
 
 admin.orders.generate_packing_slip: {
-  input: { order_id: string };
-  output: { pdf_url: string };
+  input: { orderId: string };
+  output: { pdfUrl: string };
 }
 ```
 
@@ -548,31 +548,31 @@ admin.orders.generate_packing_slip: {
 ```typescript
 interface Order {
   id: string;
-  order_number: string;
+  orderNumber: string;
   customer: Customer;
   status: OrderStatus;
-  total_points: number;
+  totalPoints: number;
   items: OrderItem[];
-  shipping_address: Address;
-  tracking_number?: string;
+  shippingAddress: Address;
+  trackingNumber?: string;
   notes?: string;
-  created_at: Date;
-  updated_at: Date;
-  shipped_at?: Date;
-  delivered_at?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  shippedAt?: Date;
+  deliveredAt?: Date;
 }
 
 interface OrderItem {
   id: string;
   product: Product;
   quantity: number;
-  points_per_unit: number;
-  total_points: number;
+  pointsPerUnit: number;
+  totalPoints: number;
 }
 
 interface OrderTimelineEvent {
   id: string;
-  order_id: string;
+  orderId: string;
   status: OrderStatus;
   label: string;
   completed: boolean;
@@ -587,7 +587,7 @@ interface OrderNote {
   admin_id: string;
   admin: Admin;
   note: string;
-  created_at: Date;
+  createdAt: Date;
 }
 ```
 

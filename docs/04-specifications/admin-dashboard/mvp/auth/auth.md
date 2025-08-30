@@ -217,6 +217,6 @@ interface AdminSession {
 
 ---
 
-**Stack Technique** : Vercel Edge Functions + Supabase Auth + shadcn/ui + tRPC v11  
+**Stack Technique** : Next.js 15.5 (App Router) sur Vercel + Supabase Auth + shadcn/ui + tRPC v11  
 **Priorité** : 🔥 Critique - Bloquant pour tout développement admin  
 **Estimation** : 3-5 jours développement + tests sécurité

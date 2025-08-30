@@ -455,35 +455,25 @@ CREATE TABLE partner_inventory (
 );
 ```
 
-### **API Endpoints Essentiels**
-```yaml
-# Authentification
-POST /api/partner-app/auth/login
-POST /api/partner-app/auth/refresh
-POST /api/partner-app/auth/logout
+### **API tRPC Essentielles**
+```ts
+// Auth
+partners.app.login: mutation<{ email: string; password: string }, PartnerLoginResponseDTO>
+partners.app.me: query<void, PartnerUserDTO>
 
-# Projets
-GET /api/partner-app/projects
-GET /api/partner-app/projects/:id
-PUT /api/partner-app/projects/:id/status
+// Projets
+partners.app.projects: query<void, PartnerProjectDTO[]>
 
-# Updates
-POST /api/partner-app/updates
-GET /api/partner-app/updates
-GET /api/partner-app/updates/:id
-PUT /api/partner-app/updates/:id (si draft)
+// Updates
+partners.app.createUpdate: mutation<PartnerUpdateCreateInput, PartnerUpdateDTO>
+partners.app.myUpdates: query<{ page?: number; limit?: number }, Paginated<PartnerUpdateDTO>>
+partners.app.uploadMedia: mutation<{ updateId: string; files: FilePayload[] }, MediaUploadDTO[]>
 
-# Médias
-POST /api/partner-app/media/upload-url (URL pré-signée)
-POST /api/partner-app/media/confirm (confirmer upload)
+// (MVP+) Expéditions
+// partners.app.createShipment, partners.app.updateShipment
 
-# (MVP+) Expéditions
-POST /api/partner-app/shipments
-PUT /api/partner-app/shipments/:id
-
-# (MVP+) Inventaire
-GET /api/partner-app/inventory
-PUT /api/partner-app/inventory/:productId
+// (MVP+) Inventaire
+// partners.app.listInventory, partners.app.updateInventory
 ```
 
 ---

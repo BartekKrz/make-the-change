@@ -282,7 +282,7 @@ const transactionColumns: ColumnDef<PointsTransaction>[] = [
       <DialogDescription>
         Utilisateur: {selectedUser?.name} ({selectedUser?.email})
         <br />
-        Solde actuel: {selectedUser?.points_balance} pts
+        Solde actuel: {selectedUser?.pointsBalance} pts
       </DialogDescription>
     </DialogHeader>
     
@@ -564,35 +564,35 @@ interface PointsTransaction {
   description: string;
   reference_id?: string; // ID investissement/commande
   reference_type?: 'subscription' | 'order' | 'bonus';
-  earned_date: Date;
-  expiry_date?: Date;
-  used_date?: Date;
-  created_at: Date;
+  earnedDate: Date;
+  expiryDate?: Date;
+  usedDate?: Date;
+  createdAt: Date;
 }
 
 interface PointsAdjustment {
   id: string;
-  transaction_id: string;
-  admin_id: string;
+  transactionId: string;
+  adminId: string;
   admin: Admin;
   type: 'add' | 'remove' | 'extend' | 'reset';
-  amount_before: number;
-  amount_after: number;
-  expiry_before?: Date;
-  expiry_after?: Date;
+  amountBefore: number;
+  amountAfter: number;
+  expiryBefore?: Date;
+  expiryAfter?: Date;
   reason: string;
-  created_at: Date;
+  createdAt: Date;
 }
 
 interface PointsAuditLog {
   id: string;
-  user_id: string;
-  admin_id?: string;
+  userId: string;
+  adminId?: string;
   action: string;
   details: any;
-  ip_address: string;
-  user_agent: string;
-  created_at: Date;
+  ipAddress: string;
+  userAgent: string;
+  createdAt: Date;
 }
 ```
 

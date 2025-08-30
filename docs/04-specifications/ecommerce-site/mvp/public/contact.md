@@ -839,6 +839,6 @@ hj('event', 'contact_form_interaction');
 
 ---
 
-**Stack Technique** : Vercel Edge Functions + React Hook Form + shadcn/ui + Crisp Chat  
+**Stack Technique** : Next.js 15.5 (App Router) sur Vercel + React Hook Form + shadcn/ui + Crisp Chat  
 **Priorité** : 🔥 Critique - Support client essentiel  
 **Estimation** : 4-5 jours développement + intégrations

@@ -1,6 +1,6 @@
 # 🚀 Mobile App MVP - Spécifications
 
-**📍 VERSION: MVP** | **🗓️ TIMELINE: Mois 1-4** | **⭐️ PRIORITÉ: Critique**
+**📍 VERSION: MVP** | **🗓️ TIMELINE: 5 Mois (20 Semaines)** | **⭐️ PRIORITÉ: Critique**
 
 > **🎨 NEW**: Cette documentation a été enrichie avec l'analyse UX/UI moderne 2025. 
 > 
@@ -30,7 +30,7 @@ Cette version couvre les fonctionnalités **absolument essentielles** pour le la
 ## 📁 Structure des Spécifications
 
 ### 🔐 Authentication (`/auth/`)
-**Mois 1 - Semaines 1-4**
+**Semaines 1-4 (Mois 1)**
 
 > **📍 MODERN UX**: Les spécifications onboarding ont été modernisées
 > 👉 **[`../optimal-onboarding-flow-2025.md`](../optimal-onboarding-flow-2025.md)** - Flow complet optimisé
@@ -40,7 +40,7 @@ Cette version couvre les fonctionnalités **absolument essentielles** pour le la
 - [`_archive/`](./auth/_archive/) - Anciens specs splash/onboarding (archivés)
 
 ### 🧭 Navigation Essentielle (`/navigation/`)
-**Mois 3 - Semaines 9-12**
+**Semaines 9-12 (Mois 3)**
 
 > **📍 MODERN UX**: Navigation patterns modernisés
 > 👉 **[`../core-flows-navigation-patterns-2025.md`](../core-flows-navigation-patterns-2025.md)** - Patterns avancés
@@ -50,18 +50,18 @@ Cette version couvre les fonctionnalités **absolument essentielles** pour le la
 - [`_modern-dashboard-reference.md`](./navigation/_modern-dashboard-reference.md) - Lien vers specs modernes
 
 ### 🌊 Flux Critiques (`/flows/`)
-**Mois 2 - Semaines 5-8**
-- [`project-detail.md`](./flows/project-detail.md) 🚧 **À développer** - Détail projet + CTA investissement
-- [`payment-tunnel.md`](./flows/payment-tunnel.md) 🚧 **À développer** - Processus paiement Stripe
+**Semaines 11-14 (Mois 3-4)**
+- [`project-detail.md`](./flows/project-detail.md) ✅ **Complet** - Détail projet + CTA investissement
+- [`payment-tunnel.md`](./flows/payment-tunnel.md) ✅ **Complet** - Processus paiement Stripe
 
 ### 🧩 Composants Essentiels (`/components/`)
-**Mois 1-4 - Transversal**
+**Semaines 1-20 - Transversal**
 
 > **📍 MODERN UX**: Composants avec micro-interactions modernes
 > 👉 **[`../modern-ux-analysis-2025.md`](../modern-ux-analysis-2025.md)** - Micro-interactions détaillées
 
-- [`loading-states.md`](./components/loading-states.md) 🚧 **À développer** - États de chargement standardisés
-- [`error-handling.md`](./components/error-handling.md) 🚧 **À développer** - Gestion d'erreurs uniforme
+- [`loading-states.md`](./components/loading-states.md) ✅ **Complet** - États de chargement standardisés
+- [`error-handling.md`](./components/error-handling.md) ✅ **Complet** - Gestion d'erreurs uniforme
 - [`navigation-bar.md`](./components/navigation-bar.md) ✅ **Détaillé** - Barre de navigation principale
 - [`_modern-nav-reference.md`](./components/_modern-nav-reference.md) - Référence navigation moderne
 
@@ -73,48 +73,58 @@ Cette version couvre les fonctionnalités **absolument essentielles** pour le la
 - **Conversion investissement** : >25%
 - **Crash rate** : <1%
 
-### 👤 **Métriques Utilisateur**
+### 👤 **Métriques Utilisateur - DUAL BILLING KPIs**
 - **Onboarding completion** : >80%
 - **First investment rate** : >25%
+- **NOUVEAU: Billing frequency choice** : 70% monthly, 30% annual initial
+- **NOUVEAU: Monthly→Annual conversion** : >15% après 3 mois
 - **Session length** : >5min
 - **User retention 7J** : >60%
+- **NOUVEAU: Subscription management engagement** : >40% monthly access
 
-## 🚀 Plan d'Implémentation
+## 🚀 Plan d'Implémentation (20 Semaines)
 
-### **Semaine 1-4 : Authentification Foundation**
-1. Setup Expo + Navigation
-2. Écrans auth complets
-3. Intégration Supabase Auth
-4. Tests utilisateur auth flow
+### **Semaines 1-4 : Authentification Foundation + DUAL BILLING**
+1. Setup Expo + Navigation (TanStack Query, NativeWind)
+2. Écrans auth complets (login, register, onboarding)
+3. **NOUVEAU: Billing frequency choice integration** dans onboarding
+4. Intégration Supabase Auth + user levels + Stripe setup
+5. Tests utilisateur auth flow + dual billing choice validation
 
-### **Semaine 5-8 : Investment Core**
-1. Admin crée projets (parallèle)
-2. Mobile découverte projets
-3. Flux investissement + Stripe
-4. Génération points automatique
+### **Semaines 9-12 : Mobile App Core + SUBSCRIPTION MANAGEMENT**
+1. Navigation principale + dashboard adaptatif par niveau
+2. **NOUVEAU: Subscription info display** + current plan + next billing
+3. Découverte projets + géolocalisation
+4. Système investissements + génération points 
+5. **NOUVEAU: Dual Stripe integration** (Subscriptions + Payment Intents)
+6. **NOUVEAU: Monthly→Annual upgrade prompts** + incentives
 
-### **Semaine 9-12 : Dashboard & Polish**
-1. Dashboard utilisateur riche
-2. Historique investissements
-3. Composants réutilisables
-4. Performance optimization
+### **Semaines 13-14 : E-commerce Mobile + BILLING MANAGEMENT** 
+1. Catalogue produits + filtres par points
+2. Panier + checkout avec points
+3. **NOUVEAU: Subscription management screen** (change plan, billing portal)
+4. Historique commandes + tracking
+5. **NOUVEAU: Billing history integration**
+6. Système notifications expiration points
 
-### **Semaine 13-16 : Préparation Launch**
-1. Tests E2E complets
-2. Performance audit
-3. Security review
-4. Store submission prep
+### **Semaines 17-20 : Tests & Optimisation**
+1. Tests E2E complets + debugging
+2. Performance audit + optimisations
+3. Security review + audit sécurité
+4. Store submission + préparation launch
 
 ## 🔗 Liens Rapides
 
 ### **Spécifications Prêtes**
-- **[UX Analysis 2025](../modern-ux-analysis-2025.md)** - Vision stratégique complète ⭐️
-- **[Onboarding Flow 2025](../optimal-onboarding-flow-2025.md)** - Flow conversion-optimisé ⭐️
-- **[Navigation Patterns 2025](../core-flows-navigation-patterns-2025.md)** - Navigation moderne ⭐️
+- **[Mobile Conventions 2025](../mobile-conventions/)** - Conventions de code unifiées ⭐️⭐️⭐️
+- **[UX Analysis 2025](../2025-analysis/modern-ux-analysis-2025.md)** - Vision stratégique complète ⭐️
+- **[Onboarding Flow 2025](../2025-analysis/optimal-onboarding-flow-2025.md)** - Flow conversion-optimisé ⭐️
+- **[Navigation Patterns 2025](../2025-analysis/core-flows-navigation-patterns-2025.md)** - Navigation moderne ⭐️
 - [Register](./auth/register.md) - Création de compte détaillée
-- [Login](./auth/login.md) - Connexion sécurisée
+- [Login](./auth/login.md) - Connexion sécurisée  
 - [Dashboard](./navigation/dashboard.md) - Vue d'ensemble adaptative
 - [Navigation Bar](./components/navigation-bar.md) - Navigation de base
+- [Implementation Patterns](./implementation-patterns.md) - Patterns techniques avec TanStack Form ⭐️
 
 ### **Spécifications à Compléter**
 - [Project Detail](./flows/project-detail.md) - **PRIORITÉ HAUTE** Semaine 5
@@ -122,9 +132,10 @@ Cette version couvre les fonctionnalités **absolument essentielles** pour le la
 - [Loading States](./components/loading-states.md) - **PRIORITÉ MOYENNE** Semaine 3
 
 ### **Références Externes**
+- [../mobile-conventions/](../mobile-conventions/) - **NOUVEAU** Conventions de code unifiées
 - [../../../07-project-management/sprint-planning.md](../../../07-project-management/sprint-planning.md) - Planning détaillé 4 mois
 - [../../../03-technical/architecture-overview.md](../../../03-technical/architecture-overview.md) - Stack technique
-- [../../../01-strategy/business-model-adaptive.md](../../../01-strategy/business-model-adaptive.md) - Logique métier
+- [../../../01-strategy/business-model-definitive.md](../../../01-strategy/business-model-definitive.md) - Logique métier
 
 ---
 

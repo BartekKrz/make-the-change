@@ -250,7 +250,7 @@ test('home page conversion flow', async ({ page }) => {
 
 ### SEO Optimizations
 ```tsx
-// Métadonnées Vercel Edge Functions
+// Métadonnées Next.js (metadata API)
 export const metadata = {
   title: 'Make the CHANGE - Investissement Biodiversité',
   description: 'Les récompenses de la nature, méritées par votre impact. Investissez dans la biodiversité et échangez vos points contre des produits premium.',
@@ -259,7 +259,7 @@ export const metadata = {
 ```
 
 ### Optimizations Performance
-- **Images** : Vercel Edge Functions Image avec lazy loading
+- **Images** : next/image (optimisation Vercel) avec lazy loading
 - **Fonts** : Preload des fonts critiques
 - **Critical CSS** : Inline CSS critique pour hero
 - **Prefetch** : Links vers pages principales

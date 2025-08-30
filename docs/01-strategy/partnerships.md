@@ -43,21 +43,65 @@ Fulfillment: Entrepôt centralisé Belgique
 Shipping: Livraison Europe 3-5 jours
 ```
 
-### Catalogue Produits Confirmé
+### **NOUVEAU - Stratégie Marketing & Acquisition Client**
+
+#### **Base Clients Co-Marketing**
 ```yaml
-Produits Premium (1 point = 1€ de valeur produit):
+PROFIL AUDIENCE:
+- Taille: 800-1,500 clients actifs e-commerce
+- Démographie: 25-55 ans, revenus moyens-élevés
+- Comportement: Sensibles environnement, achats éthiques récurrents
+- Budget: €200-500/an produits biologiques/artisanaux
+- Engagement: Newsletter ouverte 25-35%, commandes 3-4x/an
+```
+
+#### **Mécanismes d'Acquisition (GDPR-Compliant)**
+```yaml
+EMAIL CO-BRANDÉ:
+- Envoi: HABEEBEE via leur liste (protection GDPR)
+- Reception: Make the CHANGE via landing dédiée
+- Landing: makethechange.com/habeebee + UTM tracking
+- Message: "Découvrez Make the CHANGE, partenaire HABEEBEE"
+
+OFFRES EXCLUSIVES:
+- Code "HABEEBEE20": 20 points offerts + 1er mois -50%
+- Messaging: "Pour 9€ au lieu de 18€, adoptez votre première ruche"
+- Urgence: "Offre limitée 200 premiers clients HABEEBEE"
+
+ON-PACK INSERTION:
+- Flyer A6 dans chaque colis HABEEBEE (200 colis/mois)
+- QR Code: Landing + code "WELCOME10" (expire 30j)
+- Coût: €0.50/flyer, ROI attendu: 5% scan × 8% conversion = 1 abonné/mois
+```
+
+#### **Projections d'Acquisition Réalistes**
+```yaml
+EMAIL CAMPAIGNS (2 envois/4 mois):
+- Email 1 (Mois 1): 1,200 envois × 3% CTR × 8% CVR = 3 abonnés
+- Email 2 (Mois 3): 1,200 envois × 2.5% CTR × 6% CVR = 2 abonnés
+- Total email: 5 abonnés sur 4 mois
+
+ON-PACK INSERTION:
+- Volume: 800 colis sur 4 mois
+- Performance: 5% scan × 8% conversion = 3 abonnés
+- Coût: €400 (impression + design)
+
+TOTAL HABEEBEE: 8 abonnés | CAC: €50 | ROI: 500% sur 12 mois
+```
+
+### Catalogue Produits Confirmé
+
+> **📊 PRIX DÉFINITIFS** : Voir [pricing-master-sheet.md](./pricing-master-sheet.md) pour la grille tarifaire complète
+
+```yaml
+Exemple Produits Premium (1 point = 1€):
 - Miel d'Acacia (250g/500g) - 15/27 points
 - Miel de Tilleul (250g/500g) - 17/30 points  
 - Miel de Châtaignier (250g/500g) - 19/34 points
-- Miel de Bruyère (250g/500g) - 21/38 points
 - Pollen frais (100g) - 13 points
-- Propolis teinture (30ml) - 24 points
-- Cire d'abeille artisanale (200g) - 10 points
+- Commission confirmée: 20%
 
-Produits Corporates:
-- Pots miel personnalisés entreprises
-- Coffrets cadeaux executive
-- Formations apiculture urbaine
+→ Catalogue complet avec 11 produits dans pricing-master-sheet.md
 ```
 
 ## 🇲🇬 ILANGA NATURE - Partenaire Impact Madagascar
@@ -74,42 +118,29 @@ Model: Commerce équitable + développement durable
 ```
 
 ### Gamme Produits Actuelle (2025)
+
+> **📊 PRIX DÉFINITIFS** : Voir [pricing-master-sheet.md](./pricing-master-sheet.md) pour la grille tarifaire complète
+
 ```yaml
-Miels Premium (Madagascar/Réunion):
-- Pink Berries Honey BIO 250g - 7€ (9 points)
-- Primary Forest Honey 250g - 7€ (9 points)
-- Mokarana Honey 250g - 8.50€ (11 points)
-- Niaouli Honey 250g - 6.50€ (8 points)
-- Lychee Honey 250g - 6.50€ (8 points)
+Exemples Produits Premium Madagascar:
+- Pink Berries Honey BIO 250g - 9 points
+- Miel Forêt Primaire 250g - 9 points
+- Vanille 3 gousses - 13 points
+- Voatsiperifery rouge 150g - 30 points
+- Commission négociée: 25%
 
-Vanille Bourbon Madagascar:
-- 3 gousses vanille - 10€ (13 points)
-- Poudre vanille 15g - 10€ (13 points)
-- Extrait vanille 30ml - 5.85€ (7 points)
-
-Épices & Condiments:
-- Voatsiperifery rouge 150g - 23€ (30 points)
-- Poivre vert saumure 135g - 4.51€ (6 points)
-- Sels aromatisés 500g - 4.73€ (6 points)
-
-Huiles d'Olive Sardaigne:
-- Extra vierge 25cl BIO - 8.50€ (11 points)
-- Extra vierge 50cl - 15€ (19 points)
-- Coffrets dégustation - 25-45€ (32-58 points)
-
-Confitures Artisanales:
-- Mangue 220g - 5.95€ (7 points)
-- Fruit de la passion 220g - 5.95€ (7 points)
-- Ananas vanille 220g - 5.95€ (7 points)
+→ Catalogue complet avec prix points dans pricing-master-sheet.md
 ```
 
 ### Coffrets & Collections
+
+> **📊 PRIX DÉFINITIFS** : Voir [pricing-master-sheet.md](./pricing-master-sheet.md)
+
 ```yaml
-Coffrets Cadeaux Make the CHANGE:
-- Collection 3 miels bio 250g - 27.50€ (35 points)
-- Collection 3 épices - 35€ (45 points)
-- Assortiment 6 miels 80g - 27€ (35 points)
-- Mix épices & miels - 40€ (52 points)
+Exemples Coffrets Make the CHANGE:
+- Coffret Découverte Miels - 35 points
+- Collection Épices Premium - 45 points
+- Mix Miels & Épices - 52 points
 ```
 
 ### Intégration Plateforme
@@ -119,6 +150,49 @@ Product Catalog: 60+ références sucrées/salées disponibles
 Impact Stories: Traçabilité producteur, projets développement
 Commission Model: Dropshipping direct Madagascar/Sardaigne
 Timeline: Intégration immédiate catalogue 2025
+```
+
+### **NOUVEAU - Stratégie Marketing & Acquisition Client**
+
+#### **Base Clients Co-Marketing ILANGA**
+```yaml
+PROFIL AUDIENCE:
+- Taille: 400-600 clients éthiques actifs
+- Démographie: 30-60 ans, revenus moyens+, éducation supérieure
+- Comportement: Consommation responsable, voyage éthique, impact social
+- Budget: €150-400/an produits équitables/artisanaux
+- Engagement: Newsletter 30-40% ouverture, très fidèles marque
+```
+
+#### **Mécanismes d'Acquisition Éthique**
+```yaml
+NEWSLETTER CO-BRANDÉE:
+- Envoi: ILANGA NATURE via base clients
+- Landing: makethechange.com/ilanga + UTM tracking  
+- Message: "Étendez votre impact avec Make the CHANGE"
+
+OFFRES IMPACT:
+- Code "IMPACT25": 25 points offerts + focus projets Madagascar
+- Messaging: "Soutenez Madagascar pour 18€/mois - Impact direct garanti"
+- Story: Connexion oliviers Madagascar ↔ apiculture France/Belgique
+
+SOCIAL MEDIA:
+- Posts Instagram/Facebook ILANGA (1,000-2,000 reach)
+- Contenu: Stories partenaires, impact croisé
+- Conversion: 2% CTR × 5% CVR = 1 abonné par post
+```
+
+#### **Projections d'Acquisition ILANGA**
+```yaml
+NEWSLETTER (1 envoi/4 mois):
+- 500 envois × 4% CTR × 10% CVR = 2 abonnés
+- Audience plus premium, conversion plus élevée
+
+SOCIAL MEDIA (posts mensuels):
+- 4 posts × 1,500 reach × 2% CTR × 5% CVR = 1 abonné
+- Contenu authentique, engagement élevé
+
+TOTAL ILANGA: 3 abonnés | CAC: €20 | ROI: 800% sur 12 mois
 ```
 
 ## 🇱🇺 PROMIEL - Partenaire Luxembourg

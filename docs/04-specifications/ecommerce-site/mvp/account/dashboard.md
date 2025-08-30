@@ -42,7 +42,7 @@ Donner une vue d'ensemble de l'impact, des points, des investissements et de l'a
         <div className="text-right">
           <p className="text-green-100 text-sm">Membre depuis</p>
           <p className="text-xl font-semibold">
-            {formatDate(user.created_at, 'MMMM yyyy')}
+            {formatDate(user.createdAt, 'MMMM yyyy')}
           </p>
         </div>
       </div>
@@ -65,7 +65,7 @@ Donner une vue d'ensemble de l'impact, des points, des investissements et de l'a
               Solde Points
             </p>
             <p className="text-3xl font-bold text-slate-900">
-              {user.points_balance}
+              {user.pointsBalance}
             </p>
             <p className="text-sm text-green-600 flex items-center mt-1">
               <TrendingUp className="w-3 h-3 mr-1" />
@@ -212,7 +212,7 @@ Donner une vue d'ensemble de l'impact, des points, des investissements et de l'a
               />
               <div className="absolute top-3 right-3">
                 <Badge variant="success">
-                  {project.funding_progress}% financé
+                  {project.fundingProgress}% financé
                 </Badge>
               </div>
             </div>
@@ -296,10 +296,10 @@ Donner une vue d'ensemble de l'impact, des points, des investissements et de l'a
                     Commande #{order.id}
                   </p>
                   <p className="text-sm text-slate-500">
-                    {order.items_count} articles • {order.total_points} points
+                    {order.itemsCount} articles • {order.totalPoints} points
                   </p>
                   <p className="text-xs text-slate-400">
-                    {formatDate(order.created_at)}
+                    {formatDate(order.createdAt)}
                   </p>
                 </div>
               </div>
@@ -351,21 +351,21 @@ interface DashboardData {
   user: {
     id: string;
     firstName: string;
-    points_balance: number;
-    created_at: Date;
+    pointsBalance: number;
+    createdAt: Date;
   };
   
   metrics: {
-    total_invested: number;
-    projects_supported: number;
-    co2_impact: number;
-    total_orders: number;
-    pending_orders: number;
-    monthly_points_earned: number;
+    totalInvested: number;
+    projectsSupported: number;
+    co2Impact: number;
+    totalOrders: number;
+    pendingOrders: number;
+    monthlyPointsEarned: number;
   };
   
-  supported_projects: Project[];
-  recent_orders: Order[];
+  supportedProjects: Project[];
+  recentOrders: Order[];
   recommendations: Project[];
 }
 ```
@@ -397,12 +397,12 @@ const dashboardActions = {
 ```typescript
 // Dashboard data
 ecommerce.dashboard.getData: {
-  input: { user_id: string };
+  input: { userId: string };
   output: {
     user: UserProfile;
     metrics: DashboardMetrics;
-    supported_projects: Project[];
-    recent_orders: Order[];
+    supportedProjects: Project[];
+    recentOrders: Order[];
     recommendations: Project[];
   };
 }
@@ -410,7 +410,7 @@ ecommerce.dashboard.getData: {
 // Actions rapides
 ecommerce.dashboard.quickActions: {
   input: { action: 'invest' | 'order' | 'redeem'; data: any };
-  output: { success: boolean; redirect_url?: string };
+  output: { success: boolean; redirectUrl?: string };
 }
 ```
 
@@ -418,14 +418,14 @@ ecommerce.dashboard.quickActions: {
 
 ```typescript
 interface DashboardMetrics {
-  total_invested: number;
-  projects_supported: number;
-  co2_impact: number;
-  total_orders: number;
-  pending_orders: number;
-  monthly_points_earned: number;
-  lifetime_points_earned: number;
-  points_spent: number;
+  totalInvested: number;
+  projectsSupported: number;
+  co2Impact: number;
+  totalOrders: number;
+  pendingOrders: number;
+  monthlyPointsEarned: number;
+  lifetimePointsEarned: number;
+  pointsSpent: number;
 }
 
 interface ProjectSummary {
@@ -433,7 +433,7 @@ interface ProjectSummary {
   name: string;
   description: string;
   images: Image[];
-  funding_progress: number;
+  fundingProgress: number;
   user_investment: number;
   points_earned: number;
   status: 'funding' | 'production' | 'completed';
@@ -452,7 +452,7 @@ interface ProjectSummary {
     <Card className="text-center">
       <CardContent className="p-4">
         <Coins className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
-        <p className="text-2xl font-bold">{user.points_balance}</p>
+        <p className="text-2xl font-bold">{user.pointsBalance}</p>
         <p className="text-xs text-slate-500">Points</p>
       </CardContent>
     </Card>
@@ -523,6 +523,6 @@ export const getDashboardData = cache(async (userId: string) => {
 
 ---
 
-**Stack Technique** : Vercel Edge Functions + shadcn/ui + tRPC + Cache Redis  
+**Stack Technique** : Next.js 15.5 (App Router) sur Vercel + shadcn/ui + tRPC + (Cache côté serveur Next via tags/revalidate; éviter Redis au MVP)  
 **Priorité** : 🔥 Critique - Point central utilisateur  
 **Estimation** : 6-8 jours développement + optimisation performance

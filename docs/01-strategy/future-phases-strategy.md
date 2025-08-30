@@ -40,17 +40,30 @@ Ce document décrit les pistes d'évolution possibles pour le projet dans ses pr
 - **Objectif** : Créer une identité forte et différenciante.
 - **Possibilités** :
   - Développer des produits "Édition Limitée Make the CHANGE" (miel signature, coffrets biodiversité, cosmétiques co-brandés).
-  - Renforcer l’attachement à la marque et fidéliser les abonnés.
+  - **DUAL EXCLUSIVITY**: Produits exclusifs annual subscribers (loyalty reward).
+  - Renforcer l'attachement à la marque et fidéliser les abonnés.
+  - **TIERED CATALOG**: Access différencié monthly vs annual.
   - Créer un catalogue exclusif non disponible ailleurs.
 
 - **Bénéfices** :
   - Augmentation de la LTV (produits uniques).
-  - Effet communauté/rarety.
+  - **DUAL LTV**: Annual subscribers LTV +40% vs monthly (exclusive access).
+  - Effet communauté/rarety amplifié avec annual exclusives.
   - Avantage compétitif vs. Amazon/box écolos.
+  - **CONVERSION DRIVER**: Monthly → Annual upgrade pour exclusive access.
 
-- **Considérations** :
-  - Besoin de financement plus important (pré-séries, packaging personnalisé).
-  - Gestion qualité et logistique plus complexe.
+- **Considérations optimisées** :
+  - **DUAL FINANCING**: Annual prepayments financent R&D exclusive products.
+  - Gestion qualité et logistique plus complexe mais financement sécurisé.
+
+**PROJECTIONS DUAL BILLING PHASE 3:**
+```yaml
+Revenue Scale:
+  - 500-800 subscribers mix
+  - Annual conversion rate: 45% (vs 25% Phase 2)
+  - Exclusive products drive 60% annual adoption
+  - Revenue: 50,000-80,000€ ARR equivalent
+```
 
 ---
 

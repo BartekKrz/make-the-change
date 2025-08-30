@@ -1,5 +1,7 @@
 # Détail du Produit (Récompenses)
 
+> **💡 RÉFÉRENCE** : Voir [../../mobile-conventions/03-conventions-patterns.md](../../mobile-conventions/03-conventions-patterns.md) pour les patterns complets d'utilisation des composants Screen et les conventions de hooks.
+
 ## 🎯 Objectif
 
 Présenter de manière détaillée un produit récompense (miel, huile d'olive, cosmétiques) avec toutes les informations nécessaires pour un achat éclairé via points.

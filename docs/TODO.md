@@ -32,7 +32,7 @@ Ce document centralise tous les `TODOs` et les actions à réaliser identifiés 
 - [ ] **(P0)** Définir le processus d'escalation du support.
 
 ### 🔧 Technique & Infrastructure (P0)
-- [ ] **(P0)** Finaliser le choix du provider backend (Vercel Edge Functions, Supabase).
+- [ ] **(P0)** Finaliser le choix du provider backend (Vercel – Edge + Node runtimes, Supabase).
 - [ ] **(P0)** Mettre en place le pipeline CI/CD complet (GitHub Actions).
 - [ ] **(P0)** Configurer le monitoring de production (Sentry, Vercel Analytics).
 - [ ] **(P0)** Mettre en place la stratégie de backup automatique et la tester.
@@ -58,6 +58,8 @@ Ce document centralise tous les `TODOs` et les actions à réaliser identifiés 
 - [ ] **(P1)** Définir les 5 patterns UX critiques (ex: navigation, formulaires).
 - [ ] **(P1)** Générer les design tokens de couleurs.
 - [ ] **(P1)** Compléter les spécifications "à développer" (🚧) pour le MVP.
+- [ ] **(P1)** [Nouveau] Spécifier et designer l'écran du Classement d'Impact.
+- [ ] **(P1)** [Nouveau] Définir les règles de confidentialité et d'anonymisation pour le classement.
 
 ---
 
@@ -79,6 +81,10 @@ Ce document centralise tous les `TODOs` et les actions à réaliser identifiés 
 - [ ] **(P1)** Mettre en place des tests de charge pour simuler la croissance.
 - [ ] **(P1)** Automatiser le scaling de l'infrastructure.
 - [ ] **(P1)** Modéliser les coûts d'infrastructure en fonction de l'usage.
+- [ ] **(P1)** [Nouveau] Créer la vue matérialisée `user_impact_summary` pour les scores d'impact.
+- [ ] **(P1)** [Nouveau] Développer l'endpoint API `leaderboard.get` pour le classement.
+- [ ] **(P1)** [Nouveau] Implémenter le cron job pour rafraîchir la vue matérialisée quotidiennement.
+
 
 ### 📞 Communication & Support (P1)
 - [ ] **(P1)** Mettre en place la segmentation des audiences pour le messaging.
@@ -115,4 +121,3 @@ Ce document centralise tous les `TODOs` et les actions à réaliser identifiés 
 - [ ] **(P2)** Mettre en place des scripts d'automatisation pour les tâches répétitives.
 - [ ] **(P2)** Créer une base de connaissance interne (runbooks, etc.).
 - [ ] **(P2)** Définir un plan de formation continue pour l'équipe.
-
