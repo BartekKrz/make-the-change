@@ -22,7 +22,11 @@ echo "   📄 Migration 002 - E-commerce Tables:"
 echo "   Copiez le contenu de: packages/database/migrations/002_create_ecommerce_tables.sql"
 echo ""
 
-echo "4. Vérifiez que toutes les tables sont créées"
+echo "   📄 Migration 003 - RLS Policies:"
+echo "   Copiez le contenu de: packages/database/migrations/003_create_rls_policies.sql"
+echo ""
+
+echo "4. Vérifiez que toutes les tables sont créées et RLS est activé"
 echo "5. Revenez ici et lancez: pnpm db:verify"
 echo ""
 

@@ -45,6 +45,13 @@ expectedExtensions.forEach((ext, index) => {
   console.log(`   ${index + 1}. ${ext}`);
 });
 
+console.log('\n🔒 Politiques RLS à vérifier:');
+console.log('   - RLS activé sur les tables sensibles');
+console.log('   - Politiques utilisateur (accès personnel)');
+console.log('   - Politiques publiques (lecture projets/produits)');
+console.log('   - Politiques admin (accès complet)');
+console.log('   - Restrictions KYC sur les investissements');
+
 console.log('\n⚠️  Pour vérifier automatiquement:');
 console.log('   1. Configurez SUPABASE_URL et SUPABASE_ANON_KEY');
 console.log('   2. Implémentez la vérification avec @supabase/supabase-js');
