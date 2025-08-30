@@ -1,0 +1,46 @@
+{
+  "name": "make-the-change",
+  "version": "0.1.0",
+  "description": "Plateforme d'investissement biodiversité avec récompenses tangibles",
+  "private": true,
+  "license": "MIT",
+  "author": {
+    "name": "Bartosz Krynski",
+    "email": "bartosz@make-the-change.com"
+  },
+  "keywords": [
+    "biodiversity",
+    "investment",
+    "sustainability",
+    "rewards",
+    "monorepo"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "test": "turbo test",
+    "clean": "turbo clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.9",
+    "@types/node": "^22.10.2",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
