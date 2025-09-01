@@ -1,9 +1,0 @@
-number	title	labels	assignees	body_file	remove_labels	remove_assignees
-38	💳 [MVP-P0] Implémenter dual billing management (mensuel/annuel + upgrade flow)	impact-critical,frontend-mobile,frontend-web,backend-api,effort-complex,payments,security,P0	BartekKrz	backlog/bodies/38-dual-billing.md		
-45	💰 [ADMIN-MVP-P0][Projects] Investment Tiers manager + grille tarifaire définitive	impact-critical,frontend-web,backend-api,database,effort-complex,P0	BartekKrz	backlog/bodies/45-pricing-master.md		
-13	💳 [MVP-P0] Développer tunnel de paiement Stripe complet (dual billing support)	impact-critical,frontend-mobile,backend-api,effort-epic,payments,security,P0	BartekKrz	backlog/bodies/13-payment-tunnel.md		
-27	🌱 [ECOMMERCE-MVP-P0] Implémenter découverte projets et investissements web (nouveaux partenaires)	impact-critical,frontend-web,backend-api,database,effort-complex,P0	BartekKrz	backlog/bodies/27-project-discovery.md		
-26	🛒 [ECOMMERCE-MVP-P0] Développer catalogue produits et découverte web (grille tarifaire définitive)	impact-high,frontend-web,backend-api,database,effort-complex,P0	BartekKrz	backlog/bodies/26-catalog-pricing.md		
-37	🏔️ [EPIC] E-commerce Web Platform - Public Discovery & Purchase (modèle hybride)	impact-high,frontend-web,backend-api,effort-epic,epic	BartekKrz	backlog/bodies/37-ecommerce-hybrid.md		
-19	🛒 [ADMIN-MVP-P1] Développer système e-commerce hybride complet (dual billing)	frontend-web,backend-api,database,ecommerce,P1		backlog/bodies/19-ecommerce-dual.md		
-16	🔐 [ADMIN-MVP-P0] Implémenter authentification admin sécurisée (conformité RGPD)	impact-critical,frontend-web,backend-api,database,effort-complex,security,P0	BartekKrz	backlog/bodies/16-auth-compliance.md		

@@ -1,6 +1,7 @@
 // Export all utilities
 export * from './formatters';
 export * from './validators';
+export * from './points-calculator';
 
 // Common utility functions
 export const sleep = (ms: number): Promise<void> => {

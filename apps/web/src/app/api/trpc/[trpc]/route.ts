@@ -1,11 +1,8 @@
-/**
- * Routes API tRPC pour Next.js App Router
- * Connecte l'API tRPC existante avec Next.js
- */
 
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { appRouter } from '@/lib/trpc-server';
-import { createTRPCContext } from '@/lib/trpc-context';
+import { appRouter, createTRPCContext } from '@make-the-change/api';
+
+export const runtime = 'nodejs'
 
 const handler = (req: Request) =>
   fetchRequestHandler({

@@ -1,3 +1,324 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Neutres Sophistiqués 2025 - Base raffinée avec nuances subtiles */
+    --background: 240 15% 98%;          /* #F7F9FB - Blanc Perle plus raffiné */
+    --foreground: 224 84% 5%;           /* #0A0E1A - Charbon profond */
+    --card: 240 20% 99%;                /* #FAFBFC - Carte légèrement nacrée */
+    --card-foreground: 224 84% 5%;      /* #0A0E1A */
+    --popover: 240 25% 99%;             /* #FAFCFD */
+    --popover-foreground: 224 84% 5%;   /* #0A0E1A */
+
+    /* Primary - Gradient Vert Émeraude Dynamique */
+    --primary: 160 95% 30%;             /* #059669 - Base émeraude */
+    --primary-light: 160 85% 40%;       /* #0BA872 - Plus lumineux */
+    --primary-dark: 160 100% 25%;       /* #008B5B - Plus profond */
+    --primary-foreground: 160 95% 98%;
+
+    /* Secondary - Neutres Chauds Modernes */
+    --secondary: 25 8% 88%;             /* #E8E3DF - Mocha Mousse clair */
+    --secondary-dark: 25 15% 75%;       /* #CFC4BB - Plus riche */
+    --secondary-foreground: 224 84% 5%;
+
+    /* Accent - Gradient Ambre Doré Sophistiqué */
+    --accent: 39 96% 52%;               /* #F59E0B - Base ambre */
+    --accent-light: 35 95% 60%;         /* #F7A21B - Plus lumineux */
+    --accent-dark: 42 100% 48%;         /* #FF9500 - Plus profond */
+    --accent-foreground: 39 96% 5%;
+
+    /* Palette Nature Enrichie */
+    --emerald: 154 78% 40%;             /* #10B981 - Vert nature */
+    --emerald-light: 154 68% 50%;       /* #34C759 */
+    
+    --ocean: 211 85% 45%;               /* #1E90FF - Bleu océan */
+    --ocean-light: 211 75% 55%;         /* #4A9EFF */
+    
+    --earth: 25 45% 35%;                /* #8B6914 - Brun terre */
+    --earth-light: 25 35% 45%;          /* #A67C1A */
+
+    /* Sémantiques avec Gradients */
+    --success: var(--emerald);
+    --success-light: var(--emerald-light);
+    --success-foreground: 154 78% 98%;
+
+    --destructive: 0 84% 60%;           /* #EF4444 */
+    --destructive-light: 0 74% 70%;     /* #F87171 */
+    --destructive-foreground: 0 84% 98%;
+
+    --warning: var(--accent);
+    --warning-light: var(--accent-light);
+    --warning-foreground: var(--accent-foreground);
+
+    --info: var(--ocean);
+    --info-light: var(--ocean-light);
+    --info-foreground: 211 85% 98%;
+
+    /* Éléments UI Enrichis */
+    --muted: 225 15% 90%;               /* #E4E7EC - Plus nuancé */
+    --muted-foreground: 225 12% 50%;    /* #707984 - Plus contrasté */
+    --border: 225 20% 88%;              /* #DDE2E9 */
+    --input: 225 25% 90%;               /* #E1E7ED */
+    --ring: var(--primary);
+
+    /* Gradients Personnalisés 2025 */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-light)) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--accent-light)) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--accent-light)) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--success-light)) 100%);
+    --gradient-ocean: linear-gradient(135deg, hsl(var(--ocean)) 0%, hsl(var(--ocean-light)) 100%);
+    
+    /* Mesh Gradients Complexes */
+    --mesh-nature: radial-gradient(ellipse at top left, hsl(var(--emerald)) 0%, transparent 50%), 
+                   radial-gradient(ellipse at top right, hsl(var(--ocean)) 0%, transparent 50%), 
+                   radial-gradient(ellipse at bottom, hsl(var(--accent)) 0%, transparent 50%);
+                   
+    --mesh-warm: radial-gradient(ellipse at center, hsl(var(--accent-light) / 0.3) 0%, transparent 50%),
+                 linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--background)) 100%);
+  }
+
+  .dark {
+    /* Mode Sombre Sophistiqué 2025 - Profondeur et richesse */
+    --background: 224 95% 3%;           /* #020617 - Nuit profonde */
+    --foreground: 210 40% 95%;          /* #F1F5F9 - Blanc lunaire */
+    --card: 224 84% 5%;                 /* #0A0E1A - Carte sombre */
+    --card-foreground: 210 40% 95%;
+    --popover: 224 95% 3%;
+    --popover-foreground: 210 40% 95%;
+
+    /* Primary - Émeraude Lumineux pour Mode Sombre */
+    --primary: 160 85% 45%;             /* #12B886 - Plus lumineux et visible */
+    --primary-light: 160 75% 55%;       /* #20C997 */
+    --primary-dark: 160 95% 35%;        /* #0CA678 */
+    --primary-foreground: 160 95% 5%;
+
+    /* Secondary - Neutres Sombres Chauds */
+    --secondary: 25 12% 15%;            /* #252018 - Mocha sombre */
+    --secondary-dark: 25 20% 10%;       /* #1F1B12 */
+    --secondary-foreground: 210 40% 95%;
+
+    /* Accent - Ambre Éclatant pour Contraste */
+    --accent: 39 90% 65%;               /* #FBB040 - Plus lumineux en sombre */
+    --accent-light: 35 85% 75%;         /* #FFC266 */
+    --accent-dark: 42 95% 55%;          /* #F5A623 */
+    --accent-foreground: 39 90% 8%;
+
+    /* Palette Nature Mode Sombre */
+    --emerald: 154 70% 50%;             /* #20C997 */
+    --emerald-light: 154 60% 60%;       /* #40D4AA */
+    
+    --ocean: 211 80% 65%;               /* #5DADE2 */
+    --ocean-light: 211 70% 75%;         /* #85C1E9 */
+    
+    --earth: 25 40% 45%;                /* #A67C1A */
+    --earth-light: 25 30% 55%;          /* #C49A2A */
+
+    /* Sémantiques Mode Sombre */
+    --success: var(--emerald);
+    --success-light: var(--emerald-light);
+    --success-foreground: 154 70% 8%;
+
+    --destructive: 0 75% 70%;           /* #F87171 */
+    --destructive-light: 0 65% 80%;     /* #FCA5A5 */
+    --destructive-foreground: 0 75% 10%;
+
+    --warning: var(--accent);
+    --warning-light: var(--accent-light);
+    --warning-foreground: var(--accent-foreground);
+
+    --info: var(--ocean);
+    --info-light: var(--ocean-light);
+    --info-foreground: 211 80% 8%;
+
+    /* Éléments UI Mode Sombre */
+    --muted: 225 20% 12%;               /* #1A1D29 */
+    --muted-foreground: 225 15% 70%;    /* #B0B4C0 */
+    --border: 225 25% 18%;              /* #242938 */
+    --input: 225 30% 16%;               /* #1F2332 */
+    --ring: var(--primary);
+
+    /* Gradients Mode Sombre - Plus lumineux et contrastés */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-light)) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--accent-light)) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--accent-light)) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--success-light)) 100%);
+    --gradient-ocean: linear-gradient(135deg, hsl(var(--ocean)) 0%, hsl(var(--ocean-light)) 100%);
+    
+    /* Mesh Gradients Mode Sombre */
+    --mesh-nature: radial-gradient(ellipse at top left, hsl(var(--emerald) / 0.4) 0%, transparent 60%), 
+                   radial-gradient(ellipse at top right, hsl(var(--ocean) / 0.3) 0%, transparent 60%), 
+                   radial-gradient(ellipse at bottom, hsl(var(--accent) / 0.2) 0%, transparent 60%);
+                   
+    --mesh-warm: radial-gradient(ellipse at center, hsl(var(--accent-light) / 0.2) 0%, transparent 60%),
+                 linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--background)) 100%);
+  }
+}
+
+/* Utility Classes pour Gradients 2025 */
+@layer utilities {
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .bg-gradient-accent {
+    background: var(--gradient-accent);
+  }
+  
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  .bg-gradient-success {
+    background: var(--gradient-success);
+  }
+  
+  .bg-gradient-ocean {
+    background: var(--gradient-ocean);
+  }
+  
+  .bg-mesh-nature {
+    background: var(--mesh-nature);
+  }
+  
+  .bg-mesh-warm {
+    background: var(--mesh-warm);
+  }
+
+  /* Animations Gradient */
+  .gradient-shift {
+    background-size: 300% 300%;
+    animation: gradientShift 6s ease infinite;
+  }
+  
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Hover Effects Avancés */
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px hsl(var(--primary) / 0.15);
+  }
+
+  /* Glass Effect Moderne */
+  .glass {
+    backdrop-filter: blur(12px);
+    background: hsl(var(--background) / 0.8);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+  
+  .glass-card {
+    backdrop-filter: blur(16px);
+    background: hsl(var(--card) / 0.9);
+    border: 1px solid hsl(var(--border) / 0.3);
+    box-shadow: 0 8px 32px hsl(var(--foreground) / 0.1);
+  }
+}
+
+/* Optimisations Responsive Mobile-First 2025 */
+@layer utilities {
+  /* Touch optimizations pour mobile */
+  @media (max-width: 768px) {
+    button, [role='button'], .touch-target {
+      min-height: 44px;
+      min-width: 44px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Responsive grids */
+    .grid-responsive {
+      grid-template-columns: 1fr;
+    }
+    
+    .grid-responsive.md\:grid-cols-2 {
+      grid-template-columns: 1fr;
+    }
+    
+    .grid-responsive.lg\:grid-cols-3 {
+      grid-template-columns: 1fr;
+    }
+
+    /* Responsive spacing */
+    .px-responsive {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    .py-responsive {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    /* Text responsive */
+    .text-responsive {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .grid-responsive.md\:grid-cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .grid-responsive.lg\:grid-cols-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .px-responsive {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+    
+    .py-responsive {
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+
+    .text-responsive {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .grid-responsive.lg\:grid-cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Active states for touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    button:active, [role='button']:active {
+      transform: scale(0.95) !important;
+      filter: brightness(0.9) !important;
+      transition: all 0.1s ease-out;
+    }
+  }
+
+  /* Safe area for devices with notches */
+  @supports (padding: max(0px)) {
+    .safe-top {
+      padding-top: max(1rem, env(safe-area-inset-top));
+    }
+    
+    .safe-bottom {
+      padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+    
+    .safe-left {
+      padding-left: max(1rem, env(safe-area-inset-left));
+    }
+    
+    .safe-right {
+      padding-right: max(1rem, env(safe-area-inset-right));
+    }
+  }
+}

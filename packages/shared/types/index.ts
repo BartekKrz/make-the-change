@@ -4,19 +4,19 @@ export * from './project';
 export * from './order';
 
 // Common types utilisés partout
-export interface ApiResponse<T = unknown> {
+export type ApiResponse<T = unknown> = {
   success: boolean;
   data?: T;
   error?: string;
   message?: string;
 }
 
-export interface PaginationParams {
+export type PaginationParams = {
   page: number;
   limit: number;
 }
 
-export interface PaginatedResponse<T> extends ApiResponse<T[]> {
+export type PaginatedResponse<T> = ApiResponse<T[]> & {
   pagination: {
     page: number;
     limit: number;
@@ -28,12 +28,12 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
 }
 
 // Types pour les filtres communs
-export interface DateRange {
+export type DateRange = {
   from: Date;
   to: Date;
 }
 
-export interface SortParams {
+export type SortParams = {
   field: string;
   direction: 'asc' | 'desc';
 }

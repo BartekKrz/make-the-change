@@ -1,16 +1,10 @@
-/**
- * Client tRPC pour l'application web
- * Configuration avec TanStack Query et authentification Supabase
- */
 
 import { createTRPCReact } from '@trpc/react-query';
 import { httpBatchLink, loggerLink } from '@trpc/client';
-import type { AppRouter } from '@/lib/trpc-server';
+import type { AppRouter } from '@make-the-change/api';
 
-// Créer le client tRPC React
 export const trpc = createTRPCReact<AppRouter>();
 
-// Configuration du client tRPC
 export const trpcClient = trpc.createClient({
   links: [
     loggerLink({
@@ -20,11 +14,9 @@ export const trpcClient = trpc.createClient({
     }),
     httpBatchLink({
       url: '/api/trpc',
-      // Ajouter automatiquement le token d'authentification
       async headers() {
         const headers: Record<string, string> = {};
-        
-        // Récupérer le token Supabase depuis le localStorage ou les cookies
+
         if (typeof window !== 'undefined') {
           try {
             const supabaseAuth = localStorage.getItem('sb-ebmjxinsyyjwshnynwwu-auth-token');
@@ -38,7 +30,7 @@ export const trpcClient = trpc.createClient({
             console.error('Error getting auth token:', error);
           }
         }
-        
+
         return headers;
       },
     }),

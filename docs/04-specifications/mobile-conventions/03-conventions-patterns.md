@@ -2138,9 +2138,9 @@ export const useCumulativeBiodiversityImpact = () => {
 ✅ **Évolutivité** : Extensible pour nouveaux types projets + partenaires  
 ✅ **Qualité** : ESLint strict + Prettier + conventions rigoureuses
 
-### 🚀 **Nouvelles Fonctionnalités 2024**
+### 🚀 **Nouvelles Fonctionnalités 2025**
 
-🔥 **TanStack Form Integration** : Remplacement complet de React Hook Form  
+🔥 **TanStack Form Integration** 
 🔥 **Screen Component Enrichi** : États loading/error, navigation avancée, testabilité  
 🔥 **Convention Hooks Clarifiée** : Arrow function directe vs return explicite  
 🔥 **Validation Zod Unifiée** : Schemas réutilisables pour formulaires et API  

@@ -10,6 +10,8 @@ export default defineConfig({
     setupFiles: ['./test/setup.ts'],
     globals: true,
     css: true,
+    exclude: ['**/node_modules/**', '**/test/e2e/**', '**/*.e2e.*', '**/*.playwright.*'],
+    include: ['**/test/unit/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
@@ -34,11 +36,7 @@ export default defineConfig({
           lines: 95,
           statements: 95,
         },
-        'src/lib/trpc-server.ts': {
-          functions: 90,
-          lines: 90,
-          statements: 90,
-        },
+        // tRPC routers moved to shared package
       },
     },
   },
