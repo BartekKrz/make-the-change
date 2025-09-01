@@ -9,7 +9,8 @@ import {
   X,
   ChevronRight,
   Target,
-  Building2
+  Building2,
+  CreditCard
 } from 'lucide-react';
 import { useEffect, useRef, useState, useCallback, type FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -63,6 +64,12 @@ const navigationSections = [
         icon: Users,
         label: 'Utilisateurs',
         description: 'Gestion des utilisateurs'
+      },
+      {
+        href: '/admin/subscriptions',
+        icon: CreditCard,
+        label: 'Abonnements',
+        description: 'Gestion des abonnements'
       }
     ]
   }

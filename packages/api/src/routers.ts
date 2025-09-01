@@ -10,6 +10,7 @@ import {
 } from '@make-the-change/shared/utils'
 import type { TRPCContext } from './context'
 import { partnerRouter } from './router/admin/partner';
+import { adminSubscriptionsRouter } from './router/admin/subscriptions';
 
 // Supabase service client for server-side ops
 const supabaseUrl = process.env.SUPABASE_URL as string
@@ -194,6 +195,7 @@ export const appRouter = createRouter({
   users: usersRouter,
   admin: createRouter({
     partners: partnerRouter,
+    subscriptions: adminSubscriptionsRouter,
     orders: createRouter({
       list: adminProcedure
         .input(

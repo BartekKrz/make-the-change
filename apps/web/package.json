@@ -21,7 +21,13 @@
     "test:unit:ui": "vitest --ui test/unit",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:debug": "playwright test --debug"
+    "test:e2e:debug": "playwright test --debug",
+    "test:tdd": "playwright test test/e2e/admin-subscriptions.spec.ts --headed --workers=1",
+    "test:tdd:watch": "./scripts/tdd-dev.sh watch",
+    "tdd:setup": "./scripts/tdd-dev.sh setup",
+    "tdd:seed": "./scripts/tdd-dev.sh seed",
+    "tdd:clean": "./scripts/tdd-dev.sh clean",
+    "tdd:reset": "./scripts/tdd-dev.sh reset"
   },
   "dependencies": {
     "@make-the-change/api": "workspace:*",

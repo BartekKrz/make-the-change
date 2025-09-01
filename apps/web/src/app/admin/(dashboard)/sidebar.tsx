@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import type { LucideIcon } from 'lucide-react';
-import { Layout, Receipt, Package, Users, LogOut, X, ChevronRight, MapPin, FolderOpen } from 'lucide-react';
+import { Layout, Receipt, Package, Users, LogOut, X, ChevronRight, MapPin, FolderOpen, CreditCard } from 'lucide-react';
 import {  useState, type FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
@@ -34,6 +34,7 @@ const navigationSections = [
       { href: '/admin/orders', icon: Receipt, label: 'Commandes' },
       { href: '/admin/products', icon: Package, label: 'Produits' },
       { href: '/admin/users', icon: Users, label: 'Utilisateurs' },
+      { href: '/admin/subscriptions', icon: CreditCard, label: 'Abonnements' },
     ],
   },
 ];

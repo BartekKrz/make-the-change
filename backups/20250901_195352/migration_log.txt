@@ -1,0 +1,14 @@
+🚀 DÉBUT DE L'EXÉCUTION DE LA MIGRATION DUAL BILLING
+Date: Lun  1 sep 2025 20:03:09 CEST
+Script: migration_script.sql
+
+📄 ÉTAPE 1: CRÉATION DES TYPES ENUM
+Lun  1 sep 2025 20:03:16 CEST
+🔍 VÉRIFICATION PRÉ-MIGRATION:
+- Vérifier l'état des tables existantes
+- Sauvegarde des données effectuée
+
+✅ UTILISATION DE L'APPROCHE ALTERNATIVE:
+- Via SQL Editor Supabase Dashboard
+- Copier/coller les scripts étape par étape
+
