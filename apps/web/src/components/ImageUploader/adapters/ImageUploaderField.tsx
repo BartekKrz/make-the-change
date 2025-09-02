@@ -34,6 +34,70 @@ export const ImageUploaderField = ({
       return;
     }
 
+    await uploadSingleImage(file);
+  };
+
+  const handleImagesSelect = async (files: File[]) => {
+    if (!files || files.length === 0) {
+      console.log('🚫 No files selected');
+      return;
+    }
+
+    console.log('📸 Starting multiple upload:', {
+      fileCount: files.length,
+      fileNames: files.map(f => f.name),
+      productId,
+      multiple
+    });
+
+    try {
+      // Créer FormData pour l'upload multiple
+      const formData = new FormData();
+      
+      // Ajouter tous les fichiers
+      files.forEach((file, index) => {
+        formData.append('files', file); // Utiliser 'files' pour multiple
+      });
+      
+      if (productId) {
+        formData.append('productId', productId);
+        console.log('📦 Added productId to FormData:', productId);
+      }
+
+      console.log('🚀 Calling API /api/upload/product-images with multiple files...');
+
+      // Appeler l'API d'upload améliorée
+      const response = await fetch('/api/upload/product-images', {
+        method: 'POST',
+        body: formData,
+      });
+
+      console.log('📡 API Response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Error response:', errorText);
+        throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+      }
+
+      const result = await response.json();
+      console.log('✅ Multiple upload successful, result:', result);
+      
+      // L'API retourne maintenant toutes les images mises à jour
+      if (result.images) {
+        console.log('📝 Updating field with API response images:', result.images);
+        field.handleChange(result.images);
+        onImagesChange?.(result.images);
+      }
+      
+      console.log('🎉 Multiple upload completed successfully');
+    } catch (error) {
+      console.error('💥 Multiple upload error:', error);
+      // TODO: Ajouter une notification d'erreur
+    }
+  };
+
+  const uploadSingleImage = async (file: File) => {
     console.log('📸 Starting upload:', {
       fileName: file.name,
       fileSize: file.size,
@@ -196,12 +260,18 @@ export const ImageUploaderField = ({
       formData.append('file', file);
       
       if (productId) {
-        // Appeler l'API PUT améliorée
-        const putUrl = new URL('/api/upload/product-images', window.location.origin);
-        putUrl.searchParams.set('productId', productId);
-        putUrl.searchParams.set('oldImageUrl', oldImageUrl);
+        formData.append('productId', productId);
+        formData.append('oldImageUrl', oldImageUrl);
+        formData.append('imageIndex', index.toString());
         
-        const uploadResponse = await fetch(putUrl.toString(), {
+        console.log('🔄 Calling PUT API with FormData:', {
+          productId,
+          oldImageUrl,
+          imageIndex: index,
+          fileName: file.name
+        });
+        
+        const uploadResponse = await fetch('/api/upload/product-images', {
           method: 'PUT',
           body: formData,
         });
@@ -263,9 +333,11 @@ export const ImageUploaderField = ({
   return (
     <ImageUploader
       currentImage={currentImage}
-      onImageSelect={handleImageSelect}
+      onImageSelect={multiple ? undefined : handleImageSelect}
+      onImagesSelect={multiple ? handleImagesSelect : undefined}
       onImageRemove={() => handleImageRemove(currentImage)}
       onUploadComplete={handleUploadComplete}
+      multiple={multiple}
       width={width}
       height={height}
       disabled={disabled}

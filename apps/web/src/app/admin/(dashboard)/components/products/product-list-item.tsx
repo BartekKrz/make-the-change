@@ -13,6 +13,7 @@ type Product =  {
   featured?: boolean
   price_points: number
   stock_quantity: number | null
+  images?: string[]
 }
 
 type ProductListItemProps =  {

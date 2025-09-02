@@ -2,8 +2,29 @@
 
 import { FC } from 'react';
 import Image from 'next/image';
-import { Trash2, Edit3 } from 'lucide-react';
+import { Trash2, Edit3, Eye, GripVertical } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
+import { 
+  DndContext, 
+  closestCenter, 
+  KeyboardSensor, 
+  PointerSensor, 
+  useSensor, 
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import { 
+  arrayMove, 
+  SortableContext, 
+  sortableKeyboardCoordinates, 
+  verticalListSortingStrategy,
+  rectSortingStrategy
+} from '@dnd-kit/sortable';
+import { 
+  useSortable
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { useIsMobile } from '@/hooks/useMediaQuery';
 
 type ImageMasonryProps = {
   images: string[];
@@ -11,7 +32,10 @@ type ImageMasonryProps = {
   onImageClick?: (imageUrl: string, index: number) => void;
   onImageReplace?: (imageUrl: string, index: number) => void;
   onImageDelete?: (imageUrl: string, index: number) => void;
+  onImagePreview?: (imageUrl: string, index: number) => void;
+  onImagesReorder?: (oldIndex: number, newIndex: number, newImages: string[]) => void;
   showActions?: boolean;
+  enableReorder?: boolean;
 };
 
 export const ImageMasonry: FC<ImageMasonryProps> = ({ 
@@ -20,60 +44,162 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
   onImageClick,
   onImageReplace,
   onImageDelete,
-  showActions = false
+  onImagePreview,
+  onImagesReorder,
+  showActions = false,
+  enableReorder = false
 }) => {
-  // Composant pour une image avec actions hover
-  const ImageWithActions: FC<{ 
+  const isMobile = useIsMobile();
+  
+  // Configuration des sensors pour le drag & drop
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Minimum distance before drag starts
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Handler pour la fin du drag & drop
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = images.findIndex((_, index) => `image-${index}` === active.id);
+      const newIndex = images.findIndex((_, index) => `image-${index}` === over?.id);
+      
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newImages = arrayMove(images, oldIndex, newIndex);
+        onImagesReorder?.(oldIndex, newIndex, newImages);
+      }
+    }
+  };
+
+  // Composant sortable pour une image individuelle
+  const SortableImageItem: FC<{ 
     src: string; 
     alt: string; 
     index: number; 
     className?: string;
-  }> = ({ src, alt, index, className }) => (
-    <div className={cn("relative group w-full h-full", className)}>
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className="object-cover transition-all duration-200 group-hover:brightness-75"
-        unoptimized={src.includes('unsplash')}
-        onClick={() => onImageClick?.(src, index)}
-      />
-      
-      {/* Overlay avec actions au hover */}
-      {showActions && (
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-          <div className="flex gap-2">
-            {/* Bouton remplacer */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onImageReplace?.(src, index);
-              }}
-              className="p-2 bg-white/90 hover:bg-white rounded-full transition-colors duration-200 shadow-lg"
-              title="Remplacer l'image"
-            >
-              <Edit3 className="w-4 h-4 text-gray-700" />
-            </button>
-            
-            {/* Bouton supprimer */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onImageDelete?.(src, index);
-              }}
-              className="p-2 bg-red-500/90 hover:bg-red-500 rounded-full transition-colors duration-200 shadow-lg"
-              title="Supprimer l'image"
-            >
-              <Trash2 className="w-4 h-4 text-white" />
-            </button>
+    id: string;
+  }> = ({ src, alt, index, className, id }) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({ id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
+    return (
+      <div 
+        ref={setNodeRef}
+        style={style}
+        className={cn(
+          "relative group w-full h-full",
+          isDragging && "z-50 opacity-50",
+          className
+        )}
+      >
+        {/* Drag handle pour desktop */}
+        {enableReorder && !isMobile && showActions && (
+          <div 
+            {...attributes}
+            {...listeners}
+            className="absolute top-2 left-2 z-10 p-1 bg-black/50 rounded cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
+            title="Glisser pour réorganiser"
+          >
+            <GripVertical className="w-4 h-4 text-white" />
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className={cn(
+            "object-cover transition-all duration-200",
+            showActions ? "group-hover:brightness-75" : "hover:brightness-90 cursor-pointer",
+            isDragging && "brightness-75"
+          )}
+          unoptimized={src.includes('unsplash')}
+          onClick={() => {
+            if (showActions) {
+              // En mode édition, le clic direct ne fait rien (il faut utiliser les boutons)
+              return;
+            } else {
+              // En mode non-édition, clic ouvre la prévisualisation
+              onImagePreview?.(src, index);
+            }
+          }}
+        />
+        
+        {/* Overlay avec actions au hover en mode édition */}
+        {showActions && (
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+            <div className="flex gap-2">
+              {/* Bouton prévisualiser */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onImagePreview?.(src, index);
+                }}
+                className="p-2 bg-blue-500/90 hover:bg-blue-500 rounded-full transition-colors duration-200 shadow-lg"
+                title="Prévisualiser l'image"
+              >
+                <Eye className="w-4 h-4 text-white" />
+              </button>
+              
+              {/* Bouton remplacer */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onImageReplace?.(src, index);
+                }}
+                className="p-2 bg-white/90 hover:bg-white rounded-full transition-colors duration-200 shadow-lg"
+                title="Remplacer l'image"
+              >
+                <Edit3 className="w-4 h-4 text-gray-700" />
+              </button>
+              
+              {/* Bouton supprimer */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onImageDelete?.(src, index);
+                }}
+                className="p-2 bg-red-500/90 hover:bg-red-500 rounded-full transition-colors duration-200 shadow-lg"
+                title="Supprimer l'image"
+              >
+                <Trash2 className="w-4 h-4 text-white" />
+              </button>
+            </div>
+          </div>
+        )}
+        
+        {/* Indicateur de clic en mode non-édition */}
+        {!showActions && (
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
+            <div className="bg-black/50 rounded-full p-3">
+              <Eye className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   // Vérification de sécurité
-  if (!images || !Array.isArray(images)) {
+  if (!images || !Array.isArray(images) || images.length === 0) {
     return (
       <div className={cn("border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center", className)}>
         <p className="text-muted-foreground">Aucune image</p>
@@ -81,40 +207,18 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
     );
   }
 
-  const totalImages = images.length;
-
-  if (totalImages === 0) {
-    return (
-      <div className={cn("border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center", className)}>
-        <p className="text-muted-foreground">Aucune image</p>
-      </div>
-    );
-  }
-
-  // 1 image : affichage simple
-  if (totalImages === 1) {
+  // Configuration pour DndContext
+  const imageIds = images.map((_, index) => `image-${index}`);
+  
+  // Grille uniforme et responsive pour toutes les images
+  const GalleryContent = () => {
     return (
       <div className={cn("border border-border rounded-lg overflow-hidden", className)}>
-        <div className="relative w-full aspect-[4/3]">
-          <ImageWithActions
-            src={images[0]}
-            alt="Product image"
-            index={0}
-            className="cursor-pointer"
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // 2 images : côte à côte
-  if (totalImages === 2) {
-    return (
-      <div className={cn("border border-border rounded-lg overflow-hidden", className)}>
-        <div className="flex gap-1 h-64">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 p-2">
           {images.map((imageUrl, index) => (
-            <div key={index} className="relative flex-1">
-              <ImageWithActions
+            <div key={index} className="relative aspect-square min-h-[120px]">
+              <SortableImageItem
+                id={imageIds[index]}
                 src={imageUrl}
                 alt={`Product image ${index + 1}`}
                 index={index}
@@ -125,120 +229,23 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
         </div>
       </div>
     );
-  }
+  };
 
-  // 3 images : 1 grande à gauche, 2 petites à droite
-  if (totalImages === 3) {
+  // Si le réordonnancement est activé et qu'on est en mode édition, envelopper avec DndContext
+  if (enableReorder && showActions) {
     return (
-      <div className={cn("border border-border rounded-lg overflow-hidden", className)}>
-        <div className="flex gap-1 h-64">
-          {/* Image principale (grande) */}
-          <div className="relative flex-[2]">
-            <ImageWithActions
-              src={images[0]}
-              alt="Main product image"
-              index={0}
-              className="cursor-pointer"
-            />
-          </div>
-          
-          {/* Colonne des 2 images à droite */}
-          <div className="flex-1 flex flex-col gap-1">
-            {images.slice(1, 3).map((imageUrl, index) => (
-              <div key={index + 1} className="relative flex-1">
-                <ImageWithActions
-                  src={imageUrl}
-                  alt={`Product image ${index + 2}`}
-                  index={index + 1}
-                  className="cursor-pointer"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <DndContext 
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={imageIds} strategy={rectSortingStrategy}>
+          <GalleryContent />
+        </SortableContext>
+      </DndContext>
     );
   }
 
-  // 4+ images : 1 grande à gauche, 3 à droite avec compteur sur la dernière
-  return (
-    <div className={cn("border border-border rounded-lg overflow-hidden", className)}>
-      <div className="flex gap-1 h-64">
-        {/* Image principale (grande) */}
-        <div className="relative flex-[2]">
-          <ImageWithActions
-            src={images[0]}
-            alt="Main product image"
-            index={0}
-            className="cursor-pointer"
-          />
-        </div>
-        
-        {/* Colonne des 3 images à droite */}
-        <div className="flex-1 flex flex-col gap-1">
-          {/* Première image de la colonne */}
-          <div className="relative flex-1">
-            <ImageWithActions
-              src={images[1]}
-              alt="Product image 2"
-              index={1}
-              className="cursor-pointer"
-            />
-          </div>
-          
-          {/* Deuxième image de la colonne */}
-          <div className="relative flex-1">
-            <ImageWithActions
-              src={images[2]}
-              alt="Product image 3"
-              index={2}
-              className="cursor-pointer"
-            />
-          </div>
-          
-          {/* Troisième image avec overlay si plus de 4 images */}
-          <div className="relative flex-1">
-            <ImageWithActions
-              src={images[3]}
-              alt="Product image 4"
-              index={3}
-              className="cursor-pointer"
-            />
-            {/* Overlay avec compteur pour les images supplémentaires */}
-            {totalImages > 4 && (
-              <div 
-                className="absolute inset-0 bg-black/60 flex items-center justify-center cursor-pointer hover:bg-black/70 transition-colors z-10"
-                onClick={() => onImageClick?.(images[3], 3)}
-              >
-                <span className="text-white font-semibold text-xl">
-                  +{totalImages - 3}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Composant alternatif pour l'affichage simple en mosaïque (garder pour compatibilité)
-export const SimpleMosaicImages: FC<{ images: string[] }> = ({ images }) => {
-  if (!images || !Array.isArray(images)) return null;
-  
-  return (
-    <div className="flex flex-wrap gap-2 p-2">
-      {images.map((imageUrl, index) => (
-        <div key={index} className="relative w-[48%] aspect-square overflow-hidden rounded-md">
-          <Image
-            src={imageUrl}
-            alt={`Product image ${index + 1}`}
-            fill
-            className="object-cover"
-            unoptimized={imageUrl.includes('unsplash')}
-          />
-        </div>
-      ))}
-    </div>
-  );
+  // Sinon, affichage normal sans drag & drop
+  return <GalleryContent />;
 };

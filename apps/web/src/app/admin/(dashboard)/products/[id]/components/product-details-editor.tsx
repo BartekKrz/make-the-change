@@ -1,5 +1,6 @@
 'use client';
 import type { FC, PropsWithChildren } from 'react';
+import { useState } from 'react';
 import {  DollarSign, Save, ImageIcon, Info } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card';
 import { Button } from '@/app/admin/(dashboard)/components/ui/button';
@@ -8,6 +9,7 @@ import { FormInput, FormSelect, FormTextArea } from '@/components/form';
 import {  tierLabels, fulfillmentMethodLabels, type ProductFormData } from '@/lib/validators/product';
 import { ImageUploaderField } from '@/components/ImageUploader';
 import { ImageMasonry } from '@/components/ImageMasonry/ImageMasonry';
+import { ImageGalleryModal } from '@/components/ImageGallery';
 
 type ProductDetailsEditorProps = {
   productData: ProductFormData & { id: string };
@@ -59,6 +61,17 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
         description: 'Impossible de mettre à jour le produit'
       }
     }
+  });
+
+  // État pour le modal de prévisualisation d'images
+  const [galleryModal, setGalleryModal] = useState<{
+    isOpen: boolean;
+    images: string[];
+    initialIndex: number;
+  }>({
+    isOpen: false,
+    images: [],
+    initialIndex: 0
   });
 
   const contentSections = [
@@ -180,7 +193,7 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
       title: 'Images',
       icon: ImageIcon,
       content: (
-        <div className='space-y-4'>
+        <div className='w-full space-y-6'>
           <form.Field name="images">
             {(field) => {
               // Debug des données
@@ -201,17 +214,72 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
               }
               
               return (
-                <div className='space-y-4'>
+                <div className='w-full space-y-6'>
                   {/* Interface unifiée : galerie + zone d'ajout */}
-                  <div className='space-y-3'>
-                    {/* Galerie actuelle sans label - TOUJOURS afficher si images existent */}
+                  <div className='w-full space-y-6'>
+                    {/* Galerie actuelle - TOUJOURS afficher si images existent */}
                     {images && images.length > 0 && (
                       <ImageMasonry 
                         images={images} 
-                        className='max-w-2xl'
+                        className='w-full'
                         showActions={isEditing}
+                        enableReorder={isEditing}
                         onImageClick={(imageUrl: string, index: number) => {
                           console.log('Image cliquée:', imageUrl, 'index:', index);
+                        }}
+                        onImagePreview={(imageUrl: string, index: number) => {
+                          console.log('🖼️ Prévisualisation image:', imageUrl, 'index:', index);
+                          setGalleryModal({
+                            isOpen: true,
+                            images: images,
+                            initialIndex: index
+                          });
+                        }}
+                        onImagesReorder={async (oldIndex: number, newIndex: number, newImages: string[]) => {
+                          console.log('🔄 Début réorganisation:', { oldIndex, newIndex });
+                          
+                          // Sauvegarder l'état original pour le rollback
+                          const originalImages = [...images];
+                          
+                          // 🚀 OPTIMISTIC UPDATE : Réorganiser immédiatement dans l'UI
+                          console.log('⚡ Optimistic update - nouvelles images:', newImages);
+                          field.handleChange(newImages);
+                          
+                          if (productData.id) {
+                            try {
+                              // Appeler l'API PATCH pour la réorganisation
+                              const response = await fetch('/api/upload/product-images', {
+                                method: 'PATCH',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                  productId: productData.id,
+                                  images: newImages,
+                                }),
+                              });
+                              
+                              if (response.ok) {
+                                const result = await response.json();
+                                console.log('✅ Reorder successful, API confirmed:', result.images);
+                                
+                                // Synchroniser avec les données retournées par l'API si différentes
+                                if (result.images && JSON.stringify(result.images) !== JSON.stringify(newImages)) {
+                                  console.log('🔄 Synchronisation avec API');
+                                  field.handleChange(result.images);
+                                }
+                              } else {
+                                // 🔄 ROLLBACK : Restaurer l'ordre original si l'API échoue
+                                console.error('❌ Reorder API failed, rolling back to:', originalImages);
+                                field.handleChange(originalImages);
+                              }
+                            } catch (error) {
+                              console.error('💥 Erreur réorganisation:', error);
+                              // 🔄 ROLLBACK : Restaurer l'ordre original si erreur réseau
+                              console.log('🔄 Network error, rolling back to:', originalImages);
+                              field.handleChange(originalImages);
+                            }
+                          }
                         }}
                         onImageReplace={async (imageUrl: string, index: number) => {
                           console.log('Remplacer image:', imageUrl, 'index:', index);
@@ -230,13 +298,11 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                               try {
                                 const formData = new FormData();
                                 formData.append('file', file);
+                                formData.append('productId', productData.id);
+                                formData.append('oldImageUrl', imageUrl);
+                                formData.append('imageIndex', index.toString());
                                 
-                                // Utiliser l'API PUT améliorée
-                                const putUrl = new URL('/api/upload/product-images', window.location.origin);
-                                putUrl.searchParams.set('productId', productData.id);
-                                putUrl.searchParams.set('oldImageUrl', imageUrl);
-                                
-                                const response = await fetch(putUrl.toString(), {
+                                const response = await fetch('/api/upload/product-images', {
                                   method: 'PUT',
                                   body: formData,
                                 });
@@ -327,7 +393,7 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                     <ImageUploaderField
                       field={field}
                       width="w-full"
-                      height="h-32"
+                      height="h-48"
                       disabled={!isEditing}
                       multiple={true}
                       productId={productData.id}
@@ -339,22 +405,6 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                       }}
                     />
                   </div>
-
-                  {/* Bouton pour la gestion avancée */}
-                  {images && images.length > 0 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        window.open(`/admin/products/${productData.id}/images`, '_blank');
-                      }}
-                      className='w-full'
-                    >
-                      <ImageIcon className='w-4 h-4 mr-2' />
-                      Gérer l&apos;ordre et la disposition des images
-                    </Button>
-                  )}
                 </div>
               );
             }}
@@ -365,6 +415,7 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
   ];
 
   return (
+    <>
     <form onSubmit={(e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -372,7 +423,12 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
     }} className='space-y-6 md:space-y-8'>
       <ProductCardsGrid>
         {contentSections.map((section) => (
-          <Card key={section.id} className='transition-all duration-200 hover:shadow-lg'>
+          <Card 
+            key={section.id} 
+            className={`transition-all duration-200 hover:shadow-lg ${
+              section.id === 'images' ? 'md:col-span-2' : ''
+            }`}
+          >
             <CardHeader className='pb-4'>
               <CardTitle className='flex items-center gap-3 text-lg'>
                 <div className='p-2 bg-gradient-to-br from-primary/20 to-orange-500/20 rounded-lg border border-primary/20'>
@@ -410,6 +466,150 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
         </div>
       )}
     </form>
+
+    {/* Modal de prévisualisation d'images */}
+    {galleryModal.isOpen && (
+      <ImageGalleryModal
+        images={galleryModal.images}
+        initialIndex={galleryModal.initialIndex}
+        isOpen={galleryModal.isOpen}
+        onClose={() => setGalleryModal(prev => ({ ...prev, isOpen: false }))}
+        showActions={isEditing}
+        onImageReplace={async (imageUrl: string, index: number) => {
+          console.log('🔄 Remplacer image depuis modal:', imageUrl, 'index:', index);
+          
+          // Fermer le modal d'abord
+          setGalleryModal(prev => ({ ...prev, isOpen: false }));
+          
+          // Déclencher l'input file
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = 'image/*';
+          input.onchange = async (e) => {
+            const file = (e.target as HTMLInputElement).files?.[0];
+            if (file && productData.id) {
+              // Accéder aux images actuelles depuis le form
+              const currentImages = form.getFieldValue('images') || [];
+              
+              // 🚀 OPTIMISTIC UPDATE : Afficher l'image temporairement
+              const tempImageUrl = URL.createObjectURL(file);
+              const optimisticImages = [...currentImages];
+              optimisticImages[index] = tempImageUrl;
+              form.setFieldValue('images', optimisticImages);
+              
+              try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('productId', productData.id);
+                formData.append('oldImageUrl', imageUrl);
+                formData.append('imageIndex', index.toString());
+                
+                const response = await fetch('/api/upload/product-images', {
+                  method: 'PUT',
+                  body: formData,
+                });
+                
+                if (response.ok) {
+                  const result = await response.json();
+                  console.log('✅ Replace successful from modal, final URL:', result.images);
+                  
+                  // Nettoyer l'URL temporaire
+                  URL.revokeObjectURL(tempImageUrl);
+                  
+                  // Utiliser les images mises à jour retournées par l'API
+                  if (result.images) {
+                    form.setFieldValue('images', result.images);
+                  }
+                } else {
+                  // 🔄 ROLLBACK : Restaurer l'image originale si l'API échoue
+                  console.error('❌ Replace API failed from modal, rolling back');
+                  URL.revokeObjectURL(tempImageUrl);
+                  form.setFieldValue('images', currentImages);
+                }
+              } catch (error) {
+                console.error('💥 Erreur remplacement depuis modal:', error);
+                // 🔄 ROLLBACK : Restaurer l'image originale si erreur
+                URL.revokeObjectURL(tempImageUrl);
+                form.setFieldValue('images', currentImages);
+              }
+            }
+          };
+          input.click();
+        }}
+        onImageDelete={async (imageUrl: string, index: number) => {
+          console.log('🗑️ Supprimer image depuis modal:', imageUrl, 'index:', index);
+          
+          // Accéder aux images actuelles depuis le form
+          const currentImages = form.getFieldValue('images') || [];
+          console.log('📊 Images avant suppression depuis modal:', currentImages);
+          
+          // Sauvegarder l'état original pour le rollback
+          const originalImages = [...currentImages];
+          
+          // 🚀 OPTIMISTIC UPDATE : Supprimer immédiatement de l'UI
+          const newImages = currentImages.filter((_: string, i: number) => i !== index);
+          console.log('⚡ Optimistic update depuis modal - nouvelles images:', newImages);
+          form.setFieldValue('images', newImages);
+          
+          // Mettre à jour le modal avec les nouvelles images
+          setGalleryModal(prev => ({ 
+            ...prev, 
+            images: newImages,
+            // Ajuster l'index si nécessaire
+            initialIndex: index >= newImages.length ? Math.max(0, newImages.length - 1) : index
+          }));
+          
+          if (productData.id) {
+            try {
+              // Extraire le path du fichier depuis l'URL
+              let filePath = '';
+              if (imageUrl.includes('supabase.co/storage')) {
+                filePath = imageUrl.split('/storage/v1/object/public/products/')[1];
+              }
+              
+              // Utiliser l'API DELETE améliorée
+              const deleteUrl = new URL('/api/upload/product-images', window.location.origin);
+              deleteUrl.searchParams.set('path', filePath);
+              deleteUrl.searchParams.set('productId', productData.id);
+              deleteUrl.searchParams.set('imageUrl', imageUrl);
+              
+              const response = await fetch(deleteUrl.toString(), {
+                method: 'DELETE',
+              });
+              
+              if (response.ok) {
+                const result = await response.json();
+                console.log('✅ Delete successful from modal, API confirmed:', result.images);
+                
+                // Synchroniser avec les données retournées par l'API si différentes
+                if (result.images && JSON.stringify(result.images) !== JSON.stringify(newImages)) {
+                  console.log('🔄 Synchronisation avec API depuis modal');
+                  form.setFieldValue('images', result.images);
+                  setGalleryModal(prev => ({ ...prev, images: result.images }));
+                }
+                
+                // Si plus d'images, fermer le modal
+                if (result.images.length === 0) {
+                  setGalleryModal(prev => ({ ...prev, isOpen: false }));
+                }
+              } else {
+                // 🔄 ROLLBACK : Restaurer l'image si l'API échoue
+                console.error('❌ Delete API failed from modal, rolling back to:', originalImages);
+                form.setFieldValue('images', originalImages);
+                setGalleryModal(prev => ({ ...prev, images: originalImages }));
+              }
+            } catch (error) {
+              console.error('💥 Erreur suppression depuis modal:', error);
+              // 🔄 ROLLBACK : Restaurer l'image si erreur réseau
+              console.log('🔄 Network error from modal, rolling back to:', originalImages);
+              form.setFieldValue('images', originalImages);
+              setGalleryModal(prev => ({ ...prev, images: originalImages }));
+            }
+          }
+        }}
+      />
+    )}
+    </>
   );
 };
 

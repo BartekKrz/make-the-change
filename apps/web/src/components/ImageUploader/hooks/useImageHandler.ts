@@ -1,6 +1,8 @@
 import { useState, ChangeEvent } from 'react';
 
 export const useImageHandler = () => {
+  // Support pour images multiples
+  const [uploadedImages, setUploadedImages] = useState<Array<{ src: string; file: File }>>([]);
   const [uploadedImageSrc, setUploadedImageSrc] = useState<string | null>(null);
   const [uploadedImageFile, setUploadedImageFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -22,45 +24,84 @@ export const useImageHandler = () => {
   };
 
   const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
+    const files = e.target.files;
     setError(null);
 
-    if (!file) {
+    if (!files || files.length === 0) {
       setUploadedImageSrc(null);
       setUploadedImageFile(null);
+      setUploadedImages([]);
       return;
     }
 
-    // Validation du fichier
-    const validationError = validateFile(file);
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
+    // Support pour images multiples
+    if (files.length > 1) {
+      const validFiles: Array<{ src: string; file: File }> = [];
+      let hasError = false;
 
-    setUploadedImageFile(file);
+      Array.from(files).forEach((file) => {
+        // Validation du fichier
+        const validationError = validateFile(file);
+        if (validationError) {
+          setError(validationError);
+          hasError = true;
+          return;
+        }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result === 'string') {
-        setUploadedImageSrc(reader.result);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if (typeof reader.result === 'string') {
+            validFiles.push({ src: reader.result, file });
+            if (validFiles.length === files.length && !hasError) {
+              setUploadedImages(validFiles);
+            }
+          }
+        };
+        reader.onerror = () => {
+          setError('Erreur lors de la lecture du fichier');
+          hasError = true;
+        };
+        reader.readAsDataURL(file);
+      });
+    } else {
+      // Single file (compatibilité avec l'ancien système)
+      const file = files[0];
+      
+      // Validation du fichier
+      const validationError = validateFile(file);
+      if (validationError) {
+        setError(validationError);
+        return;
       }
-    };
-    reader.onerror = () => {
-      setError('Erreur lors de la lecture du fichier');
-    };
-    reader.readAsDataURL(file);
+
+      setUploadedImageFile(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setUploadedImageSrc(reader.result);
+        }
+      };
+      reader.onerror = () => {
+        setError('Erreur lors de la lecture du fichier');
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const clearImage = () => {
     setUploadedImageSrc(null);
     setUploadedImageFile(null);
+    setUploadedImages([]);
     setError(null);
   };
 
   return {
+    // Single image (compatibilité)
     uploadedImageSrc,
     uploadedImageFile,
+    // Multiple images
+    uploadedImages,
     isUploading,
     error,
     handleImageUpload,

@@ -10,57 +10,43 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
-    const file = formData.get('file') as File
+    
+    // Support pour upload single ou multiple
+    const singleFile = formData.get('file') as File
+    const multipleFiles = formData.getAll('files') as File[]
     const productId = formData.get('productId') as string
 
-    if (!file || !productId) {
+    // Déterminer si c'est un upload single ou multiple
+    const files = singleFile ? [singleFile] : multipleFiles
+    
+    if (!files.length || !productId) {
       return NextResponse.json(
-        { error: 'File and productId are required' },
+        { error: 'File(s) and productId are required' },
         { status: 400 }
       )
     }
 
-    // Validation du fichier
+    console.log(`📸 Processing ${files.length} file(s) for product ${productId}`)
+
+    // Validation des fichiers
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        { error: 'Type de fichier non supporté' },
-        { status: 400 }
-      )
+    const maxSize = 10 * 1024 * 1024 // 10MB
+    
+    for (const file of files) {
+      if (!allowedTypes.includes(file.type)) {
+        return NextResponse.json(
+          { error: `Type de fichier non supporté: ${file.name}` },
+          { status: 400 }
+        )
+      }
+
+      if (file.size > maxSize) {
+        return NextResponse.json(
+          { error: `Fichier trop volumineux: ${file.name} (max 10MB)` },
+          { status: 400 }
+        )
+      }
     }
-
-    if (file.size > 10 * 1024 * 1024) { // 10MB
-      return NextResponse.json(
-        { error: 'Fichier trop volumineux (max 10MB)' },
-        { status: 400 }
-      )
-    }
-
-    // Upload vers Supabase Storage
-    const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-    const filePath = `${productId}/gallery/${fileName}`
-
-    const { data, error } = await supabaseAdmin.storage
-      .from('products')
-      .upload(filePath, file, {
-        cacheControl: '31536000', // 1 an
-        upsert: true
-      })
-
-    if (error) {
-      console.error('Supabase upload error:', error)
-      return NextResponse.json(
-        { error: 'Échec de l\'upload' },
-        { status: 500 }
-      )
-    }
-
-    // Générer l'URL publique
-    const { data: publicUrlData } = supabaseAdmin.storage
-      .from('products')
-      .getPublicUrl(filePath)
-
-    const imageUrl = publicUrlData.publicUrl
 
     // Récupérer les images actuelles du produit
     const { data: product, error: fetchError } = await supabaseAdmin
@@ -77,40 +63,85 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Ajouter la nouvelle image à la liste
     const currentImages = product.images || []
-    const updatedImages = [...currentImages, imageUrl]
+    const newImageUrls: string[] = []
+    const uploadedPaths: string[] = []
 
-    // Mettre à jour le produit avec les nouvelles images
-    const { error: updateError } = await supabaseAdmin
-      .from('products')
-      .update({ 
-        images: updatedImages,
-        updated_at: new Date().toISOString()
+    // Upload de tous les fichiers
+    try {
+      for (const file of files) {
+        const fileName = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
+        const filePath = `${productId}/gallery/${fileName}`
+
+        console.log(`📤 Uploading ${file.name} to ${filePath}`)
+
+        const { data, error } = await supabaseAdmin.storage
+          .from('products')
+          .upload(filePath, file, {
+            cacheControl: '31536000', // 1 an
+            upsert: true
+          })
+
+        if (error) {
+          console.error('Supabase upload error:', error)
+          throw new Error(`Échec de l'upload pour ${file.name}`)
+        }
+
+        // Générer l'URL publique
+        const { data: publicUrlData } = supabaseAdmin.storage
+          .from('products')
+          .getPublicUrl(filePath)
+
+        const imageUrl = publicUrlData.publicUrl
+        newImageUrls.push(imageUrl)
+        uploadedPaths.push(filePath)
+        
+        console.log(`✅ Successfully uploaded ${file.name}: ${imageUrl}`)
+      }
+
+      // Ajouter les nouvelles images à la liste
+      const updatedImages = [...currentImages, ...newImageUrls]
+
+      // Mettre à jour le produit avec les nouvelles images
+      const { error: updateError } = await supabaseAdmin
+        .from('products')
+        .update({ 
+          images: updatedImages,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', productId)
+
+      if (updateError) {
+        console.error('Erreur mise à jour produit:', updateError)
+        // Si on ne peut pas mettre à jour la DB, on supprime les fichiers uploadés
+        await supabaseAdmin.storage.from('products').remove(uploadedPaths)
+        throw new Error('Échec de la mise à jour du produit')
+      }
+
+      console.log(`🎉 Successfully processed ${files.length} file(s)`)
+
+      // Retourner les images mises à jour ET la première URL pour compatibilité
+      return NextResponse.json({
+        success: true,
+        url: newImageUrls[0], // Compatibilité avec l'ancien format
+        urls: newImageUrls, // Nouvelles URLs
+        images: updatedImages, // Toutes les images du produit
+        count: files.length
       })
-      .eq('id', productId)
 
-    if (updateError) {
-      console.error('Erreur mise à jour produit:', updateError)
-      // Si on ne peut pas mettre à jour la DB, on supprime le fichier uploadé
-      await supabaseAdmin.storage.from('products').remove([filePath])
-      return NextResponse.json(
-        { error: 'Échec de la mise à jour du produit' },
-        { status: 500 }
-      )
+    } catch (uploadError) {
+      // Nettoyer les fichiers partiellement uploadés
+      if (uploadedPaths.length > 0) {
+        await supabaseAdmin.storage.from('products').remove(uploadedPaths)
+      }
+      throw uploadError
     }
-
-    return NextResponse.json({
-      success: true,
-      url: imageUrl,
-      path: filePath,
-      images: updatedImages
-    })
-
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json(
-      { error: 'Erreur serveur' },
+      { 
+        error: error instanceof Error ? error.message : 'Erreur interne du serveur' 
+      },
       { status: 500 }
     )
   }
@@ -308,6 +339,53 @@ export async function PUT(request: NextRequest) {
 
   } catch (error) {
     console.error('Replace error:', error)
+    return NextResponse.json(
+      { error: 'Erreur serveur' },
+      { status: 500 }
+    )
+  }
+}
+
+// PATCH - Réordonner les images
+export async function PATCH(request: NextRequest) {
+  try {
+    const { productId, images } = await request.json()
+
+    if (!productId || !Array.isArray(images)) {
+      return NextResponse.json(
+        { error: 'ProductId et array d\'images requis' },
+        { status: 400 }
+      )
+    }
+
+    console.log('🔄 Reordering images for product:', productId)
+    console.log('📋 New order:', images)
+
+    // Mettre à jour l'ordre des images dans la base de données
+    const { data, error } = await supabaseAdmin
+      .from('products')
+      .update({ images })
+      .eq('id', productId)
+      .select('images')
+      .single()
+
+    if (error) {
+      console.error('🚨 Database update error:', error)
+      return NextResponse.json(
+        { error: 'Erreur lors de la mise à jour de l\'ordre' },
+        { status: 500 }
+      )
+    }
+
+    console.log('✅ Images reordered successfully:', data.images)
+
+    return NextResponse.json({
+      success: true,
+      images: data.images,
+      message: 'Ordre des images mis à jour'
+    })
+  } catch (error) {
+    console.error('Reorder error:', error)
     return NextResponse.json(
       { error: 'Erreur serveur' },
       { status: 500 }

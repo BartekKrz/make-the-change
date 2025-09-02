@@ -5,8 +5,10 @@ import type { LucideIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { ProductImage } from '@/components/ProductImage';
 
 export type DataListProps<T> = {
   items: T[];
@@ -137,6 +139,8 @@ export type DataCardProps = {
   onClick?: () => void;
   testId?: string;
   prefetch?: boolean | null;
+  image?: string;
+  imageAlt?: string;
 };
 
 const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
@@ -145,7 +149,9 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
   href,
   onClick,
   testId,
-  prefetch = null
+  prefetch = null,
+  image,
+  imageAlt
 }) => {
   const router = useRouter();
 
@@ -175,6 +181,19 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
 
   const CardContent = () => (
     <>
+      {/* Image de fond optionnelle */}
+      {image && imageAlt && (
+        <div className='absolute top-0 right-0 w-20 h-20 overflow-hidden rounded-tr-2xl opacity-10 md:group-hover:opacity-20 transition-opacity duration-300'>
+          <Image
+            src={image}
+            alt={imageAlt}
+            fill
+            className='object-cover scale-110'
+            unoptimized={image.includes('unsplash') || image.includes('supabase')}
+          />
+        </div>
+      )}
+      
       {}
       <div className='relative [&_a]:relative [&_a]:z-10 [&_button]:relative [&_button]:z-10'>{children}</div>
 
@@ -263,21 +282,48 @@ const DataCardHeader: FC<PropsWithChildren<DataCardHeaderProps>> = ({ children, 
 
 type DataCardTitleProps = {
   icon?: LucideIcon;
+  image?: string;
+  imageAlt?: string;
+  images?: string[];
+  onImageClick?: () => void;
   className?: string;
 };
 
-const DataCardTitle: FC<PropsWithChildren<DataCardTitleProps>> = ({ children, icon: Icon, className }) => (
-  <div className='flex w-full items-center gap-3 relative'>
-    {Icon && (
-      <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-primary/10 to-orange-500/10 flex items-center justify-center border border-primary/20'>
-        <Icon size={20} className='text-muted-foreground' />
+const DataCardTitle: FC<PropsWithChildren<DataCardTitleProps>> = ({ 
+  children, 
+  icon: Icon, 
+  image, 
+  imageAlt, 
+  images,
+  onImageClick,
+  className 
+}) => {
+  const shouldShowIcon = Icon && !image;
+  const shouldShowImage = image && imageAlt;
+
+  return (
+    <div className='flex w-full items-center gap-3 relative'>
+      {shouldShowImage && (
+        <ProductImage
+          src={image}
+          alt={imageAlt}
+          size="md"
+          images={images}
+          onImageClick={onImageClick}
+          className="flex-shrink-0"
+        />
+      )}
+      {shouldShowIcon && (
+        <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-primary/10 to-orange-500/10 flex items-center justify-center border border-primary/20 flex-shrink-0'>
+          <Icon size={20} className='text-muted-foreground' />
+        </div>
+      )}
+      <div className='flex-1 min-w-0'>
+        <h2 className={cn('text-foreground font-semibold line-clamp-2 text-lg', className)}>{children}</h2>
       </div>
-    )}
-    <div className='flex-1'>
-      <h2 className={cn('text-foreground font-semibold line-clamp-2 text-lg', className)}>{children}</h2>
     </div>
-  </div>
-);
+  );
+};
 
 type DataCardContentProps = {
   className?: string;

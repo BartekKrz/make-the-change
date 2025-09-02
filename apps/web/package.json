@@ -30,6 +30,9 @@
     "tdd:reset": "./scripts/tdd-dev.sh reset"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@make-the-change/api": "workspace:*",
     "@make-the-change/shared": "workspace:*",
     "@nivo/bar": "^0.99.0",

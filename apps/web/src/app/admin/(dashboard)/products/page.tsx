@@ -18,6 +18,7 @@ import { AdminPageContainer } from '@/app/admin/(dashboard)/components/layout/ad
 import { AdminPageHeader } from '@/app/admin/(dashboard)/components/layout/admin-page-header'
 import { AdminPagination } from '@/app/admin/(dashboard)/components/layout/admin-pagination'
 import { ViewToggle, type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle'
+import { getMainProductImage } from '@/components/ProductImage'
 import { FC } from 'react'
 
 const AdminProductsPage: FC = () => {
@@ -144,19 +145,34 @@ const AdminProductsPage: FC = () => {
               </Button>
             )
           }}
-          renderItem={(p: any) => (
-            <DataCard href={`/admin/products/${p.id}`}>
-              <DataCard.Header>
-                <DataCard.Title>
-                  <div className="flex items-center gap-2">
-                    <Package className="w-4 h-4 text-muted-foreground" />
-                    <span className="font-medium">{p.name}</span>
-                    <span className="font-mono text-xs text-muted-foreground">{p.slug}</span>
-                    <Badge color={p.is_active ? 'green' : 'red'}>{p.is_active ? 'actif' : 'inactif'}</Badge>
-                    {p.featured && <Star className="w-4 h-4 text-yellow-500" />}
-                  </div>
-                </DataCard.Title>
-              </DataCard.Header>
+          renderItem={(p: any) => {
+            const mainImage = getMainProductImage(p.images);
+            
+            const handleImageGalleryOpen = () => {
+              // TODO: Ouvrir la galerie d'images du produit
+              console.log('Ouvrir galerie pour produit:', p.id, 'Images:', p.images);
+            };
+            
+            return (
+              <DataCard 
+                href={`/admin/products/${p.id}`}
+              >
+                <DataCard.Header>
+                  <DataCard.Title
+                    icon={Package}
+                    image={mainImage}
+                    imageAlt={p.name}
+                    images={p.images}
+                    onImageClick={handleImageGalleryOpen}
+                  >
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium">{p.name}</span>
+                      <span className="font-mono text-xs text-muted-foreground">{p.slug}</span>
+                      <Badge color={p.is_active ? 'green' : 'red'}>{p.is_active ? 'actif' : 'inactif'}</Badge>
+                      {p.featured && <Star className="w-4 h-4 text-yellow-500" />}
+                    </div>
+                  </DataCard.Title>
+                </DataCard.Header>
               <DataCard.Content>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Zap className="w-3.5 h-3.5" />
@@ -178,7 +194,8 @@ const AdminProductsPage: FC = () => {
                 </div>
               </DataCard.Footer>
             </DataCard>
-          )}
+          );
+        }}
         />
       ) : (
         isLoading ? (

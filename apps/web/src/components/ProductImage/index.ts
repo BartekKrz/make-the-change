@@ -1,0 +1,1 @@
+export { ProductImage, useMainProductImage, getMainProductImage } from './ProductImage';
