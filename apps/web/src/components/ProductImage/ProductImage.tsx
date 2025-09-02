@@ -4,6 +4,9 @@ import { FC } from 'react';
 import Image from 'next/image';
 import { Package, Images } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
+import { BlurHashImage } from '@/components/ui/BlurHashImage';
+import { useImageWithBlurHash } from '@/hooks/useImageWithBlurHash';
+import type { BlurHashData } from '@/lib/types/blurhash';
 
 interface ProductImageProps {
   src?: string;
@@ -14,6 +17,7 @@ interface ProductImageProps {
   fallbackType?: 'placeholder' | 'initials';
   initials?: string;
   images?: string[];
+  blurHashes?: BlurHashData[];
   onImageClick?: () => void;
 }
 
@@ -94,13 +98,29 @@ export const ProductImage: FC<ProductImageProps> = ({
   fallbackType = 'placeholder',
   initials,
   images,
+  blurHashes = [],
   onImageClick
 }) => {
   const sizeClass = sizeMap[size];
   const isValidImage = src && src.trim() !== '' && src.startsWith('http');
   const imageCount = images?.length || 0;
 
-  // Si on a une image valide, l'afficher
+  // Hook BlurHash pour l'image principale
+  const { blurHash, hasBlurHash } = useImageWithBlurHash(
+    blurHashes || [],
+    src || '',
+    'product'
+  );
+
+  // Dimensions basées sur la taille
+  const dimensions = {
+    xs: { width: 32, height: 32 },
+    sm: { width: 32, height: 32 },
+    md: { width: 96, height: 96 },
+    lg: { width: 128, height: 128 },
+  }[size];
+
+  // Si on a une image valide, l'afficher avec BlurHash
   if (isValidImage) {
     return (
       <div className={cn('relative overflow-hidden rounded-lg bg-muted/20', sizeClass, className)}>
@@ -112,19 +132,31 @@ export const ProductImage: FC<ProductImageProps> = ({
           </>
         )}
         
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          className="object-cover transition-all duration-200 hover:scale-105"
-          priority={priority}
-          unoptimized={src.includes('unsplash') || src.includes('supabase')}
-          onError={(e) => {
-            // Fallback en cas d'erreur de chargement
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-          }}
-        />
+        {/* Image avec BlurHash ou Image standard selon disponibilité */}
+        {hasBlurHash ? (
+          <BlurHashImage
+            src={src}
+            blurHash={blurHash}
+            alt={alt}
+            width={dimensions.width}
+            height={dimensions.height}
+            className="w-full h-full hover:scale-105 transition-transform duration-200"
+          />
+        ) : (
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            className="object-cover transition-all duration-200 hover:scale-105"
+            priority={priority}
+            unoptimized={src.includes('unsplash') || src.includes('supabase')}
+            onError={(e) => {
+              // Fallback en cas d'erreur de chargement
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+            }}
+          />
+        )}
         
         {/* Badge compteur d'images */}
         <ImageCountBadge count={imageCount} onClick={onImageClick} />

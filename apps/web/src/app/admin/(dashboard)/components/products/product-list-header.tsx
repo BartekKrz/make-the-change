@@ -4,6 +4,7 @@ import { Star } from 'lucide-react'
 import { Badge } from '@/app/admin/(dashboard)/components/badge'
 import { getInitials } from '@/app/admin/(dashboard)/components/ui/format-utils'
 import { ProductImage, getMainProductImage } from '@/components/ProductImage'
+import type { BlurHashData } from '@/lib/types/blurhash'
 import { FC } from 'react'
 
 type Product =  {
@@ -13,6 +14,7 @@ type Product =  {
   is_active: boolean
   featured?: boolean
   images?: string[]
+  blur_hashes?: BlurHashData[]
 }
 
 type ProductListHeaderProps =  {
@@ -33,6 +35,7 @@ export const ProductListHeader: FC<ProductListHeaderProps> = ({ product }) => {
           size="xs"
           fallbackType="initials"
           initials={initials}
+          blurHashes={product.blur_hashes}
         />
       </div>
 

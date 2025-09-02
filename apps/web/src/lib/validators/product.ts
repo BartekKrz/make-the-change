@@ -1,6 +1,13 @@
 
 import { z } from 'zod'
 
+// BlurHash schema
+const blurHashSchema = z.object({
+  url: z.string().url('URL d\'image invalide'),
+  blurhash: z.string().min(1, 'BlurHash requis'),
+  type: z.enum(['product'], { errorMap: () => ({ message: 'Type BlurHash invalide pour un produit' }) })
+})
+
 export const productFormSchema = z.object({
   name: z
     .string()
@@ -67,6 +74,11 @@ export const productFormSchema = z.object({
     .array(z.string().url('URL d\'image invalide'))
     .max(10, 'Maximum 10 images par produit')
     .default([]),
+
+  blur_hashes: z
+    .array(blurHashSchema)
+    .max(10, 'Maximum 10 BlurHash par produit')
+    .default([]),
 }).refine((data) => {
   if (data.price_points > 1000 && !data.description) {
     return false
@@ -113,6 +125,7 @@ export const defaultProductValues: ProductFormData = {
   is_active: true,
   featured: false,
   images: [],
+  blur_hashes: [],
 }
 
 export const tierLabels = {

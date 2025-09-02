@@ -3,6 +3,7 @@
 import { AdminListItem } from '@/app/admin/(dashboard)/components/ui/admin-list-item'
 import { ProductListHeader } from './product-list-header'
 import { ProductListMetadata } from './product-list-metadata'
+import type { BlurHashData } from '@/lib/types/blurhash'
 import type { FC, ReactNode } from 'react'
 
 type Product =  {
@@ -14,6 +15,7 @@ type Product =  {
   price_points: number
   stock_quantity: number | null
   images?: string[]
+  blur_hashes?: BlurHashData[]
 }
 
 type ProductListItemProps =  {

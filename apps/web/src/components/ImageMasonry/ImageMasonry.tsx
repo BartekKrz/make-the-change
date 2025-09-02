@@ -4,6 +4,9 @@ import { FC } from 'react';
 import Image from 'next/image';
 import { Trash2, Edit3, Eye, GripVertical } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
+import { BlurHashImage } from '@/components/ui/BlurHashImage';
+import { useImageWithBlurHash } from '@/hooks/useImageWithBlurHash';
+import type { BlurHashData } from '@/lib/types/blurhash';
 import { 
   DndContext, 
   closestCenter, 
@@ -28,6 +31,7 @@ import { useIsMobile } from '@/hooks/useMediaQuery';
 
 type ImageMasonryProps = {
   images: string[];
+  blurHashes?: BlurHashData[];
   className?: string;
   onImageClick?: (imageUrl: string, index: number) => void;
   onImageReplace?: (imageUrl: string, index: number) => void;
@@ -40,6 +44,7 @@ type ImageMasonryProps = {
 
 export const ImageMasonry: FC<ImageMasonryProps> = ({ 
   images, 
+  blurHashes = [],
   className, 
   onImageClick,
   onImageReplace,
@@ -85,7 +90,8 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
     index: number; 
     className?: string;
     id: string;
-  }> = ({ src, alt, index, className, id }) => {
+    blurHashes: BlurHashData[];
+  }> = ({ src, alt, index, className, id, blurHashes }) => {
     const {
       attributes,
       listeners,
@@ -94,6 +100,13 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
       transition,
       isDragging,
     } = useSortable({ id });
+
+    // Hook BlurHash pour cette image
+    const { blurHash, hasBlurHash } = useImageWithBlurHash(
+      blurHashes,
+      src,
+      'product'
+    );
 
     const style = {
       transform: CSS.Transform.toString(transform),
@@ -122,16 +135,39 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
           </div>
         )}
 
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          className={cn(
-            "object-cover transition-all duration-200",
-            showActions ? "group-hover:brightness-75" : "hover:brightness-90 cursor-pointer",
-            isDragging && "brightness-75"
-          )}
-          unoptimized={src.includes('unsplash')}
+        {/* Image avec BlurHash ou Image standard */}
+        {hasBlurHash ? (
+          <div className="relative w-full h-full overflow-hidden rounded-lg">
+            <BlurHashImage
+              src={src}
+              blurHash={blurHash}
+              alt={alt}
+              width={300}
+              height={300}
+              className={cn(
+                "w-full h-full transition-all duration-200",
+                showActions ? "group-hover:brightness-75" : "hover:brightness-90 cursor-pointer",
+                isDragging && "brightness-75"
+              )}
+            />
+          </div>
+        ) : (
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            className={cn(
+              "object-cover transition-all duration-200",
+              showActions ? "group-hover:brightness-75" : "hover:brightness-90 cursor-pointer",
+              isDragging && "brightness-75"
+            )}
+            unoptimized={src.includes('unsplash')}
+          />
+        )}
+
+        {/* Click handler overlay */}
+        <div 
+          className="absolute inset-0 z-5"
           onClick={() => {
             if (showActions) {
               // En mode édition, le clic direct ne fait rien (il faut utiliser les boutons)
@@ -223,6 +259,7 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
                 alt={`Product image ${index + 1}`}
                 index={index}
                 className="cursor-pointer"
+                blurHashes={blurHashes}
               />
             </div>
           ))}

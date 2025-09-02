@@ -240,6 +240,7 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                     {images && images.length > 0 && (
                       <ImageMasonry 
                         images={images} 
+                        blurHashes={productData.blur_hashes}
                         className='w-full'
                         showActions={isEditing}
                         enableReorder={isEditing}
