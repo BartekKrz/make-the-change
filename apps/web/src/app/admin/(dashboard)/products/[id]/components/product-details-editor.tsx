@@ -187,8 +187,18 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
               console.log('🔍 Field images state:', field.state.value);
               console.log('🔍 ProductData images:', productData.images);
               
-              // TOUJOURS utiliser productData.images comme source de vérité
-              const images = productData.images || [];
+              // Utiliser field.state.value comme source de vérité pour l'affichage
+              // Initialiser avec productData.images si le field est vide
+              const images = field.state.value && field.state.value.length >= 0 
+                ? field.state.value 
+                : productData.images || [];
+              
+              // Synchroniser le field avec productData au premier rendu si nécessaire
+              if ((!field.state.value || field.state.value.length === 0) && 
+                  productData.images && productData.images.length > 0) {
+                console.log('🔄 Initialisation du field avec productData');
+                field.handleChange(productData.images);
+              }
               
               return (
                 <div className='space-y-4'>
@@ -203,7 +213,7 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                         onImageClick={(imageUrl: string, index: number) => {
                           console.log('Image cliquée:', imageUrl, 'index:', index);
                         }}
-                        onImageReplace={(imageUrl: string, index: number) => {
+                        onImageReplace={async (imageUrl: string, index: number) => {
                           console.log('Remplacer image:', imageUrl, 'index:', index);
                           const input = document.createElement('input');
                           input.type = 'file';
@@ -211,33 +221,104 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                           input.onchange = async (e) => {
                             const file = (e.target as HTMLInputElement).files?.[0];
                             if (file && productData.id) {
+                              // 🚀 OPTIMISTIC UPDATE : Afficher l'image temporairement
+                              const tempImageUrl = URL.createObjectURL(file);
+                              const optimisticImages = [...images];
+                              optimisticImages[index] = tempImageUrl;
+                              field.handleChange(optimisticImages);
+                              
                               try {
                                 const formData = new FormData();
                                 formData.append('file', file);
-                                formData.append('productId', productData.id);
                                 
-                                const response = await fetch('/api/upload/product-images', {
-                                  method: 'POST',
+                                // Utiliser l'API PUT améliorée
+                                const putUrl = new URL('/api/upload/product-images', window.location.origin);
+                                putUrl.searchParams.set('productId', productData.id);
+                                putUrl.searchParams.set('oldImageUrl', imageUrl);
+                                
+                                const response = await fetch(putUrl.toString(), {
+                                  method: 'PUT',
                                   body: formData,
                                 });
                                 
                                 if (response.ok) {
                                   const result = await response.json();
-                                  const newImages = [...images];
-                                  newImages[index] = result.url;
-                                  field.handleChange(newImages);
+                                  console.log('✅ Replace successful, final URL:', result.images);
+                                  
+                                  // Nettoyer l'URL temporaire
+                                  URL.revokeObjectURL(tempImageUrl);
+                                  
+                                  // Utiliser les images mises à jour retournées par l'API
+                                  if (result.images) {
+                                    field.handleChange(result.images);
+                                  }
+                                } else {
+                                  // 🔄 ROLLBACK : Restaurer l'image originale si l'API échoue
+                                  console.error('❌ Replace API failed, rolling back');
+                                  URL.revokeObjectURL(tempImageUrl);
+                                  field.handleChange(images); // Restaurer l'état original
                                 }
                               } catch (error) {
-                                console.error('Erreur remplacement:', error);
+                                console.error('💥 Erreur remplacement:', error);
+                                // 🔄 ROLLBACK : Restaurer l'image originale si erreur
+                                URL.revokeObjectURL(tempImageUrl);
+                                field.handleChange(images); // Restaurer l'état original
                               }
                             }
                           };
                           input.click();
                         }}
-                        onImageDelete={(imageUrl: string, index: number) => {
-                          console.log('Supprimer image:', imageUrl, 'index:', index);
+                        onImageDelete={async (imageUrl: string, index: number) => {
+                          console.log('🚀 Début suppression:', imageUrl, 'index:', index);
+                          console.log('📊 Images avant suppression:', images);
+                          
+                          // Sauvegarder l'état original pour le rollback
+                          const originalImages = [...images];
+                          
+                          // 🚀 OPTIMISTIC UPDATE : Supprimer immédiatement de l'UI
                           const newImages = images.filter((_, i) => i !== index);
+                          console.log('⚡ Optimistic update - nouvelles images:', newImages);
                           field.handleChange(newImages);
+                          
+                          if (productData.id) {
+                            try {
+                              // Extraire le path du fichier depuis l'URL
+                              let filePath = '';
+                              if (imageUrl.includes('supabase.co/storage')) {
+                                filePath = imageUrl.split('/storage/v1/object/public/products/')[1];
+                              }
+                              
+                              // Utiliser l'API DELETE améliorée
+                              const deleteUrl = new URL('/api/upload/product-images', window.location.origin);
+                              deleteUrl.searchParams.set('path', filePath);
+                              deleteUrl.searchParams.set('productId', productData.id);
+                              deleteUrl.searchParams.set('imageUrl', imageUrl);
+                              
+                              const response = await fetch(deleteUrl.toString(), {
+                                method: 'DELETE',
+                              });
+                              
+                              if (response.ok) {
+                                const result = await response.json();
+                                console.log('✅ Delete successful, API confirmed:', result.images);
+                                
+                                // Synchroniser avec les données retournées par l'API si différentes
+                                if (result.images && JSON.stringify(result.images) !== JSON.stringify(newImages)) {
+                                  console.log('🔄 Synchronisation avec API');
+                                  field.handleChange(result.images);
+                                }
+                              } else {
+                                // 🔄 ROLLBACK : Restaurer l'image si l'API échoue
+                                console.error('❌ Delete API failed, rolling back to:', originalImages);
+                                field.handleChange(originalImages);
+                              }
+                            } catch (error) {
+                              console.error('💥 Erreur suppression:', error);
+                              // 🔄 ROLLBACK : Restaurer l'image si erreur réseau
+                              console.log('🔄 Network error, rolling back to:', originalImages);
+                              field.handleChange(originalImages);
+                            }
+                          }
                         }}
                       />
                     )}
@@ -251,8 +332,10 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                       multiple={true}
                       productId={productData.id}
                       onImagesChange={(newImages) => {
-                        console.log('📸 Nouvelles images uploadées:', newImages);
-                        field.handleChange(newImages);
+                        console.log('📸 Nouvelles images uploadées depuis API:', newImages);
+                        console.log('🔄 Galerie devrait se mettre à jour automatiquement');
+                        // Le field est déjà mis à jour par ImageUploaderField
+                        // Pas besoin de double appel à field.handleChange
                       }}
                     />
                   </div>

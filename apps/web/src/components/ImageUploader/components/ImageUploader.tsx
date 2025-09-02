@@ -10,21 +10,23 @@ interface ImageUploaderProps {
   currentImage?: string;
   onImageSelect?: (file: File | null) => void;
   onImageRemove?: () => void;
+  onUploadComplete?: () => void; // Nouveau callback pour nettoyer l'état après upload
   width?: string;
   height?: string;
   disabled?: boolean;
   className?: string;
 }
 
-export const ImageUploader = ({
+export const ImageUploader: React.FC<ImageUploaderProps> = ({
   currentImage,
   onImageSelect,
   onImageRemove,
+  onUploadComplete,
   width = 'w-full',
   height = 'h-48',
   disabled = false,
-  className = ''
-}: ImageUploaderProps) => {
+  className,
+}) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -42,10 +44,23 @@ export const ImageUploader = ({
     }
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     handleImageUpload(e);
     const file = e.target.files?.[0] || null;
-    onImageSelect?.(file);
+    
+    if (file && onImageSelect) {
+      try {
+        await onImageSelect(file);
+        // Nettoyer l'état local après upload réussi
+        clearImage();
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        onUploadComplete?.();
+      } catch (error) {
+        console.error('Upload failed:', error);
+      }
+    }
   };
 
   const handleRemove = () => {
@@ -69,7 +84,7 @@ export const ImageUploader = ({
     setIsDragOver(false);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
     
@@ -79,7 +94,20 @@ export const ImageUploader = ({
     if (files.length > 0) {
       const file = files[0];
       handleImageUpload({ target: { files: [file] } } as any);
-      onImageSelect?.(file);
+      
+      if (onImageSelect) {
+        try {
+          await onImageSelect(file);
+          // Nettoyer l'état local après upload réussi
+          clearImage();
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+          onUploadComplete?.();
+        } catch (error) {
+          console.error('Upload failed:', error);
+        }
+      }
     }
   };
 
