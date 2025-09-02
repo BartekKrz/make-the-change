@@ -159,7 +159,7 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
                 {section.title}
               </CardTitle>
             </CardHeader>
-            <CardContent className='pt-0'>
+            <CardContent>
               {section.content}
             </CardContent>
           </Card>

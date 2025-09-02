@@ -1,83 +1,150 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { FC } from 'react';
 import { ProductDetailLayout } from '@/app/admin/(dashboard)/products/[id]/components/product-detail-layout';
 import { ProductCompactHeader } from '@/app/admin/(dashboard)/products/[id]/components/product-compact-header';
 import { ProductDetailsEditor } from '@/app/admin/(dashboard)/products/[id]/components/product-details-editor';
 import { ProductBreadcrumbs } from '@/app/admin/(dashboard)/products/[id]/components/product-breadcrumbs';
 import type { ProductFormData } from '@/lib/validators/product';
+import type { SaveStatus } from '@/app/admin/(dashboard)/products/[id]/types';
 
 type ProductDetailControllerProps = {
   productData: ProductFormData & { id: string };
   onSave: (patch: Partial<ProductFormData>) => Promise<void>;
 };
 
+// Helper function to create debounced save
+const createDebouncedSave = (saveFn: Function, delay: number) => {
+  let timeoutId: NodeJS.Timeout;
+  return (data: any) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      saveFn(data);
+    }, delay);
+  };
+};
+
 export const ProductDetailController: FC<ProductDetailControllerProps> = ({
   productData,
   onSave
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [pendingData, setPendingData] = useState<Partial<ProductFormData>>({});
+  const [pendingChanges, setPendingChanges] = useState<Partial<ProductFormData>>({});
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const handleEditToggle = (editing: boolean) => {
-    console.log('🔄 handleEditToggle called with editing:', editing);
-    if (!editing) {
-      setPendingData({});
-    }
-    setIsEditing(editing);
-    console.log('✅ setIsEditing completed');
-  };
+  // Données actuelles = données originales + modifications en attente
+  const currentData = useMemo(() => ({
+    ...productData,
+    ...pendingChanges
+  }), [productData, pendingChanges]);
 
-  const handleDataChange = (data: Partial<ProductFormData>) => {
-    setPendingData(prev => ({ ...prev, ...data }));
-  };
+  // Fonction de sauvegarde intelligente
+  const smartSave = useCallback(async (changes: Partial<ProductFormData>, immediate = false) => {
+    if (Object.keys(changes).length === 0) return;
 
-  const handleSave = async () => {
-    console.log('🔄 ProductDetailController.handleSave() - Début');
+    console.log('🔄 SmartSave triggered:', changes, immediate ? '(immediate)' : '(debounced)');
     setIsSaving(true);
+    setSaveError(null);
 
     try {
-      console.log('📊 Données actuelles:', productData);
-      console.log('📝 Données en attente:', pendingData);
-
+      // Créer le patch en comparant avec les données originales
       const patch: Partial<ProductFormData> = {};
-      for (const key of [
-        'name','slug','price_points','short_description','description','is_active','featured','stock_quantity','min_tier','category_id','producer_id','fulfillment_method','images'
-      ] as const) {
-        if (key in pendingData && (productData as any)[key] !== (pendingData as any)[key]) {
-          console.log(`🔄 Champ ${key} modifié:`, {
-            ancien: (productData as any)[key],
-            nouveau: (pendingData as any)[key]
-          });
-          (patch as any)[key] = (pendingData as any)[key];
+      for (const [key, value] of Object.entries(changes)) {
+        if ((productData as any)[key] !== value) {
+          (patch as any)[key] = value;
         }
       }
 
-      console.log('📦 Patch final:', patch);
-      console.log('📊 Taille du patch:', Object.keys(patch).length);
-
       if (Object.keys(patch).length > 0) {
-        console.log('✅ Appel de onSave()...');
+        console.log('📦 Saving patch:', patch);
         await onSave(patch);
-        console.log('✅ onSave() terminé avec succès');
-      } else {
-        console.log('⚠️ Aucun changement détecté');
+        
+        // Succès : nettoyer les changements en attente
+        setPendingChanges(prev => {
+          const updated = { ...prev };
+          Object.keys(patch).forEach(key => delete updated[key]);
+          return updated;
+        });
+        
+        setLastSaved(new Date());
+        console.log('✅ Save successful');
       }
-
-      setIsEditing(false);
-      setPendingData({});
     } catch (error) {
-      console.error('❌ Erreur lors de la sauvegarde:', error);
-      console.error('❌ Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+      console.error('❌ Save failed:', error);
+      setSaveError(error instanceof Error ? error.message : 'Erreur de sauvegarde');
+      
+      // Retry après 30s en cas d'erreur
+      setTimeout(() => {
+        if (Object.keys(changes).length > 0) {
+          console.log('🔄 Retrying save after error...');
+          smartSave(changes, true);
+        }
+      }, 30000);
     } finally {
-      console.log('🔄 ProductDetailController.handleSave() - Fin');
       setIsSaving(false);
     }
-  };
+  }, [productData, onSave]);
 
-  const displayData = { ...productData, ...pendingData };
+  // Auto-save avec debounce pour les champs texte
+  const debouncedSave = useMemo(
+    () => createDebouncedSave(smartSave, 3000),
+    [smartSave]
+  );
+
+  // Gestion des changements de champ
+  const handleFieldChange = useCallback((field: string, value: any) => {
+    console.log('🔄 [CONTROLLER] Field changed:', field, value);
+    console.log('🔄 [CONTROLLER] ProductData avant mise à jour:', productData[field as keyof ProductFormData]);
+    
+    setPendingChanges(prev => ({
+      ...prev,
+      [field]: value
+    }));
+
+    // Stratégie de sauvegarde selon le type de champ
+    const immediateFields = ['is_active', 'featured', 'min_tier', 'fulfillment_method', 'category_id', 'producer_id', 'images'];
+    const autoSaveFields = ['name', 'slug', 'short_description', 'description', 'price_points', 'stock_quantity'];
+
+    if (immediateFields.includes(field)) {
+      // Sauvegarde immédiate pour toggles, selects et images
+      console.log('⚡ [CONTROLLER] Immediate save triggered for field:', field, 'value:', value);
+      smartSave({ [field]: value }, true);
+    } else if (autoSaveFields.includes(field)) {
+      // Auto-save avec debounce pour les champs texte
+      console.log('⏱️ [CONTROLLER] Debounced save for field:', field);
+      debouncedSave({ [field]: value });
+    }
+  }, [smartSave, debouncedSave, productData]);
+
+  // Fonction pour sauvegarder manuellement toutes les modifications en attente
+  const saveAllPending = useCallback(() => {
+    if (Object.keys(pendingChanges).length > 0) {
+      console.log('💾 Manual save all pending changes:', pendingChanges);
+      smartSave(pendingChanges, true);
+    }
+  }, [pendingChanges, smartSave]);
+
+  // Indicateur de statut
+  const saveStatus = useMemo((): SaveStatus => {
+    if (isSaving) return { type: 'saving' as const, message: 'Sauvegarde...' };
+    if (saveError) return { type: 'error' as const, message: `Erreur: ${saveError}` };
+    if (Object.keys(pendingChanges).length > 0) {
+      return { 
+        type: 'pending' as const, 
+        message: `${Object.keys(pendingChanges).length} modification(s) en attente`,
+        count: Object.keys(pendingChanges).length
+      };
+    }
+    if (lastSaved) {
+      const timeSince = Math.floor((Date.now() - lastSaved.getTime()) / 1000);
+      if (timeSince < 60) {
+        return { type: 'saved' as const, message: `Sauvegardé il y a ${timeSince}s` };
+      }
+    }
+    return { type: 'idle' as const, message: 'Tous les changements sont sauvegardés' };
+  }, [isSaving, saveError, pendingChanges, lastSaved]);
 
   return (
     <ProductDetailLayout
@@ -85,49 +152,20 @@ export const ProductDetailController: FC<ProductDetailControllerProps> = ({
         <>
           <ProductBreadcrumbs productData={productData} />
           <ProductCompactHeader
-            productData={displayData}
-            isEditing={isEditing}
-            onEditToggle={handleEditToggle}
-            onSave={handleSave}
-            isSaving={isSaving}
+            productData={currentData}
+            saveStatus={saveStatus}
+            onSaveAll={saveAllPending}
           />
         </>
       }
       toolbar={<div />}
       content={
         <ProductDetailsEditor
-          productData={displayData}
-          isEditing={isEditing}
-          isSaving={isSaving}
-          onSave={async (data) => {
-            console.log('🎯 ProductDetailController onSave called with data:', data);
-            console.log('🖼️ Images in data:', data.images);
-            console.log('🏭 Original productData.images:', productData.images);
-            
-            const patch: Partial<ProductFormData> = {};
-            for (const key of [
-              'name','slug','short_description','description','price_points','stock_quantity',
-              'category_id','producer_id','min_tier','fulfillment_method','is_active','featured','images'
-            ] as const) {
-              if ((data as any)[key] !== undefined && (productData as any)[key] !== (data as any)[key]) {
-                console.log(`🔄 Field ${key} changed:`, {
-                  from: (productData as any)[key],
-                  to: (data as any)[key]
-                });
-                (patch as any)[key] = (data as any)[key];
-              }
-            }
-
-            console.log('📦 Final patch to send:', patch);
-            
-            if (Object.keys(patch).length > 0) {
-              console.log('✅ Patch has content, calling onSave...');
-              await onSave(patch);
-            } else {
-              console.log('⚠️ No changes detected, skipping save');
-            }
-            setIsEditing(false);
-          }}
+          productData={currentData}
+          onFieldChange={handleFieldChange}
+          saveStatus={saveStatus}
+          pendingChanges={pendingChanges}
+          onSaveAll={saveAllPending}
         />
       }
     />

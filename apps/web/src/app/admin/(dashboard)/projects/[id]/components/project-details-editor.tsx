@@ -213,7 +213,7 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
       <ProjectCardsGrid>
         {contentSections.map((section) => (
           <Card key={section.id} className='transition-all duration-200 hover:shadow-lg'>
-            <CardHeader className='pb-4'>
+            <CardHeader>
               <CardTitle className='flex items-center gap-3 text-lg'>
                 <div className='p-2 bg-gradient-to-br from-primary/20 to-orange-500/20 rounded-lg border border-primary/20'>
                   <section.icon className='h-5 w-5 text-primary' />
@@ -221,7 +221,7 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
                 {section.title}
               </CardTitle>
             </CardHeader>
-            <CardContent className='pt-0'>
+            <CardContent>
               {section.content}
             </CardContent>
           </Card>

@@ -24,7 +24,10 @@ export const ImageUploadArea = ({
       isDragOver && 'bg-muted/30 scale-[1.02]',
       disabled && 'cursor-not-allowed opacity-50'
     )}
-    onClick={!disabled ? onClick : undefined}
+    onClick={!disabled ? () => {
+      console.log('🖱️ [ImageUploadArea] Zone cliquée, disabled:', disabled);
+      onClick();
+    } : undefined}
   >
     <div className={cn(
       'p-4 rounded-lg transition-all duration-300 ease-out',

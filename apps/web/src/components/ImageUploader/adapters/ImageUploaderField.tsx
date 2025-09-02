@@ -341,10 +341,10 @@ export const ImageUploaderField = ({
 
   const currentImages = field.state.value || [];
   
-  // En mode multiple, ne pas afficher d'image courante dans la zone d'upload
-  // La galerie est affichée séparément
+  // En mode multiple, JAMAIS afficher d'image courante dans la zone d'upload
+  // La galerie est affichée séparément par ImageMasonry
   const currentImage = multiple 
-    ? undefined  // Toujours vide en mode multiple pour permettre l'ajout
+    ? undefined  // TOUJOURS vide en mode multiple pour garder la zone d'upload
     : (currentImages.length > 0 ? currentImages[0] : undefined);
 
   // Callback pour nettoyer l'état de l'ImageUploader après upload réussi

@@ -56,11 +56,21 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
 }) => {
   const isMobile = useIsMobile();
   
-  // Configuration des sensors pour le drag & drop
+  // 🧪 [DEBUG] Vérification des props
+  console.log('🎯 [DEBUG] ImageMasonry props:', {
+    showActions,
+    enableReorder,
+    hasPreview: !!onImagePreview,
+    hasReplace: !!onImageReplace,
+    hasDelete: !!onImageDelete,
+    imagesCount: images.length
+  });
+  
+  // Configuration des sensors pour le drag & drop avec activation plus permissive
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // Minimum distance before drag starts
+        distance: 5, // Distance réduite pour une activation plus facile
       },
     }),
     useSensor(KeyboardSensor, {
@@ -70,14 +80,18 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
 
   // Handler pour la fin du drag & drop
   const handleDragEnd = (event: DragEndEvent) => {
+    console.log('🎯 [DEBUG] Drag end event:', event);
     const { active, over } = event;
 
     if (active.id !== over?.id) {
       const oldIndex = images.findIndex((_, index) => `image-${index}` === active.id);
       const newIndex = images.findIndex((_, index) => `image-${index}` === over?.id);
       
+      console.log('🎯 [DEBUG] Drag reorder:', { oldIndex, newIndex });
+      
       if (oldIndex !== -1 && newIndex !== -1) {
         const newImages = arrayMove(images, oldIndex, newIndex);
+        console.log('🎯 [DEBUG] Calling onImagesReorder:', { oldIndex, newIndex, newImages });
         onImagesReorder?.(oldIndex, newIndex, newImages);
       }
     }
@@ -123,13 +137,17 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
           className
         )}
       >
-        {/* Drag handle pour desktop */}
-        {enableReorder && !isMobile && showActions && (
+        {/* Drag handle pour desktop et mobile */}
+        {enableReorder && showActions && (
           <div 
             {...attributes}
             {...listeners}
-            className="absolute top-2 left-2 z-10 p-1 bg-black/50 rounded cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute top-2 left-2 z-30 p-1 bg-black/70 rounded cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
             title="Glisser pour réorganiser"
+            onClick={(e) => {
+              console.log('🎯 [DEBUG] Drag handle cliqué');
+              e.stopPropagation();
+            }}
           >
             <GripVertical className="w-4 h-4 text-white" />
           </div>
@@ -165,27 +183,34 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
           />
         )}
 
-        {/* Click handler overlay */}
-        <div 
-          className="absolute inset-0 z-5"
-          onClick={() => {
-            if (showActions) {
-              // En mode édition, le clic direct ne fait rien (il faut utiliser les boutons)
-              return;
-            } else {
-              // En mode non-édition, clic ouvre la prévisualisation
-              onImagePreview?.(src, index);
-            }
-          }}
-        />
+        {/* Click handler overlay - Réactivé mais conditionnel */}
+        {!showActions && onImageClick && (
+          <div 
+            className="absolute inset-0 z-5 cursor-pointer"
+            onClick={() => {
+              console.log('🎯 [DEBUG] Image cliquée via overlay');
+              onImageClick(src, index);
+            }}
+          />
+        )}
         
         {/* Overlay avec actions au hover en mode édition */}
         {showActions && (
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+          <div 
+            className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center z-20"
+            onMouseEnter={() => console.log('🎯 [DEBUG] Overlay hover activé')}
+            onMouseDown={(e) => {
+              // Empêcher l'overlay d'interférer avec le drag sur le handle
+              if (enableReorder) {
+                e.stopPropagation();
+              }
+            }}
+          >
             <div className="flex gap-2">
               {/* Bouton prévisualiser */}
               <button
                 onClick={(e) => {
+                  console.log('🖼️ [DEBUG] Bouton prévisualiser cliqué dans ImageMasonry');
                   e.stopPropagation();
                   onImagePreview?.(src, index);
                 }}
@@ -198,6 +223,7 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
               {/* Bouton remplacer */}
               <button
                 onClick={(e) => {
+                  console.log('🔄 [DEBUG] Bouton remplacer cliqué dans ImageMasonry');
                   e.stopPropagation();
                   onImageReplace?.(src, index);
                 }}
@@ -210,6 +236,7 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
               {/* Bouton supprimer */}
               <button
                 onClick={(e) => {
+                  console.log('🗑️ [DEBUG] Bouton supprimer cliqué dans ImageMasonry');
                   e.stopPropagation();
                   onImageDelete?.(src, index);
                 }}

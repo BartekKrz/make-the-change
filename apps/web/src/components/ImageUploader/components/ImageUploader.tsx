@@ -45,23 +45,33 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   } = useImageHandler();
 
   const triggerFileInput = () => {
+    console.log('🎯 [ImageUploader] triggerFileInput appelé, disabled:', disabled);
     if (!disabled) {
+      console.log('🎯 [ImageUploader] Déclenchement du clic sur file input');
       fileInputRef.current?.click();
+    } else {
+      console.log('⚠️ [ImageUploader] Upload désactivé');
     }
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('📁 [ImageUploader] handleFileSelect appelé');
+    console.log('📁 [ImageUploader] Event target files:', e.target.files);
+    
     handleImageUpload(e);
     const files = e.target.files;
     
     if (files && files.length > 0) {
-      if (multiple && files.length > 1) {
-        // Upload multiple
+      console.log('📁 [ImageUploader] Files détectés:', files.length, 'multiple:', multiple);
+      
+      if (multiple) {
+        // En mode multiple, traiter TOUS les fichiers (même s'il n'y en a qu'un)
         const fileArray = Array.from(files);
+        console.log('📁 [ImageUploader] Mode multiple, appel onImagesSelect avec:', fileArray.length, 'files');
         if (onImagesSelect) {
           try {
             await onImagesSelect(fileArray);
-            // Nettoyer l'état local après upload réussi
+            // Nettoyer l'état local après upload réussi pour éviter l'affichage
             clearImage();
             if (fileInputRef.current) {
               fileInputRef.current.value = '';
@@ -70,10 +80,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           } catch (error) {
             console.error('Upload failed:', error);
           }
+        } else {
+          console.log('⚠️ [ImageUploader] onImagesSelect non défini');
         }
       } else {
         // Upload single (compatibilité)
         const file = files[0];
+        console.log('📁 [ImageUploader] Mode single, appel onImageSelect avec:', file.name);
         if (onImageSelect) {
           try {
             await onImageSelect(file);
@@ -86,8 +99,12 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           } catch (error) {
             console.error('Upload failed:', error);
           }
+        } else {
+          console.log('⚠️ [ImageUploader] onImageSelect non défini');
         }
       }
+    } else {
+      console.log('⚠️ [ImageUploader] Aucun fichier détecté');
     }
   };
 
@@ -120,14 +137,15 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     const files = e.dataTransfer.files;
     if (files.length > 0) {
-      if (multiple && files.length > 1) {
-        // Drag & drop multiple
+      if (multiple) {
+        // Drag & drop multiple - traiter TOUS les fichiers
         const fileArray = Array.from(files);
         handleImageUpload({ target: { files: fileArray } } as any);
         
         if (onImagesSelect) {
           try {
             await onImagesSelect(fileArray);
+            // Nettoyer l'état local après upload réussi pour éviter l'affichage
             clearImage();
             if (fileInputRef.current) {
               fileInputRef.current.value = '';
@@ -158,7 +176,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   };
 
-  const displayImage = uploadedImageSrc || currentImage;
+  // En mode multiple, ne jamais afficher d'image dans la zone d'upload
+  // Les images sont gérées par ImageMasonry séparément
+  const displayImage = multiple ? undefined : (uploadedImageSrc || currentImage);
 
   return (
     <div 

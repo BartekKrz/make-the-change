@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { FC } from 'react';
-import { Package, Star, ShoppingCart, Calendar, Edit, X, Save, Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { Package, Star, ShoppingCart, Calendar, Info, ChevronDown, ChevronUp, Clock, CheckCircle, AlertCircle, Save } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
 import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import type { SaveStatus } from '@/app/admin/(dashboard)/products/[id]/types';
 
 type ProductData = {
   id: string;
@@ -25,18 +26,14 @@ type ProductData = {
 
 type ProductCompactHeaderProps = {
   productData: ProductData;
-  isEditing?: boolean;
-  onEditToggle?: (editing: boolean) => void;
-  onSave?: () => void;
-  isSaving?: boolean;
+  saveStatus?: SaveStatus;
+  onSaveAll?: () => void;
 };
 
 export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
   productData,
-  isEditing = false,
-  onEditToggle,
-  onSave,
-  isSaving = false
+  saveStatus,
+  onSaveAll
 }) => {
   const [showMobileDetails, setShowMobileDetails] = useState(false);
 
@@ -69,6 +66,45 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
 
   const formatStock = (): string => {
     return `${productData.stock_quantity} en stock`;
+  };
+
+  // Composant pour l'indicateur de statut de sauvegarde
+  const SaveStatusIndicator = () => {
+    if (!saveStatus) return null;
+
+    const statusConfig = {
+      idle: { icon: CheckCircle, color: 'text-green-600', bgColor: 'bg-green-50', borderColor: 'border-green-200' },
+      saving: { icon: Clock, color: 'text-blue-600', bgColor: 'bg-blue-50', borderColor: 'border-blue-200' },
+      pending: { icon: Clock, color: 'text-amber-600', bgColor: 'bg-amber-50', borderColor: 'border-amber-200' },
+      saved: { icon: CheckCircle, color: 'text-green-600', bgColor: 'bg-green-50', borderColor: 'border-green-200' },
+      error: { icon: AlertCircle, color: 'text-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-200' }
+    };
+
+    const config = statusConfig[saveStatus.type];
+    const Icon = config.icon;
+
+    return (
+      <div className={cn(
+        'flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium',
+        config.bgColor,
+        config.borderColor,
+        config.color
+      )}>
+        <Icon size={16} className={saveStatus.type === 'saving' ? 'animate-spin' : ''} />
+        <span className="truncate max-w-[200px]">{saveStatus.message}</span>
+        {saveStatus.type === 'pending' && saveStatus.count && saveStatus.count > 0 && onSaveAll && (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={onSaveAll}
+            className="ml-2 px-2 py-1 h-6 text-xs"
+          >
+            <Save size={12} className="mr-1" />
+            Sauvegarder
+          </Button>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -147,106 +183,21 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
         {}
         <div className='flex items-center gap-2 flex-shrink-0 self-start md:self-auto'>
           {}
-          {!isEditing && (
-            <button
-              onClick={() => setShowMobileDetails(!showMobileDetails)}
-              className='flex md:hidden items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-md border border-border/40 hover:border-border/60'
-              aria-label={showMobileDetails ? 'Masquer les détails' : 'Afficher les détails'}
-            >
-              <Info className='h-3 w-3' />
-              {showMobileDetails ? (
-                <ChevronUp className='h-3 w-3 transition-transform duration-200' />
-              ) : (
-                <ChevronDown className='h-3 w-3 transition-transform duration-200' />
-              )}
-            </button>
-          )}
+          <button
+            onClick={() => setShowMobileDetails(!showMobileDetails)}
+            className='flex md:hidden items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-md border border-border/40 hover:border-border/60'
+            aria-label={showMobileDetails ? 'Masquer les détails' : 'Afficher les détails'}
+          >
+            <Info className='h-3 w-3' />
+            {showMobileDetails ? (
+              <ChevronUp className='h-3 w-3 transition-transform duration-200' />
+            ) : (
+              <ChevronDown className='h-3 w-3 transition-transform duration-200' />
+            )}
+          </button>
 
-          {onEditToggle && (
-            <>
-              {isEditing ? (
-                <>
-                  {}
-                  <div className='flex md:hidden items-center gap-2'>
-                    <Button
-                      variant='outline'
-                      size='default'
-                      onClick={() => onEditToggle(false)}
-                      disabled={isSaving}
-                      className='text-sm font-medium px-4 py-2 min-h-[40px] min-w-[80px]'
-                    >
-                      <X className='h-4 w-4 mr-1' />
-                      Annuler
-                    </Button>
-                    <Button
-                      variant='default'
-                      size='default'
-                      onClick={onSave}
-                      disabled={isSaving}
-                      className='text-sm font-medium px-4 py-2 min-h-[40px] min-w-[100px] bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80'
-                    >
-                      <Save className='h-4 w-4 mr-1' />
-                      {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
-                    </Button>
-                  </div>
-
-                  {}
-                  <div className='hidden md:flex items-center gap-2'>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={() => onEditToggle(false)}
-                      disabled={isSaving}
-                      className='text-sm'
-                    >
-                      <X className='h-4 w-4 mr-1' />
-                      Annuler
-                    </Button>
-                    <Button
-                      variant='default'
-                      size='sm'
-                      onClick={onSave}
-                      disabled={isSaving}
-                      className='text-sm'
-                    >
-                      <Save className='h-4 w-4 mr-1' />
-                      Sauvegarder
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  {}
-                  <Button
-                    variant='outline'
-                    size='default'
-                    onClick={() => {
-                      console.log('🖊️ Edit button clicked (mobile)');
-                      onEditToggle(true);
-                    }}
-                    className='flex md:hidden text-sm font-medium px-4 py-2 min-h-[40px] min-w-[80px] border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50'
-                  >
-                    <Edit className='h-4 w-4 mr-1' />
-                    Éditer
-                  </Button>
-
-                  {}
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    onClick={() => {
-                      console.log('🖊️ Edit button clicked (desktop)');
-                      onEditToggle(true);
-                    }}
-                    className='hidden md:flex text-sm'
-                  >
-                    <Edit className='h-4 w-4 mr-1' />
-                    Modifier
-                  </Button>
-                </>
-              )}
-            </>
-          )}
+          {}
+          <SaveStatusIndicator />
         </div>
       </div>
 

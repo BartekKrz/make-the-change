@@ -12,7 +12,10 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
     <input
       type="file"
       accept="image/*"
-      onChange={onChange}
+      onChange={(e) => {
+        console.log('🎯 [ImageInput] onChange déclenché, files:', e.target.files);
+        onChange(e);
+      }}
       className={`absolute inset-0 w-full h-full opacity-0 z-[-1] ${className}`}
       ref={ref}
       aria-label="Télécharger une image"
