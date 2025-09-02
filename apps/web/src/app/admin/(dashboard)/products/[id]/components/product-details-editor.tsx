@@ -1,15 +1,13 @@
-'use client';
-import type { FC, PropsWithChildren } from 'react';
-import { useState } from 'react';
-import {  DollarSign, Save, ImageIcon, Info } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
-import { useFormWithToast } from '@/hooks/use-form-with-toast';
-import { FormInput, FormSelect, FormTextArea } from '@/components/form';
-import {  tierLabels, fulfillmentMethodLabels, type ProductFormData } from '@/lib/validators/product';
-import { ImageUploaderField } from '@/components/ImageUploader';
-import { ImageMasonry } from '@/components/ImageMasonry/ImageMasonry';
-import { ImageGalleryModal } from '@/components/ImageGallery';
+import { FormTextArea, FormSelect, FormInput } from "@/components/form";
+import { ImageGalleryModal } from "@/components/ImageGallery";
+import { ImageMasonry } from "@/components/ImageMasonry";
+import { ImageUploaderField } from "@/components/ImageUploader";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useFormWithToast } from "@/hooks/use-form-with-toast";
+import { ProductFormData, tierLabels, fulfillmentMethodLabels } from "@/lib/validators/product";
+import { Info, DollarSign, ImageIcon, Save } from "lucide-react";
+import { FC, PropsWithChildren, useState } from "react";
 
 type ProductDetailsEditorProps = {
   productData: ProductFormData & { id: string };
@@ -41,15 +39,36 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
   const { form, isSubmitting } = useFormWithToast({
     defaultValues: productData,
     onSubmit: async (value: ProductFormData) => {
-      console.log('📝 ProductDetailsEditor onSubmit called with:', value);
+      console.log('� ProductDetailsEditor onSubmit called with:', value);
+      console.log('🚨 Calling stack trace:', new Error().stack);
       console.log('📷 Images in form data:', value.images);
       
       if (onSave) {
         console.log('🚀 Calling onSave with form data...');
-        await onSave(value);
-        return { success: true };
+        
+        // Détecter s'il y a des changements réels (plus précis que JSON.stringify)
+        const hasChanges = Object.keys(value).some(key => {
+          const currentValue = (value as any)[key];
+          const originalValue = (productData as any)[key];
+          
+          // Comparaison spéciale pour les arrays (comme images)
+          if (Array.isArray(currentValue) && Array.isArray(originalValue)) {
+            return JSON.stringify(currentValue.sort()) !== JSON.stringify(originalValue.sort());
+          }
+          
+          return currentValue !== originalValue;
+        });
+        
+        if (hasChanges) {
+          console.log('✅ Changes detected, proceeding with save and showing toast');
+          await onSave(value);
+          return { success: true };
+        } else {
+          console.log('⚠️ No changes detected in onSubmit, not showing toast');
+          return { success: false }; // Ne pas afficher le toast s'il n'y a pas de changements
+        }
       }
-      return { success: true };
+      return { success: false }; // Pas de onSave, pas de toast
     },
     toasts: {
       success: {
@@ -282,10 +301,20 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                           }
                         }}
                         onImageReplace={async (imageUrl: string, index: number) => {
-                          console.log('Remplacer image:', imageUrl, 'index:', index);
+                          console.log('� Remplacement image:', imageUrl, 'index:', index);
+                          
                           const input = document.createElement('input');
                           input.type = 'file';
                           input.accept = 'image/*';
+                          
+                          // Empêcher la soumission du formulaire quand l'input est créé
+                          input.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                          });
+                          
+                          // Attacher l'input au body (en dehors du formulaire) pour éviter la soumission
+                          input.style.display = 'none';
+                          document.body.appendChild(input);
                           input.onchange = async (e) => {
                             const file = (e.target as HTMLInputElement).files?.[0];
                             if (file && productData.id) {
@@ -318,20 +347,30 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                                   if (result.images) {
                                     field.handleChange(result.images);
                                   }
+                                  
+                                  // Nettoyer l'input du DOM
+                                  document.body.removeChild(input);
                                 } else {
                                   // 🔄 ROLLBACK : Restaurer l'image originale si l'API échoue
                                   console.error('❌ Replace API failed, rolling back');
                                   URL.revokeObjectURL(tempImageUrl);
                                   field.handleChange(images); // Restaurer l'état original
+                                  
+                                  // Nettoyer l'input du DOM
+                                  document.body.removeChild(input);
                                 }
                               } catch (error) {
                                 console.error('💥 Erreur remplacement:', error);
                                 // 🔄 ROLLBACK : Restaurer l'image originale si erreur
                                 URL.revokeObjectURL(tempImageUrl);
                                 field.handleChange(images); // Restaurer l'état original
+                              } finally {
+                                // Nettoyer l'input du DOM
+                                document.body.removeChild(input);
                               }
                             }
                           };
+                          
                           input.click();
                         }}
                         onImageDelete={async (imageUrl: string, index: number) => {
@@ -417,8 +456,12 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
   return (
     <>
     <form onSubmit={(e) => {
+      console.log('🎯 Form onSubmit event triggered', e);
+      console.log('🎯 Event target:', e.target);
+      console.log('🎯 Event currentTarget:', e.currentTarget);
       e.preventDefault();
       e.stopPropagation();
+      console.log('🎯 About to call form.handleSubmit()');
       form.handleSubmit();
     }} className='space-y-6 md:space-y-8'>
       <ProductCardsGrid>
@@ -485,6 +528,15 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
           const input = document.createElement('input');
           input.type = 'file';
           input.accept = 'image/*';
+          
+          // Empêcher la soumission du formulaire quand l'input est créé
+          input.addEventListener('click', (e) => {
+            e.stopPropagation();
+          });
+          
+          // Attacher l'input au body (en dehors du formulaire) pour éviter la soumission
+          input.style.display = 'none';
+          document.body.appendChild(input);
           input.onchange = async (e) => {
             const file = (e.target as HTMLInputElement).files?.[0];
             if (file && productData.id) {
@@ -520,17 +572,26 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                   if (result.images) {
                     form.setFieldValue('images', result.images);
                   }
+                  
+                  // Nettoyer l'input du DOM
+                  document.body.removeChild(input);
                 } else {
                   // 🔄 ROLLBACK : Restaurer l'image originale si l'API échoue
                   console.error('❌ Replace API failed from modal, rolling back');
                   URL.revokeObjectURL(tempImageUrl);
                   form.setFieldValue('images', currentImages);
+                  
+                  // Nettoyer l'input du DOM
+                  document.body.removeChild(input);
                 }
               } catch (error) {
                 console.error('💥 Erreur remplacement depuis modal:', error);
                 // 🔄 ROLLBACK : Restaurer l'image originale si erreur
                 URL.revokeObjectURL(tempImageUrl);
                 form.setFieldValue('images', currentImages);
+                
+                // Nettoyer l'input du DOM
+                document.body.removeChild(input);
               }
             }
           };

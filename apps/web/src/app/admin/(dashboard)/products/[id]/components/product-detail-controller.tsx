@@ -22,10 +22,12 @@ export const ProductDetailController: FC<ProductDetailControllerProps> = ({
   const [pendingData, setPendingData] = useState<Partial<ProductFormData>>({});
 
   const handleEditToggle = (editing: boolean) => {
+    console.log('🔄 handleEditToggle called with editing:', editing);
     if (!editing) {
       setPendingData({});
     }
     setIsEditing(editing);
+    console.log('✅ setIsEditing completed');
   };
 
   const handleDataChange = (data: Partial<ProductFormData>) => {

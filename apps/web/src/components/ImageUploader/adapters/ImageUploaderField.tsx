@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { ImageUploader } from '../components/ImageUploader';
+import { useToast } from '@/hooks/use-toast';
 
 // Type pour TanStack Form Field
 interface TanStackFormField {
@@ -27,6 +29,8 @@ export const ImageUploaderField = ({
   multiple = false,
   productId
 }: ImageUploaderFieldProps) => {
+  const [isUploading, setIsUploading] = useState(false);
+  const { toast } = useToast();
   
   const handleImageSelect = async (file: File | null) => {
     if (!file) {
@@ -34,7 +38,9 @@ export const ImageUploaderField = ({
       return;
     }
 
+    setIsUploading(true); // 🚀 Démarrer le loading
     await uploadSingleImage(file);
+    setIsUploading(false); // 🏁 Arrêter le loading
   };
 
   const handleImagesSelect = async (files: File[]) => {
@@ -42,6 +48,8 @@ export const ImageUploaderField = ({
       console.log('🚫 No files selected');
       return;
     }
+
+    setIsUploading(true); // 🚀 Démarrer le loading
 
     console.log('📸 Starting multiple upload:', {
       fileCount: files.length,
@@ -88,12 +96,27 @@ export const ImageUploaderField = ({
         console.log('📝 Updating field with API response images:', result.images);
         field.handleChange(result.images);
         onImagesChange?.(result.images);
+        
+        // Toast de succès spécifique pour l'upload d'images
+        toast({
+          variant: 'success',
+          title: 'Images uploadées',
+          description: `${files.length} image(s) ajoutée(s) avec succès`,
+        });
       }
       
       console.log('🎉 Multiple upload completed successfully');
     } catch (error) {
       console.error('💥 Multiple upload error:', error);
-      // TODO: Ajouter une notification d'erreur
+      
+      // Toast d'erreur spécifique pour l'upload d'images
+      toast({
+        variant: 'destructive',
+        title: 'Erreur d\'upload',
+        description: 'Impossible d\'uploader les images. Veuillez réessayer.',
+      });
+    } finally {
+      setIsUploading(false); // 🏁 Arrêter le loading dans tous les cas
     }
   };
 
@@ -341,6 +364,7 @@ export const ImageUploaderField = ({
       width={width}
       height={height}
       disabled={disabled}
+      isUploading={isUploading}
     />
   );
 };

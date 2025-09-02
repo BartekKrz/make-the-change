@@ -220,7 +220,10 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
                   <Button
                     variant='outline'
                     size='default'
-                    onClick={() => onEditToggle(true)}
+                    onClick={() => {
+                      console.log('🖊️ Edit button clicked (mobile)');
+                      onEditToggle(true);
+                    }}
                     className='flex md:hidden text-sm font-medium px-4 py-2 min-h-[40px] min-w-[80px] border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50'
                   >
                     <Edit className='h-4 w-4 mr-1' />
@@ -231,7 +234,10 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
                   <Button
                     variant='outline'
                     size='sm'
-                    onClick={() => onEditToggle(true)}
+                    onClick={() => {
+                      console.log('🖊️ Edit button clicked (desktop)');
+                      onEditToggle(true);
+                    }}
                     className='hidden md:flex text-sm'
                   >
                     <Edit className='h-4 w-4 mr-1' />

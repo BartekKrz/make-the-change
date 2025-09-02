@@ -17,6 +17,7 @@ interface ImageUploaderProps {
   disabled?: boolean;
   multiple?: boolean; // Support pour images multiples
   className?: string;
+  isUploading?: boolean; // État de loading externe
 }
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -30,6 +31,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   disabled = false,
   multiple = false,
   className,
+  isUploading: externalIsUploading = false,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -198,6 +200,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           onClick={triggerFileInput} 
           isDragOver={isDragOver}
           disabled={disabled}
+          isUploading={isUploading || externalIsUploading}
         />
       )}
       
