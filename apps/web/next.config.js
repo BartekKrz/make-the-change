@@ -19,6 +19,8 @@ const nextConfig = {
   // Image optimizations (15.3+ improvements)
   images: {
     formats: ['image/avif', 'image/webp'],
+    // Autoriser toutes les sources externes sans optimisation pour éviter les problèmes CORS
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -31,6 +33,8 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
+    // Fallback pour compatibilité
+    domains: ['images.unsplash.com', '*.supabase.co'],
   },
   
   // Webpack configuration

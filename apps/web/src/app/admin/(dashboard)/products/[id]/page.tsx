@@ -4,7 +4,6 @@ import { useParams } from 'next/navigation'
 import { trpc } from '@/lib/trpc'
 import { useMemo } from 'react'
 import { FC } from 'react'
-import { supabase } from '@/supabase/client'
 import { ProductDetailController } from '@/app/admin/(dashboard)/products/[id]/components/product-detail-controller'
 
 const AdminProductEditPage: FC = () => {
@@ -22,36 +21,58 @@ const AdminProductEditPage: FC = () => {
   )
   const update = trpc.admin.products.update.useMutation({
     onMutate: async (vars) => {
+      console.log('🔄 TanStack Query onMutate - Début');
+      console.log('📦 Variables reçues:', vars);
+      console.log('🆔 ProductId:', productId);
+
       await utils.admin.products.detail.cancel({ productId })
       await utils.admin.products.list.cancel()
 
       const prevDetail = utils.admin.products.detail.getData({ productId })
       const prevList = utils.admin.products.list.getData()
 
+      console.log('📊 Données précédentes - Detail:', prevDetail);
+      console.log('📊 Données précédentes - List:', prevList ? prevList.items.length : 0, 'items');
+
       if (prevDetail) {
-        utils.admin.products.detail.setData({ productId }, { ...prevDetail, ...vars.patch })
+        const newDetail = { ...prevDetail, ...vars.patch };
+        console.log('🔄 Mise à jour cache detail:', newDetail);
+        utils.admin.products.detail.setData({ productId }, newDetail)
       }
 
       if (prevList) {
-        utils.admin.products.list.setData(undefined, {
+        const newList = {
           ...prevList,
           items: prevList.items.map(p => p.id === productId ? { ...p, ...vars.patch } : p)
-        })
+        };
+        console.log('🔄 Mise à jour cache list:', newList.items.length, 'items');
+        utils.admin.products.list.setData(undefined, newList)
       }
 
       return { prevDetail, prevList }
     },
     onError: (error, vars, ctx) => {
+      console.error('❌ TanStack Query onError:', error);
+      console.error('❌ Variables:', vars);
+      console.error('❌ Contexte:', ctx);
+
       if (ctx?.prevDetail) {
+        console.log('🔄 Rollback cache detail');
         utils.admin.products.detail.setData({ productId }, ctx.prevDetail)
       }
       if (ctx?.prevList) {
+        console.log('🔄 Rollback cache list');
         utils.admin.products.list.setData(undefined, ctx.prevList)
       }
-      console.error('Erreur lors de la mise à jour:', error)
-      alert('Erreur lors de la sauvegarde')
+
+      alert(`Erreur lors de la sauvegarde: ${error.message || 'Erreur inconnue'}`)
+    },
+    onSuccess: (data, vars) => {
+      console.log('✅ TanStack Query onSuccess:', data);
+      console.log('✅ Variables utilisées:', vars);
     },
     onSettled: () => {
+      console.log('🔄 TanStack Query onSettled - Invalidation des queries');
       utils.admin.products.detail.invalidate({ productId })
       utils.admin.products.list.invalidate()
     }
@@ -66,41 +87,22 @@ const AdminProductEditPage: FC = () => {
   if (!productData) return <div className="p-8">Produit non trouvé</div>
 
   const handleSave = async (patch: any) => {
+    console.log('💾 HandleSave called with patch:', patch);
+    
     if (product) {
+      console.log('🔄 Calling update.mutate with:', { id: productId, patch });
       update.mutate({ id: productId, patch })
     } else {
+      console.log('⚠️ No product - mock mode');
       console.log('Mode mock - sauvegarde simulée:', patch)
       alert('Sauvegarde simulée (mode développement)')
     }
-  }
-
-  const handleImageUpload = async (file: File) => {
-    const bucket = 'product-images'
-    const path = `${productId}/${Date.now()}-${file.name}`
-    const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true })
-    if (error) {
-      alert('Upload échoué: ' + error.message)
-      throw error
-    }
-    const { data } = supabase.storage.from(bucket).getPublicUrl(path)
-    const url = data.publicUrl
-    const currentImages = productData.images || []
-    const newImages = [...currentImages, url]
-    await handleSave({ images: newImages })
-  }
-
-  const handleImageRemove = async (url: string) => {
-    const currentImages = productData.images || []
-    const newImages = currentImages.filter((img: string) => img !== url)
-    await handleSave({ images: newImages })
   }
 
   return (
     <ProductDetailController
       productData={productData}
       onSave={handleSave}
-      onImageUpload={handleImageUpload}
-      onImageRemove={handleImageRemove}
     />
   )
 }

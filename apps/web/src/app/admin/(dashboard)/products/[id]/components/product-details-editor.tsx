@@ -1,5 +1,4 @@
 'use client';
-
 import type { FC, PropsWithChildren } from 'react';
 import {  DollarSign, Save, ImageIcon, Info } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card';
@@ -7,14 +6,14 @@ import { Button } from '@/app/admin/(dashboard)/components/ui/button';
 import { useFormWithToast } from '@/hooks/use-form-with-toast';
 import { FormInput, FormSelect, FormTextArea } from '@/components/form';
 import {  tierLabels, fulfillmentMethodLabels, type ProductFormData } from '@/lib/validators/product';
+import { ImageUploaderField } from '@/components/ImageUploader';
+import { ImageMasonry } from '@/components/ImageMasonry/ImageMasonry';
 
 type ProductDetailsEditorProps = {
   productData: ProductFormData & { id: string };
   isEditing: boolean;
   isSaving?: boolean;
   onSave?: (data: ProductFormData) => Promise<void>;
-  onImageUpload?: (file: File) => void;
-  onImageRemove?: (url: string) => void;
 };
 
 const ProductCardsGrid: FC<PropsWithChildren> = ({ children }) => (
@@ -35,14 +34,16 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
   productData,
   isEditing,
   isSaving = false,
-  onSave,
-  onImageUpload,
-  onImageRemove
+  onSave
 }) => {
   const { form, isSubmitting } = useFormWithToast({
     defaultValues: productData,
     onSubmit: async (value: ProductFormData) => {
+      console.log('📝 ProductDetailsEditor onSubmit called with:', value);
+      console.log('📷 Images in form data:', value.images);
+      
       if (onSave) {
+        console.log('🚀 Calling onSave with form data...');
         await onSave(value);
         return { success: true };
       }
@@ -180,24 +181,101 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
       icon: ImageIcon,
       content: (
         <div className='space-y-4'>
-          {isEditing && onImageUpload && (
-            <div>
-              <label className='block text-sm font-medium mb-2'>Ajouter des images</label>
-              <input
-                type='file'
-                accept='image/*'
-                multiple
-                onChange={(e) => {
-                  const files = Array.from(e.target.files || [])
-                  files.forEach(file => onImageUpload(file))
-                }}
-                className='block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100'
-              />
-            </div>
-          )}
-          <p className='text-sm text-muted-foreground'>
-            Gestionnaire d&apos;images du produit
-          </p>
+          <form.Field name="images">
+            {(field) => {
+              // Debug des données
+              console.log('🔍 Field images state:', field.state.value);
+              console.log('🔍 ProductData images:', productData.images);
+              
+              // TOUJOURS utiliser productData.images comme source de vérité
+              const images = productData.images || [];
+              
+              return (
+                <div className='space-y-4'>
+                  {/* Interface unifiée : galerie + zone d'ajout */}
+                  <div className='space-y-3'>
+                    {/* Galerie actuelle sans label - TOUJOURS afficher si images existent */}
+                    {images && images.length > 0 && (
+                      <ImageMasonry 
+                        images={images} 
+                        className='max-w-2xl'
+                        showActions={isEditing}
+                        onImageClick={(imageUrl: string, index: number) => {
+                          console.log('Image cliquée:', imageUrl, 'index:', index);
+                        }}
+                        onImageReplace={(imageUrl: string, index: number) => {
+                          console.log('Remplacer image:', imageUrl, 'index:', index);
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = async (e) => {
+                            const file = (e.target as HTMLInputElement).files?.[0];
+                            if (file && productData.id) {
+                              try {
+                                const formData = new FormData();
+                                formData.append('file', file);
+                                formData.append('productId', productData.id);
+                                
+                                const response = await fetch('/api/upload/product-images', {
+                                  method: 'POST',
+                                  body: formData,
+                                });
+                                
+                                if (response.ok) {
+                                  const result = await response.json();
+                                  const newImages = [...images];
+                                  newImages[index] = result.url;
+                                  field.handleChange(newImages);
+                                }
+                              } catch (error) {
+                                console.error('Erreur remplacement:', error);
+                              }
+                            }
+                          };
+                          input.click();
+                        }}
+                        onImageDelete={(imageUrl: string, index: number) => {
+                          console.log('Supprimer image:', imageUrl, 'index:', index);
+                          const newImages = images.filter((_, i) => i !== index);
+                          field.handleChange(newImages);
+                        }}
+                      />
+                    )}
+
+                    {/* Zone d'upload intégrée sans label */}
+                    <ImageUploaderField
+                      field={field}
+                      width="w-full"
+                      height="h-32"
+                      disabled={!isEditing}
+                      multiple={true}
+                      productId={productData.id}
+                      onImagesChange={(newImages) => {
+                        console.log('📸 Nouvelles images uploadées:', newImages);
+                        field.handleChange(newImages);
+                      }}
+                    />
+                  </div>
+
+                  {/* Bouton pour la gestion avancée */}
+                  {images && images.length > 0 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        window.open(`/admin/products/${productData.id}/images`, '_blank');
+                      }}
+                      className='w-full'
+                    >
+                      <ImageIcon className='w-4 h-4 mr-2' />
+                      Gérer l&apos;ordre et la disposition des images
+                    </Button>
+                  )}
+                </div>
+              );
+            }}
+          </form.Field>
         </div>
       ),
     },

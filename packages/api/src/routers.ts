@@ -11,6 +11,7 @@ import {
 import type { TRPCContext } from './context'
 import { partnerRouter } from './router/admin/partner';
 import { adminSubscriptionsRouter } from './router/admin/subscriptions';
+import { imagesRouter } from './router/admin/images';
 
 // Supabase service client for server-side ops
 const supabaseUrl = process.env.SUPABASE_URL as string
@@ -196,6 +197,7 @@ export const appRouter = createRouter({
   admin: createRouter({
     partners: partnerRouter,
     subscriptions: adminSubscriptionsRouter,
+    images: imagesRouter,
     orders: createRouter({
       list: adminProcedure
         .input(
@@ -398,14 +400,50 @@ export const appRouter = createRouter({
           })
         )
         .mutation(async ({ input }) => {
+          console.log('🔄 Backend: admin.products.update - Début');
+          console.log('📦 Input reçu:', JSON.stringify(input, null, 2));
+
+          const { data: productBefore, error: fetchError } = await supabase
+            .from('products')
+            .select('*')
+            .eq('id', input.id)
+            .single();
+
+          if (fetchError) {
+            console.error('❌ Erreur récupération produit:', fetchError);
+            throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found' });
+          }
+
+          console.log('📊 Produit avant mise à jour:', {
+            id: productBefore.id,
+            name: productBefore.name,
+            images_count: productBefore.images ? productBefore.images.length : 0,
+            images: productBefore.images
+          });
+
+          console.log('🔄 Patch appliqué:', JSON.stringify(input.patch, null, 2));
+
           const { data, error } = await supabase
             .from('products')
             .update(input.patch as any)
             .eq('id', input.id)
             .select()
-            .single()
-          if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
-          return data
+            .single();
+
+          if (error) {
+            console.error('❌ Erreur mise à jour:', error);
+            throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message });
+          }
+
+          console.log('✅ Produit mis à jour:', {
+            id: data.id,
+            name: data.name,
+            images_count: data.images ? data.images.length : 0,
+            images: data.images
+          });
+
+          console.log('🎉 Backend: admin.products.update - Succès');
+          return data;
         }),
 
       inventoryAdjust: adminProcedure

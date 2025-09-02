@@ -15,6 +15,7 @@ import { useAppForm, FormInput, FormTextArea, FormSelect } from '@/components/fo
 
 import { useToast } from '@/hooks/use-toast';
 import { createProject } from '@/app/admin/(dashboard)/projects/actions';
+import ImageUpload from '@/components/ui/image-upload';
 
 import type { ProjectFormData } from '@/lib/validators/project';
 
@@ -28,6 +29,8 @@ const NewProjectPage = () => {
   const router = useRouter();
   const utils = trpc.useUtils();
   const { toast } = useToast();
+  const [projectImages, setProjectImages] = useState<string[]>([]);
+
   const form = useAppForm({
     defaultValues: defaultProjectValues,
     onSubmit: async ({ value }: { value: ProjectFormData }) => {
@@ -39,6 +42,11 @@ const NewProjectPage = () => {
             formData.append(key, val.toString());
           }
         });
+        
+        // Ajouter les images
+        if (projectImages.length > 0) {
+          formData.append('images', JSON.stringify(projectImages));
+        }
 
         const result = await createProject({ success: false, message: '' }, formData);
 
@@ -176,6 +184,22 @@ const NewProjectPage = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Images */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Images du projet</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ImageUpload
+              entityId="temp-project" // Sera remplacé par l'ID réel après création
+              bucket="projects"
+              currentImages={projectImages}
+              onImagesChange={setProjectImages}
+              maxFiles={8}
+            />
+          </CardContent>
+        </Card>
 
         {}
         <Card>
