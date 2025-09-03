@@ -24,7 +24,6 @@ type ProductsErrorStateProps = {
   refetch: () => void;
 };
 
-
 const ProductsErrorState: FC<ProductsErrorStateProps> = ({ productsError, refetch }) => (
   <div className="text-center py-12">
     <div className="p-4 bg-red-50 text-red-800 rounded-lg mb-4 max-w-md mx-auto">
@@ -55,231 +54,386 @@ const ProductsEmptyState: FC<ProductsEmptyState> = ({ resetFilters }) => (
   </div>
 );
 
-
-type ProductsGridViewProps = {
-  products: any[];
-  isLoading: boolean;
-  adjustStock: (productId: string, delta: number) => void;
-  toggleFeature: (productId: string) => void;
-  toggleActive: (productId: string) => void;
-  updateProduct: any;
-  resetFilters: () => void;
+type ProductProps = {
+  product: any;
+  view: 'grid' | 'list';
+  createQueryKey: () => any;
 };
 
-const ProductsGridView: FC<ProductsGridViewProps> = ({ 
-  products, 
-  isLoading, 
-  adjustStock, 
-  toggleFeature, 
-  toggleActive, 
-  updateProduct,
-  resetFilters
-}) => (
-  <DataList
-    items={products}
-    isLoading={isLoading}
-    gridCols={3}
-    emptyState={{
-      title: 'Aucun produit',
-      description: 'Aucun résultat pour ces filtres.',
-      action: (
-        <Button size="sm" variant="outline" onClick={resetFilters}>
-          Réinitialiser
-        </Button>
-      )
-    }}
-    renderItem={(p) => {
-      const mainImage = getMainProductImage(p.images);
+const Product: FC<ProductProps> = ({ product, view, createQueryKey }) => {
+  const pendingRequest = useRef<NodeJS.Timeout | null>(null);
+  const utils = trpc.useUtils();
+  
+  const updateProduct = trpc.admin.products.update.useMutation({
+    onMutate: async ({ id, patch }) => {
       
-      return (
-        <DataCard href={`/admin/products/${p.id}`}>
-          <DataCard.Header>
-            <DataCard.Title
-              icon={Package}
-              image={mainImage}
-              imageAlt={p.name}
-              images={p.images}
+      await utils.admin.products.list.cancel();
+      
+      
+      const queryKey = createQueryKey();
+      const previousData = utils.admin.products.list.getData(queryKey);
+
+      
+      if (previousData?.items) {
+        const updatedData = {
+          ...previousData,
+          items: previousData.items.map(product => 
+            product.id === id ? { ...product, ...patch } : product
+          )
+        };
+        
+        utils.admin.products.list.setData(queryKey, updatedData);
+      }
+
+      return { previousData, queryKey };
+    },
+    onError: (_err, _variables, context) => {
+      
+      if (context?.previousData && context.queryKey) {
+        utils.admin.products.list.setData(context.queryKey, context.previousData);
+      }
+    },
+  });
+  
+  const debouncedMutation = useCallback((patch: any, delay = 500) => {
+    
+    if (pendingRequest.current) {
+      clearTimeout(pendingRequest.current);
+    }
+
+    
+    const queryKey = createQueryKey();
+    const currentData = utils.admin.products.list.getData(queryKey);
+    
+    if (currentData?.items) {
+      const optimisticData = {
+        ...currentData,
+        items: currentData.items.map(p => 
+          p.id === product.id ? { ...p, ...patch } : p
+        )
+      };
+      
+      utils.admin.products.list.setData(queryKey, optimisticData);
+    }
+
+    
+    pendingRequest.current = setTimeout(() => {
+      updateProduct.mutate({ id: product.id, patch });
+      pendingRequest.current = null;
+    }, delay);
+  }, [product.id, updateProduct, utils, createQueryKey]);
+
+  
+  const adjustStock = useCallback((delta: number) => {
+    const currentStock = product.stock_quantity || 0;
+    const newStock = Math.max(0, currentStock + delta);
+    
+    if (newStock === currentStock) return;
+    
+    debouncedMutation({ stock_quantity: newStock });
+  }, [product.stock_quantity, debouncedMutation]);
+
+  const toggleFeature = useCallback(() => {
+    const newFeatured = !product.featured;
+    debouncedMutation({ featured: newFeatured }, 300);
+  }, [product.featured, debouncedMutation]);
+
+  const toggleActive = useCallback(() => {
+    const newActive = !product.is_active;
+    debouncedMutation({ is_active: newActive }, 300);
+  }, [product.is_active, debouncedMutation]);
+
+  
+  if (view === 'grid') {
+    const mainImage = getMainProductImage(product.images);
+    
+    return (
+      <DataCard href={`/admin/products/${product.id}`}>
+        <DataCard.Header>
+          <DataCard.Title
+            icon={Package}
+            image={mainImage}
+            imageAlt={product.name}
+            images={product.images}
+          >
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-medium">{product.name}</span>
+              <span className="font-mono text-xs text-muted-foreground">{product.slug}</span>
+              <Badge color={product.is_active ? 'green' : 'red'}>{product.is_active ? 'actif' : 'inactif'}</Badge>
+              {product.featured && <Star className="w-4 h-4 text-yellow-500" />}
+            </div>
+          </DataCard.Title>
+        </DataCard.Header>
+        <DataCard.Content>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <Zap className="w-3.5 h-3.5" />
+            <span>{product.price_points} pts</span>
+          </div>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <Box className="w-3.5 h-3.5" />
+            <span>Stock: {product.stock_quantity ?? 0}</span>
+          </div>
+          {product.producer && (
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                {product.producer.name}
+              </span>
+            </div>
+          )}
+        </DataCard.Content>
+        <DataCard.Footer>
+          <div className="flex items-center gap-1 md:gap-2">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="text-xs px-2" 
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(1); }}
             >
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-medium">{p.name}</span>
-                <span className="font-mono text-xs text-muted-foreground">{p.slug}</span>
-                <Badge color={p.is_active ? 'green' : 'red'}>{p.is_active ? 'actif' : 'inactif'}</Badge>
-                {p.featured && <Star className="w-4 h-4 text-yellow-500" />}
-              </div>
-            </DataCard.Title>
-          </DataCard.Header>
-          <DataCard.Content>
-            <div className="flex items-center gap-3 text-sm text-muted-foreground">
-              <Zap className="w-3.5 h-3.5" />
-              <span>{p.price_points} pts</span>
+               +1
+            </Button>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="text-xs px-2" 
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(-1); }}
+            >
+              -1
+            </Button>
+          </div>
+          <div className="flex items-center gap-1 md:gap-2 flex-wrap">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="text-xs whitespace-nowrap" 
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(); }}
+            >
+              <span className="hidden sm:inline">{product.featured ? 'Unfeature' : 'Feature'}</span>
+              <span className="sm:hidden">{product.featured ? '★' : '☆'}</span>
+            </Button>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="text-xs whitespace-nowrap" 
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(); }}
+            >
+              <span className="hidden sm:inline">{product.is_active ? 'Désactiver' : 'Activer'}</span>
+              <span className="sm:hidden">{product.is_active ? 'Off' : 'On'}</span>
+            </Button>
+          </div>
+          {updateProduct.isError && (
+            <div className="text-xs text-red-600 mt-2">
+              Erreur: {updateProduct.error?.message || 'Impossible de sauvegarder'}
             </div>
-            <div className="flex items-center gap-3 text-sm text-muted-foreground">
-              <Box className="w-3.5 h-3.5" />
-              <span>Stock: {p.stock_quantity ?? 0}</span>
+          )}
+        </DataCard.Footer>
+      </DataCard>
+    );
+  }
+
+  
+  return (
+    <ProductListItem
+      key={product.id}
+      product={product}
+      actions={
+        <div className="flex items-center gap-1 md:gap-2 flex-wrap">
+          <div className="flex items-center gap-1">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="text-xs px-2" 
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(1); }}
+            >
+              +1
+            </Button>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="text-xs px-2" 
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(-1); }}
+            >
+              -1
+            </Button>
+          </div>
+          <div className="flex items-center gap-1">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="text-xs whitespace-nowrap" 
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(); }}
+            >
+              <span className="hidden sm:inline">{product.featured ? 'Unfeature' : 'Feature'}</span>
+              <span className="sm:hidden">{product.featured ? '★' : '☆'}</span>
+            </Button>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="text-xs whitespace-nowrap" 
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(); }}
+            >
+              <span className="hidden sm:inline">{product.is_active ? 'Désactiver' : 'Activer'}</span>
+              <span className="sm:hidden">{product.is_active ? 'Off' : 'On'}</span>
+            </Button>
+          </div>
+          {updateProduct.isError && (
+            <div className="text-xs text-red-600 w-full">
+              Erreur: {updateProduct.error?.message || 'Impossible de sauvegarder'}
             </div>
-            {p.producer && (
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                  {p.producer.name}
-                </span>
-              </div>
-            )}
-          </DataCard.Content>
-          <DataCard.Footer>
-            <div className="flex items-center gap-1 md:gap-2">
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="text-xs px-2" 
-                disabled={updateProduct.isPending}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(p.id, 1); }}
-              >
-                {updateProduct.isPending ? '...' : '+1'}
-              </Button>
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="text-xs px-2" 
-                disabled={updateProduct.isPending}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(p.id, -1); }}
-              >
-                {updateProduct.isPending ? '...' : '-1'}
-              </Button>
-            </div>
-            <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="text-xs whitespace-nowrap" 
-                disabled={updateProduct.isPending}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(p.id); }}
-              >
-                <span className="hidden sm:inline">{p.featured ? 'Unfeature' : 'Feature'}</span>
-                <span className="sm:hidden">{p.featured ? '★' : '☆'}</span>
-              </Button>
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="text-xs whitespace-nowrap" 
-                disabled={updateProduct.isPending}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(p.id); }}
-              >
-                <span className="hidden sm:inline">{p.is_active ? 'Désactiver' : 'Activer'}</span>
-                <span className="sm:hidden">{p.is_active ? 'Off' : 'On'}</span>
-              </Button>
-            </div>
-            {updateProduct.isError && (
-              <div className="text-xs text-red-600 mt-2">
-                Erreur: {updateProduct.error?.message || 'Impossible de sauvegarder'}
-              </div>
-            )}
-          </DataCard.Footer>
-        </DataCard>
-      );
-    }}
-  />
+          )}
+        </div>
+      }
+    />
+  );
+};
+
+
+
+type ProductsListProps = {
+  products: any[];
+  view: 'grid' | 'list';
+  createQueryKey: () => any;
+};
+
+
+const ProductListSkeleton: FC = () => (
+  <div className="group relative py-3 px-3 -mx-3 md:py-4 md:px-4 md:-mx-4 border border-transparent rounded-lg">
+    <div className="relative min-h-[76px] md:min-h-[80px] px-1 py-1">
+      
+      {/* Header skeleton - ProductListHeader */}
+      <div className="mb-1.5 md:mb-2">
+        <div className="flex items-center gap-2 md:gap-3">
+          {/* ProductImage (size="xs" = rond) */}
+          <div className="w-7 h-7 md:w-8 md:h-8 bg-gray-200 rounded-full animate-pulse flex-shrink-0" />
+          
+          {/* Titre + slug + badge + star */}
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            {/* Nom produit */}
+            <div className="w-32 h-4 bg-gray-200 rounded animate-pulse" />
+            {/* Slug */}
+            <div className="w-20 h-3 bg-gray-200 rounded animate-pulse" />
+            {/* Badge actif/inactif */}
+            <div className="w-12 h-5 bg-gray-200 rounded-full animate-pulse" />
+            {/* Star featured (parfois) */}
+            <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
+          </div>
+        </div>
+      </div>
+
+      {/* Metadata skeleton - ProductListMetadata */}
+      <div className="space-y-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-4 flex-wrap">
+          {/* Prix - Zap + texte */}
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
+            <div className="w-12 h-3 bg-gray-200 rounded animate-pulse" />
+          </div>
+          
+          {/* Stock - Box + texte */}
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
+            <div className="w-16 h-3 bg-gray-200 rounded animate-pulse" />
+          </div>
+          
+          {/* Producer - User + nom (parfois présent) */}
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
+            <div className="w-20 h-3 bg-gray-200 rounded animate-pulse" />
+          </div>
+        </div>
+      </div>
+
+      {/* Actions skeleton - boutons de la vue liste */}
+      <div className="relative z-30 mt-3 pt-2 border-t border-border/20">
+        <div className="flex items-center gap-1 md:gap-2 flex-wrap">
+          {/* Boutons +1/-1 */}
+          <div className="flex items-center gap-1">
+            <div className="w-8 h-6 bg-gray-200 rounded animate-pulse" />
+            <div className="w-8 h-6 bg-gray-200 rounded animate-pulse" />
+          </div>
+          {/* Boutons Feature/Active */}
+          <div className="flex items-center gap-1">
+            <div className="w-16 h-6 bg-gray-200 rounded animate-pulse" />
+            <div className="w-16 h-6 bg-gray-200 rounded animate-pulse" />
+          </div>
+        </div>
+      </div>
+
+      {/* Flèche de navigation (droite) */}
+      <div className="flex-shrink-0 ml-4 absolute right-0 top-1/2 -translate-y-1/2">
+        <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
+      </div>
+    </div>
+  </div>
 );
 
-type ProductsListViewProps = {
-  products: any[];
-  isLoading: boolean;
-  adjustStock: (productId: string, delta: number) => void;
-  toggleFeature: (productId: string) => void;
-  toggleActive: (productId: string) => void;
-  updateProduct: any;
-  resetFilters: () => void;
+type ProductsListSkeletonProps = {
+  view: 'grid' | 'list';
 };
 
-
-const ProductsListView: FC<ProductsListViewProps> = ({ 
-  products, 
-  isLoading, 
-  adjustStock, 
-  toggleFeature, 
-  toggleActive, 
-  updateProduct,
-  resetFilters
-}) => {
-  if (isLoading) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-muted-foreground">Chargement des produits...</p>
-      </div>
-    );
-  }
-
-  if (products.length === 0) {
-    return (
-      <ProductsEmptyState
-        resetFilters={resetFilters}
-      />
-    );
-  }
-
-  return (
+const ProductsListSkeleton: FC<ProductsListSkeletonProps> = ({ view }) => {
+  return view === 'grid' ? (
+    <DataList
+      items={[]}
+      isLoading={true}
+      gridCols={3}
+      emptyState={{
+        title: 'Aucun produit',
+        description: 'Aucun résultat pour ces filtres.',
+        action: null // Pas besoin d'action dans un skeleton
+      }}
+      renderItem={() => null}
+    />
+  ) : (
     <ListContainer>
-      {products.map((product) => (
-        <ProductListItem
-          key={product.id}
-          product={product}
-          actions={
-            <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-              <div className="flex items-center gap-1">
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="text-xs px-2" 
-                  disabled={updateProduct.isPending}
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(product.id, 1); }}
-                >
-                  {updateProduct.isPending ? '...' : '+1'}
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="text-xs px-2" 
-                  disabled={updateProduct.isPending}
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(product.id, -1); }}
-                >
-                  {updateProduct.isPending ? '...' : '-1'}
-                </Button>
-              </div>
-              <div className="flex items-center gap-1">
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="text-xs whitespace-nowrap" 
-                  disabled={updateProduct.isPending}
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(product.id); }}
-                >
-                  <span className="hidden sm:inline">{product.featured ? 'Unfeature' : 'Feature'}</span>
-                  <span className="sm:hidden">{product.featured ? '★' : '☆'}</span>
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="text-xs whitespace-nowrap" 
-                  disabled={updateProduct.isPending}
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(product.id); }}
-                >
-                  <span className="hidden sm:inline">{product.is_active ? 'Désactiver' : 'Activer'}</span>
-                  <span className="sm:hidden">{product.is_active ? 'Off' : 'On'}</span>
-                </Button>
-              </div>
-              {updateProduct.isError && (
-                <div className="text-xs text-red-600 w-full">
-                  Erreur: {updateProduct.error?.message || 'Impossible de sauvegarder'}
-                </div>
-              )}
-            </div>
-          }
-        />
+      {Array.from({ length: 6 }).map((_, i) => (
+        <ProductListSkeleton key={i} />
       ))}
     </ListContainer>
   );
 };
 
+const ProductsList: FC<ProductsListProps> = ({ 
+  products, 
+  view,
+  createQueryKey
+}) => {
+  // Plus de gestion de l'état vide ici - c'est géré au niveau supérieur
+  
+  if (view === 'grid') return (
+    <DataList
+      items={products}
+      isLoading={false}
+      gridCols={3}
+      emptyState={{
+        title: 'Aucun produit',
+        description: 'Aucun résultat pour ces filtres.',
+        action: null // Jamais affiché car on gère l'état vide avec ProductsEmptyState
+      }}
+      renderItem={(product) => (
+        <Product
+          key={product.id}
+          product={product}
+          view="grid"
+          createQueryKey={createQueryKey}
+        />
+      )}
+    />
+  );
 
+  
+  return (
+    <ListContainer>
+      {products.map((product) => (
+        <Product
+          key={product.id}
+          product={product}
+          view="list"
+          createQueryKey={createQueryKey}
+        />
+      ))}
+    </ListContainer>
+  );
+};
 
 
 const AdminProductsPage: FC = () => {
@@ -291,10 +445,6 @@ const AdminProductsPage: FC = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(80);
   
-  
-  const pendingRequests = useRef<Record<string, NodeJS.Timeout>>({});
-  
- 
   const headerRef = useRef<HTMLDivElement>(null);
   
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -362,8 +512,6 @@ const AdminProductsPage: FC = () => {
     updateHeaderHeight();
   }, [producers, updateHeaderHeight]);
 
-  const utils = trpc.useUtils();
-  
   
   const createQueryKey = useCallback(() => ({
     cursor,
@@ -373,107 +521,7 @@ const AdminProductsPage: FC = () => {
     producerId: selectedProducerId,
   }), [cursor, debouncedSearch, activeOnly, selectedProducerId]);
   
-  const updateProduct = trpc.admin.products.update.useMutation({
-    onMutate: async ({ id, patch }) => {
-   
-      await utils.admin.products.list.cancel();
-      
-   
-      const queryKey = createQueryKey();
-
-   
-      const previousData = utils.admin.products.list.getData(queryKey);
-
-   
-      if (previousData?.items) {
-        const updatedData = {
-          ...previousData,
-          items: previousData.items.map(product => 
-            product.id === id ? { ...product, ...patch } : product
-          )
-        };
-        
-        utils.admin.products.list.setData(queryKey, updatedData);
-      }
-
-   
-      return { previousData, queryKey };
-    },
-    onError: (_err, _variables, context) => {
-   
-      if (context?.previousData && context.queryKey) {
-        utils.admin.products.list.setData(context.queryKey, context.previousData);
-      }
-    },
-    // Pas de onSuccess - laissons TanStack Query gérer la synchronisation
-    // Les optimistic updates dans debouncedMutation suffisent
-  });
-
   
-  const debouncedMutation = useCallback((productId: string, patch: any, delay = 500) => {
-    
-    if (pendingRequests.current[productId]) {
-      clearTimeout(pendingRequests.current[productId]);
-    }
-
-    
-    const queryKey = createQueryKey();
-    const currentData = utils.admin.products.list.getData(queryKey);
-    
-    if (currentData?.items) {
-      const optimisticData = {
-        ...currentData,
-        items: currentData.items.map(product => 
-          product.id === productId ? { ...product, ...patch } : product
-        )
-      };
-      
-      
-      utils.admin.products.list.setData(queryKey, optimisticData);
-    }
-
-    
-    const timer = setTimeout(() => {
-      updateProduct.mutate({ id: productId, patch });
-      
-      delete pendingRequests.current[productId];
-    }, delay);
-
-    
-    pendingRequests.current[productId] = timer;
-  }, [updateProduct, utils.admin.products.list, createQueryKey]);
-
-  const adjustStock = useCallback((productId: string, delta: number) => {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-    
-    const currentStock = product.stock_quantity || 0;
-    const newStock = Math.max(0, currentStock + delta);
-    
-    
-    if (newStock === currentStock) return;
-    
-    
-    debouncedMutation(productId, { stock_quantity: newStock });
-  }, [products, debouncedMutation]);
-
-  const toggleFeature = useCallback((productId: string) => {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-    
-    const newFeatured = !product.featured;
-    debouncedMutation(productId, { featured: newFeatured }, 300);
-  }, [products, debouncedMutation]);
-
-  const toggleActive = useCallback((productId: string) => {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-    
-    const newActive = !product.is_active;
-    debouncedMutation(productId, { is_active: newActive }, 300);
-  }, [products, debouncedMutation]);
-
-  // Fonction pour réinitialiser les filtres
   const resetFilters = useCallback(() => {
     setSearch(''); 
     setActiveOnly(false); 
@@ -489,31 +537,25 @@ const AdminProductsPage: FC = () => {
           className="pb-20 px-4 md:px-6"
           style={{ paddingTop: `${headerHeight}px` }}
         >
-          {/* Gestion directe des états sans abstraction inutile */}
+      
           {isErrorProducts ? (
             <ProductsErrorState 
               productsError={productsError}
               refetch={refetch}
             />
-          ) : view === 'grid' ? (
-            <ProductsGridView 
-              products={products}
-              isLoading={isLoading}
-              adjustStock={adjustStock}
-              toggleFeature={toggleFeature}
-              toggleActive={toggleActive}
-              updateProduct={updateProduct}
+          ) : isLoading ? (
+            <ProductsListSkeleton 
+              view={view as 'grid' | 'list'}
+            />
+          ) : products.length === 0 ? (
+            <ProductsEmptyState
               resetFilters={resetFilters}
             />
           ) : (
-            <ProductsListView 
+            <ProductsList 
               products={products}
-              isLoading={isLoading}
-              adjustStock={adjustStock}
-              toggleFeature={toggleFeature}
-              toggleActive={toggleActive}
-              updateProduct={updateProduct}
-              resetFilters={resetFilters}
+              view={view as 'grid' | 'list'}
+              createQueryKey={createQueryKey}
             />
           )}
         </div>

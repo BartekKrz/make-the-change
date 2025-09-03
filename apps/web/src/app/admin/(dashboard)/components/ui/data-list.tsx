@@ -10,6 +10,72 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { ProductImage } from '@/components/ProductImage';
 
+// Skeleton pour les cards de la vue grid - correspond exactement à DataCard
+const DataCardSkeleton = () => (
+  <div className="group relative bg-background backdrop-blur-md rounded-2xl border border-border/60 p-6 shadow-lg overflow-hidden h-full flex flex-col">
+    {/* Header skeleton - DataCard.Header > DataCard.Title */}
+    <div className="mb-4">
+      {/* Icon + Image + Titre en une ligne (comme DataCard.Title) */}
+      <div className="flex items-start gap-3">
+        {/* Package icon */}
+        <div className="w-5 h-5 bg-gray-200 rounded animate-pulse mt-0.5 flex-shrink-0" />
+        
+        {/* Product image (carrée comme dans les vraies cards) */}
+        <div className="w-12 h-12 bg-gray-200 rounded-lg animate-pulse flex-shrink-0" />
+        
+        {/* Title section - texte vertical aligné avec l'image */}
+        <div className="flex-1 min-w-0">
+          {/* Ligne 1: Nom + slug */}
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <div className="w-24 h-4 bg-gray-200 rounded animate-pulse" />
+            <div className="w-16 h-3 bg-gray-200 rounded animate-pulse" />
+          </div>
+          {/* Ligne 2: Badge + star */}
+          <div className="flex items-center gap-2">
+            <div className="w-12 h-5 bg-gray-200 rounded-full animate-pulse" />
+            <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    {/* Content skeleton - DataCard.Content */}
+    <div className="flex-1 space-y-3 mb-4">
+      {/* Prix - Zap + texte */}
+      <div className="flex items-center gap-3 text-sm">
+        <div className="w-3.5 h-3.5 bg-gray-200 rounded animate-pulse" />
+        <div className="w-16 h-3 bg-gray-200 rounded animate-pulse" />
+      </div>
+      
+      {/* Stock - Box + texte */}
+      <div className="flex items-center gap-3 text-sm">
+        <div className="w-3.5 h-3.5 bg-gray-200 rounded animate-pulse" />
+        <div className="w-20 h-3 bg-gray-200 rounded animate-pulse" />
+      </div>
+      
+      {/* Producer badge */}
+      <div className="flex items-center gap-3">
+        <div className="w-20 h-6 bg-gray-200 rounded animate-pulse" />
+      </div>
+    </div>
+    
+    {/* Footer skeleton - DataCard.Footer */}
+    <div className="space-y-2">
+      {/* Boutons stock +1/-1 */}
+      <div className="flex items-center gap-1 md:gap-2">
+        <div className="w-8 h-6 bg-gray-200 rounded animate-pulse" />
+        <div className="w-8 h-6 bg-gray-200 rounded animate-pulse" />
+      </div>
+      
+      {/* Boutons Feature/Active */}
+      <div className="flex items-center gap-1 md:gap-2 flex-wrap">
+        <div className="w-16 h-6 bg-gray-200 rounded animate-pulse" />
+        <div className="w-16 h-6 bg-gray-200 rounded animate-pulse" />
+      </div>
+    </div>
+  </div>
+);
+
 export type DataListProps<T> = {
   items: T[];
   renderItem: (item: T) => ReactNode;
@@ -75,20 +141,11 @@ export const DataList = <T,>({
   if (isLoading) {
     return (
       <div className={cn('space-y-6', className)} data-testid={testId}>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          className='text-center py-12'
-        >
-          <div className='flex items-center justify-center mb-4'>
-            <div className='p-4 bg-muted/30 rounded-2xl'>
-              <div className='w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin' />
-            </div>
-          </div>
-          <h3 className='text-lg font-semibold text-foreground mb-2'>Chargement...</h3>
-          <p className='text-muted-foreground'>Récupération des données en cours</p>
-        </motion.div>
+        <div className={cn('grid', getGridClasses(gridCols), getSpacingClasses(spacing), 'items-stretch')}>
+          {Array.from({ length: gridCols * 2 }).map((_, index) => (
+            <DataCardSkeleton key={index} />
+          ))}
+        </div>
       </div>
     );
   }
