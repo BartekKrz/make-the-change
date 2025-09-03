@@ -19,12 +19,12 @@ const nextConfig = {
   // Image optimizations (15.3+ improvements)
   images: {
     formats: ['image/avif', 'image/webp'],
-    // Autoriser toutes les sources externes sans optimisation pour éviter les problèmes CORS
-    unoptimized: true,
+    // Activer l'optimisation pour de meilleures performances
+    unoptimized: false,
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '*.supabase.co',
+        hostname: 'ebmjxinsyyjwshnynwwu.supabase.co',
         pathname: '/storage/v1/object/public/**',
       },
       {
@@ -32,9 +32,20 @@ const nextConfig = {
         hostname: 'images.unsplash.com',
         pathname: '/**',
       },
+      // Ajouter d'autres domaines Supabase si nécessaire
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
     ],
     // Fallback pour compatibilité
-    domains: ['images.unsplash.com', '*.supabase.co'],
+    domains: [
+      'images.unsplash.com', 
+      'ebmjxinsyyjwshnynwwu.supabase.co',
+      // Ajout de domaines génériques
+      'supabase.co'
+    ],
   },
   
   // Webpack configuration

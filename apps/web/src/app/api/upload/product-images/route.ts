@@ -97,6 +97,37 @@ export async function POST(request: NextRequest) {
         uploadedPaths.push(filePath)
         
         console.log(`✅ Successfully uploaded ${file.name}: ${imageUrl}`)
+        
+        // 🚀 NOUVEAU : Générer blur hash automatiquement après upload
+        console.log(`🔄 Génération blur hash pour: ${imageUrl}`)
+        try {
+          const blurResponse = await fetch(`${supabaseUrl}/functions/v1/generate-blur-hash`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY!}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              imageUrl,
+              entityType: 'product',
+              entityId: productId
+            })
+          })
+          
+          if (blurResponse.ok) {
+            const blurResult = await blurResponse.json()
+            if (blurResult.success) {
+              console.log(`✅ Blur hash généré: ${blurResult.blurHash?.slice(0, 20)}...`)
+            } else {
+              console.warn(`⚠️ Blur generation failed: ${blurResult.error}`)
+            }
+          } else {
+            console.warn(`⚠️ Blur Edge Function error: ${blurResponse.status} ${blurResponse.statusText}`)
+          }
+        } catch (blurError) {
+          console.error(`❌ Blur generation error for ${imageUrl}:`, blurError)
+          // Continue with upload even if blur fails
+        }
       }
 
       // Ajouter les nouvelles images à la liste
@@ -280,6 +311,37 @@ export async function PUT(request: NextRequest) {
       .getPublicUrl(filePath)
 
     const newImageUrl = publicUrlData.publicUrl
+
+    // 🚀 NOUVEAU : Générer blur hash automatiquement après upload de remplacement
+    console.log(`🔄 Génération blur hash pour remplacement: ${newImageUrl}`)
+    try {
+      const blurResponse = await fetch(`${supabaseUrl}/functions/v1/generate-blur-hash`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY!}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageUrl: newImageUrl,
+          entityType: 'product',
+          entityId: productId
+        })
+      })
+      
+      if (blurResponse.ok) {
+        const blurResult = await blurResponse.json()
+        if (blurResult.success) {
+          console.log(`✅ Blur hash généré pour remplacement: ${blurResult.blurHash?.slice(0, 20)}...`)
+        } else {
+          console.warn(`⚠️ Blur generation failed pour remplacement: ${blurResult.error}`)
+        }
+      } else {
+        console.warn(`⚠️ Blur Edge Function error pour remplacement: ${blurResponse.status} ${blurResponse.statusText}`)
+      }
+    } catch (blurError) {
+      console.error(`❌ Blur generation error pour remplacement ${newImageUrl}:`, blurError)
+      // Continue with replacement even if blur fails
+    }
 
     // Récupérer les images actuelles du produit
     const { data: product, error: fetchError } = await supabaseAdmin

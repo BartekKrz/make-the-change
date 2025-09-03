@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@layer utilities {
+  .scrollbar-hide {
+    /* Firefox */
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    /* Safari and Chrome */
+    display: none;
+  }
+}
+
 @layer base {
   :root {
     /* Neutres Sophistiqués 2025 - Base raffinée avec nuances subtiles */

@@ -30,9 +30,9 @@ export type DataListProps<T> = {
 const getGridClasses = (cols: number) => {
   const gridMap = {
     1: 'grid-cols-1',
-    2: 'grid-cols-1 md:grid-cols-2',
-    3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-    4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+    2: 'grid-cols-1 lg:grid-cols-2',
+    3: 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-3',
+    4: 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'
   };
   return gridMap[cols as keyof typeof gridMap];
 };

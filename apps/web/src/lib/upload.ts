@@ -28,10 +28,19 @@ export interface UploadResult {
   error?: string
   fileName?: string
   path?: string
+  blurHash?: string
+  blurMetadata?: {
+    width: number
+    height: number
+    fileSize: number
+    processingTime: number
+    cached: boolean
+  }
 }
 
+
 /**
- * Upload et optimisation d'images
+ * Upload et optimisation d'images avec génération automatique de blur hash
  */
 export class ImageUploadService {
   
@@ -78,12 +87,16 @@ export class ImageUploadService {
         .from(options.bucket)
         .getPublicUrl(filePath)
 
+      const publicUrl = publicUrlData.publicUrl
+
+      // ✅ Blur hash généré automatiquement par l'API upload
+
       return {
         success: true,
-        url: publicUrlData.publicUrl,
-        publicUrl: publicUrlData.publicUrl,
+        url: publicUrl,
+        publicUrl: publicUrl,
         fileName: file.name,
-        path: filePath
+        path: filePath,
       }
 
     } catch (error: any) {

@@ -330,6 +330,7 @@ export const appRouter = createRouter({
             .object({
               activeOnly: z.boolean().default(false),
               search: z.string().optional(),
+              producerId: z.string().uuid().optional(),
               limit: z.number().int().min(1).max(100).default(50),
               cursor: z.string().uuid().optional(),
             })
@@ -338,10 +339,18 @@ export const appRouter = createRouter({
         .query(async ({ input }) => {
           let q = supabase
             .from('products')
-            .select('*')
+            .select(`
+              *,
+              producer:producers(
+                id,
+                name,
+                slug
+              )
+            `)
             .order('created_at', { ascending: false })
           if (input?.activeOnly) q = q.eq('is_active', true)
           if (input?.search) q = q.or(`name.ilike.%${input.search}%,slug.ilike.%${input.search}%`)
+          if (input?.producerId) q = q.eq('producer_id', input.producerId)
           if (input?.cursor) q = q.lt('id', input.cursor)
           q = q.limit(input?.limit ?? 50)
           const { data, error } = await q
@@ -472,6 +481,17 @@ export const appRouter = createRouter({
             .eq('id', input.productId)
             .single()
           if (error) throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found' })
+          return data
+        }),
+
+      producers: adminProcedure
+        .query(async () => {
+          const { data, error } = await supabase
+            .from('producers')
+            .select('id, name, slug')
+            .eq('status', 'active')
+            .order('name', { ascending: true })
+          if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
           return data
         }),
     }),

@@ -16,6 +16,11 @@ type Product =  {
   stock_quantity: number | null
   images?: string[]
   blur_hashes?: BlurHashData[]
+  producer?: {
+    id: string
+    name: string
+    slug: string
+  } | null
 }
 
 type ProductListItemProps =  {

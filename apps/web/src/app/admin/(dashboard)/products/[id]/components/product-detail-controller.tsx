@@ -132,7 +132,7 @@ export const ProductDetailController: FC<ProductDetailControllerProps> = ({
     if (saveError) return { type: 'error' as const, message: `Erreur: ${saveError}` };
     if (Object.keys(pendingChanges).length > 0) {
       return { 
-        type: 'pending' as const, 
+        type: 'modified' as const, 
         message: `${Object.keys(pendingChanges).length} modification(s) en attente`,
         count: Object.keys(pendingChanges).length
       };
@@ -143,8 +143,14 @@ export const ProductDetailController: FC<ProductDetailControllerProps> = ({
         return { type: 'saved' as const, message: `Sauvegardé il y a ${timeSince}s` };
       }
     }
-    return { type: 'idle' as const, message: 'Tous les changements sont sauvegardés' };
+    return { type: 'pristine' as const, message: 'Tous les changements sont sauvegardés' };
   }, [isSaving, saveError, pendingChanges, lastSaved]);
+
+  // Fonction pour gérer le changement de statut
+  const handleStatusChange = useCallback(async (newStatus: 'active' | 'inactive') => {
+    const patch = { is_active: newStatus === 'active' };
+    await smartSave(patch, true); // Force immediate save
+  }, [smartSave]);
 
   return (
     <ProductDetailLayout
@@ -155,6 +161,7 @@ export const ProductDetailController: FC<ProductDetailControllerProps> = ({
             productData={currentData}
             saveStatus={saveStatus}
             onSaveAll={saveAllPending}
+            onStatusChange={handleStatusChange}
           />
         </>
       }

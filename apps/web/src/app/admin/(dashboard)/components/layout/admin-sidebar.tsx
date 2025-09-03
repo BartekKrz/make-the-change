@@ -80,7 +80,7 @@ export const AdminSidebar: FC = () => {
     <aside
       className={cn(
         'hidden md:block md:relative h-full z-10',
-        'w-80',
+        'w-64 lg:w-72 xl:w-80',
         'bg-gradient-to-b from-background/95 via-background/90 to-background/95',
         'dark:from-background/90 dark:via-background/85 dark:to-background/90',
         'backdrop-blur-xl',

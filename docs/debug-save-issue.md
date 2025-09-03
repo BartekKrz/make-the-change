@@ -308,3 +308,4 @@ Si les tests simples fonctionnent mais pas avec les images :
 
 **Avec ces logs, vous devriez pouvoir identifier exactement où se bloque la chaîne de sauvegarde !** 🎯
 
+
