@@ -54,11 +54,11 @@ const NewProductPage: FC = () => {
           description: 'Le produit a été créé avec succès'
         })
 
-      } catch (error: any) {
+      } catch (error: unknown) {
         toast({
           variant: 'destructive',
           title: 'Erreur',
-          description: error.message || 'Impossible de créer le produit'
+          description: error instanceof Error ? error.message : 'Impossible de créer le produit'
         })
       }
     },
@@ -214,38 +214,26 @@ const NewProductPage: FC = () => {
             <CardTitle>Options</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-wrap gap-4">
+            <div className="space-y-2">
               <form.Field name="is_active">
-                {(field) => (
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={Boolean(field.state.value)}
-                      onChange={(e) => field.handleChange(e.target.checked)}
-                      onBlur={field.handleBlur}
-                    />
-                    <span className="text-sm">Produit actif</span>
-                    <Badge color={field.state.value ? "green" : "gray"}>
-                      {field.state.value ? 'Actif' : 'Inactif'}
-                    </Badge>
-                  </label>
+                {() => (
+                  <FormCheckbox
+                    label="Produit actif"
+                    description="Si coché, le produit sera visible et disponible à la vente."
+                    trueBadge="Actif"
+                    falseBadge="Inactif"
+                  />
                 )}
               </form.Field>
 
               <form.Field name="featured">
-                {(field) => (
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={Boolean(field.state.value)}
-                      onChange={(e) => field.handleChange(e.target.checked)}
-                      onBlur={field.handleBlur}
-                    />
-                    <span className="text-sm">Produit vedette</span>
-                    <Badge color={field.state.value ? "blue" : "gray"}>
-                      {field.state.value ? 'Vedette' : 'Standard'}
-                    </Badge>
-                  </label>
+                {() => (
+                  <FormCheckbox
+                    label="Produit vedette"
+                    description="Les produits vedettes peuvent être mis en avant sur certaines pages."
+                    trueBadge="Vedette"
+                    falseBadge="Standard"
+                  />
                 )}
               </form.Field>
             </div>

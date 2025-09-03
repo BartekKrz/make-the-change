@@ -337,6 +337,7 @@ export const appRouter = createRouter({
             .optional()
         )
         .query(async ({ input }) => {
+          // Query for items
           let q = supabase
             .from('products')
             .select(`
@@ -355,7 +356,22 @@ export const appRouter = createRouter({
           q = q.limit(input?.limit ?? 50)
           const { data, error } = await q
           if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
-          return { items: data, nextCursor: data?.at(-1)?.id ?? null }
+
+          // Query for total count (without cursor and limit)
+          let countQ = supabase
+            .from('products')
+            .select('id', { count: 'exact', head: true })
+          if (input?.activeOnly) countQ = countQ.eq('is_active', true)
+          if (input?.search) countQ = countQ.or(`name.ilike.%${input.search}%,slug.ilike.%${input.search}%`)
+          if (input?.producerId) countQ = countQ.eq('producer_id', input.producerId)
+          const { count, error: countError } = await countQ
+          if (countError) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: countError.message })
+
+          return { 
+            items: data, 
+            nextCursor: data?.at(-1)?.id ?? null,
+            total: count ?? 0
+          }
         }),
 
       create: adminProcedure

@@ -1,7 +1,6 @@
 'use client';
-
 import Link from 'next/link';
-import React, { useState } from 'react';
+import  { type FC, useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Package, Plus, Star, Zap, Filter, X } from 'lucide-react';
 import { ViewToggle, type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle';
 import { DataCard, DataList } from '@/app/admin/(dashboard)/components/ui/data-list';
@@ -12,212 +11,51 @@ import { Button } from '@/app/admin/(dashboard)/components/ui/button';
 import { CheckboxWithLabel } from '@/app/admin/(dashboard)/components/ui/checkbox';
 import { Input } from '@/app/admin/(dashboard)/components/ui/input';
 import { AdminPagination } from '@/app/admin/(dashboard)/components/layout/admin-pagination';
+import { ProductFilterModal } from './components/product-filter-modal';
 import { trpc } from '@/lib/trpc';
 import { getMainProductImage } from '@/components/ProductImage';
+import { useProducers } from './hooks/use-producers';
 
 export type ProductView = 'grid' | 'list';
 
 const pageSize = 18;
 
-// Composant FilterModal pour mobile
-function FilterModal({ 
-  isOpen, 
-  onClose, 
-  producers, 
-  selectedProducerId, 
-  setSelectedProducerId,
-  activeOnly,
-  setActiveOnly,
-  view,
-  setView
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  producers: Array<{ id: string; name: string }>;
-  selectedProducerId: string | undefined;
-  setSelectedProducerId: (id: string | undefined) => void;
-  activeOnly: boolean;
-  setActiveOnly: (value: boolean) => void;
-  view: ViewMode;
-  setView: (view: ViewMode) => void;
-}) {
-  const [dragY, setDragY] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startY, setStartY] = useState(0);
 
-  // Gestion du swipe pour fermer
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setStartY(e.touches[0].clientY);
-    setIsDragging(true);
-  };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    
-    const currentY = e.touches[0].clientY;
-    const deltaY = currentY - startY;
-    
-    // Ne permettre que le swipe vers le bas
-    if (deltaY > 0) {
-      setDragY(deltaY);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-    
-    // Fermer si swipe > 100px vers le bas
-    if (dragY > 100) {
-      onClose();
-    }
-    
-    // Reset position
-    setDragY(0);
-  };
-
-  // Reset dragY quand la modal se ferme
-  React.useEffect(() => {
-    if (!isOpen) {
-      setDragY(0);
-      setIsDragging(false);
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <>
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm transition-opacity duration-300"
-        onClick={onClose}
-      />
-      
-      {/* Modal */}
-      <div 
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-border rounded-t-xl shadow-2xl transform transition-transform duration-300 max-h-[80vh] overflow-hidden"
-        style={{
-          transform: `translateY(${dragY}px)`,
-          transition: isDragging ? 'none' : 'transform 0.3s ease-out'
-        }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {/* Handle bar pour indiquer qu'on peut swiper */}
-        <div className="flex justify-center pt-2 pb-1">
-          <div className="w-10 h-1 bg-gray-300 rounded-full" />
-        </div>
-        
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border bg-white">
-          <h3 className="text-lg font-semibold text-foreground">Filtres</h3>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
-        
-        {/* Content */}
-        <div className="p-4 overflow-y-auto max-h-[calc(80vh-80px)] bg-white">
-          <div className="space-y-6">
-            
-            {/* Mode d'affichage */}
-            <div>
-              <label className="text-sm font-medium mb-3 block">Mode d&apos;affichage</label>
-              <ViewToggle
-                value={view}
-                onChange={setView}
-                availableViews={['grid', 'list']}
-              />
-            </div>
-            
-            {/* Filtre partenaires */}
-            <div>
-              <label className="text-sm font-medium mb-3 block">Partenaire</label>
-              <div className="space-y-2">
-                <Button
-                  variant={selectedProducerId === undefined ? "default" : "outline"}
-                  onClick={() => setSelectedProducerId(undefined)}
-                  className="w-full justify-start"
-                >
-                  Tous les partenaires
-                </Button>
-                {producers?.map((producer) => (
-                  <Button
-                    key={producer.id}
-                    variant={selectedProducerId === producer.id ? "default" : "outline"}
-                    onClick={() => setSelectedProducerId(producer.id)}
-                    className="w-full justify-start"
-                  >
-                    {producer.name}
-                  </Button>
-                ))}
-              </div>
-            </div>
-            
-            {/* Options */}
-            <div>
-              <label className="text-sm font-medium mb-3 block">Options</label>
-              <CheckboxWithLabel
-                checked={activeOnly}
-                onCheckedChange={(v) => setActiveOnly(Boolean(v))}
-                label="Afficher uniquement les produits actifs"
-              />
-            </div>
-          </div>
-        </div>
-        
-        {/* Footer avec actions */}
-        <div className="p-4 border-t border-border bg-white">
-          <div className="flex gap-3">
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setSelectedProducerId(undefined);
-                setActiveOnly(false);
-              }}
-              className="flex-1"
-            >
-              Réinitialiser
-            </Button>
-            <Button onClick={onClose} className="flex-1">
-              Appliquer
-            </Button>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function AdminProductsPage() {
+const AdminProductsPage: FC = () => {
   const [search, setSearch] = useState('');
   const [activeOnly, setActiveOnly] = useState(false);
   const [selectedProducerId, setSelectedProducerId] = useState<string | undefined>(undefined);
   const [cursor, setCursor] = useState<string | undefined>(undefined);
   const [view, setView] = useState<ViewMode>('grid');
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [headerHeight, setHeaderHeight] = useState(80); // Hauteur par défaut
+  const [headerHeight, setHeaderHeight] = useState(80);
   
-  const headerRef = React.useRef<HTMLDivElement>(null);
+  // État local pour les mises à jour optimistes + debounce
+  const [optimisticUpdates, setOptimisticUpdates] = useState<Record<string, any>>({});
+  const [pendingRequests, setPendingRequests] = useState<Record<string, NodeJS.Timeout>>({});
+  
+ 
+  
+  const headerRef = useRef<HTMLDivElement>(null);
 
-  // Simple debounce implementation
+  
   const [debouncedSearch, setDebouncedSearch] = useState(search);
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(timer);
   }, [search]);
 
-  // Calcul dynamique de la hauteur du header
-  const updateHeaderHeight = React.useCallback(() => {
+  
+  const updateHeaderHeight = useCallback(() => {
     if (headerRef.current) {
       const height = headerRef.current.offsetHeight;
-      setHeaderHeight(height + 16); // +16px pour marge de sécurité
+      setHeaderHeight(height + 16); 
     }
   }, []);
 
-  // Observer les changements de taille du header
-  React.useEffect(() => {
+  
+  useEffect(() => {
     updateHeaderHeight();
     
     const resizeObserver = new ResizeObserver(updateHeaderHeight);
@@ -225,7 +63,7 @@ function AdminProductsPage() {
       resizeObserver.observe(headerRef.current);
     }
 
-    // Écouter les changements de taille de fenêtre
+    
     window.addEventListener('resize', updateHeaderHeight);
     
     return () => {
@@ -234,75 +72,186 @@ function AdminProductsPage() {
     };
   }, [updateHeaderHeight]);
 
-  // Récupération des producteurs depuis l'API
-  const { data: producersData } = trpc.admin.products.list.useQuery(
-    { limit: 100 }, // On récupère plus de produits pour avoir tous les producteurs
-    { enabled: true }
-  );
+  
+  const { producers } = useProducers();
 
-  // Extraction unique des producteurs depuis les produits
-  const producers = React.useMemo(() => {
-    if (!producersData?.items) return [];
-    
-    const uniqueProducers = new Map();
-    producersData.items.forEach(product => {
-      if (product.producer && product.producer.id && product.producer.name) {
-        uniqueProducers.set(product.producer.id, {
-          id: product.producer.id,
-          name: product.producer.name
-        });
-      }
-    });
-    
-    return Array.from(uniqueProducers.values()).sort((a, b) => a.name.localeCompare(b.name));
-  }, [producersData]);
-
-  // Re-calculer la hauteur du header quand les producteurs changent
-  React.useEffect(() => {
-    updateHeaderHeight();
-  }, [producers, updateHeaderHeight]);
-
+  // Requête principale pour les produits
   const { 
     data: productsData,
     isLoading, 
     isFetching,
     refetch 
-  } = trpc.admin.products.list.useQuery(
-    {
-      cursor,
-      limit: pageSize,
-      search: debouncedSearch || undefined,
-      activeOnly: activeOnly || undefined,
-      producerId: selectedProducerId,
-    }
-  );
-
-  const products = productsData?.items || [];
-
-  const updateProduct = trpc.admin.products.update.useMutation({
-    onSuccess: () => {
-      refetch();
-    },
+  } = trpc.admin.products.list.useQuery({
+    cursor,
+    limit: pageSize,
+    search: debouncedSearch || undefined,
+    activeOnly: activeOnly || undefined,
+    producerId: selectedProducerId,
   });
 
-  // Fonction helper pour ajuster le stock
-  const adjustStock = (productId: string, delta: number) => {
-    const product = products.find(p => p.id === productId);
-    if (product) {
-      updateProduct.mutate({
-        id: productId,
-        patch: {
-          stock_quantity: Math.max(0, (product.stock_quantity || 0) + delta)
-        }
-      });
+  const baseProducts = productsData?.items || [];
+  const totalProducts = productsData?.total || 0;
+  
+  // Produits avec les mises à jour optimistes appliquées pour l'affichage
+  const products = baseProducts.map(product => {
+    const optimisticUpdate = optimisticUpdates[product.id];
+    return optimisticUpdate ? { ...product, ...optimisticUpdate } : product;
+  });
+  const currentPage = Math.max(1, Math.floor((totalProducts - products.length) / pageSize) + 1);
+  const totalPages = Math.ceil(totalProducts / pageSize);
+
+  
+  useEffect(() => {
+    updateHeaderHeight();
+  }, [producers, updateHeaderHeight]);
+
+  const utils = trpc.useUtils();
+  
+  // Helper pour créer une clé de requête cohérente
+  const createQueryKey = () => ({
+    cursor,
+    limit: pageSize,
+    search: debouncedSearch || undefined,
+    activeOnly: activeOnly || undefined,
+    producerId: selectedProducerId,
+  });
+  
+  const updateProduct = trpc.admin.products.update.useMutation({
+    onMutate: async ({ id, patch }) => {
+      // 1. Annuler toutes les requêtes en cours pour éviter les conflicts
+      await utils.admin.products.list.cancel();
+      
+      // 2. Créer la clé de requête
+      const queryKey = createQueryKey();
+
+      // 3. Snapshot de l'état actuel pour rollback
+      const previousData = utils.admin.products.list.getData(queryKey);
+
+      // 4. ⭐ OPTIMISTIC UPDATE : Mise à jour immédiate du cache
+      if (previousData?.items) {
+        const updatedData = {
+          ...previousData,
+          items: previousData.items.map(product => 
+            product.id === id ? { ...product, ...patch } : product
+          )
+        };
+        
+        utils.admin.products.list.setData(queryKey, updatedData);
+      }
+
+      // 5. Retourner le contexte pour rollback
+      return { previousData, queryKey };
+    },
+    onError: (err, variables, context) => {
+      // 6. ⚠️ ROLLBACK en cas d'erreur
+      if (context?.previousData && context.queryKey) {
+        utils.admin.products.list.setData(context.queryKey, context.previousData);
+      }
+    },
+    onSuccess: (updatedProduct, { id }) => {
+      // 7. ✅ Mettre à jour avec les vraies données du serveur
+      const queryKey = createQueryKey();
+      
+      const currentData = utils.admin.products.list.getData(queryKey);
+      if (currentData?.items) {
+        utils.admin.products.list.setData(queryKey, {
+          ...currentData,
+          items: currentData.items.map(product => 
+            product.id === id ? updatedProduct : product
+          )
+        });
+      }
     }
+  });
+
+  // Fonction pour appliquer une mise à jour optimiste immédiate
+  const applyOptimisticUpdate = (productId: string, patch: any) => {
+    setOptimisticUpdates(prev => ({
+      ...prev,
+      [productId]: { ...prev[productId], ...patch }
+    }));
   };
 
-  const currentPage = cursor ? Math.floor(products.length / pageSize) + 1 : 1;
+  // Fonction pour envoyer la requête avec debounce
+  const debouncedMutation = (productId: string, patch: any, delay = 500) => {
+    // Nettoyer le timer précédent si il existe
+    if (pendingRequests[productId]) {
+      clearTimeout(pendingRequests[productId]);
+    }
+
+    // Créer un nouveau timer
+    const timer = setTimeout(() => {
+      updateProduct.mutate({
+        id: productId,
+        patch
+      }, {
+        onSettled: () => {
+          // Nettoyer l'état optimiste après la réponse du serveur
+          setOptimisticUpdates(prev => {
+            const newState = { ...prev };
+            delete newState[productId];
+            return newState;
+          });
+          // Nettoyer le timer
+          setPendingRequests(prev => {
+            const newState = { ...prev };
+            delete newState[productId];
+            return newState;
+          });
+        }
+      });
+    }, delay);
+
+    // Sauvegarder le timer
+    setPendingRequests(prev => ({ ...prev, [productId]: timer }));
+  };
+
+  const adjustStock = (productId: string, delta: number) => {
+    const displayProduct = getDisplayProduct(productId);
+    const currentStock = displayProduct.stock_quantity || 0;
+    const newStock = Math.max(0, currentStock + delta);
+    
+    // Ne rien faire si le stock ne change pas
+    if (newStock === currentStock) return;
+    
+    // 1. Mise à jour optimiste immédiate
+    applyOptimisticUpdate(productId, { stock_quantity: newStock });
+    
+    // 2. Envoyer la requête avec debounce
+    debouncedMutation(productId, { stock_quantity: newStock });
+  };
+
+  const toggleFeature = (productId: string) => {
+    const displayProduct = getDisplayProduct(productId);
+    const newFeatured = !displayProduct.featured;
+    
+    // 1. Mise à jour optimiste immédiate
+    applyOptimisticUpdate(productId, { featured: newFeatured });
+    
+    // 2. Envoyer la requête avec debounce
+    debouncedMutation(productId, { featured: newFeatured }, 300);
+  };
+
+  const toggleActive = (productId: string) => {
+    const displayProduct = getDisplayProduct(productId);
+    const newActive = !displayProduct.is_active;
+    
+    // 1. Mise à jour optimiste immédiate
+    applyOptimisticUpdate(productId, { is_active: newActive });
+    
+    // 2. Envoyer la requête avec debounce
+    debouncedMutation(productId, { is_active: newActive }, 300);
+  };
+
+  // Fonction helper pour obtenir le produit avec les mises à jour optimistes appliquées
+  const getDisplayProduct = (productId: string) => {
+    const baseProduct = baseProducts.find(p => p.id === productId);
+    const optimisticUpdate = optimisticUpdates[productId];
+    return { ...baseProduct, ...optimisticUpdate };
+  };
 
   return (
     <div className="h-full relative">
-      {/* Zone de contenu scrollable en arrière-plan */}
       <div className="absolute inset-0 overflow-auto">
         <div 
           className="pb-20 px-4 md:px-6"
@@ -322,12 +271,8 @@ function AdminProductsPage() {
                   </Button>
                 )
               }}
-              renderItem={(p: any) => {
+              renderItem={(p) => {
                 const mainImage = getMainProductImage(p.images);
-                
-                const handleImageGalleryOpen = () => {
-                  console.log('Ouvrir galerie pour produit:', p.id, 'Images:', p.images);
-                };
                 
                 return (
                   <DataCard href={`/admin/products/${p.id}`}>
@@ -337,7 +282,6 @@ function AdminProductsPage() {
                         image={mainImage}
                         imageAlt={p.name}
                         images={p.images}
-                        onImageClick={handleImageGalleryOpen}
                       >
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-medium">{p.name}</span>
@@ -366,15 +310,39 @@ function AdminProductsPage() {
                     </DataCard.Content>
                     <DataCard.Footer>
                       <div className="flex items-center gap-1 md:gap-2">
-                        <Button size="sm" variant="outline" className="text-xs px-2" onClick={(e) => { e.preventDefault(); adjustStock(p.id, 1) }}>+1</Button>
-                        <Button size="sm" variant="outline" className="text-xs px-2" onClick={(e) => { e.preventDefault(); adjustStock(p.id, -1) }}>-1</Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="text-xs px-2" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(p.id, 1); }}
+                        >
+                          +1
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="text-xs px-2" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(p.id, -1); }}
+                        >
+                          -1
+                        </Button>
                       </div>
                       <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-                        <Button size="sm" variant="outline" className="text-xs whitespace-nowrap" onClick={(e) => { e.preventDefault(); updateProduct.mutate({ id: p.id, patch: { featured: !p.featured } }) }}>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="text-xs whitespace-nowrap" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(p.id); }}
+                        >
                           <span className="hidden sm:inline">{p.featured ? 'Unfeature' : 'Feature'}</span>
                           <span className="sm:hidden">{p.featured ? '★' : '☆'}</span>
                         </Button>
-                        <Button size="sm" variant="outline" className="text-xs whitespace-nowrap" onClick={(e) => { e.preventDefault(); updateProduct.mutate({ id: p.id, patch: { is_active: !p.is_active } }) }}>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="text-xs whitespace-nowrap" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(p.id); }}
+                        >
                           <span className="hidden sm:inline">{p.is_active ? 'Désactiver' : 'Activer'}</span>
                           <span className="sm:hidden">{p.is_active ? 'Off' : 'On'}</span>
                         </Button>
@@ -407,15 +375,39 @@ function AdminProductsPage() {
                     actions={
                       <div className="flex items-center gap-1 md:gap-2 flex-wrap">
                         <div className="flex items-center gap-1">
-                          <Button size="sm" variant="outline" className="text-xs px-2" onClick={(e) => { e.preventDefault(); adjustStock(product.id, 1) }}>+1</Button>
-                          <Button size="sm" variant="outline" className="text-xs px-2" onClick={(e) => { e.preventDefault(); adjustStock(product.id, -1) }}>-1</Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="text-xs px-2" 
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(product.id, 1); }}
+                          >
+                            +1
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="text-xs px-2" 
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(product.id, -1); }}
+                          >
+                            -1
+                          </Button>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Button size="sm" variant="outline" className="text-xs whitespace-nowrap" onClick={(e) => { e.preventDefault(); updateProduct.mutate({ id: product.id, patch: { featured: !product.featured } }) }}>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="text-xs whitespace-nowrap" 
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(product.id); }}
+                          >
                             <span className="hidden sm:inline">{product.featured ? 'Unfeature' : 'Feature'}</span>
                             <span className="sm:hidden">{product.featured ? '★' : '☆'}</span>
                           </Button>
-                          <Button size="sm" variant="outline" className="text-xs whitespace-nowrap" onClick={(e) => { e.preventDefault(); updateProduct.mutate({ id: product.id, patch: { is_active: !product.is_active } }) }}>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="text-xs whitespace-nowrap" 
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(product.id); }}
+                          >
                             <span className="hidden sm:inline">{product.is_active ? 'Désactiver' : 'Activer'}</span>
                             <span className="sm:hidden">{product.is_active ? 'Off' : 'On'}</span>
                           </Button>
@@ -430,14 +422,14 @@ function AdminProductsPage() {
         </div>
       </div>
 
-      {/* Header fixe avec effet glassomorphisme - Version responsive */}
+      
       <div 
         ref={headerRef}
         className="absolute top-0 left-0 right-0 z-40 backdrop-blur-[20px] bg-background/80 border-b border-border/50 shadow-lg"
       >
         <div className="px-2 py-2.5 md:px-6 md:py-4">
           
-          {/* Layout Mobile: 1 ligne ultra-compacte */}
+          
           <div className="md:hidden">
             <div className="flex  items-center gap-2">
               <Input
@@ -466,7 +458,7 @@ function AdminProductsPage() {
             </div>
           </div>
 
-          {/* Layout Desktop: Layout intelligent avec wrapping par groupes */}
+          
           <div className="hidden md:block space-y-3">
             {/* Première ligne : Recherche + Actions principales */}
             <div className="flex items-center justify-between gap-4">
@@ -538,36 +530,35 @@ function AdminProductsPage() {
         </div>
       </div>
 
-      {/* FAB - Floating Action Button - Mobile uniquement */}
+   
       <Link href="/admin/products/new" className="md:hidden">
-        <div className="fixed bottom-6 right-6 z-50 group">
+        <div className="fixed bottom-6  right-6 z-50 group">
           <Button 
             size="lg" 
-            className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 bg-primary hover:bg-primary/90 hover:scale-105 active:scale-95"
+            className="h-14 w-14 bg-gray-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 bg-primary hover:bg-primary/90 hover:scale-105 active:scale-95"
           >
             <Plus className="h-6 w-6 transition-transform group-hover:rotate-90" />
           </Button>
         </div>
       </Link>
 
-      {/* Footer fixe avec pagination - Plus compact */}
-      {products.length > pageSize && (
+      {totalProducts > pageSize && (
         <div className="absolute bottom-0 left-0 right-0 z-40 backdrop-blur-[20px] bg-background/80 border-t border-border/50 shadow-lg">
           <div className="px-4 py-2">
             <AdminPagination
               pagination={{
                 currentPage,
                 pageSize,
-                totalItems: products.length,
-                totalPages: Math.ceil(products.length / pageSize)
+                totalItems: totalProducts,
+                totalPages
               }}
             />
           </div>
         </div>
       )}
 
-      {/* Modal de filtres pour mobile */}
-      <FilterModal
+   
+      <ProductFilterModal
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}
         producers={producers}
@@ -580,6 +571,6 @@ function AdminProductsPage() {
       />
     </div>
   )
-}
+};
 
 export default AdminProductsPage

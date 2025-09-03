@@ -44,44 +44,33 @@ export const ProductDetailController: FC<ProductDetailControllerProps> = ({
   const smartSave = useCallback(async (changes: Partial<ProductFormData>, immediate = false) => {
     if (Object.keys(changes).length === 0) return;
 
-    console.log('🔄 SmartSave triggered:', changes, immediate ? '(immediate)' : '(debounced)');
     setIsSaving(true);
     setSaveError(null);
 
     try {
-      // Créer le patch en comparant avec les données originales
+      // Créer le patch en comparant avec les données originales pour ne sauvegarder que ce qui a changé
       const patch: Partial<ProductFormData> = {};
-      for (const [key, value] of Object.entries(changes)) {
-        if ((productData as any)[key] !== value) {
-          (patch as any)[key] = value;
+      for (const key in changes) {
+        const typedKey = key as keyof ProductFormData;
+        if (productData[typedKey] !== changes[typedKey]) {
+          (patch as any)[typedKey] = changes[typedKey];
         }
       }
 
       if (Object.keys(patch).length > 0) {
-        console.log('📦 Saving patch:', patch);
         await onSave(patch);
         
-        // Succès : nettoyer les changements en attente
+        // Succès : nettoyer les changements en attente qui viennent d'être sauvegardés
         setPendingChanges(prev => {
           const updated = { ...prev };
-          Object.keys(patch).forEach(key => delete updated[key]);
+          Object.keys(patch).forEach(key => delete (updated as any)[key]);
           return updated;
         });
         
         setLastSaved(new Date());
-        console.log('✅ Save successful');
       }
     } catch (error) {
-      console.error('❌ Save failed:', error);
       setSaveError(error instanceof Error ? error.message : 'Erreur de sauvegarde');
-      
-      // Retry après 30s en cas d'erreur
-      setTimeout(() => {
-        if (Object.keys(changes).length > 0) {
-          console.log('🔄 Retrying save after error...');
-          smartSave(changes, true);
-        }
-      }, 30000);
     } finally {
       setIsSaving(false);
     }
@@ -94,34 +83,28 @@ export const ProductDetailController: FC<ProductDetailControllerProps> = ({
   );
 
   // Gestion des changements de champ
-  const handleFieldChange = useCallback((field: string, value: any) => {
-    console.log('🔄 [CONTROLLER] Field changed:', field, value);
-    console.log('🔄 [CONTROLLER] ProductData avant mise à jour:', productData[field as keyof ProductFormData]);
-    
+  const handleFieldChange = useCallback((field: keyof ProductFormData, value: any) => {
     setPendingChanges(prev => ({
       ...prev,
       [field]: value
     }));
 
     // Stratégie de sauvegarde selon le type de champ
-    const immediateFields = ['is_active', 'featured', 'min_tier', 'fulfillment_method', 'category_id', 'producer_id', 'images'];
-    const autoSaveFields = ['name', 'slug', 'short_description', 'description', 'price_points', 'stock_quantity'];
+    const immediateFields: (keyof ProductFormData)[] = ['is_active', 'featured', 'min_tier', 'fulfillment_method', 'category_id', 'producer_id', 'images'];
+    const autoSaveFields: (keyof ProductFormData)[] = ['name', 'slug', 'short_description', 'description', 'price_points', 'stock_quantity'];
 
     if (immediateFields.includes(field)) {
       // Sauvegarde immédiate pour toggles, selects et images
-      console.log('⚡ [CONTROLLER] Immediate save triggered for field:', field, 'value:', value);
       smartSave({ [field]: value }, true);
     } else if (autoSaveFields.includes(field)) {
       // Auto-save avec debounce pour les champs texte
-      console.log('⏱️ [CONTROLLER] Debounced save for field:', field);
       debouncedSave({ [field]: value });
     }
-  }, [smartSave, debouncedSave, productData]);
+  }, [smartSave, debouncedSave]);
 
   // Fonction pour sauvegarder manuellement toutes les modifications en attente
   const saveAllPending = useCallback(() => {
     if (Object.keys(pendingChanges).length > 0) {
-      console.log('💾 Manual save all pending changes:', pendingChanges);
       smartSave(pendingChanges, true);
     }
   }, [pendingChanges, smartSave]);

@@ -66,26 +66,17 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
     isLoading: false
   });
 
-  // 🚀 NOUVEAU : Récupération des blur hashes depuis la DB
+  // Récupération des blur hashes depuis la DB
   useEffect(() => {
-    console.log('🔄 [ProductDetailsEditor] useEffect déclenché:', {
-      productId: productData.id,
-      imagesCount: productData.images?.length || 0,
-      images: productData.images
-    });
-
     if (!productData.id || !productData.images?.length) {
-      console.log('⚠️ [ProductDetailsEditor] Skip: pas de productId ou pas d\'images');
       return;
     }
 
     const fetchProductWithBlur = async () => {
-      console.log('🔄 [ProductDetailsEditor] Début récupération blur hashes pour produit:', productData.id);
       setBlurState(prev => ({ ...prev, isLoading: true }));
       
       try {
         const productWithBlur = await ProductBlurService.getProductWithBlur(productData.id);
-        console.log('📦 [ProductDetailsEditor] Réponse DB reçue:', productWithBlur);
         
         if (productWithBlur) {
           const stats = {
@@ -95,18 +86,12 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
             coverage: productWithBlur.blur_coverage_percent
           };
           
-          console.log('📊 [ProductDetailsEditor] Stats calculées:', stats);
-          console.log('🎯 [ProductDetailsEditor] Blur hashes trouvés:', productWithBlur.computed_blur_hashes);
-          
           setBlurState({
             blurHashes: productWithBlur.computed_blur_hashes,
             stats,
             isLoading: false
           });
-          
-          console.log(`✅ [ProductDetailsEditor] Système DB Blur: ${stats.withBlur}/${stats.totalImages} blur hashes chargés (${stats.coverage}% coverage)`);
         } else {
-          console.log('⚠️ [ProductDetailsEditor] Aucune donnée blur trouvée en DB - utilisation fallback');
           // Fallback si pas de données en DB
           const fallbackStats = {
             totalImages: productData.images.length,
@@ -120,11 +105,9 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
             stats: fallbackStats,
             isLoading: false
           });
-          
-          console.log('📊 [ProductDetailsEditor] Stats fallback:', fallbackStats);
         }
       } catch (error) {
-        console.error('❌ [ProductDetailsEditor] Erreur récupération blur DB:', error);
+        console.error('Erreur lors de la récupération des blurhashes:', error);
         setBlurState(prev => ({ ...prev, isLoading: false }));
       }
     };
