@@ -168,9 +168,6 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
       y: -4,
       scale: 1.01
     },
-    whileTap: {
-      scale: 0.98
-    },
     transition: {
       type: 'spring' as const,
       stiffness: 500,
@@ -221,9 +218,7 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
           baseClasses,
           className,
           'cursor-pointer',
-          'md:hover:border-primary-200/50 md:hover:shadow-[0_0_0_1px_rgb(59_130_246_/_0.4),0_0_0_2px_rgb(251_146_60_/_0.2)]',
-          'active:border-primary-200/30 active:shadow-[0_0_0_1px_rgb(59_130_246_/_0.2),0_0_0_2px_rgb(251_146_60_/_0.1)]',
-          'active:rounded-3xl'
+          'md:hover:border-primary-200/50 md:hover:shadow-[0_0_0_1px_rgb(59_130_246_/_0.4),0_0_0_2px_rgb(251_146_60_/_0.2)]'
         )}
         data-testid={testId}
         onClick={handleCardClick}
@@ -256,9 +251,7 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
         baseClasses,
         className,
         onClick && 'cursor-pointer',
-        'md:hover:border-primary-200/50 md:hover:shadow-[0_0_0_1px_rgb(59_130_246_/_0.4),0_0_0_2px_rgb(251_146_60_/_0.2)]',
-        'active:border-primary-200/30 active:shadow-[0_0_0_1px_rgb(59_130_246_/_0.2),0_0_0_2px_rgb(251_146_60_/_0.1)]',
-        'active:rounded-3xl'
+        'md:hover:border-primary-200/50 md:hover:shadow-[0_0_0_1px_rgb(59_130_246_/_0.4),0_0_0_2px_rgb(251_146_60_/_0.2)]'
       )}
       data-testid={testId}
       onClick={handleCardClick}

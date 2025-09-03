@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import  { type FC, useCallback, useEffect, useRef, useState } from 'react';
+import  { type FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Package, Plus, Star, Zap, Filter, X } from 'lucide-react';
 import { ViewToggle, type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle';
 import { DataCard, DataList } from '@/app/admin/(dashboard)/components/ui/data-list';
@@ -14,11 +14,271 @@ import { AdminPagination } from '@/app/admin/(dashboard)/components/layout/admin
 import { ProductFilterModal } from './components/product-filter-modal';
 import { trpc } from '@/lib/trpc';
 import { getMainProductImage } from '@/components/ProductImage';
-import { useProducers } from './hooks/use-producers';
 
 export type ProductView = 'grid' | 'list';
 
 const pageSize = 18;
+
+type ProductsErrorStateProps = {
+  productsError: any;
+  refetch: () => void;
+};
+
+
+const ProductsErrorState: FC<ProductsErrorStateProps> = ({ productsError, refetch }) => (
+  <div className="text-center py-12">
+    <div className="p-4 bg-red-50 text-red-800 rounded-lg mb-4 max-w-md mx-auto">
+      <h3 className="font-medium mb-2">Erreur de chargement</h3>
+      <p className="text-sm mb-3">
+        {productsError?.message || 'Impossible de charger les produits'}
+      </p>
+      <Button size="sm" variant="outline" onClick={() => refetch()}>
+        Réessayer
+      </Button>
+    </div>
+  </div>
+);
+
+
+type ProductsEmptyState = {
+  resetFilters: () => void;
+};
+
+const ProductsEmptyState: FC<ProductsEmptyState> = ({ resetFilters }) => (
+  <div className="text-center py-8">
+    <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+    <h3 className="text-lg font-medium text-foreground mb-2">Aucun produit</h3>
+    <p className="text-muted-foreground mb-4">Aucun résultat pour ces filtres.</p>
+    <Button size="sm" variant="outline" onClick={resetFilters}>
+      Réinitialiser
+    </Button>
+  </div>
+);
+
+
+type ProductsGridViewProps = {
+  products: any[];
+  isLoading: boolean;
+  adjustStock: (productId: string, delta: number) => void;
+  toggleFeature: (productId: string) => void;
+  toggleActive: (productId: string) => void;
+  updateProduct: any;
+  resetFilters: () => void;
+};
+
+const ProductsGridView: FC<ProductsGridViewProps> = ({ 
+  products, 
+  isLoading, 
+  adjustStock, 
+  toggleFeature, 
+  toggleActive, 
+  updateProduct,
+  resetFilters
+}) => (
+  <DataList
+    items={products}
+    isLoading={isLoading}
+    gridCols={3}
+    emptyState={{
+      title: 'Aucun produit',
+      description: 'Aucun résultat pour ces filtres.',
+      action: (
+        <Button size="sm" variant="outline" onClick={resetFilters}>
+          Réinitialiser
+        </Button>
+      )
+    }}
+    renderItem={(p) => {
+      const mainImage = getMainProductImage(p.images);
+      
+      return (
+        <DataCard href={`/admin/products/${p.id}`}>
+          <DataCard.Header>
+            <DataCard.Title
+              icon={Package}
+              image={mainImage}
+              imageAlt={p.name}
+              images={p.images}
+            >
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-medium">{p.name}</span>
+                <span className="font-mono text-xs text-muted-foreground">{p.slug}</span>
+                <Badge color={p.is_active ? 'green' : 'red'}>{p.is_active ? 'actif' : 'inactif'}</Badge>
+                {p.featured && <Star className="w-4 h-4 text-yellow-500" />}
+              </div>
+            </DataCard.Title>
+          </DataCard.Header>
+          <DataCard.Content>
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <Zap className="w-3.5 h-3.5" />
+              <span>{p.price_points} pts</span>
+            </div>
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <Box className="w-3.5 h-3.5" />
+              <span>Stock: {p.stock_quantity ?? 0}</span>
+            </div>
+            {p.producer && (
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                  {p.producer.name}
+                </span>
+              </div>
+            )}
+          </DataCard.Content>
+          <DataCard.Footer>
+            <div className="flex items-center gap-1 md:gap-2">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="text-xs px-2" 
+                disabled={updateProduct.isPending}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(p.id, 1); }}
+              >
+                {updateProduct.isPending ? '...' : '+1'}
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="text-xs px-2" 
+                disabled={updateProduct.isPending}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(p.id, -1); }}
+              >
+                {updateProduct.isPending ? '...' : '-1'}
+              </Button>
+            </div>
+            <div className="flex items-center gap-1 md:gap-2 flex-wrap">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="text-xs whitespace-nowrap" 
+                disabled={updateProduct.isPending}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(p.id); }}
+              >
+                <span className="hidden sm:inline">{p.featured ? 'Unfeature' : 'Feature'}</span>
+                <span className="sm:hidden">{p.featured ? '★' : '☆'}</span>
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="text-xs whitespace-nowrap" 
+                disabled={updateProduct.isPending}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(p.id); }}
+              >
+                <span className="hidden sm:inline">{p.is_active ? 'Désactiver' : 'Activer'}</span>
+                <span className="sm:hidden">{p.is_active ? 'Off' : 'On'}</span>
+              </Button>
+            </div>
+            {updateProduct.isError && (
+              <div className="text-xs text-red-600 mt-2">
+                Erreur: {updateProduct.error?.message || 'Impossible de sauvegarder'}
+              </div>
+            )}
+          </DataCard.Footer>
+        </DataCard>
+      );
+    }}
+  />
+);
+
+type ProductsListViewProps = {
+  products: any[];
+  isLoading: boolean;
+  adjustStock: (productId: string, delta: number) => void;
+  toggleFeature: (productId: string) => void;
+  toggleActive: (productId: string) => void;
+  updateProduct: any;
+  resetFilters: () => void;
+};
+
+
+const ProductsListView: FC<ProductsListViewProps> = ({ 
+  products, 
+  isLoading, 
+  adjustStock, 
+  toggleFeature, 
+  toggleActive, 
+  updateProduct,
+  resetFilters
+}) => {
+  if (isLoading) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">Chargement des produits...</p>
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <ProductsEmptyState
+        resetFilters={resetFilters}
+      />
+    );
+  }
+
+  return (
+    <ListContainer>
+      {products.map((product) => (
+        <ProductListItem
+          key={product.id}
+          product={product}
+          actions={
+            <div className="flex items-center gap-1 md:gap-2 flex-wrap">
+              <div className="flex items-center gap-1">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="text-xs px-2" 
+                  disabled={updateProduct.isPending}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(product.id, 1); }}
+                >
+                  {updateProduct.isPending ? '...' : '+1'}
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="text-xs px-2" 
+                  disabled={updateProduct.isPending}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(product.id, -1); }}
+                >
+                  {updateProduct.isPending ? '...' : '-1'}
+                </Button>
+              </div>
+              <div className="flex items-center gap-1">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="text-xs whitespace-nowrap" 
+                  disabled={updateProduct.isPending}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(product.id); }}
+                >
+                  <span className="hidden sm:inline">{product.featured ? 'Unfeature' : 'Feature'}</span>
+                  <span className="sm:hidden">{product.featured ? '★' : '☆'}</span>
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="text-xs whitespace-nowrap" 
+                  disabled={updateProduct.isPending}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(product.id); }}
+                >
+                  <span className="hidden sm:inline">{product.is_active ? 'Désactiver' : 'Activer'}</span>
+                  <span className="sm:hidden">{product.is_active ? 'Off' : 'On'}</span>
+                </Button>
+              </div>
+              {updateProduct.isError && (
+                <div className="text-xs text-red-600 w-full">
+                  Erreur: {updateProduct.error?.message || 'Impossible de sauvegarder'}
+                </div>
+              )}
+            </div>
+          }
+        />
+      ))}
+    </ListContainer>
+  );
+};
+
 
 
 
@@ -31,14 +291,11 @@ const AdminProductsPage: FC = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(80);
   
-  // État local pour les mises à jour optimistes + debounce
-  const [optimisticUpdates, setOptimisticUpdates] = useState<Record<string, any>>({});
-  const [pendingRequests, setPendingRequests] = useState<Record<string, NodeJS.Timeout>>({});
+  
+  const pendingRequests = useRef<Record<string, NodeJS.Timeout>>({});
   
  
-  
   const headerRef = useRef<HTMLDivElement>(null);
-
   
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   useEffect(() => {
@@ -73,13 +330,19 @@ const AdminProductsPage: FC = () => {
   }, [updateHeaderHeight]);
 
   
-  const { producers } = useProducers();
+  const { 
+    data: producers, 
+    isLoading: isLoadingProducers,
+    isError: isErrorProducers,
+    error: producersError 
+  } = trpc.admin.products.producers.useQuery();
 
-  // Requête principale pour les produits
   const { 
     data: productsData,
     isLoading, 
     isFetching,
+    isError: isErrorProducts,
+    error: productsError,
     refetch 
   } = trpc.admin.products.list.useQuery({
     cursor,
@@ -89,14 +352,8 @@ const AdminProductsPage: FC = () => {
     producerId: selectedProducerId,
   });
 
-  const baseProducts = productsData?.items || [];
+  const products = useMemo(() => productsData?.items || [], [productsData?.items]);
   const totalProducts = productsData?.total || 0;
-  
-  // Produits avec les mises à jour optimistes appliquées pour l'affichage
-  const products = baseProducts.map(product => {
-    const optimisticUpdate = optimisticUpdates[product.id];
-    return optimisticUpdate ? { ...product, ...optimisticUpdate } : product;
-  });
   const currentPage = Math.max(1, Math.floor((totalProducts - products.length) / pageSize) + 1);
   const totalPages = Math.ceil(totalProducts / pageSize);
 
@@ -107,27 +364,27 @@ const AdminProductsPage: FC = () => {
 
   const utils = trpc.useUtils();
   
-  // Helper pour créer une clé de requête cohérente
-  const createQueryKey = () => ({
+  
+  const createQueryKey = useCallback(() => ({
     cursor,
     limit: pageSize,
     search: debouncedSearch || undefined,
     activeOnly: activeOnly || undefined,
     producerId: selectedProducerId,
-  });
+  }), [cursor, debouncedSearch, activeOnly, selectedProducerId]);
   
   const updateProduct = trpc.admin.products.update.useMutation({
     onMutate: async ({ id, patch }) => {
-      // 1. Annuler toutes les requêtes en cours pour éviter les conflicts
+   
       await utils.admin.products.list.cancel();
       
-      // 2. Créer la clé de requête
+   
       const queryKey = createQueryKey();
 
-      // 3. Snapshot de l'état actuel pour rollback
+   
       const previousData = utils.admin.products.list.getData(queryKey);
 
-      // 4. ⭐ OPTIMISTIC UPDATE : Mise à jour immédiate du cache
+   
       if (previousData?.items) {
         const updatedData = {
           ...previousData,
@@ -139,116 +396,91 @@ const AdminProductsPage: FC = () => {
         utils.admin.products.list.setData(queryKey, updatedData);
       }
 
-      // 5. Retourner le contexte pour rollback
+   
       return { previousData, queryKey };
     },
-    onError: (err, variables, context) => {
-      // 6. ⚠️ ROLLBACK en cas d'erreur
+    onError: (_err, _variables, context) => {
+   
       if (context?.previousData && context.queryKey) {
         utils.admin.products.list.setData(context.queryKey, context.previousData);
       }
     },
-    onSuccess: (updatedProduct, { id }) => {
-      // 7. ✅ Mettre à jour avec les vraies données du serveur
-      const queryKey = createQueryKey();
-      
-      const currentData = utils.admin.products.list.getData(queryKey);
-      if (currentData?.items) {
-        utils.admin.products.list.setData(queryKey, {
-          ...currentData,
-          items: currentData.items.map(product => 
-            product.id === id ? updatedProduct : product
-          )
-        });
-      }
-    }
+    // Pas de onSuccess - laissons TanStack Query gérer la synchronisation
+    // Les optimistic updates dans debouncedMutation suffisent
   });
 
-  // Fonction pour appliquer une mise à jour optimiste immédiate
-  const applyOptimisticUpdate = (productId: string, patch: any) => {
-    setOptimisticUpdates(prev => ({
-      ...prev,
-      [productId]: { ...prev[productId], ...patch }
-    }));
-  };
-
-  // Fonction pour envoyer la requête avec debounce
-  const debouncedMutation = (productId: string, patch: any, delay = 500) => {
-    // Nettoyer le timer précédent si il existe
-    if (pendingRequests[productId]) {
-      clearTimeout(pendingRequests[productId]);
+  
+  const debouncedMutation = useCallback((productId: string, patch: any, delay = 500) => {
+    
+    if (pendingRequests.current[productId]) {
+      clearTimeout(pendingRequests.current[productId]);
     }
 
-    // Créer un nouveau timer
+    
+    const queryKey = createQueryKey();
+    const currentData = utils.admin.products.list.getData(queryKey);
+    
+    if (currentData?.items) {
+      const optimisticData = {
+        ...currentData,
+        items: currentData.items.map(product => 
+          product.id === productId ? { ...product, ...patch } : product
+        )
+      };
+      
+      
+      utils.admin.products.list.setData(queryKey, optimisticData);
+    }
+
+    
     const timer = setTimeout(() => {
-      updateProduct.mutate({
-        id: productId,
-        patch
-      }, {
-        onSettled: () => {
-          // Nettoyer l'état optimiste après la réponse du serveur
-          setOptimisticUpdates(prev => {
-            const newState = { ...prev };
-            delete newState[productId];
-            return newState;
-          });
-          // Nettoyer le timer
-          setPendingRequests(prev => {
-            const newState = { ...prev };
-            delete newState[productId];
-            return newState;
-          });
-        }
-      });
+      updateProduct.mutate({ id: productId, patch });
+      
+      delete pendingRequests.current[productId];
     }, delay);
 
-    // Sauvegarder le timer
-    setPendingRequests(prev => ({ ...prev, [productId]: timer }));
-  };
+    
+    pendingRequests.current[productId] = timer;
+  }, [updateProduct, utils.admin.products.list, createQueryKey]);
 
-  const adjustStock = (productId: string, delta: number) => {
-    const displayProduct = getDisplayProduct(productId);
-    const currentStock = displayProduct.stock_quantity || 0;
+  const adjustStock = useCallback((productId: string, delta: number) => {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    
+    const currentStock = product.stock_quantity || 0;
     const newStock = Math.max(0, currentStock + delta);
     
-    // Ne rien faire si le stock ne change pas
+    
     if (newStock === currentStock) return;
     
-    // 1. Mise à jour optimiste immédiate
-    applyOptimisticUpdate(productId, { stock_quantity: newStock });
     
-    // 2. Envoyer la requête avec debounce
     debouncedMutation(productId, { stock_quantity: newStock });
-  };
+  }, [products, debouncedMutation]);
 
-  const toggleFeature = (productId: string) => {
-    const displayProduct = getDisplayProduct(productId);
-    const newFeatured = !displayProduct.featured;
+  const toggleFeature = useCallback((productId: string) => {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
     
-    // 1. Mise à jour optimiste immédiate
-    applyOptimisticUpdate(productId, { featured: newFeatured });
-    
-    // 2. Envoyer la requête avec debounce
+    const newFeatured = !product.featured;
     debouncedMutation(productId, { featured: newFeatured }, 300);
-  };
+  }, [products, debouncedMutation]);
 
-  const toggleActive = (productId: string) => {
-    const displayProduct = getDisplayProduct(productId);
-    const newActive = !displayProduct.is_active;
+  const toggleActive = useCallback((productId: string) => {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
     
-    // 1. Mise à jour optimiste immédiate
-    applyOptimisticUpdate(productId, { is_active: newActive });
-    
-    // 2. Envoyer la requête avec debounce
+    const newActive = !product.is_active;
     debouncedMutation(productId, { is_active: newActive }, 300);
-  };
+  }, [products, debouncedMutation]);
 
-  // Fonction helper pour obtenir le produit avec les mises à jour optimistes appliquées
-  const getDisplayProduct = (productId: string) => {
-    const baseProduct = baseProducts.find(p => p.id === productId);
-    const optimisticUpdate = optimisticUpdates[productId];
-    return { ...baseProduct, ...optimisticUpdate };
-  };
+  // Fonction pour réinitialiser les filtres
+  const resetFilters = useCallback(() => {
+    setSearch(''); 
+    setActiveOnly(false); 
+    setSelectedProducerId(undefined); 
+    setCursor(undefined); 
+    refetch();
+  }, [refetch]);
 
   return (
     <div className="h-full relative">
@@ -257,167 +489,32 @@ const AdminProductsPage: FC = () => {
           className="pb-20 px-4 md:px-6"
           style={{ paddingTop: `${headerHeight}px` }}
         >
-          {view === 'grid' ? (
-            <DataList
-              items={products}
+          {/* Gestion directe des états sans abstraction inutile */}
+          {isErrorProducts ? (
+            <ProductsErrorState 
+              productsError={productsError}
+              refetch={refetch}
+            />
+          ) : view === 'grid' ? (
+            <ProductsGridView 
+              products={products}
               isLoading={isLoading}
-              gridCols={3}
-              emptyState={{
-                title: 'Aucun produit',
-                description: 'Aucun résultat pour ces filtres.',
-                action: (
-                  <Button size="sm" variant="outline" onClick={() => { setSearch(''); setActiveOnly(false); setSelectedProducerId(undefined); setCursor(undefined); refetch() }}>
-                    Réinitialiser
-                  </Button>
-                )
-              }}
-              renderItem={(p) => {
-                const mainImage = getMainProductImage(p.images);
-                
-                return (
-                  <DataCard href={`/admin/products/${p.id}`}>
-                    <DataCard.Header>
-                      <DataCard.Title
-                        icon={Package}
-                        image={mainImage}
-                        imageAlt={p.name}
-                        images={p.images}
-                      >
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-medium">{p.name}</span>
-                          <span className="font-mono text-xs text-muted-foreground">{p.slug}</span>
-                          <Badge color={p.is_active ? 'green' : 'red'}>{p.is_active ? 'actif' : 'inactif'}</Badge>
-                          {p.featured && <Star className="w-4 h-4 text-yellow-500" />}
-                        </div>
-                      </DataCard.Title>
-                    </DataCard.Header>
-                    <DataCard.Content>
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <Zap className="w-3.5 h-3.5" />
-                        <span>{p.price_points} pts</span>
-                      </div>
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <Box className="w-3.5 h-3.5" />
-                        <span>Stock: {p.stock_quantity ?? 0}</span>
-                      </div>
-                      {p.producer && (
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                            {p.producer.name}
-                          </span>
-                        </div>
-                      )}
-                    </DataCard.Content>
-                    <DataCard.Footer>
-                      <div className="flex items-center gap-1 md:gap-2">
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="text-xs px-2" 
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(p.id, 1); }}
-                        >
-                          +1
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="text-xs px-2" 
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(p.id, -1); }}
-                        >
-                          -1
-                        </Button>
-                      </div>
-                      <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="text-xs whitespace-nowrap" 
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(p.id); }}
-                        >
-                          <span className="hidden sm:inline">{p.featured ? 'Unfeature' : 'Feature'}</span>
-                          <span className="sm:hidden">{p.featured ? '★' : '☆'}</span>
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="text-xs whitespace-nowrap" 
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(p.id); }}
-                        >
-                          <span className="hidden sm:inline">{p.is_active ? 'Désactiver' : 'Activer'}</span>
-                          <span className="sm:hidden">{p.is_active ? 'Off' : 'On'}</span>
-                        </Button>
-                      </div>
-                    </DataCard.Footer>
-                  </DataCard>
-                );
-              }}
+              adjustStock={adjustStock}
+              toggleFeature={toggleFeature}
+              toggleActive={toggleActive}
+              updateProduct={updateProduct}
+              resetFilters={resetFilters}
             />
           ) : (
-            isLoading ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">Chargement des produits...</p>
-              </div>
-            ) : products.length === 0 ? (
-              <div className="text-center py-8">
-                <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-foreground mb-2">Aucun produit</h3>
-                <p className="text-muted-foreground mb-4">Aucun résultat pour ces filtres.</p>
-                <Button size="sm" variant="outline" onClick={() => { setSearch(''); setActiveOnly(false); setSelectedProducerId(undefined); setCursor(undefined); refetch() }}>
-                  Réinitialiser
-                </Button>
-              </div>
-            ) : (
-              <ListContainer>
-                {products.map((product) => (
-                  <ProductListItem
-                    key={product.id}
-                    product={product}
-                    actions={
-                      <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-                        <div className="flex items-center gap-1">
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            className="text-xs px-2" 
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(product.id, 1); }}
-                          >
-                            +1
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            className="text-xs px-2" 
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(product.id, -1); }}
-                          >
-                            -1
-                          </Button>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            className="text-xs whitespace-nowrap" 
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(product.id); }}
-                          >
-                            <span className="hidden sm:inline">{product.featured ? 'Unfeature' : 'Feature'}</span>
-                            <span className="sm:hidden">{product.featured ? '★' : '☆'}</span>
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            className="text-xs whitespace-nowrap" 
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(product.id); }}
-                          >
-                            <span className="hidden sm:inline">{product.is_active ? 'Désactiver' : 'Activer'}</span>
-                            <span className="sm:hidden">{product.is_active ? 'Off' : 'On'}</span>
-                          </Button>
-                        </div>
-                      </div>
-                    }
-                  />
-                ))}
-              </ListContainer>
-            )
+            <ProductsListView 
+              products={products}
+              isLoading={isLoading}
+              adjustStock={adjustStock}
+              toggleFeature={toggleFeature}
+              toggleActive={toggleActive}
+              updateProduct={updateProduct}
+              resetFilters={resetFilters}
+            />
           )}
         </div>
       </div>
@@ -505,17 +602,31 @@ const AdminProductsPage: FC = () => {
                   >
                     Tous
                   </Button>
-                  {producers?.map((producer) => (
-                    <Button
-                      key={producer.id}
-                      size="sm"
-                      variant={selectedProducerId === producer.id ? "default" : "outline"}
-                      onClick={() => setSelectedProducerId(producer.id)}
-                      className="h-8 px-3 text-sm font-medium whitespace-nowrap"
-                    >
-                      {producer.name}
-                    </Button>
-                  ))}
+                  
+                  {/* Loading state pour les producteurs */}
+                  {isLoadingProducers ? (
+                    <>
+                      <div className="h-8 w-20 bg-gray-200 animate-pulse rounded" />
+                      <div className="h-8 w-24 bg-gray-200 animate-pulse rounded" />
+                      <div className="h-8 w-16 bg-gray-200 animate-pulse rounded" />
+                    </>
+                  ) : isErrorProducers ? (
+                    <div className="text-xs text-red-600 px-2 py-1 bg-red-50 rounded">
+                      Erreur producteurs: {producersError?.message || 'Chargement échoué'}
+                    </div>
+                  ) : (
+                    producers?.map((producer) => (
+                      <Button
+                        key={producer.id}
+                        size="sm"
+                        variant={selectedProducerId === producer.id ? "default" : "outline"}
+                        onClick={() => setSelectedProducerId(producer.id)}
+                        className="h-8 px-3 text-sm font-medium whitespace-nowrap"
+                      >
+                        {producer.name}
+                      </Button>
+                    ))
+                  )}
                 </div>
               </div>
               
@@ -561,7 +672,7 @@ const AdminProductsPage: FC = () => {
       <ProductFilterModal
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}
-        producers={producers}
+        producers={producers || []}
         selectedProducerId={selectedProducerId}
         setSelectedProducerId={setSelectedProducerId}
         activeOnly={activeOnly}
