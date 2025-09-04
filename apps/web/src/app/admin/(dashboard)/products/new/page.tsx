@@ -1,5 +1,6 @@
 "use client"
 
+import { FC } from 'react'
 import { useRouter } from 'next/navigation'
 import { trpc } from '@/lib/trpc'
 import { useToast } from '@/hooks/use-toast'
@@ -13,7 +14,7 @@ import { generateSlug } from '@/lib/form-utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card'
 import { Button } from '@/app/admin/(dashboard)/components/ui/button'
 import { Badge } from '@/app/admin/(dashboard)/components/badge'
-import { useAppForm, FormInput, FormTextArea, FormSelect } from '@/components/form'
+import { useAppForm, FormInput, FormTextArea, FormSelect, FormCheckbox } from '@/components/form'
 import { ArrowLeft, Package, Plus } from 'lucide-react'
 import Link from 'next/link'
 

@@ -178,7 +178,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             </button>
           </p>
           <p className="text-xs text-muted-foreground">
-            PNG, JPG, WEBP jusqu'à 10MB • Maximum {maxFiles} images
+            PNG, JPG, WEBP jusqu&apos;à 10MB • Maximum {maxFiles} images
           </p>
           <p className="text-xs text-muted-foreground">
             {currentImages.length}/{maxFiles} images uploadées

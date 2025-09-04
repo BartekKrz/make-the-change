@@ -1,0 +1,84 @@
+/* 🎨 Design Tokens - Système de design Make The Change */
+
+/* Variables CSS modernes pour design tokens */
+:root {
+  /* Z-Index System - Hiérarchie claire et prévisible */
+  --z-base: 0;
+  --z-content: 10;
+  --z-header: 20;
+  --z-overlay: 30;
+  --z-modal: 40;
+  --z-fab: 50;
+
+  /* Layout Utilities - Layouts modernes */
+  --layout-content-padding-mobile: 1rem;
+  --layout-content-padding-desktop: 1.5rem;
+
+  /* Component Tokens - Tailles et espacements */
+  --component-button-height-sm: 2rem;
+  --component-button-padding-sm: 0.5rem;
+  --component-fab-size: 3.5rem;
+  --component-action-gap: 0.25rem;
+  --component-action-gap-md: 0.5rem;
+
+  /* Animation & Transitions */
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* Focus Ring - Accessibilité */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 1px;
+}
+
+/* 🎛️ Custom Utility Classes avec @apply */
+@layer components {
+  .design-header-blur {
+    @apply backdrop-blur-xl bg-background/95;
+  }
+
+  .design-content-padding {
+    @apply px-4 md:px-6;
+  }
+
+  .design-page-container {
+    @apply min-h-screen flex flex-col;
+  }
+
+  .design-scroll-area {
+    @apply flex-1 overflow-auto;
+  }
+
+  .design-action-group {
+    @apply flex items-center gap-1 md:gap-2 flex-wrap;
+  }
+
+  .design-metadata {
+    @apply flex items-center gap-4 flex-wrap text-sm text-muted-foreground;
+  }
+
+  .design-skeleton {
+    @apply bg-gray-200 animate-pulse rounded;
+  }
+
+  /* Buttons avec design tokens */
+  .design-button-action {
+    @apply text-xs px-2 h-8 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1;
+  }
+
+  .design-button-fab {
+    height: var(--component-fab-size);
+    width: var(--component-fab-size);
+    @apply rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95;
+    @apply focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+  }
+
+  /* Z-Index utilities basées sur CSS custom properties */
+  .z-base { z-index: var(--z-base); }
+  .z-content { z-index: var(--z-content); }
+  .z-header { z-index: var(--z-header); }
+  .z-overlay { z-index: var(--z-overlay); }
+  .z-modal { z-index: var(--z-modal); }
+  .z-fab { z-index: var(--z-fab); }
+}

@@ -1,0 +1,146 @@
+@theme {
+  /* 🎨 Design System Colors */
+  --color-primary: #10b981;
+  --color-primary-light: #6ee7b7;
+  --color-primary-dark: #059669;
+  --color-secondary: #6b7280;
+  --color-accent: #3b82f6;
+  --color-destructive: #ef4444;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+
+  /* 🎯 Z-Index System */
+  --z-base: 0;
+  --z-content: 10;
+  --z-header: 20;
+  --z-overlay: 30;
+  --z-modal: 40;
+  --z-fab: 50;
+
+  /* 📐 Layout Tokens */
+  --spacing-fab: 3.5rem;
+  --spacing-button-sm: 2rem;
+  --spacing-header-mobile: 4rem;
+  --spacing-header-desktop: 5rem;
+
+  /* 🔄 Animation Tokens */
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* 🎨 Component Tokens */
+  --button-action-height: 2rem;
+  --button-action-padding: 0.5rem;
+  --skeleton-color: #e5e7eb;
+}
+
+/* 📦 Component Classes - Tailwind v4 */
+@layer components {
+  .admin-page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .admin-header {
+    position: sticky;
+    top: 0;
+    z-index: theme(--z-header);
+    backdrop-filter: blur(24px);
+    background-color: hsl(var(--background) / 0.95);
+    border-bottom: 1px solid hsl(var(--border) / 0.5);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  }
+
+  .admin-content {
+    flex: 1;
+    overflow: auto;
+    padding: 1rem;
+  }
+
+  .admin-content-md {
+    padding: 1.5rem;
+  }
+
+  .admin-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: theme(--z-header);
+    backdrop-filter: blur(24px);
+    background-color: hsl(var(--background) / 0.95);
+    border-top: 1px solid hsl(var(--border) / 0.5);
+    box-shadow: 0 -10px 15px -3px rgb(0 0 0 / 0.1);
+  }
+
+  .admin-action-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  @media (min-width: 768px) {
+    .admin-action-group {
+      gap: 0.5rem;
+    }
+  }
+
+  .admin-button-action {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    padding: 0 0.5rem;
+    height: theme(--button-action-height);
+  }
+
+  .admin-button-action:focus-visible {
+    outline: 2px solid;
+    outline-color: hsl(var(--primary));
+    outline-offset: 1px;
+  }
+
+  .admin-button-fab {
+    border-radius: 9999px;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    transition: all 200ms ease;
+  }
+
+  .admin-button-fab:hover {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    transform: scale(1.05);
+  }
+
+  .admin-button-fab:active {
+    transform: scale(0.95);
+  }
+
+  .admin-button-fab:focus-visible {
+    outline: 2px solid;
+    outline-color: hsl(var(--primary));
+    outline-offset: 2px;
+  }
+
+  .admin-skeleton {
+    background-color: theme(--skeleton-color);
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    border-radius: 0.375rem;
+  }
+
+  .admin-filter-badge {
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: hsl(var(--primary));
+    border-radius: 9999px;
+    margin-left: 0.25rem;
+  }
+
+  .admin-loading-indicator {
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: rgb(59 130 246);
+    border-radius: 9999px;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}

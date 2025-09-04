@@ -1,0 +1,106 @@
+@theme {
+  /* � Design System Colors - Variables CSS Semantiques */
+  --color-primary: #10b981;
+  --color-primary-light: #6ee7b7;
+  --color-primary-dark: #059669;
+  --color-secondary: #6b7280;
+  --color-accent: #3b82f6;
+  --color-destructive: #ef4444;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+
+  /* 🎯 Z-Index System Moderne */
+  --z-base: 0;
+  --z-content: 10;
+  --z-header: 20;
+  --z-overlay: 30;
+  --z-modal: 40;
+  --z-fab: 50;
+
+  /* 📐 Layout Tokens */
+  --spacing-fab: 3.5rem;
+  --spacing-button-sm: 2rem;
+  --spacing-header-mobile: 4rem;
+  --spacing-header-desktop: 5rem;
+
+  /* 🔄 Animation Tokens */
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* 🎨 Component Classes */
+  --button-action-height: 2rem;
+  --button-action-padding: 0.5rem;
+  --skeleton-color: #e5e7eb;
+}
+
+/* 📦 Component Classes - Pattern moderne Tailwind v4 */
+@layer components {
+  .admin-page-container {
+    @apply min-h-screen flex flex-col h-screen;
+  }
+
+  .admin-header {
+    @apply sticky top-0 backdrop-blur-xl bg-background/95 border-b border-border/50 shadow-lg;
+    z-index: theme(--z-header);
+  }
+
+  .admin-content {
+    @apply flex-1 overflow-auto;
+    padding: theme(--content-padding);
+  }
+
+  .admin-content-md {
+    padding: theme(--content-padding-md);
+  }
+
+  .admin-footer {
+    @apply sticky bottom-0 backdrop-blur-xl bg-background/95 border-t border-border/50 shadow-lg;
+    z-index: theme(--z-header);
+  }
+
+  .action-group {
+    @apply flex items-center gap-1 md:gap-2 flex-wrap;
+  }
+
+  .metadata-group {
+    @apply flex items-center gap-4 flex-wrap text-sm text-muted-foreground;
+  }
+
+  .button-action {
+    @apply text-xs whitespace-nowrap focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1;
+    height: theme(--button-action-height);
+    padding: 0 theme(--button-action-padding);
+  }
+
+  .button-fab {
+    @apply rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+    width: theme(--button-fab-size);
+    height: theme(--button-fab-size);
+    z-index: theme(--z-fab);
+  }
+
+  .skeleton {
+    background-color: theme(--skeleton-color);
+    @apply animate-pulse rounded;
+  }
+
+  .filter-badge-indicator {
+    @apply w-2 h-2 bg-primary rounded-full ml-1;
+  }
+
+  .loading-indicator {
+    @apply w-2 h-2 bg-blue-500 rounded-full animate-pulse;
+  }
+}
+
+/* 🔧 Utility Classes spécifiques */
+@layer utilities {
+  .z-admin-content { z-index: theme(--z-content); }
+  .z-admin-header { z-index: theme(--z-header); }
+  .z-admin-overlay { z-index: theme(--z-overlay); }
+  .z-admin-modal { z-index: theme(--z-modal); }
+  .z-admin-fab { z-index: theme(--z-fab); }
+}
