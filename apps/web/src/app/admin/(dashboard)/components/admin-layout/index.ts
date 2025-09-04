@@ -1,13 +1,13 @@
-// Export principal pour une utilisation clean
+
 export { AdminPageLayout } from './AdminPageLayout';
 
-// Exports individuels si besoin spécifique
+
 export { AdminPageHeader } from './header';
 export { AdminPageContent } from './content';
 export { AdminPageFooter } from './footer';
 
-// Exports pour le système de modal de filtres (sans contexte)
+
 export { FilterButton, FilterModal } from './filter-modal';
 
-// Export pour les filtres compositionnels
+
 export { Filters } from './generic-filters';

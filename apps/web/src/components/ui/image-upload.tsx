@@ -1,12 +1,12 @@
 'use client'
 
-import React, { useState, useCallback, useRef } from 'react'
-import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react'
-import { Button } from './button'
+import { useState, useCallback, useRef, type FC } from 'react'
+import { Upload, X, Loader2 } from 'lucide-react'
+
 import { useImageUpload } from '@/lib/upload'
 import type { UploadOptions } from '@/lib/upload'
 
-interface ImageUploadProps {
+type ImageUploadProps = {
   entityId: string
   bucket: 'projects' | 'products' | 'producers' | 'users' | 'categories'
   folder?: string
@@ -18,14 +18,14 @@ interface ImageUploadProps {
   acceptedTypes?: string[]
 }
 
-interface UploadingFile {
+type UploadingFile = {
   file: File
   progress: number
   preview: string
   error?: string
 }
 
-export const ImageUpload: React.FC<ImageUploadProps> = ({
+export const ImageUpload: FC<ImageUploadProps> = ({
   entityId,
   bucket,
   folder,

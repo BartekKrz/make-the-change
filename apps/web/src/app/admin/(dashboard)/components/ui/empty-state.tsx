@@ -59,19 +59,17 @@ const EmptyState: FC<EmptyStateProps> = ({
   className,
   size,
   variant,
-}) => {
-  return (
-    <div className={cn(emptyStateVariants({ size, variant }), className)}>
-      {Icon && (
-        <Icon className={iconSizeVariants({ size })} />
-      )}
-      <h3 className="text-lg font-medium mb-2">{title}</h3>
-      {description && (
-        <p className="text-muted-foreground mb-4">{description}</p>
-      )}
-      {action}
-    </div>
-  );
-};
+}) => (
+  <div className={cn(emptyStateVariants({ size, variant }), className)}>
+    {Icon && (
+      <Icon className={iconSizeVariants({ size })} />
+    )}
+    <h3 className="text-lg font-medium mb-2">{title}</h3>
+    {description && (
+      <p className="text-muted-foreground mb-4">{description}</p>
+    )}
+    {action}
+  </div>
+);
 
 export { EmptyState };

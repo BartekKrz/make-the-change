@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, type ComponentPropsWithoutRef, type ElementRef, useState, useEffect } from 'react';
+import { forwardRef, type ComponentPropsWithoutRef, type ElementRef, useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { cn } from '@/lib/utils';
 

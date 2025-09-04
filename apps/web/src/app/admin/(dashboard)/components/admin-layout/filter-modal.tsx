@@ -1,5 +1,5 @@
 'use client';
-import { type ReactNode } from 'react';
+import { FC, type ReactNode } from 'react';
 import { Filter } from 'lucide-react';
 import { Button } from '../ui/button';
 import { 
@@ -16,7 +16,7 @@ type FilterButtonProps = {
   onClick: () => void;
 };
 
-const FilterButton = ({ onClick }: FilterButtonProps) => {
+const FilterButton: FC<FilterButtonProps> = ({ onClick }) => {
   return (
     <Button
       size="sm"
@@ -29,35 +29,33 @@ const FilterButton = ({ onClick }: FilterButtonProps) => {
   );
 };
 
-// Version avec props - état explicite
+
 type FilterModalProps = {
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
 };
 
-const FilterModal = ({ isOpen, onClose, children }: FilterModalProps) => {
-  return (
-    <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DrawerContent onSwipeClose={onClose}>
-        <DrawerHeader>
-          <DrawerTitle>Filtres</DrawerTitle>
-          <DrawerClose asChild>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-8 w-8 p-0"
-            >
-              ×
-            </Button>
-          </DrawerClose>
-        </DrawerHeader>
-        <DrawerBody>
-          {children}
-        </DrawerBody>
-      </DrawerContent>
-    </Drawer>
-  );
-};
+const FilterModal: FC<FilterModalProps> = ({ isOpen, onClose, children }) => (
+  <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <DrawerContent onSwipeClose={onClose}>
+      <DrawerHeader>
+        <DrawerTitle>Filtres</DrawerTitle>
+        <DrawerClose asChild>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 w-8 p-0"
+          >
+            ×
+          </Button>
+        </DrawerClose>
+      </DrawerHeader>
+      <DrawerBody>
+        {children}
+      </DrawerBody>
+    </DrawerContent>
+  </Drawer>
+);
 
 export { FilterButton, FilterModal };

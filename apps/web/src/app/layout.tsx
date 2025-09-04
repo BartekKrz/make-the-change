@@ -13,18 +13,16 @@ export const metadata: Metadata = {
 
 const RootLayout: FC<PropsWithChildren> = ({
   children,
-}) =>  {
-  return (
-    <html lang="fr">
-      <body className={inter.className}>
-        <Providers>
-          <div className="min-h-screen bg-background text-text">
-            <main>{children}</main>
-          </div>
-        </Providers>
-      </body>
-    </html>
-  )
-}
+}) =>  (
+  <html lang="fr">
+    <body className={inter.className}>
+      <Providers>
+        <div className="min-h-screen bg-background text-text">
+          <main>{children}</main>
+        </div>
+      </Providers>
+    </body>
+  </html>
+)
 
 export default RootLayout

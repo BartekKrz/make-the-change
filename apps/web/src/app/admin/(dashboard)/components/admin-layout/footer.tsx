@@ -1,11 +1,9 @@
 'use client';
-import { type ReactNode } from 'react';
+import { FC, PropsWithChildren, type ReactNode } from 'react';
 
-type AdminPageFooterProps = {
-  children?: ReactNode;
-};
 
-export const AdminPageFooter = ({ children }: AdminPageFooterProps) => {
+
+export const AdminPageFooter: FC<PropsWithChildren> = ({ children } ) => {
   if (!children) return null;
   
   return (
