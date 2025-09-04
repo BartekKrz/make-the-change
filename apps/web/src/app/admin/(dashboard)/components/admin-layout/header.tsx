@@ -22,8 +22,8 @@ type AdminPageHeaderProps = {
   view: ViewMode;
   onViewChange: (view: ViewMode) => void;
   availableViews?: ViewMode[];
-  // Supprimé mobileFilters car le bouton de filtres est automatique maintenant
-  showMobileFilters?: boolean; // Nouveau: pour contrôler si on montre le bouton filtres mobile
+  showMobileFilters?: boolean;
+  onOpenFilterModal?: () => void; // Nouvelle prop explicite
 };
 
 export const AdminPageHeader = ({
@@ -37,7 +37,8 @@ export const AdminPageHeader = ({
   view,
   onViewChange,
   availableViews = ['grid', 'list'],
-  showMobileFilters = true
+  showMobileFilters = true,
+  onOpenFilterModal
 }: AdminPageHeaderProps) => {
   return (
     <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
@@ -63,8 +64,8 @@ export const AdminPageHeader = ({
               </div>
               
               {/* Bouton de filtres automatique en mobile */}
-              {showMobileFilters && (
-                <FilterButton />
+              {showMobileFilters && onOpenFilterModal && (
+                <FilterButton onClick={onOpenFilterModal} />
               )}
             </div>
           </div>

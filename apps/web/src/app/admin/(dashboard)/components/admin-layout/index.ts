@@ -6,8 +6,8 @@ export { AdminPageHeader } from './header';
 export { AdminPageContent } from './content';
 export { AdminPageFooter } from './footer';
 
-// Exports pour le système de modal de filtres
-export { FilterModalProvider, FilterButton, FilterModal, useFilterModal } from './filter-modal';
+// Exports pour le système de modal de filtres (sans contexte)
+export { FilterButton, FilterModal } from './filter-modal';
 
 // Export pour les filtres compositionnels
 export { Filters } from './generic-filters';

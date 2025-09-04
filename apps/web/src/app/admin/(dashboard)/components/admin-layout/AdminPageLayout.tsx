@@ -1,23 +1,22 @@
 'use client';
+import { type ReactNode } from 'react';
 import { type ViewMode } from '../ui/view-toggle';
 import { AdminPageHeader } from './header';
 import { AdminPageContent } from './content';
 import { AdminPageFooter } from './footer';
-import { FilterModalProvider, FilterModal } from './filter-modal';
+import { FilterModal } from './filter-modal';
 
 // Types pour les props du layout principal
 type AdminPageLayoutProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
-// Composant principal simple SANS contexte mais AVEC provider pour les filtres
+// Composant principal simple - pas de contexte, pas de magie
 export const AdminPageLayout = ({ children }: AdminPageLayoutProps) => {
   return (
-    <FilterModalProvider>
-      <div className="min-h-screen flex flex-col h-screen">
-        {children}
-      </div>
-    </FilterModalProvider>
+    <div className="min-h-screen flex flex-col h-screen">
+      {children}
+    </div>
   );
 };
 

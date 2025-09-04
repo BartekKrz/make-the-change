@@ -138,17 +138,15 @@ export const DataList = <T,>({
     return index;
   };
 
-  if (isLoading) {
-    return (
-      <div className={cn('space-y-6', className)} data-testid={testId}>
-        <div className={cn('grid', getGridClasses(gridCols), getSpacingClasses(spacing), 'items-stretch')}>
-          {Array.from({ length: gridCols * 2 }).map((_, index) => (
-            <DataCardSkeleton key={index} />
-          ))}
-        </div>
+  if (isLoading) return (
+    <div className={cn('space-y-6', className)} data-testid={testId}>
+      <div className={cn('grid', getGridClasses(gridCols), getSpacingClasses(spacing), 'items-stretch')}>
+        {Array.from({ length: gridCols * 2 }).map((_, index) => (
+          <DataCardSkeleton key={index} />
+        ))}
       </div>
-    );
-  }
+    </div>
+  );
 
   if (items.length === 0 && emptyState) {
     const EmptyIcon = emptyState.icon;
@@ -404,16 +402,14 @@ type DataCardContentItemProps = {
   icon: LucideIcon;
 };
 
-const DataCardContentItem: FC<PropsWithChildren<DataCardContentItemProps>> = ({ icon: Icon, children }) => {
-  return (
-    <div className='flex items-center gap-3 text-sm text-muted-foreground'>
-      <Icon className='h-4 w-4' />
-      <span className='[&>a]:md:group-hover:text-primary [&>a]:md:group-hover:underline [&>a]:hover:!text-blue-600 [&>a]:hover:!font-medium [&>a]:transition-all [&>a]:duration-200'>
-        {children}
-      </span>
-    </div>
-  );
-};
+const DataCardContentItem: FC<PropsWithChildren<DataCardContentItemProps>> = ({ icon: Icon, children }) => (
+  <div className='flex items-center gap-3 text-sm text-muted-foreground'>
+    <Icon className='h-4 w-4' />
+    <span className='[&>a]:md:group-hover:text-primary [&>a]:md:group-hover:underline [&>a]:hover:!text-blue-600 [&>a]:hover:!font-medium [&>a]:transition-all [&>a]:duration-200'>
+      {children}
+    </span>
+  </div>
+);
 
 export const DataCard = Object.assign(DataCardComponent, {
   Header: DataCardHeader,

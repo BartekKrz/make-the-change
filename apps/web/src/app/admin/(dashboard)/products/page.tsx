@@ -1,7 +1,7 @@
 'use client';
 import { type FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Package, Star, Zap } from 'lucide-react';
-import { AdminPageLayout, Filters } from '@/app/admin/(dashboard)/components/admin-layout';
+import { AdminPageLayout, Filters, FilterModal } from '@/app/admin/(dashboard)/components/admin-layout';
 import { type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle';
 import { DataCard, DataList } from '@/app/admin/(dashboard)/components/ui/data-list';
 import { ListContainer } from '@/app/admin/(dashboard)/components/ui/list-container';
@@ -12,23 +12,37 @@ import { CheckboxWithLabel } from '@/app/admin/(dashboard)/components/ui/checkbo
 import { AdminPagination } from '@/app/admin/(dashboard)/components/layout/admin-pagination';
 import { trpc } from '@/lib/trpc';
 import { getMainProductImage } from '@/components/ProductImage';
+import { EmptyState } from '@/app/admin/(dashboard)/components/ui/empty-state';
 
 const pageSize = 18;
 
 type ProductProps = {
   product: any;
   view: 'grid' | 'list';
-  createQueryKey: () => any;
+  queryParams: {
+    cursor?: string;
+    search?: string;
+    activeOnly?: boolean;
+    producerId?: string;
+  };
 };
 
-const Product = ({ product, view, createQueryKey }: ProductProps) => {
+const Product = ({ product, view, queryParams }: ProductProps) => {
   const pendingRequest = useRef<NodeJS.Timeout | null>(null);
   const utils = trpc.useUtils();
+  
+  // Mémoriser la query key une seule fois
+  const queryKey = useMemo(() => ({
+    cursor: queryParams.cursor,
+    limit: pageSize,
+    search: queryParams.search,
+    activeOnly: queryParams.activeOnly,
+    producerId: queryParams.producerId,
+  }), [queryParams]);
   
   const updateProduct = trpc.admin.products.update.useMutation({
     onMutate: async ({ id, patch }) => {
       await utils.admin.products.list.cancel();
-      const queryKey = createQueryKey();
       const previousData = utils.admin.products.list.getData(queryKey);
 
       if (previousData?.items) {
@@ -54,7 +68,6 @@ const Product = ({ product, view, createQueryKey }: ProductProps) => {
       clearTimeout(pendingRequest.current);
     }
 
-    const queryKey = createQueryKey();
     const currentData = utils.admin.products.list.getData(queryKey);
     
     if (currentData?.items) {
@@ -71,7 +84,7 @@ const Product = ({ product, view, createQueryKey }: ProductProps) => {
       updateProduct.mutate({ id: product.id, patch });
       pendingRequest.current = null;
     }, delay);
-  }, [product.id, updateProduct, utils, createQueryKey]);
+  }, [product.id, updateProduct, utils, queryKey]);
 
   const adjustStock = useCallback((delta: number) => {
     const currentStock = product.stock_quantity || 0;
@@ -153,8 +166,9 @@ const Product = ({ product, view, createQueryKey }: ProductProps) => {
   const [selectedProducerId, setSelectedProducerId] = useState<string | undefined>();
   const [cursor, setCursor] = useState<string | undefined>();
   const [view, setView] = useState<ViewMode>('grid');
-  
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);  
   const [debouncedSearch, setDebouncedSearch] = useState(search);
+
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(timer);
@@ -176,17 +190,9 @@ const Product = ({ product, view, createQueryKey }: ProductProps) => {
     producerId: selectedProducerId,
   });
 
-  const products = useMemo(() => productsData?.items || [], [productsData?.items]);
+  const products = productsData?.items || [];
   const totalProducts = productsData?.total || 0;
   const totalPages = Math.ceil(totalProducts / pageSize);
-
-  const createQueryKey = useCallback(() => ({
-    cursor,
-    limit: pageSize,
-    search: debouncedSearch || undefined,
-    activeOnly: activeOnly || undefined,
-    producerId: selectedProducerId,
-  }), [cursor, debouncedSearch, activeOnly, selectedProducerId]);
 
   const resetFilters = useCallback(() => {
     setSearch(''); 
@@ -208,15 +214,8 @@ const Product = ({ product, view, createQueryKey }: ProductProps) => {
         view={view}
         onViewChange={setView}
         showMobileFilters={true}
+        onOpenFilterModal={() => setIsFilterModalOpen(true)}
       >
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Produits</h1>
-          <span className="text-sm text-gray-500">
-            {products.length} produit{products.length > 1 ? 's' : ''}
-          </span>
-        </div>
-
-        {/* Filtres desktop */}
         <div className="hidden md:flex items-center gap-3 flex-wrap mt-4">
           <Button
             size="sm"
@@ -258,7 +257,6 @@ const Product = ({ product, view, createQueryKey }: ProductProps) => {
               items={[]}
               isLoading={true}
               gridCols={3}
-              emptyState={{ title: 'Chargement...', description: '', action: null }}
               renderItem={() => null}
             />
           ) : (
@@ -269,12 +267,16 @@ const Product = ({ product, view, createQueryKey }: ProductProps) => {
             </ListContainer>
           )
         ) : products.length === 0 ? (
-          <div className="text-center py-8">
-            <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium mb-2">Aucun produit</h3>
-            <p className="text-muted-foreground mb-4">Aucun résultat pour ces filtres.</p>
-            <Button size="sm" variant="outline" onClick={resetFilters}>Réinitialiser</Button>
-          </div>
+          <EmptyState
+            icon={Package}
+            title="Aucun produit"
+            description="Aucun résultat pour ces filtres."
+            action={
+              <Button size="sm" variant="outline" onClick={resetFilters}>
+                Réinitialiser
+              </Button>
+            }
+          />
         ) : view === 'grid' ? (
           <DataList
             items={products}
@@ -282,13 +284,33 @@ const Product = ({ product, view, createQueryKey }: ProductProps) => {
             gridCols={3}
             emptyState={{ title: 'Aucun produit', description: '', action: null }}
             renderItem={(product) => (
-              <Product key={product.id} product={product} view="grid" createQueryKey={createQueryKey} />
+              <Product 
+                key={product.id} 
+                product={product} 
+                view="grid" 
+                queryParams={{
+                  cursor,
+                  search: debouncedSearch || undefined,
+                  activeOnly: activeOnly || undefined,
+                  producerId: selectedProducerId,
+                }}
+              />
             )}
           />
         ) : (
           <ListContainer>
             {products.map((product) => (
-              <Product key={product.id} product={product} view="list" createQueryKey={createQueryKey} />
+              <Product 
+                key={product.id} 
+                product={product} 
+                view="list" 
+                queryParams={{
+                  cursor,
+                  search: debouncedSearch || undefined,
+                  activeOnly: activeOnly || undefined,
+                  producerId: selectedProducerId,
+                }}
+              />
             ))}
           </ListContainer>
         )}
@@ -307,8 +329,11 @@ const Product = ({ product, view, createQueryKey }: ProductProps) => {
         )}
       </AdminPageLayout.Content>
 
-      {/* Modal de filtres automatique - simplifié ! */}
-      <AdminPageLayout.FilterModal>
+   
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+      >
         <Filters>
           <Filters.View
             view={view}
@@ -329,7 +354,7 @@ const Product = ({ product, view, createQueryKey }: ProductProps) => {
             label="Afficher uniquement les éléments actifs"
           />
         </Filters>
-      </AdminPageLayout.FilterModal>
+      </FilterModal>
     </AdminPageLayout>
   );
 };

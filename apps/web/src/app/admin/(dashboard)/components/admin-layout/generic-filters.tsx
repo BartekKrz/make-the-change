@@ -4,18 +4,18 @@ import { ViewToggle } from '../ui/view-toggle';
 import { Button } from '../ui/button';
 import { CheckboxWithLabel } from '../ui/checkbox';
 
-// Conteneur principal pour les filtres
+
 type FiltersProps = {
   children: React.ReactNode;
 };
 
 export const Filters = ({ children }: FiltersProps) => (
-  <div className="space-y-6">
+  <div className="space-y-6 pb-20">
     {children}
   </div>
 );
 
-// Composant pour le mode d'affichage
+
 type ViewFilterProps = {
   view: ViewMode;
   onViewChange: (view: ViewMode) => void;
@@ -39,7 +39,7 @@ const ViewFilter = ({
   </div>
 );
 
-// Composant pour les filtres de sélection (producteurs, catégories, etc.)
+
 type SelectionItem = {
   id: string;
   name: string;
@@ -88,7 +88,7 @@ const SelectionFilter = ({
   );
 };
 
-// Composant pour les filtres booléens (actif/inactif, etc.)
+
 type ToggleFilterProps = {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
@@ -105,10 +105,10 @@ const ToggleFilter = ({ checked, onCheckedChange, label }: ToggleFilterProps) =>
   </div>
 );
 
-// Composition des sous-composants
+
 Filters.View = ViewFilter;
 Filters.Selection = SelectionFilter;
 Filters.Toggle = ToggleFilter;
 
-// Export du composant principal et des types utiles
+
 export { type ViewMode, type SelectionItem };
