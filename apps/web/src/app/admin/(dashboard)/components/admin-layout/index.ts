@@ -9,5 +9,5 @@ export { AdminPageFooter } from './footer';
 // Exports pour le système de modal de filtres
 export { FilterModalProvider, FilterButton, FilterModal, useFilterModal } from './filter-modal';
 
-// Export pour les filtres génériques
-export { GenericFilters } from './generic-filters';
+// Export pour les filtres compositionnels
+export { Filters } from './generic-filters';

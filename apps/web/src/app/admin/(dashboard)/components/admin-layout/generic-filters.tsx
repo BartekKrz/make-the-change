@@ -4,88 +4,111 @@ import { ViewToggle } from '../ui/view-toggle';
 import { Button } from '../ui/button';
 import { CheckboxWithLabel } from '../ui/checkbox';
 
-// Types pour les producteurs
-type Producer = {
+// Conteneur principal pour les filtres
+type FiltersProps = {
+  children: React.ReactNode;
+};
+
+export const Filters = ({ children }: FiltersProps) => (
+  <div className="space-y-6">
+    {children}
+  </div>
+);
+
+// Composant pour le mode d'affichage
+type ViewFilterProps = {
+  view: ViewMode;
+  onViewChange: (view: ViewMode) => void;
+  availableViews?: ViewMode[];
+  label?: string;
+};
+
+const ViewFilter = ({ 
+  view, 
+  onViewChange, 
+  availableViews = ['grid', 'list'],
+  label = "Mode d'affichage"
+}: ViewFilterProps) => (
+  <div>
+    <label className="text-sm font-medium mb-3 block">{label}</label>
+    <ViewToggle 
+      value={view} 
+      onChange={onViewChange} 
+      availableViews={availableViews} 
+    />
+  </div>
+);
+
+// Composant pour les filtres de sélection (producteurs, catégories, etc.)
+type SelectionItem = {
   id: string;
   name: string;
 };
 
-// Props pour le composant de filtres génériques
-type GenericFiltersProps = {
-  // Vue
-  view: ViewMode;
-  onViewChange: (view: ViewMode) => void;
-  
-  // Producteurs
-  producers?: Producer[];
-  selectedProducerId?: string;
-  onProducerChange: (id: string | undefined) => void;
-  
-  // Filtre actif uniquement
-  activeOnly: boolean;
-  onActiveOnlyChange: (value: boolean) => void;
-  
-  // Autres filtres personnalisés
-  children?: React.ReactNode;
+type SelectionFilterProps = {
+  items: SelectionItem[];
+  selectedId?: string;
+  onSelectionChange: (id: string | undefined) => void;
+  label: string;
+  allLabel?: string;
 };
 
-export const GenericFilters = ({
-  view,
-  onViewChange,
-  producers = [],
-  selectedProducerId,
-  onProducerChange,
-  activeOnly,
-  onActiveOnlyChange,
-  children
-}: GenericFiltersProps) => (
-  <div className="space-y-6">
-    {/* Mode d'affichage */}
+const SelectionFilter = ({ 
+  items, 
+  selectedId, 
+  onSelectionChange, 
+  label,
+  allLabel = "Tous"
+}: SelectionFilterProps) => {
+  if (items.length === 0) return null;
+  
+  return (
     <div>
-      <label className="text-sm font-medium mb-3 block">Mode d&apos;affichage</label>
-      <ViewToggle 
-        value={view} 
-        onChange={onViewChange} 
-        availableViews={['grid', 'list']} 
-      />
-    </div>
-      
-    {/* Producteurs */}
-    {producers.length > 0 && (
-      <div>
-        <label className="text-sm font-medium mb-3 block">Partenaire</label>
-        <div className="space-y-2">
+      <label className="text-sm font-medium mb-3 block">{label}</label>
+      <div className="space-y-2">
+        <Button
+          variant={selectedId === undefined ? "default" : "outline"}
+          onClick={() => onSelectionChange(undefined)}
+          className="w-full justify-start"
+        >
+          {allLabel}
+        </Button>
+        {items.map((item) => (
           <Button
-            variant={selectedProducerId === undefined ? "default" : "outline"}
-            onClick={() => onProducerChange(undefined)}
+            key={item.id}
+            variant={selectedId === item.id ? "default" : "outline"}
+            onClick={() => onSelectionChange(item.id)}
             className="w-full justify-start"
           >
-            Tous les partenaires
+            {item.name}
           </Button>
-          {producers.map((producer) => (
-            <Button
-              key={producer.id}
-              variant={selectedProducerId === producer.id ? "default" : "outline"}
-              onClick={() => onProducerChange(producer.id)}
-              className="w-full justify-start"
-            >
-              {producer.name}
-            </Button>
-          ))}
-        </div>
+        ))}
       </div>
-    )}
-      
-    {/* Filtre actifs uniquement */}
-    <div>
-      <CheckboxWithLabel
-        checked={activeOnly}
-        onCheckedChange={(checked) => onActiveOnlyChange(Boolean(checked))}
-        label="Afficher uniquement les éléments actifs"
-      />
     </div>
-      
-    {/* Filtres personnalisés */}
-    {children}
+  );
+};
+
+// Composant pour les filtres booléens (actif/inactif, etc.)
+type ToggleFilterProps = {
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+  label: string;
+};
+
+const ToggleFilter = ({ checked, onCheckedChange, label }: ToggleFilterProps) => (
+  <div>
+    <CheckboxWithLabel
+      checked={checked}
+      onCheckedChange={(checked) => onCheckedChange(Boolean(checked))}
+      label={label}
+    />
   </div>
 );
+
+// Composition des sous-composants
+Filters.View = ViewFilter;
+Filters.Selection = SelectionFilter;
+Filters.Toggle = ToggleFilter;
+
+// Export du composant principal et des types utiles
+export { type ViewMode, type SelectionItem };

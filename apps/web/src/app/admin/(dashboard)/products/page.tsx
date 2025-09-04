@@ -1,7 +1,7 @@
 'use client';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Package, Star, Zap } from 'lucide-react';
-import { AdminPageLayout, GenericFilters } from '@/app/admin/(dashboard)/components/admin-layout';
+import { AdminPageLayout, Filters } from '@/app/admin/(dashboard)/components/admin-layout';
 import { type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle';
 import { DataCard, DataList } from '@/app/admin/(dashboard)/components/ui/data-list';
 import { ListContainer } from '@/app/admin/(dashboard)/components/ui/list-container';
@@ -147,7 +147,7 @@ const Product = ({ product, view, createQueryKey }: ProductProps) => {
   return <ProductListItem key={product.id} product={product} actions={actions} />;
 };
 
-export default function ProductsPage() {
+ const ProductsPage: FC = () => {
   const [search, setSearch] = useState('');
   const [activeOnly, setActiveOnly] = useState(false);
   const [selectedProducerId, setSelectedProducerId] = useState<string | undefined>();
@@ -309,16 +309,29 @@ export default function ProductsPage() {
 
       {/* Modal de filtres automatique - simplifié ! */}
       <AdminPageLayout.FilterModal>
-        <GenericFilters
-          view={view}
-          onViewChange={setView}
-          producers={producers || []}
-          selectedProducerId={selectedProducerId}
-          onProducerChange={setSelectedProducerId}
-          activeOnly={activeOnly}
-          onActiveOnlyChange={setActiveOnly}
-        />
+        <Filters>
+          <Filters.View
+            view={view}
+            onViewChange={setView}
+          />
+          
+          <Filters.Selection
+            items={producers || []}
+            selectedId={selectedProducerId}
+            onSelectionChange={setSelectedProducerId}
+            label="Partenaire"
+            allLabel="Tous les partenaires"
+          />
+          
+          <Filters.Toggle
+            checked={activeOnly}
+            onCheckedChange={setActiveOnly}
+            label="Afficher uniquement les éléments actifs"
+          />
+        </Filters>
       </AdminPageLayout.FilterModal>
     </AdminPageLayout>
   );
-}
+};
+
+export default ProductsPage;
