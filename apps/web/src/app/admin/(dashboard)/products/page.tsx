@@ -24,6 +24,7 @@ type ProductProps = {
     search?: string;
     activeOnly?: boolean;
     producerId?: string;
+    limit: number;
   };
 };
 
@@ -31,19 +32,10 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
   const pendingRequest = useRef<NodeJS.Timeout | null>(null);
   const utils = trpc.useUtils();
   
-  // Mémoriser la query key une seule fois
-  const queryKey = useMemo(() => ({
-    cursor: queryParams.cursor,
-    limit: pageSize,
-    search: queryParams.search,
-    activeOnly: queryParams.activeOnly,
-    producerId: queryParams.producerId,
-  }), [queryParams]);
-  
   const updateProduct = trpc.admin.products.update.useMutation({
     onMutate: async ({ id, patch }) => {
       await utils.admin.products.list.cancel();
-      const previousData = utils.admin.products.list.getData(queryKey);
+      const previousData = utils.admin.products.list.getData(queryParams);
 
       if (previousData?.items) {
         const updatedData = {
@@ -52,9 +44,9 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
             product.id === id ? { ...product, ...patch } : product
           )
         };
-        utils.admin.products.list.setData(queryKey, updatedData);
+        utils.admin.products.list.setData(queryParams, updatedData);
       }
-      return { previousData, queryKey };
+      return { previousData, queryKey: queryParams };
     },
     onError: (_err, _variables, context) => {
       if (context?.previousData && context.queryKey) {
@@ -68,7 +60,7 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
       clearTimeout(pendingRequest.current);
     }
 
-    const currentData = utils.admin.products.list.getData(queryKey);
+    const currentData = utils.admin.products.list.getData(queryParams);
     
     if (currentData?.items) {
       const optimisticData = {
@@ -77,14 +69,14 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
           p.id === product.id ? { ...p, ...patch } : p
         )
       };
-      utils.admin.products.list.setData(queryKey, optimisticData);
+      utils.admin.products.list.setData(queryParams, optimisticData);
     }
 
     pendingRequest.current = setTimeout(() => {
       updateProduct.mutate({ id: product.id, patch });
       pendingRequest.current = null;
     }, delay);
-  }, [product.id, updateProduct, utils, queryKey]);
+  }, [product.id, updateProduct, utils, queryParams]);
 
   const adjustStock = useCallback((delta: number) => {
     const currentStock = product.stock_quantity || 0;
@@ -174,6 +166,15 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
     return () => clearTimeout(timer);
   }, [search]);
 
+  
+  const queryParams = useMemo(() => ({
+    cursor,
+    search: debouncedSearch || undefined,
+    activeOnly: activeOnly || undefined,
+    producerId: selectedProducerId,
+    limit: pageSize,
+  }), [cursor, debouncedSearch, activeOnly, selectedProducerId]);
+
   const { data: producers } = trpc.admin.products.producers.useQuery();
   const { 
     data: productsData,
@@ -182,13 +183,7 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
     isError,
     error,
     refetch 
-  } = trpc.admin.products.list.useQuery({
-    cursor,
-    limit: pageSize,
-    search: debouncedSearch || undefined,
-    activeOnly: activeOnly || undefined,
-    producerId: selectedProducerId,
-  });
+  } = trpc.admin.products.list.useQuery(queryParams);
 
   const products = productsData?.items || [];
   const totalProducts = productsData?.total || 0;
@@ -244,13 +239,17 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
 
       <AdminPageLayout.Content>
         {isError ? (
-          <div className="text-center py-12">
-            <div className="p-4 bg-red-50 text-red-800 rounded-lg mb-4 max-w-md mx-auto">
-              <h3 className="font-medium mb-2">Erreur de chargement</h3>
-              <p className="text-sm mb-3">{error?.message || 'Impossible de charger les produits'}</p>
-              <Button size="sm" variant="outline" onClick={() => refetch()}>Réessayer</Button>
-            </div>
-          </div>
+          <EmptyState
+            variant="muted"
+            icon={Package}
+            title="Erreur de chargement"
+            description={error?.message || 'Impossible de charger les produits'}
+            action={
+              <Button size="sm" variant="outline" onClick={() => refetch()}>
+                Réessayer
+              </Button>
+            }
+          />
         ) : isLoading ? (
           view === 'grid' ? (
             <DataList
@@ -288,12 +287,7 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
                 key={product.id} 
                 product={product} 
                 view="grid" 
-                queryParams={{
-                  cursor,
-                  search: debouncedSearch || undefined,
-                  activeOnly: activeOnly || undefined,
-                  producerId: selectedProducerId,
-                }}
+                queryParams={queryParams}
               />
             )}
           />
@@ -304,12 +298,7 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
                 key={product.id} 
                 product={product} 
                 view="list" 
-                queryParams={{
-                  cursor,
-                  search: debouncedSearch || undefined,
-                  activeOnly: activeOnly || undefined,
-                  producerId: selectedProducerId,
-                }}
+                queryParams={queryParams}
               />
             ))}
           </ListContainer>
