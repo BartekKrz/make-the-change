@@ -12,6 +12,7 @@ import type { TRPCContext } from './context'
 import { partnerRouter } from './router/admin/partner';
 import { adminSubscriptionsRouter } from './router/admin/subscriptions';
 import { imagesRouter } from './router/admin/images';
+import { categoriesRouter } from './router/admin/categories';
 
 // Supabase service client for server-side ops
 const supabaseUrl = process.env.SUPABASE_URL as string
@@ -198,6 +199,7 @@ export const appRouter = createRouter({
     partners: partnerRouter,
     subscriptions: adminSubscriptionsRouter,
     images: imagesRouter,
+    categories: categoriesRouter,
     orders: createRouter({
       list: adminProcedure
         .input(
@@ -331,6 +333,9 @@ export const appRouter = createRouter({
               activeOnly: z.boolean().default(false),
               search: z.string().optional(),
               producerId: z.string().uuid().optional(),
+              categoryId: z.string().uuid().optional(),
+              partnerSource: z.string().optional(),
+              originCountry: z.string().optional(),
               limit: z.number().int().min(1).max(100).default(50),
               cursor: z.string().uuid().optional(),
             })
@@ -346,12 +351,25 @@ export const appRouter = createRouter({
                 id,
                 name,
                 slug
+              ),
+              category:categories!category_id(
+                id,
+                name,
+                slug
+              ),
+              secondary_category:categories!secondary_category_id(
+                id,
+                name,
+                slug
               )
             `)
             .order('created_at', { ascending: false })
           if (input?.activeOnly) q = q.eq('is_active', true)
           if (input?.search) q = q.or(`name.ilike.%${input.search}%,slug.ilike.%${input.search}%`)
           if (input?.producerId) q = q.eq('producer_id', input.producerId)
+          if (input?.categoryId) q = q.or(`category_id.eq.${input.categoryId},secondary_category_id.eq.${input.categoryId}`)
+          if (input?.partnerSource) q = q.eq('partner_source', input.partnerSource)
+          if (input?.originCountry) q = q.eq('origin_country', input.originCountry)
           if (input?.cursor) q = q.lt('id', input.cursor)
           q = q.limit(input?.limit ?? 50)
           const { data, error } = await q
@@ -364,6 +382,9 @@ export const appRouter = createRouter({
           if (input?.activeOnly) countQ = countQ.eq('is_active', true)
           if (input?.search) countQ = countQ.or(`name.ilike.%${input.search}%,slug.ilike.%${input.search}%`)
           if (input?.producerId) countQ = countQ.eq('producer_id', input.producerId)
+          if (input?.categoryId) countQ = countQ.or(`category_id.eq.${input.categoryId},secondary_category_id.eq.${input.categoryId}`)
+          if (input?.partnerSource) countQ = countQ.eq('partner_source', input.partnerSource)
+          if (input?.originCountry) countQ = countQ.eq('origin_country', input.originCountry)
           const { count, error: countError } = await countQ
           if (countError) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: countError.message })
 

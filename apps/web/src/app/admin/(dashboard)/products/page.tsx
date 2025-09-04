@@ -9,6 +9,7 @@ import { ProductListItem } from '@/app/admin/(dashboard)/components/products/pro
 import { Badge } from '@/app/admin/(dashboard)/components/badge';
 import { Button } from '@/app/admin/(dashboard)/components/ui/button';
 import { CheckboxWithLabel } from '@/app/admin/(dashboard)/components/ui/checkbox';
+import { SimpleSelect } from '@/app/admin/(dashboard)/components/ui/select';
 import { AdminPagination } from '@/app/admin/(dashboard)/components/layout/admin-pagination';
 import { trpc } from '@/lib/trpc';
 import { getMainProductImage } from '@/components/ProductImage';
@@ -24,11 +25,12 @@ type ProductProps = {
     search?: string;
     activeOnly?: boolean;
     producerId?: string;
+    categoryId?: string;
     limit: number;
   };
 };
 
-const Product = ({ product, view, queryParams }: ProductProps) => {
+const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
   const pendingRequest = useRef<NodeJS.Timeout | null>(null);
   const utils = trpc.useUtils();
   
@@ -143,6 +145,34 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
               <span>Stock: {product.stock_quantity ?? 0}</span>
             </div>
           </div>
+          
+          <div className="flex flex-wrap gap-2 mt-2">
+            {product.category && (
+              <Badge color="green">
+                {product.category.name}
+              </Badge>
+            )}
+            {product.secondary_category && (
+              <Badge color="green">
+                {product.secondary_category.name}
+              </Badge>
+            )}
+            {product.producer && (
+              <Badge color="blue">
+                {product.producer.name}
+              </Badge>
+            )}
+            {product.partner_source && (
+              <Badge color="yellow">
+                {product.partner_source}
+              </Badge>
+            )}
+            {product.origin_country && (
+              <Badge color="gray">
+                {product.origin_country}
+              </Badge>
+            )}
+          </div>
         </DataCard.Content>
         <DataCard.Footer>{actions}</DataCard.Footer>
       </DataCard>
@@ -156,6 +186,7 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
   const [search, setSearch] = useState('');
   const [activeOnly, setActiveOnly] = useState(false);
   const [selectedProducerId, setSelectedProducerId] = useState<string | undefined>();
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>();
   const [cursor, setCursor] = useState<string | undefined>();
   const [view, setView] = useState<ViewMode>('grid');
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);  
@@ -171,11 +202,13 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
     cursor,
     search: debouncedSearch || undefined,
     activeOnly: activeOnly || undefined,
-    producerId: selectedProducerId,
+    producerId: selectedProducerId === 'all' ? undefined : selectedProducerId,
+    categoryId: selectedCategoryId === 'all' ? undefined : selectedCategoryId,
     limit: pageSize,
-  }), [cursor, debouncedSearch, activeOnly, selectedProducerId]);
+  }), [cursor, debouncedSearch, activeOnly, selectedProducerId, selectedCategoryId]);
 
   const { data: producers } = trpc.admin.products.producers.useQuery();
+  const { data: categories } = trpc.admin.categories.list.useQuery({ activeOnly: true });
   const { 
     data: productsData,
     isLoading, 
@@ -185,14 +218,26 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
     refetch 
   } = trpc.admin.products.list.useQuery(queryParams);
 
-  const products = productsData?.items || [];
+  const products = useMemo(() => productsData?.items || [], [productsData?.items]);
   const totalProducts = productsData?.total || 0;
   const totalPages = Math.ceil(totalProducts / pageSize);
+
+  // Prepare options for selects with "all" options
+  const producerOptions = useMemo(() => [
+    { value: 'all', label: 'Tous les partenaires' },
+    ...(producers?.map(p => ({ value: p.id, label: p.name })) || [])
+  ], [producers]);
+
+  const categoryOptions = useMemo(() => [
+    { value: 'all', label: 'Toutes les catégories' },
+    ...(categories?.filter(cat => !cat.parent_id).map(c => ({ value: c.id, label: c.name })) || [])
+  ], [categories]);
 
   const resetFilters = useCallback(() => {
     setSearch(''); 
     setActiveOnly(false); 
     setSelectedProducerId(undefined); 
+    setSelectedCategoryId(undefined);
     setCursor(undefined); 
     refetch();
   }, [refetch]);
@@ -211,29 +256,39 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
         showMobileFilters={true}
         onOpenFilterModal={() => setIsFilterModalOpen(true)}
       >
-        <div className="hidden md:flex items-center gap-3 flex-wrap mt-4">
-          <Button
-            size="sm"
-            variant={selectedProducerId === undefined ? "default" : "outline"}
-            onClick={() => setSelectedProducerId(undefined)}
-          >
-            Tous
-          </Button>
-          {producers?.map((producer) => (
-            <Button
-              key={producer.id}
-              size="sm"
-              variant={selectedProducerId === producer.id ? "default" : "outline"}
-              onClick={() => setSelectedProducerId(producer.id)}
-            >
-              {producer.name}
-            </Button>
-          ))}
+        <div className="hidden md:flex items-center gap-3 flex-wrap">
+          <SimpleSelect
+            placeholder="Sélectionner un partenaire"
+            value={selectedProducerId || 'all'}
+            onValueChange={(value) => setSelectedProducerId(value === 'all' ? undefined : value)}
+            options={producerOptions}
+            className="w-48"
+          />
+          
+          <SimpleSelect
+            placeholder="Sélectionner une catégorie"
+            value={selectedCategoryId || 'all'}
+            onValueChange={(value) => setSelectedCategoryId(value === 'all' ? undefined : value)}
+            options={categoryOptions}
+            className="w-48"
+          />
+          
           <CheckboxWithLabel
             checked={activeOnly}
             onCheckedChange={(v) => setActiveOnly(Boolean(v))}
             label="Actifs uniquement"
           />
+          
+          {(selectedProducerId || selectedCategoryId || activeOnly) && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={resetFilters}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Effacer les filtres
+            </Button>
+          )}
         </div>
       </AdminPageLayout.Header>
 
@@ -335,6 +390,14 @@ const Product = ({ product, view, queryParams }: ProductProps) => {
             onSelectionChange={setSelectedProducerId}
             label="Partenaire"
             allLabel="Tous les partenaires"
+          />
+          
+          <Filters.Selection
+            items={categories?.filter(cat => !cat.parent_id) || []}
+            selectedId={selectedCategoryId}
+            onSelectionChange={setSelectedCategoryId}
+            label="Catégorie"
+            allLabel="Toutes les catégories"
           />
           
           <Filters.Toggle

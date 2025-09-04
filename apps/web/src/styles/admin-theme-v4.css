@@ -46,19 +46,48 @@
   }
 
   .admin-header {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: theme(--z-header);
-    backdrop-filter: blur(24px);
-    background-color: hsl(var(--background) / 0.95);
-    border-bottom: 1px solid hsl(var(--border) / 0.5);
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    backdrop-filter: blur(20px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Mobile: position below mobile header */
+  @media (max-width: 767px) {
+    .admin-header {
+      top: 40px; /* Height of mobile header */
+    }
+  }
+
+  /* Desktop: adjust for sidebar width */
+  @media (min-width: 768px) {
+    .admin-header {
+      top: 0;
+      left: 256px; /* w-64 = 256px */
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .admin-header {
+      left: 288px; /* lg:w-72 = 288px */
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .admin-header {
+      left: 320px; /* xl:w-80 = 320px */
+    }
   }
 
   .admin-content {
     flex: 1;
     overflow: auto;
-    padding: 1rem;
+    /* Le contenu commence dès le top, pas de compensation pour le header */
   }
 
   .admin-content-md {

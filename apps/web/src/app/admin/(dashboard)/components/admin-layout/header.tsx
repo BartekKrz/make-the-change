@@ -40,7 +40,7 @@ export const AdminPageHeader: FC<AdminPageHeaderProps> = ({
   showMobileFilters = true,
   onOpenFilterModal
 }) => (
-  <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+  <div className="admin-header">
     <div className="p-6">
       <div className="flex flex-col gap-4">
         {/* Version mobile */}

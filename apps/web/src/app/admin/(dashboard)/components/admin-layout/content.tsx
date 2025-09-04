@@ -7,8 +7,8 @@ type AdminPageContentProps = {
 };
 
 export const AdminPageContent: FC<PropsWithChildren & AdminPageContentProps> = ({ children, className }) => (
-  <main className={cn("flex-1 overflow-auto", className)}>
-    <div className="p-6 pb-8">
+  <main className={cn("admin-content", className)}>
+    <div className="p-6 pb-8 pt-40 md:pt-52">
       {children}
     </div>
   </main>
