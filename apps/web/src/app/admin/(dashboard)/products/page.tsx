@@ -4,18 +4,80 @@ import { Box, Package, Star, Zap } from 'lucide-react';
 import { AdminPageLayout, Filters, FilterModal } from '@/app/admin/(dashboard)/components/admin-layout';
 import { type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle';
 import { DataCard, DataList } from '@/app/admin/(dashboard)/components/ui/data-list';
-import { ListContainer } from '@/app/admin/(dashboard)/components/ui/list-container';
-import { ProductListItem } from '@/app/admin/(dashboard)/components/products/product-list-item';
 import { Badge } from '@/app/admin/(dashboard)/components/badge';
 import { Button } from '@/app/admin/(dashboard)/components/ui/button';
 import { CheckboxWithLabel } from '@/app/admin/(dashboard)/components/ui/checkbox';
 import { SimpleSelect } from '@/app/admin/(dashboard)/components/ui/select';
 import { AdminPagination } from '@/app/admin/(dashboard)/components/layout/admin-pagination';
 import { trpc } from '@/lib/trpc';
-import { getMainProductImage } from '@/components/images/product-image';
 import { EmptyState } from '@/app/admin/(dashboard)/components/ui/empty-state';
+import { AdminListItem } from '../components/ui/admin-list-item';
+import { ProductListHeader } from '../components/products/product-list-header';
+import { ProductListMetadata } from '../components/products/product-list-metadata';
 
 const pageSize = 18;
+
+// Skeleton spécialisé pour les cartes de produits
+const ProductCardSkeleton: FC = () => (
+  <DataCard>
+    <DataCard.Header>
+      <DataCard.Title>
+        <div className="flex items-center gap-3">
+          {/* Image du produit */}
+          <div className="w-12 h-12 bg-gray-200 [border-radius:var(--radius-surface)] animate-pulse flex-shrink-0" />
+          
+          {/* Titre et badges */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <div className="w-32 h-5 bg-gray-200 [border-radius:var(--radius-xs)] animate-pulse" />
+              <div className="w-12 h-4 bg-gray-200 [border-radius:var(--radius-pill)] animate-pulse" />
+              <div className="w-4 h-4 bg-gray-200 [border-radius:var(--radius-xs)] animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </DataCard.Title>
+    </DataCard.Header>
+    
+    <DataCard.Content>
+      {/* Points et stock */}
+      <div className="flex items-center gap-4 flex-wrap text-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-3.5 h-3.5 bg-gray-200 [border-radius:var(--radius-xs)] animate-pulse" />
+          <div className="w-16 h-3 bg-gray-200 [border-radius:var(--radius-xs)] animate-pulse" />
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-3.5 h-3.5 bg-gray-200 [border-radius:var(--radius-xs)] animate-pulse" />
+          <div className="w-20 h-3 bg-gray-200 [border-radius:var(--radius-xs)] animate-pulse" />
+        </div>
+      </div>
+      
+      {/* Badges des catégories */}
+      <div className="flex flex-wrap gap-2 mt-2">
+        <div className="w-16 h-6 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
+        <div className="w-20 h-6 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
+        <div className="w-18 h-6 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
+      </div>
+    </DataCard.Content>
+    
+    <DataCard.Footer>
+      <div className="flex items-center gap-1 md:gap-2 flex-wrap">
+        <div className="w-8 h-8 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
+        <div className="w-8 h-8 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
+        <div className="w-8 h-8 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
+        <div className="w-12 h-8 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
+      </div>
+    </DataCard.Footer>
+  </DataCard>
+);
+
+// Skeleton spécialisé pour la vue liste
+const ProductListSkeleton: FC = () => (
+  <div className="surface-panel animate-pulse" 
+       style={{ minHeight: 'calc(var(--density-card-padding) * 4)' }}>
+    <div className="h-4 bg-gray-300 rounded mb-2" />
+    <div className="h-3 bg-gray-200 rounded w-3/4" />
+  </div>
+);
 
 type ProductProps = {
   product: any;
@@ -99,83 +161,84 @@ const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
 
   const actions = (
     <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-      <Button size="sm" variant="outline" className="text-xs px-2 h-8" 
+      <Button size="sm" variant="outline" className="control-button" 
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(1); }}>
         +1
       </Button>
-      <Button size="sm" variant="outline" className="text-xs px-2 h-8"
+      <Button size="sm" variant="outline" className="control-button"
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(-1); }}>
         -1
       </Button>
-      <Button size="sm" variant="outline" className="text-xs px-2 h-8"
+      <Button size="sm" variant="outline" className="control-button"
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(); }}>
         {product.featured ? '★' : '☆'}
       </Button>
-      <Button size="sm" variant="outline" className="text-xs px-2 h-8"
+      <Button size="sm" variant="outline" className="control-button"
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(); }}>
         {product.is_active ? 'Off' : 'On'}
       </Button>
     </div>
   );
 
-  if (view === 'grid') {
-    const mainImage = getMainProductImage(product.images);
-    
-    return (
-      <DataCard href={`/admin/products/${product.id}`}>
-        <DataCard.Header>
-          <DataCard.Title icon={Package} image={mainImage} imageAlt={product.name} images={product.images}>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-medium">{product.name}</span>
-              <Badge color={product.is_active ? 'green' : 'red'}>
-                {product.is_active ? 'actif' : 'inactif'}
-              </Badge>
-              {product.featured && <Star className="w-4 h-4 text-yellow-500" />}
-            </div>
-          </DataCard.Title>
-        </DataCard.Header>
-        <DataCard.Content>
-          <div className="flex items-center gap-4 flex-wrap text-sm text-muted-foreground">
-            <div className="flex items-center gap-3">
-              <Zap className="w-3.5 h-3.5" />
-              <span>{product.price_points} pts</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Box className="w-3.5 h-3.5" />
-              <span>Stock: {product.stock_quantity ?? 0}</span>
-            </div>
+  if (view === 'grid') return (
+    <DataCard href={`/admin/products/${product.id}`}>
+      <DataCard.Header>
+        <DataCard.Title icon={Package} image={product.images[0]} imageAlt={product.name} images={product.images}>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-medium">{product.name}</span>
+            <Badge color={product.is_active ? 'green' : 'red'}>
+              {product.is_active ? 'actif' : 'inactif'}
+            </Badge>
+            {product.featured && <Star className="w-4 h-4 text-yellow-500" />}
           </div>
+        </DataCard.Title>
+      </DataCard.Header>
+      <DataCard.Content>
+        <div className="flex items-center gap-4 flex-wrap text-sm text-muted-foreground">
+          <div className="flex items-center gap-3">
+            <Zap className="w-3.5 h-3.5" />
+            <span>{product.price_points} pts</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Box className="w-3.5 h-3.5" />
+            <span>Stock: {product.stock_quantity ?? 0}</span>
+          </div>
+        </div>
           
-          <div className="flex flex-wrap gap-2 mt-2">
-            {product.category && (
-              <Badge color="green">
-                {product.category.name}
-              </Badge>
-            )}
-            {product.secondary_category && (
-              <Badge color="green">
-                {product.secondary_category.name}
-              </Badge>
-            )}
-            {product.producer && (
-              <Badge color="blue">
-                {product.producer.name}
-              </Badge>
-            )}
-            {product.partner_source && (
-              <Badge color="yellow">
-                {product.partner_source}
-              </Badge>
-            )}
+        <div className="flex flex-wrap gap-2 mt-2">
+          {product.category && (
+            <Badge color="green">
+              {product.category.name}
+            </Badge>
+          )}
+          {product.secondary_category && (
+            <Badge color="green">
+              {product.secondary_category.name}
+            </Badge>
+          )}
+          {product.producer && (
+            <Badge color="blue">
+              {product.producer.name}
+            </Badge>
+          )}
+          {product.partner_source && (
+            <Badge color="yellow">
+              {product.partner_source}
+            </Badge>
+          )}
             
-          </div>
-        </DataCard.Content>
-        <DataCard.Footer>{actions}</DataCard.Footer>
-      </DataCard>
-    );
-  }
+        </div>
+      </DataCard.Content>
+      <DataCard.Footer>{actions}</DataCard.Footer>
+    </DataCard>
+  );
 
-  return <ProductListItem key={product.id} product={product} actions={actions} />;
+  return   <AdminListItem
+      href={`/admin/products/${product.id}`}
+      header={<ProductListHeader product={product} />}
+      metadata={<ProductListMetadata product={product} />}
+      actions={actions}
+    />
 };
 
  const ProductsPage: FC = () => {
@@ -218,7 +281,7 @@ const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
   const totalProducts = productsData?.total || 0;
   const totalPages = Math.ceil(totalProducts / pageSize);
 
-  // Prepare options for selects with "all" options
+  
   const producerOptions = useMemo(() => [
     { value: 'all', label: 'Tous les partenaires' },
     ...(producers?.map(p => ({ value: p.id, label: p.name })) || [])
@@ -301,58 +364,32 @@ const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
               </Button>
             }
           />
-        ) : isLoading ? (
-          view === 'grid' ? (
-            <DataList
-              items={[]}
-              isLoading={true}
-              gridCols={3}
-              renderItem={() => null}
-            />
-          ) : (
-            <ListContainer>
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-20 bg-gray-200 rounded animate-pulse" />
-              ))}
-            </ListContainer>
-          )
-        ) : products.length === 0 ? (
-          <EmptyState
-            icon={Package}
-            title="Aucun produit"
-            description="Aucun résultat pour ces filtres."
-            action={
-              <Button size="sm" variant="outline" onClick={resetFilters}>
-                Réinitialiser
-              </Button>
-            }
-          />
-        ) : view === 'grid' ? (
+        ) : (
           <DataList
+            variant={view === 'map' ? 'grid' : view}
             items={products}
-            isLoading={false}
+            isLoading={isLoading}
             gridCols={3}
-            emptyState={{ title: 'Aucun produit', description: '', action: null }}
+            renderSkeleton={() => view === 'grid' ? <ProductCardSkeleton /> : <ProductListSkeleton />}
+            emptyState={{
+              icon: Package,
+              title: 'Aucun produit',
+              description: 'Aucun résultat pour ces filtres.',
+              action: (
+                <Button size="sm" variant="outline" onClick={resetFilters}>
+                  Réinitialiser
+                </Button>
+              )
+            }}
             renderItem={(product) => (
               <Product 
                 key={product.id} 
                 product={product} 
-                view="grid" 
+                view={view === 'map' ? 'grid' : view} 
                 queryParams={queryParams}
               />
             )}
           />
-        ) : (
-          <ListContainer>
-            {products.map((product) => (
-              <Product 
-                key={product.id} 
-                product={product} 
-                view="list" 
-                queryParams={queryParams}
-              />
-            ))}
-          </ListContainer>
         )}
 
         {totalProducts > pageSize && (

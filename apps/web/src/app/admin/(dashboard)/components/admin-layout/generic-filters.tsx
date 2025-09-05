@@ -3,7 +3,7 @@ import { type ViewMode } from '../ui/view-toggle';
 import { ViewToggle } from '../ui/view-toggle';
 import { Button } from '../ui/button';
 import { CheckboxWithLabel } from '../ui/checkbox';
-import { type ReactNode } from 'react';
+import { FC, type ReactNode } from 'react';
 
 type FiltersProps = {
   children: ReactNode;
@@ -23,12 +23,12 @@ type ViewFilterProps = {
   label?: string;
 };
 
-const ViewFilter = ({ 
+const ViewFilter: FC<ViewFilterProps> = ({ 
   view, 
   onViewChange, 
   availableViews = ['grid', 'list'],
   label = "Mode d'affichage"
-}: ViewFilterProps) => (
+}) => (
   <div>
     <label className="text-sm font-medium mb-3 block">{label}</label>
     <ViewToggle 
@@ -95,17 +95,15 @@ type ToggleFilterProps = {
   label: string;
 };
 
-const ToggleFilter = ({ checked, onCheckedChange, label }: ToggleFilterProps) => {
-  return (
-    <div>
-      <CheckboxWithLabel
-        checked={checked}
-        onCheckedChange={(checked) => onCheckedChange(Boolean(checked))}
-        label={label}
-      />
-    </div>
-  );
-};
+const ToggleFilter: FC<ToggleFilterProps> = ({ checked, onCheckedChange, label }) => (
+  <div>
+    <CheckboxWithLabel
+      checked={checked}
+      onCheckedChange={(checked) => onCheckedChange(Boolean(checked))}
+      label={label}
+    />
+  </div>
+);
 
 
 Filters.View = ViewFilter;

@@ -4,89 +4,24 @@ import type { FC, PropsWithChildren, ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { ProductImage } from '@/components/images/product-image';
 
-// Skeleton pour les cards de la vue grid - correspond exactement à DataCard
-const DataCardSkeleton = () => (
-  <div className="group relative bg-background backdrop-blur-md rounded-2xl border border-border/60 p-6 shadow-lg overflow-hidden h-full flex flex-col">
-    {/* Header skeleton - DataCard.Header > DataCard.Title */}
-    <div className="mb-4">
-      {/* Icon + Image + Titre en une ligne (comme DataCard.Title) */}
-      <div className="flex items-start gap-3">
-        {/* Package icon */}
-        <div className="w-5 h-5 bg-gray-200 rounded animate-pulse mt-0.5 flex-shrink-0" />
-        
-        {/* Product image (carrée comme dans les vraies cards) */}
-        <div className="w-12 h-12 bg-gray-200 rounded-lg animate-pulse flex-shrink-0" />
-        
-        {/* Title section - texte vertical aligné avec l'image */}
-        <div className="flex-1 min-w-0">
-          {/* Ligne 1: Nom + slug */}
-          <div className="flex items-center gap-2 flex-wrap mb-1">
-            <div className="w-24 h-4 bg-gray-200 rounded animate-pulse" />
-            <div className="w-16 h-3 bg-gray-200 rounded animate-pulse" />
-          </div>
-          {/* Ligne 2: Badge + star */}
-          <div className="flex items-center gap-2">
-            <div className="w-12 h-5 bg-gray-200 rounded-full animate-pulse" />
-            <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    {/* Content skeleton - DataCard.Content */}
-    <div className="flex-1 space-y-3 mb-4">
-      {/* Prix - Zap + texte */}
-      <div className="flex items-center gap-3 text-sm">
-        <div className="w-3.5 h-3.5 bg-gray-200 rounded animate-pulse" />
-        <div className="w-16 h-3 bg-gray-200 rounded animate-pulse" />
-      </div>
-      
-      {/* Stock - Box + texte */}
-      <div className="flex items-center gap-3 text-sm">
-        <div className="w-3.5 h-3.5 bg-gray-200 rounded animate-pulse" />
-        <div className="w-20 h-3 bg-gray-200 rounded animate-pulse" />
-      </div>
-      
-      {/* Producer badge */}
-      <div className="flex items-center gap-3">
-        <div className="w-20 h-6 bg-gray-200 rounded animate-pulse" />
-      </div>
-    </div>
-    
-    {/* Footer skeleton - DataCard.Footer */}
-    <div className="space-y-2">
-      {/* Boutons stock +1/-1 */}
-      <div className="flex items-center gap-1 md:gap-2">
-        <div className="w-8 h-6 bg-gray-200 rounded animate-pulse" />
-        <div className="w-8 h-6 bg-gray-200 rounded animate-pulse" />
-      </div>
-      
-      {/* Boutons Feature/Active */}
-      <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-        <div className="w-16 h-6 bg-gray-200 rounded animate-pulse" />
-        <div className="w-16 h-6 bg-gray-200 rounded animate-pulse" />
-      </div>
-    </div>
-  </div>
-);
-
 export type DataListProps<T> = {
+  variant?: 'grid' | 'list';
   items: T[];
   renderItem: (item: T) => ReactNode;
-  getItemKey?: (item: T, index: number) => string | number;
-  emptyState?: {
+  renderSkeleton: () => ReactNode;
+  emptyState: {
     icon?: LucideIcon;
     title: string;
     description?: string;
     action?: ReactNode;
   };
-  isLoading?: boolean;
+  isLoading: boolean;
+  getItemKey?: (item: T, index: number) => string | number;
   className?: string;
   gridCols?: 1 | 2 | 3 | 4;
   spacing?: 'sm' | 'md' | 'lg';
@@ -113,15 +48,17 @@ const getSpacingClasses = (spacing: 'sm' | 'md' | 'lg') => {
 };
 
 export const DataList = <T,>({
+  variant = 'grid',
   items,
   renderItem,
+  renderSkeleton,
+  emptyState,
+  isLoading,
   getItemKey,
   className,
   gridCols = 2,
   spacing = 'md',
-  testId = 'data-list',
-  emptyState,
-  isLoading = false
+  testId = 'data-list'
 }: DataListProps<T>) => {
   const getKey = (item: T, index: number): string | number => {
     if (getItemKey) {
@@ -138,15 +75,31 @@ export const DataList = <T,>({
     return index;
   };
 
-  if (isLoading) return (
-    <div className={cn('space-y-6', className)} data-testid={testId}>
-      <div className={cn('grid', getGridClasses(gridCols), getSpacingClasses(spacing), 'items-stretch')}>
-        {Array.from({ length: gridCols * 2 }).map((_, index) => (
-          <DataCardSkeleton key={index} />
-        ))}
+  if (isLoading) {
+    const skeletonItems = variant === 'grid' ? gridCols * 2 : 6;
+    
+    return (
+      <div className={cn('space-y-6', className)} data-testid={testId}>
+        {variant === 'grid' ? (
+          <div className={cn('grid', getGridClasses(gridCols), getSpacingClasses(spacing), 'items-stretch')}>
+            {Array.from({ length: skeletonItems }).map((_, index) => (
+              <div key={index} className='h-full'>
+                {renderSkeleton()}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {Array.from({ length: skeletonItems }).map((_, index) => (
+              <div key={index}>
+                {renderSkeleton()}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
-  );
+    );
+  }
 
   if (items.length === 0 && emptyState) {
     const EmptyIcon = emptyState.icon;
@@ -177,13 +130,23 @@ export const DataList = <T,>({
 
   return (
     <div className={cn('space-y-6', className)} data-testid={testId}>
-      <div className={cn('grid', getGridClasses(gridCols), getSpacingClasses(spacing), 'items-stretch')}>
-        {items.map((item, index) => (
-          <div key={getKey(item, index)} className='h-full'>
-            {renderItem(item)}
-          </div>
-        ))}
-      </div>
+      {variant === 'grid' ? (
+        <div className={cn('grid', getGridClasses(gridCols), getSpacingClasses(spacing), 'items-stretch')}>
+          {items.map((item, index) => (
+            <div key={getKey(item, index)} className='h-full'>
+              {renderItem(item)}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {items.map((item, index) => (
+            <div key={getKey(item, index)}>
+              {renderItem(item)}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -216,7 +179,7 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
     }
   }, [href, prefetch, router]);
   const baseClasses =
-    'group relative bg-background backdrop-blur-md rounded-2xl border border-border/60 p-6 shadow-lg overflow-hidden transition-[border-color,box-shadow,backdrop-filter,outline] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex flex-col';
+    'surface-card group relative backdrop-blur-md p-6 overflow-hidden h-full flex flex-col';
 
   const motionProps = {
     whileHover: {
@@ -235,7 +198,7 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
     <>
       {/* Image de fond optionnelle */}
       {image && imageAlt && (
-        <div className='absolute top-0 right-0 w-20 h-20 overflow-hidden rounded-tr-2xl opacity-10 md:group-hover:opacity-20 transition-opacity duration-300'>
+        <div className='absolute top-0 right-0 w-20 h-20 overflow-hidden [border-radius:var(--radius-surface)_var(--radius-surface)_0_0] opacity-10 md:group-hover:opacity-20 transition-opacity duration-300'>
           <Image
             src={image}
             alt={imageAlt}
@@ -250,9 +213,9 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
       <div className='relative [&_a]:relative [&_a]:z-10 [&_button]:relative [&_button]:z-10'>{children}</div>
 
       {}
-      <div className='absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/5 via-background/20 to-orange-500/5 opacity-0 md:group-hover:opacity-100 group-active:opacity-60 transition-opacity duration-300' />
-      <div className='absolute inset-0 rounded-2xl bg-gradient-to-br from-background/30 via-background/20 to-background/30' />
-      <div className='absolute inset-0 rounded-2xl shadow-2xl shadow-primary/20 opacity-0 md:group-hover:opacity-100 group-active:opacity-50 transition-opacity duration-300 -z-10' />
+      <div className='absolute inset-0 [border-radius:var(--radius-surface)] bg-gradient-to-r from-primary/5 via-background/20 to-orange-500/5 opacity-0 md:group-hover:opacity-100 group-active:opacity-60 transition-opacity duration-300' />
+      <div className='absolute inset-0 [border-radius:var(--radius-surface)] bg-gradient-to-br from-background/30 via-background/20 to-background/30' />
+      <div className='absolute inset-0 [border-radius:var(--radius-surface)] shadow-2xl shadow-primary/20 opacity-0 md:group-hover:opacity-100 group-active:opacity-50 transition-opacity duration-300 -z-10' />
     </>
   );
 
@@ -362,7 +325,7 @@ const DataCardTitle: FC<PropsWithChildren<DataCardTitleProps>> = ({
         />
       )}
       {shouldShowIcon && (
-        <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-primary/10 to-orange-500/10 flex items-center justify-center border border-primary/20 flex-shrink-0'>
+        <div className='w-12 h-12 [border-radius:var(--radius-surface)] bg-gradient-to-br from-primary/10 to-orange-500/10 flex items-center justify-center border border-primary/20 flex-shrink-0'>
           <Icon size={20} className='text-muted-foreground' />
         </div>
       )}

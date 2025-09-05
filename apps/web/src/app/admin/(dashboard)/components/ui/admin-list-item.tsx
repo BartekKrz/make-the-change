@@ -27,9 +27,10 @@ export const AdminListItem: FC<AdminListItemProps> = ({
   return (
     <div
       className={cn(
-        'group relative py-3 px-3 -mx-3 md:py-4 md:px-4 md:-mx-4 cursor-pointer',
+        'group relative cursor-pointer',
+        '[padding:var(--density-spacing-md)] [margin:calc(var(--density-spacing-md)*-1)]',
         'transition-all duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]',
-        'border border-transparent rounded-lg',
+        'border border-transparent [border-radius:var(--radius-surface)]',
         'md:hover:bg-gradient-to-r md:hover:from-primary/5 md:hover:via-background/20 md:hover:to-orange-500/5',
         'md:hover:shadow-lg md:hover:shadow-primary/10 md:hover:border-primary/20',
         'md:hover:scale-[1.005] md:hover:-translate-y-0.5',
@@ -51,7 +52,7 @@ export const AdminListItem: FC<AdminListItemProps> = ({
       <div className="relative z-20 flex items-center justify-between pointer-events-none">
         <div className="flex-1 min-w-0">
           {}
-          <div className="mb-1.5 md:mb-2">
+          <div className="[margin-bottom:var(--density-spacing-sm)]">
             {header}
           </div>
 
@@ -63,7 +64,7 @@ export const AdminListItem: FC<AdminListItemProps> = ({
           {}
           {actions && (
             <div
-              className="relative z-30 mt-3 pt-2 border-t border-border/20 pointer-events-auto"
+              className="relative z-30 [margin-top:var(--density-spacing-md)] [padding-top:var(--density-spacing-sm)] border-t border-border/20 pointer-events-auto"
               onClick={handleActionClick}
             >
               {actions}
@@ -75,7 +76,7 @@ export const AdminListItem: FC<AdminListItemProps> = ({
         <div className="flex-shrink-0 ml-4 transition-all duration-300 md:group-hover:translate-x-1 md:group-hover:scale-110 group-active:translate-x-0.5 group-active:scale-105">
           <div className="relative">
             {}
-            <div className="absolute inset-0 bg-primary/10 rounded-full scale-150 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-primary/10 [border-radius:var(--radius-pill)] scale-150 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300" />
             <svg
               width="20"
               height="20"
@@ -104,10 +105,10 @@ export const AdminListItem: FC<AdminListItemProps> = ({
       </div>
 
       {}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/3 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/3 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none [border-radius:var(--radius-surface)]" />
 
       {}
-      <div className="absolute inset-0 ring-2 ring-primary/20 ring-offset-2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 rounded-lg pointer-events-none" />
+      <div className="absolute inset-0 ring-2 ring-primary/20 ring-offset-2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 [border-radius:var(--radius-surface)] pointer-events-none" />
     </div>
   )
 }

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import type { ButtonHTMLAttributes, ReactNode, ForwardedRef } from 'react';
 
 const buttonVariants = cva(
-  'relative cursor-pointer overflow-hidden inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-300 ease-out focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 group active:scale-[0.97] active:brightness-95 tap-highlight-transparent touch-manipulation',
+  'control-button relative cursor-pointer overflow-hidden inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 group active:scale-[0.97] active:brightness-95',
   {
     variants: {
       variant: {
@@ -52,11 +52,11 @@ const buttonVariants = cva(
           'bg-mesh-nature text-primary-foreground shadow-lg [@media(hover:hover)]:hover:shadow-xl [@media(hover:hover)]:hover:shadow-emerald/20 active:scale-[0.98] transition-all duration-500'
       },
       size: {
-        default: 'h-10 px-4 py-2 text-sm',
-        sm: 'h-9 rounded-md px-3 text-xs',
-        lg: 'h-12 rounded-xl px-8 text-base font-semibold',
-        icon: 'h-10 w-10',
-        full: 'w-full h-10 px-4 py-2'
+        default: 'px-4 py-2 text-sm',
+        sm: 'px-3 text-xs [border-radius:var(--radius-md)]',
+        lg: 'px-8 text-base font-semibold [border-radius:var(--radius-xl)]',
+        icon: 'w-10',
+        full: 'w-full px-4 py-2'
       }
     },
     defaultVariants: {
@@ -127,7 +127,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           {/* Contenu avec loading state */}
           {loading ? (
             <div className='flex items-center justify-center gap-2 relative z-10 pointer-events-none'>
-              <div className='animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent' />
+              <div className='animate-spin [border-radius:var(--radius-pill)] h-4 w-4 border-2 border-current border-t-transparent' />
               <span className='animate-pulse'>{loadingText ?? children}</span>
             </div>
           ) : (

@@ -10,6 +10,26 @@
   --color-warning: #f59e0b;
   --color-info: #3b82f6;
 
+  /* 📐 Border Radius - Dashboard 2025 Complete Scale */
+  --radius-none: 0px;
+  --radius-xs: 2px;      /* Micro-éléments, badges */
+  --radius-sm: 4px;      /* Pills, petits contrôles */
+  --radius-md: 6px;      /* Contrôles compacts */
+  --radius-lg: 8px;      /* Boutons standard */
+  --radius-xl: 12px;     /* Cards, surfaces */
+  --radius-2xl: 16px;    /* Panels, grandes cards */
+  --radius-3xl: 24px;    /* Overlays, sheets */
+  --radius-4xl: 32px;    /* Major overlays */
+  --radius-m3: 28px;     /* Material 3 dialogs/sheets */
+  --radius-pill: 9999px; /* Pills, avatars */
+
+  /* 🎯 Semantic Radius Tokens */
+  --radius-control: var(--radius-lg);    /* 8px - boutons, inputs */
+  --radius-surface: var(--radius-xl);    /* 12px - cards, panels */
+  --radius-overlay: var(--radius-3xl);   /* 24px - modals, popovers */
+  --radius-dialog: var(--radius-m3);     /* 28px - Material 3 dialogs */
+  --radius-sheet: var(--radius-3xl);     /* 24px - bottom sheets */
+
   /* 🎯 Z-Index System */
   --z-base: 0;
   --z-content: 10;
@@ -34,10 +54,142 @@
   --button-action-height: 2rem;
   --button-action-padding: 0.5rem;
   --skeleton-color: #e5e7eb;
+
+  /* 🌟 Elevation System - Material 3 Inspired */
+  --shadow-surface: 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  --shadow-card: 0 1px 3px 0.5px rgb(0 0 0 / 0.05), 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  --shadow-overlay: 0 10px 30px -10px rgb(0 0 0 / 0.35);
+  --shadow-dialog: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+
+  /* 📏 Density System - Adaptive Spacing & Sizing */
+  --density-card-padding: 1.5rem;      /* 24px default */
+  --density-button-height: 2.5rem;     /* 40px default */
+  --density-spacing-sm: 0.5rem;        /* 8px default */
+  --density-spacing-md: 1rem;          /* 16px default */
+  --density-spacing-lg: 1.5rem;        /* 24px default */
+}
+
+/* 🎚️ Density Variants */
+:root[data-density="compact"] {
+  /* Radius plus petits pour compact */
+  --radius-control: var(--radius-md);    /* 6px */
+  --radius-surface: var(--radius-lg);    /* 8px */
+  --radius-overlay: var(--radius-2xl);   /* 16px */
+  --radius-dialog: var(--radius-3xl);    /* 24px */
+  
+  /* Espacements réduits */
+  --density-card-padding: 0.75rem;       /* 12px */
+  --density-button-height: 2rem;         /* 32px */
+  --density-spacing-sm: 0.25rem;         /* 4px */
+  --density-spacing-md: 0.5rem;          /* 8px */
+  --density-spacing-lg: 0.75rem;         /* 12px */
+}
+
+:root[data-density="comfortable"] {
+  /* Radius plus grands pour comfortable */
+  --radius-control: var(--radius-xl);    /* 12px */
+  --radius-surface: var(--radius-2xl);   /* 16px */
+  --radius-overlay: var(--radius-4xl);   /* 32px */
+  --radius-dialog: var(--radius-4xl);    /* 32px */
+  
+  /* Espacements augmentés */
+  --density-card-padding: 2rem;          /* 32px */
+  --density-button-height: 3rem;         /* 48px */
+  --density-spacing-sm: 0.75rem;         /* 12px */
+  --density-spacing-md: 1.5rem;          /* 24px */
+  --density-spacing-lg: 2rem;            /* 32px */
 }
 
 /* 📦 Component Classes - Tailwind v4 */
 @layer components {
+  /* 🎯 Dashboard 2025 Semantic Classes */
+  
+  /* Surface Components - Density Adaptive */
+  .surface-card {
+    border-radius: var(--radius-surface);
+    box-shadow: var(--shadow-card);
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    padding: var(--density-card-padding);
+    gap: var(--density-spacing-md);
+    transition: all var(--transition-normal) ease;
+  }
+
+  .surface-card:hover {
+    box-shadow: var(--shadow-overlay);
+    transform: translateY(-1px);
+  }
+
+  .surface-panel {
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-surface);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border) / 0.5);
+    padding: var(--density-card-padding);
+    gap: var(--density-spacing-md);
+  }
+
+  /* Control Components - Density Adaptive */
+  .control-button {
+    border-radius: var(--radius-control);
+    min-height: max(24px, var(--density-button-height));  /* WCAG + density */
+    min-width: 24px;
+    height: var(--density-button-height);
+    transition: all var(--transition-fast) ease;
+    touch-action: manipulation;
+  }
+
+  .control-input {
+    border-radius: var(--radius-control);
+    min-height: 24px;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--background));
+    transition: all var(--transition-fast) ease;
+  }
+
+  .control-input:focus {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+    border-color: hsl(var(--primary));
+  }
+
+  /* Overlay Components */
+  .overlay-dialog {
+    border-radius: var(--radius-dialog);
+    box-shadow: var(--shadow-dialog);
+    backdrop-filter: blur(16px);
+    background: hsl(var(--background) / 0.95);
+    border: 1px solid hsl(var(--border) / 0.3);
+  }
+
+  .overlay-popover {
+    border-radius: var(--radius-overlay);
+    box-shadow: var(--shadow-overlay);
+    background: hsl(var(--popover));
+    border: 1px solid hsl(var(--border));
+  }
+
+  .overlay-sheet {
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0; /* Asymétrique - coins exposés seulement */
+    box-shadow: var(--shadow-overlay);
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    border-bottom: none;
+  }
+
+  /* Micro Components */
+  .micro-badge {
+    border-radius: var(--radius-xs);
+    padding: 0.125rem 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .micro-pill {
+    border-radius: var(--radius-pill);
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+  }
   .admin-page-container {
     min-height: 100vh;
     display: flex;
