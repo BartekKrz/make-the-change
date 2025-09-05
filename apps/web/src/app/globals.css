@@ -1,168 +1,177 @@
 @import "tailwindcss";
 @import "../styles/admin-theme-v4.css";
 
+@theme {
+  /* 🎨 Colors - Design System 2025 Light Mode */
+  --color-background: #ffffff;
+  --color-foreground: #111827;
+  --color-card: #f9fafb;
+  --color-card-foreground: #111827;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #111827;
+
+  /* Primary - Émeraude Dynamique */
+  --color-primary: #059669;
+  --color-primary-light: #0ba872;
+  --color-primary-dark: #008b5b;
+  --color-primary-foreground: #f0fdfa;
+
+  /* Secondary - Neutres Chauds */
+  --color-secondary: #f3f4f6;
+  --color-secondary-dark: #e5e7eb;
+  --color-secondary-foreground: #111827;
+
+  /* Accent - Ambre Sophistiqué */
+  --color-accent: #f59e0b;
+  --color-accent-light: #f7a21b;
+  --color-accent-dark: #d97706;
+  --color-accent-foreground: #451a03;
+
+  /* Palette Nature */
+  --color-emerald: #10b981;
+  --color-emerald-light: #34c759;
+  --color-ocean: #1e90ff;
+  --color-ocean-light: #4a9eff;
+  --color-earth: #8b6914;
+  --color-earth-light: #a67c1a;
+
+  /* Sémantiques */
+  --color-success: #10b981;
+  --color-success-foreground: #f0fdfa;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #fef2f2;
+  --color-warning: #f59e0b;
+  --color-warning-foreground: #1f1611;
+  --color-info: #1e90ff;
+  --color-info-foreground: #f0f9ff;
+
+  /* UI Elements */
+  --color-muted: #f3f4f6;
+  --color-muted-foreground: #6b7280;
+  --color-border: #e5e7eb;
+  --color-input: #f9fafb;
+  --color-ring: #059669;
+
+  /* 📐 Border Radius - Système Complet */
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+  --radius-4xl: 32px;
+  --radius-pill: 9999px;
+
+  /* Semantic Radius */
+  --radius-control: 8px;
+  --radius-surface: 12px;
+  --radius-overlay: 24px;
+  --radius-dialog: 28px;
+
+  /* 🎯 Z-Index System */
+  --z-base: 0;
+  --z-content: 10;
+  --z-header: 20;
+  --z-overlay: 30;
+  --z-modal: 40;
+  --z-fab: 50;
+
+  /* 📐 Spacing & Layout */
+  --spacing-fab: 3.5rem;
+  --spacing-header-mobile: 4rem;
+  --spacing-header-desktop: 5rem;
+
+  /* 🔄 Animation */
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+
+  /* 🌟 Shadows */
+  --shadow-surface: 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  --shadow-card: 0 1px 3px 0.5px rgb(0 0 0 / 0.05), 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  --shadow-overlay: 0 10px 30px -10px rgb(0 0 0 / 0.35);
+  --shadow-dialog: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+
+  /* 📏 Density System */
+  --density-card-padding: 1.5rem;
+  --density-button-height: 2.5rem;
+  --density-spacing-sm: 0.5rem;
+  --density-spacing-md: 1rem;
+  --density-spacing-lg: 1.5rem;
+
+  /* 🎨 Component Tokens */
+  --button-action-height: 2rem;
+  --skeleton-color: #e5e7eb;
+}
+
+/* 🌙 Dark Mode - Compatible avec next-themes */
+.dark {
+  --color-background: #0f1419;
+  --color-foreground: #f8fafc;
+  --color-card: #1e293b;
+  --color-card-foreground: #f8fafc;
+  --color-popover: #0f1419;
+  --color-popover-foreground: #f8fafc;
+
+  --color-primary: #10b981;
+  --color-primary-light: #34d399;
+  --color-primary-dark: #059669;
+  --color-primary-foreground: #064e3b;
+
+  --color-secondary: #374151;
+  --color-secondary-dark: #1f2937;
+  --color-secondary-foreground: #f8fafc;
+
+  --color-accent: #f59e0b;
+  --color-accent-light: #fbbf24;
+  --color-accent-dark: #d97706;
+  --color-accent-foreground: #451a03;
+
+  --color-muted: #374151;
+  --color-muted-foreground: #9ca3af;
+  --color-border: #4b5563;
+  --color-input: #374151;
+  --color-ring: #10b981;
+
+  --color-success: #10b981;
+  --color-success-foreground: #064e3b;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #7f1d1d;
+  --color-warning: #f59e0b;
+  --color-warning-foreground: #451a03;
+  --color-info: #3b82f6;
+  --color-info-foreground: #1e3a8a;
+}
+
+/* 🎚️ Density Variants */
+[data-density="compact"] {
+  --density-card-padding: 0.75rem;
+  --density-button-height: 2rem;
+  --density-spacing-sm: 0.25rem;
+  --density-spacing-md: 0.5rem;
+  --density-spacing-lg: 0.75rem;
+  --radius-control: 6px;
+  --radius-surface: 8px;
+}
+
+[data-density="comfortable"] {
+  --density-card-padding: 2rem;
+  --density-button-height: 3rem;
+  --density-spacing-sm: 0.75rem;
+  --density-spacing-md: 1.5rem;
+  --density-spacing-lg: 2rem;
+  --radius-control: 12px;
+  --radius-surface: 16px;
+}
+
 @layer utilities {
   .scrollbar-hide {
-    /* Firefox */
     scrollbar-width: none;
   }
   .scrollbar-hide::-webkit-scrollbar {
-    /* Safari and Chrome */
     display: none;
-  }
-}
-
-@layer base {
-  :root {
-    /* Neutres Sophistiqués 2025 - Base raffinée avec nuances subtiles */
-    --background: 240 15% 98%;          /* #F7F9FB - Blanc Perle plus raffiné */
-    --foreground: 224 84% 5%;           /* #0A0E1A - Charbon profond */
-    --card: 240 20% 99%;                /* #FAFBFC - Carte légèrement nacrée */
-    --card-foreground: 224 84% 5%;      /* #0A0E1A */
-    --popover: 240 25% 99%;             /* #FAFCFD */
-    --popover-foreground: 224 84% 5%;   /* #0A0E1A */
-
-    /* Primary - Gradient Vert Émeraude Dynamique */
-    --primary: 160 95% 30%;             /* #059669 - Base émeraude */
-    --primary-light: 160 85% 40%;       /* #0BA872 - Plus lumineux */
-    --primary-dark: 160 100% 25%;       /* #008B5B - Plus profond */
-    --primary-foreground: 160 95% 98%;
-
-    /* Secondary - Neutres Chauds Modernes */
-    --secondary: 25 8% 88%;             /* #E8E3DF - Mocha Mousse clair */
-    --secondary-dark: 25 15% 75%;       /* #CFC4BB - Plus riche */
-    --secondary-foreground: 224 84% 5%;
-
-    /* Accent - Gradient Ambre Doré Sophistiqué */
-    --accent: 39 96% 52%;               /* #F59E0B - Base ambre */
-    --accent-light: 35 95% 60%;         /* #F7A21B - Plus lumineux */
-    --accent-dark: 42 100% 48%;         /* #FF9500 - Plus profond */
-    --accent-foreground: 39 96% 5%;
-
-    /* Palette Nature Enrichie */
-    --emerald: 154 78% 40%;             /* #10B981 - Vert nature */
-    --emerald-light: 154 68% 50%;       /* #34C759 */
-    
-    --ocean: 211 85% 45%;               /* #1E90FF - Bleu océan */
-    --ocean-light: 211 75% 55%;         /* #4A9EFF */
-    
-    --earth: 25 45% 35%;                /* #8B6914 - Brun terre */
-    --earth-light: 25 35% 45%;          /* #A67C1A */
-
-    /* Sémantiques avec Gradients */
-    --success: var(--emerald);
-    --success-light: var(--emerald-light);
-    --success-foreground: 154 78% 98%;
-
-    --destructive: 0 84% 60%;           /* #EF4444 */
-    --destructive-light: 0 74% 70%;     /* #F87171 */
-    --destructive-foreground: 0 84% 98%;
-
-    --warning: var(--accent);
-    --warning-light: var(--accent-light);
-    --warning-foreground: var(--accent-foreground);
-
-    --info: var(--ocean);
-    --info-light: var(--ocean-light);
-    --info-foreground: 211 85% 98%;
-
-    /* Éléments UI Enrichis */
-    --muted: 225 15% 90%;               /* #E4E7EC - Plus nuancé */
-    --muted-foreground: 225 12% 50%;    /* #707984 - Plus contrasté */
-    --border: 225 20% 88%;              /* #DDE2E9 */
-    --input: 225 25% 90%;               /* #E1E7ED */
-    --ring: var(--primary);
-
-    /* Gradients Personnalisés 2025 */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-light)) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--accent-light)) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--accent-light)) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--success-light)) 100%);
-    --gradient-ocean: linear-gradient(135deg, hsl(var(--ocean)) 0%, hsl(var(--ocean-light)) 100%);
-    
-    /* Mesh Gradients Complexes */
-    --mesh-nature: radial-gradient(ellipse at top left, hsl(var(--emerald)) 0%, transparent 50%), 
-                   radial-gradient(ellipse at top right, hsl(var(--ocean)) 0%, transparent 50%), 
-                   radial-gradient(ellipse at bottom, hsl(var(--accent)) 0%, transparent 50%);
-                   
-    --mesh-warm: radial-gradient(ellipse at center, hsl(var(--accent-light) / 0.3) 0%, transparent 50%),
-                 linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--background)) 100%);
-  }
-
-  .dark {
-    /* Mode Sombre Sophistiqué 2025 - Profondeur et richesse */
-    --background: 224 95% 3%;           /* #020617 - Nuit profonde */
-    --foreground: 210 40% 95%;          /* #F1F5F9 - Blanc lunaire */
-    --card: 224 84% 5%;                 /* #0A0E1A - Carte sombre */
-    --card-foreground: 210 40% 95%;
-    --popover: 224 95% 3%;
-    --popover-foreground: 210 40% 95%;
-
-    /* Primary - Émeraude Lumineux pour Mode Sombre */
-    --primary: 160 85% 45%;             /* #12B886 - Plus lumineux et visible */
-    --primary-light: 160 75% 55%;       /* #20C997 */
-    --primary-dark: 160 95% 35%;        /* #0CA678 */
-    --primary-foreground: 160 95% 5%;
-
-    /* Secondary - Neutres Sombres Chauds */
-    --secondary: 25 12% 15%;            /* #252018 - Mocha sombre */
-    --secondary-dark: 25 20% 10%;       /* #1F1B12 */
-    --secondary-foreground: 210 40% 95%;
-
-    /* Accent - Ambre Éclatant pour Contraste */
-    --accent: 39 90% 65%;               /* #FBB040 - Plus lumineux en sombre */
-    --accent-light: 35 85% 75%;         /* #FFC266 */
-    --accent-dark: 42 95% 55%;          /* #F5A623 */
-    --accent-foreground: 39 90% 8%;
-
-    /* Palette Nature Mode Sombre */
-    --emerald: 154 70% 50%;             /* #20C997 */
-    --emerald-light: 154 60% 60%;       /* #40D4AA */
-    
-    --ocean: 211 80% 65%;               /* #5DADE2 */
-    --ocean-light: 211 70% 75%;         /* #85C1E9 */
-    
-    --earth: 25 40% 45%;                /* #A67C1A */
-    --earth-light: 25 30% 55%;          /* #C49A2A */
-
-    /* Sémantiques Mode Sombre */
-    --success: var(--emerald);
-    --success-light: var(--emerald-light);
-    --success-foreground: 154 70% 8%;
-
-    --destructive: 0 75% 70%;           /* #F87171 */
-    --destructive-light: 0 65% 80%;     /* #FCA5A5 */
-    --destructive-foreground: 0 75% 10%;
-
-    --warning: var(--accent);
-    --warning-light: var(--accent-light);
-    --warning-foreground: var(--accent-foreground);
-
-    --info: var(--ocean);
-    --info-light: var(--ocean-light);
-    --info-foreground: 211 80% 8%;
-
-    /* Éléments UI Mode Sombre */
-    --muted: 225 20% 12%;               /* #1A1D29 */
-    --muted-foreground: 225 15% 70%;    /* #B0B4C0 */
-    --border: 225 25% 18%;              /* #242938 */
-    --input: 225 30% 16%;               /* #1F2332 */
-    --ring: var(--primary);
-
-    /* Gradients Mode Sombre - Plus lumineux et contrastés */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-light)) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--accent-light)) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--accent-light)) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--success-light)) 100%);
-    --gradient-ocean: linear-gradient(135deg, hsl(var(--ocean)) 0%, hsl(var(--ocean-light)) 100%);
-    
-    /* Mesh Gradients Mode Sombre */
-    --mesh-nature: radial-gradient(ellipse at top left, hsl(var(--emerald) / 0.4) 0%, transparent 60%), 
-                   radial-gradient(ellipse at top right, hsl(var(--ocean) / 0.3) 0%, transparent 60%), 
-                   radial-gradient(ellipse at bottom, hsl(var(--accent) / 0.2) 0%, transparent 60%);
-                   
-    --mesh-warm: radial-gradient(ellipse at center, hsl(var(--accent-light) / 0.2) 0%, transparent 60%),
-                 linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--background)) 100%);
   }
 }
 
