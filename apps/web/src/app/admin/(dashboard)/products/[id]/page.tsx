@@ -1,9 +1,9 @@
 
 "use client"
 
+import { type FC } from 'react'
 import { useParams } from 'next/navigation'
 import { trpc } from '@/lib/trpc'
-import { FC } from 'react'
 import { ProductDetailController } from '@/app/admin/(dashboard)/products/[id]/components/product-detail-controller'
 import { useToast } from '@/hooks/use-toast'
 import type { ProductFormData } from '@/lib/validators/product'

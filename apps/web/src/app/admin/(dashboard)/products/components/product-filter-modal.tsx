@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { type FC, useState, useEffect, type TouchEvent } from 'react';
 import { X } from 'lucide-react';
 import { ViewToggle, type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle';
 import { Button } from '@/app/admin/(dashboard)/components/ui/button';
@@ -24,27 +24,29 @@ type FilterModalProps = {
   setView: (view: ViewMode) => void;
 };
 
-export function ProductFilterModal({ 
-  isOpen, 
-  onClose, 
-  producers, 
-  selectedProducerId, 
-  setSelectedProducerId,
-  activeOnly,
-  setActiveOnly,
-  view,
-  setView
-}: FilterModalProps) {
+export const ProductFilterModal: FC<FilterModalProps> = (props) => {
+  const { 
+    isOpen, 
+    onClose, 
+    producers, 
+    selectedProducerId, 
+    setSelectedProducerId,
+    activeOnly,
+    setActiveOnly,
+    view,
+    setView
+  } = props;
+
   const [dragY, setDragY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startY, setStartY] = useState(0);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
+  const handleTouchStart = (e: TouchEvent) => {
     setStartY(e.touches[0].clientY);
     setIsDragging(true);
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleTouchMove = (e: TouchEvent) => {
     if (!isDragging) return;
     const currentY = e.touches[0].clientY;
     const deltaY = currentY - startY;
@@ -57,7 +59,7 @@ export function ProductFilterModal({
     setDragY(0);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isOpen) {
       setDragY(0);
       setIsDragging(false);
@@ -155,4 +157,4 @@ export function ProductFilterModal({
       </div>
     </>
   );
-}
+};

@@ -1,19 +1,19 @@
-import { ReactNode } from 'react';
+import { type FC, type ReactNode, type MouseEvent } from 'react';
 import { cn } from '@/lib/utils';
 
-interface RoundActionButtonProps {
-  onClick: () => void;
+type RoundActionButtonProps = {
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
   children: ReactNode;
   className?: string;
   disabled?: boolean;
 }
 
-export const RoundActionButton = ({ 
+export const RoundActionButton: FC<RoundActionButtonProps> = ({ 
   onClick, 
   children, 
   className = '',
   disabled = false 
-}: RoundActionButtonProps) => (
+} ) => (
   <button
     onClick={onClick}
     disabled={disabled}

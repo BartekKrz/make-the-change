@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { trpc } from '@/lib/trpc';
 
-interface UseProductsDataOptions {
+type UseProductsDataOptions = {
   cursor?: string;
   limit: number;
   search?: string;

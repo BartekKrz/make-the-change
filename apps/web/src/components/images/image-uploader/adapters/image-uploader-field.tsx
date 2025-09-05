@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import { ImageUploader } from '../components/ImageUploader';
+import { ImageUploader } from '../components/image-uploader';
 import { useToast } from '@/hooks/use-toast';
 
-// Type pour TanStack Form Field
-interface TanStackFormField {
+
+type TanStackFormField = {
   state: {
     value: string[] | null | undefined;
   };
   handleChange: (updater: ((prev: string[]) => string[]) | string[]) => void;
 }
 
-interface ImageUploaderFieldProps {
+type ImageUploaderFieldProps = {
   field: TanStackFormField;
   onImagesChange?: (images: string[]) => void;
   width?: string;
@@ -257,85 +257,6 @@ export const ImageUploaderField = ({
         field.handleChange([]);
         onImagesChange?.([]);
       }
-    }
-  };
-
-  const handleImageReplace = async (index: number, file: File) => {
-    console.log('🔄 Starting image replacement at index:', index);
-    
-    try {
-      const currentImages = field.state.value || [];
-      const oldImageUrl = currentImages[index];
-      
-      if (!oldImageUrl) {
-        console.error('❌ No image to replace at index:', index);
-        return;
-      }
-
-      console.log('🔄 Replacing image:', {
-        index,
-        oldUrl: oldImageUrl,
-        newFile: file.name,
-        productId
-      });
-
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      if (productId) {
-        formData.append('productId', productId);
-        formData.append('oldImageUrl', oldImageUrl);
-        formData.append('imageIndex', index.toString());
-        
-        console.log('🔄 Calling PUT API with FormData:', {
-          productId,
-          oldImageUrl,
-          imageIndex: index,
-          fileName: file.name
-        });
-        
-        const uploadResponse = await fetch('/api/upload/product-images', {
-          method: 'PUT',
-          body: formData,
-        });
-
-        if (!uploadResponse.ok) {
-          throw new Error('Échec du remplacement');
-        }
-
-        const result = await uploadResponse.json();
-        console.log('✅ Replace successful, updated images:', result.images);
-        
-        // Utiliser les images mises à jour retournées par l'API
-        if (result.images) {
-          field.handleChange(result.images);
-          onImagesChange?.(result.images);
-        }
-      } else {
-        // Mode local : upload standard puis remplacement dans la liste
-        const uploadResponse = await fetch('/api/upload/product-images', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!uploadResponse.ok) {
-          throw new Error('Échec de l\'upload');
-        }
-
-        const result = await uploadResponse.json();
-        
-        if (result.url) {
-          const newImages = [...currentImages];
-          newImages[index] = result.url;
-          console.log('📝 Updating field (replace - local):', newImages);
-          field.handleChange(newImages);
-          onImagesChange?.(newImages);
-        }
-      }
-      
-      console.log('✅ Image replacement completed');
-    } catch (error) {
-      console.error('💥 Replace error:', error);
     }
   };
 

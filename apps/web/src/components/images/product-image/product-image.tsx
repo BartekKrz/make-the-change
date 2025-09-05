@@ -1,14 +1,14 @@
 'use client';
 
-import { FC } from 'react';
+import { type FC } from 'react';
 import Image from 'next/image';
 import { Package, Images } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
-import { BlurHashImage } from '@/components/ui/BlurHashImage';
+import { BlurHashImage } from '@/components/ui/blur-hash-image';
 import { useImageWithBlurHash } from '@/hooks/useImageWithBlurHash';
 import type { BlurHashData } from '@/lib/types/blurhash';
 
-interface ProductImageProps {
+type ProductImageProps = {
   src?: string;
   alt: string;
   size: 'xs' | 'sm' | 'md' | 'lg';
@@ -22,21 +22,13 @@ interface ProductImageProps {
 }
 
 const sizeMap = {
-  xs: 'w-7 h-7 md:w-8 md:h-8', // 28px mobile, 32px desktop - list
-  sm: 'w-8 h-8', // 32px - desktop list  
-  md: 'w-24 h-24', // 96px - cards standard (doublé)
-  lg: 'w-32 h-32', // 128px - cards large
+  xs: 'w-7 h-7 md:w-8 md:h-8', 
+  sm: 'w-8 h-8', 
+  md: 'w-24 h-24', 
+  lg: 'w-32 h-32', 
 } as const;
 
-const getInitials = (name: string): string => {
-  return name
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase())
-    .join('')
-    .substring(0, 2);
-};
 
-// Placeholder SVG optimisé
 const PlaceholderSVG: FC<{ className?: string }> = ({ className }) => (
   <div className={cn(
     'bg-gradient-to-br from-muted/60 to-muted/40 flex items-center justify-center rounded-lg',
@@ -47,7 +39,7 @@ const PlaceholderSVG: FC<{ className?: string }> = ({ className }) => (
   </div>
 );
 
-// Fallback avec initiales
+
 const InitialsFallback: FC<{ initials: string; className?: string }> = ({ initials, className }) => (
   <div className={cn(
     'bg-primary/10 flex items-center justify-center rounded-lg text-xs font-medium text-primary',
@@ -57,7 +49,7 @@ const InitialsFallback: FC<{ initials: string; className?: string }> = ({ initia
   </div>
 );
 
-// Badge compteur d'images avec effet pile
+
 const ImageCountBadge: FC<{ count: number; onClick?: () => void }> = ({ count, onClick }) => {
   if (count <= 1) return null;
   
@@ -105,14 +97,14 @@ export const ProductImage: FC<ProductImageProps> = ({
   const isValidImage = src && src.trim() !== '' && src.startsWith('http');
   const imageCount = images?.length || 0;
 
-  // Hook BlurHash pour l'image principale
+  
   const { blurHash, hasBlurHash } = useImageWithBlurHash(
     blurHashes || [],
     src || '',
     'product'
   );
 
-  // Dimensions basées sur la taille
+  
   const dimensions = {
     xs: { width: 32, height: 32 },
     sm: { width: 32, height: 32 },
@@ -120,7 +112,7 @@ export const ProductImage: FC<ProductImageProps> = ({
     lg: { width: 128, height: 128 },
   }[size];
 
-  // Si on a une image valide, l'afficher avec BlurHash
+  
   if (isValidImage) {
     return (
       <div className={cn('relative overflow-hidden rounded-lg bg-muted/20', sizeClass, className)}>
@@ -151,7 +143,7 @@ export const ProductImage: FC<ProductImageProps> = ({
             priority={priority}
             unoptimized={src.includes('unsplash') || src.includes('supabase')}
             onError={(e) => {
-              // Fallback en cas d'erreur de chargement
+              
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
             }}
@@ -164,26 +156,26 @@ export const ProductImage: FC<ProductImageProps> = ({
     );
   }
 
-  // Fallback selon le type demandé
+  
   if (fallbackType === 'initials' && initials) {
     return <InitialsFallback initials={initials} className={cn(sizeClass, className)} />;
   }
 
-  // Fallback par défaut : placeholder
+  
   return <PlaceholderSVG className={cn(sizeClass, className)} />;
 };
 
-// Hook helper pour extraire l'image principale
+
 export const useMainProductImage = (images?: string[]): string | undefined => {
   if (!images || !Array.isArray(images) || images.length === 0) {
     return undefined;
   }
 
-  // Trouver la première image valide
+  
   return images.find(img => img && img.trim() !== '' && img.startsWith('http'));
 };
 
-// Fonction utilitaire standalone
+
 export const getMainProductImage = (images?: string[]): string | undefined => {
   if (!images || !Array.isArray(images) || images.length === 0) {
     return undefined;

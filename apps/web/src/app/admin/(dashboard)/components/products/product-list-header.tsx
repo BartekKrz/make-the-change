@@ -3,7 +3,7 @@
 import { Star } from 'lucide-react'
 import { Badge } from '@/app/admin/(dashboard)/components/badge'
 import { getInitials } from '@/app/admin/(dashboard)/components/ui/format-utils'
-import { ProductImage, getMainProductImage } from '@/components/ProductImage'
+import { ProductImage, getMainProductImage } from '@/components/images/product-image'
 import type { BlurHashData } from '@/lib/types/blurhash'
 import { FC } from 'react'
 

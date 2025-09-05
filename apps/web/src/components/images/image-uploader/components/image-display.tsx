@@ -1,8 +1,9 @@
 import Image from 'next/image';
-import { ImageActionButtons } from './ImageActionButtons';
+import { ImageActionButtons } from './image-action-buttons';
 import { cn } from '@/lib/utils';
+import { FC } from 'react';
 
-interface ImageDisplayProps {
+type ImageDisplayProps = {
   src: string;
   onRemove: () => void;
   onChange: () => void;
@@ -10,13 +11,13 @@ interface ImageDisplayProps {
   className?: string;
 }
 
-export const ImageDisplay = ({ 
+export const ImageDisplay: FC<ImageDisplayProps> = ({ 
   src, 
   onRemove, 
   onChange, 
   disabled = false,
   className = ''
-}: ImageDisplayProps) => (
+}) => (
   <div className={cn('relative group w-full h-full', className)}>
     <Image
       src={src}

@@ -1,6 +1,6 @@
 "use client"
 
-import { FC } from 'react'
+import { type FC } from 'react'
 import { useRouter } from 'next/navigation'
 import { trpc } from '@/lib/trpc'
 import { useToast } from '@/hooks/use-toast'

@@ -4,7 +4,7 @@ import { FC } from 'react';
 import Image from 'next/image';
 import { Trash2, Edit3, Eye, GripVertical } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
-import { BlurHashImage } from '@/components/ui/BlurHashImage';
+import { BlurHashImage } from '@/components/ui/blur-hash-image';
 import { useImageWithBlurHash } from '@/hooks/useImageWithBlurHash';
 import type { BlurHashData } from '@/lib/types/blurhash';
 import { 

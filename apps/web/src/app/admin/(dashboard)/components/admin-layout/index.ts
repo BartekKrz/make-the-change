@@ -1,5 +1,5 @@
 
-export { AdminPageLayout } from './AdminPageLayout';
+export { AdminPageLayout } from './admin-page-layout';
 
 
 export { AdminPageHeader } from './header';

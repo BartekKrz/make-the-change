@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { ProductDetailLayout } from '@/app/admin/(dashboard)/products/[id]/components/product-detail-layout';
 import { ProductCompactHeader } from '@/app/admin/(dashboard)/products/[id]/components/product-compact-header';
 import { ProductDetailsEditor } from '@/app/admin/(dashboard)/products/[id]/components/product-details-editor';

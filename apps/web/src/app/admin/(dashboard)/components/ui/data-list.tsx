@@ -8,7 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { ProductImage } from '@/components/ProductImage';
+import { ProductImage } from '@/components/images/product-image';
 
 // Skeleton pour les cards de la vue grid - correspond exactement à DataCard
 const DataCardSkeleton = () => (

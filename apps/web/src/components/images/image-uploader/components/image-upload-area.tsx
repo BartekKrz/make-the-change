@@ -1,5 +1,6 @@
 import {  Images, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { FC } from 'react';
 
 type ImageUploadAreaProps = {
   onClick: () => void;
@@ -8,12 +9,12 @@ type ImageUploadAreaProps = {
   isUploading?: boolean;
 }
 
-export const ImageUploadArea = ({ 
+export const ImageUploadArea: FC<ImageUploadAreaProps> = ({ 
   onClick, 
   isDragOver = false,
   disabled = false,
   isUploading = false
-}: ImageUploadAreaProps) => (
+}) => (
   <div 
     className={cn(
       'absolute inset-0 group flex flex-col items-center justify-center gap-3 p-6',

@@ -1,4 +1,4 @@
-import { RoundActionButton } from './RoundActionButton';
+import { RoundActionButton } from './round-action-button';
 import { Trash2, ImagePlus } from 'lucide-react';
 
 interface ImageActionButtonsProps {

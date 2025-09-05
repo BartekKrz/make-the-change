@@ -5,20 +5,28 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import { type FC, useState } from 'react';
 import Image from 'next/image';
 import { Blurhash } from 'react-blurhash';
 import { cn } from '@/lib/utils';
-import type { BlurHashImageProps } from '@/lib/types/blurhash';
 
-export function BlurHashImage({
+type BlurHashImageProps = {
+  src: string;
+  blurHash: string;
+  alt: string;
+  className?: string;
+  width?: number;
+  height?: number;
+}
+
+export const BlurHashImage: FC<BlurHashImageProps> = ({
   src,
   blurHash,
   alt,
   className = '',
   width = 400,
   height = 300
-}: BlurHashImageProps) {
+}) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
@@ -82,4 +90,4 @@ export function BlurHashImage({
       )}
     </div>
   );
-}
+};

@@ -3,7 +3,7 @@ export { FieldError } from './field-error';
 export { FormInput } from './form-input';
 export { FormTextArea } from './form-textarea';
 export { FormSelect } from './form-select';
-export { FormCheckbox } from './FormCheckbox';
+export { FormCheckbox } from './form-checkbox';
 export { FormSubmitButton } from './form-submit-button';
 
 export {

@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { FC } from 'react';
+import { type FC, useState } from 'react';
 import { Package, Star, Info, ChevronDown, ChevronUp, Building } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';

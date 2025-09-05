@@ -12,7 +12,7 @@ import { CheckboxWithLabel } from '@/app/admin/(dashboard)/components/ui/checkbo
 import { SimpleSelect } from '@/app/admin/(dashboard)/components/ui/select';
 import { AdminPagination } from '@/app/admin/(dashboard)/components/layout/admin-pagination';
 import { trpc } from '@/lib/trpc';
-import { getMainProductImage } from '@/components/ProductImage';
+import { getMainProductImage } from '@/components/images/product-image';
 import { EmptyState } from '@/app/admin/(dashboard)/components/ui/empty-state';
 
 const pageSize = 18;
@@ -167,11 +167,7 @@ const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
                 {product.partner_source}
               </Badge>
             )}
-            {product.origin_country && (
-              <Badge color="gray">
-                {product.origin_country}
-              </Badge>
-            )}
+            
           </div>
         </DataCard.Content>
         <DataCard.Footer>{actions}</DataCard.Footer>

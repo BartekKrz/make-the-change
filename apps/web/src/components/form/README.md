@@ -66,7 +66,7 @@ import {
 } from '@/components/form';
 
 // Exemple d'utilisation
-const MyForm = () => {
+const MyForm: FC = () => {
   const form = useAppForm({
     defaultValues: { name: '' },
     onSubmit: async ({ value }) => {

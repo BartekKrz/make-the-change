@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { ImageUploader } from '../components/ImageUploader';
+import { ImageUploader } from './image-uploader';
 import { cn } from '@/lib/utils';
 import { X, Upload } from 'lucide-react';
 import Image from 'next/image';
 
-interface MultiImageUploaderProps {
+type MultiImageUploaderProps =  {
   currentImages?: string[];
   onImagesChange?: (images: string[]) => void;
   maxImages?: number;

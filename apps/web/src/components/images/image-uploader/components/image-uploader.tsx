@@ -1,12 +1,12 @@
-import { useRef, useState } from 'react';
-import { ImageDisplay } from './ImageDisplay';
-import { ImageUploadArea } from './ImageUploadArea';
-import { ImageInput } from './ImageInput';
-import { useImageHandler } from '../hooks/useImageHandler';
+import { FC, useRef, useState } from 'react';
+import { ImageDisplay } from './image-display';
+import { ImageUploadArea } from './image-upload-area';
+import { ImageInput } from './image-input';
+import { useImageHandler } from '../hooks/use-image-handler';
 import { cn } from '@/lib/utils';
 import { Loader2, AlertCircle } from 'lucide-react';
 
-interface ImageUploaderProps {
+type ImageUploaderProps =  {
   currentImage?: string;
   onImageSelect?: (file: File | null) => void;
   onImagesSelect?: (files: File[]) => void; // Nouveau pour images multiples
@@ -20,7 +20,7 @@ interface ImageUploaderProps {
   isUploading?: boolean; // État de loading externe
 }
 
-export const ImageUploader: React.FC<ImageUploaderProps> = ({
+export const ImageUploader: FC<ImageUploaderProps> = ({
   currentImage,
   onImageSelect,
   onImagesSelect,

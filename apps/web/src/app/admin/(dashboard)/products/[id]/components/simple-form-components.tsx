@@ -1,13 +1,13 @@
 'use client';
 
-import { FC } from 'react';
+import { type FC } from 'react';
 import { Input } from '@/app/admin/(dashboard)/components/ui/input';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/admin/(dashboard)/components/ui/select';
 import { TextArea } from '../../../components/ui/textarea';
 
 
-interface SimpleInputProps {
+type SimpleInputProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;
@@ -44,7 +44,7 @@ export const SimpleInput: FC<SimpleInputProps> = ({
   );
 };
 
-interface SimpleTextAreaProps {
+type SimpleTextAreaProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;
@@ -75,7 +75,7 @@ export const SimpleTextArea: FC<SimpleTextAreaProps> = ({
   );
 };
 
-interface SimpleSelectProps {
+type SimpleSelectProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;

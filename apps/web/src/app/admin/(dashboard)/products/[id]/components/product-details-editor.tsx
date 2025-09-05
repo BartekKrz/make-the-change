@@ -1,8 +1,8 @@
 import { SimpleInput, SimpleTextArea, SimpleSelect } from "./simple-form-components";
-import { ImageGalleryModal } from "@/components/ImageGallery";
-import { OptimizedImageMasonry } from "@/components/ui/OptimizedImageMasonry";
+import { ImageGalleryModal } from "@/components/images/image-gallery";
+import { OptimizedImageMasonry } from "@/components/ui/optimized-image-masonry";
 import { ProductBlurService, type ProductBlurHash } from "@/lib/services/product-blur-service";
-import { ImageUploaderField } from "@/components/ImageUploader";
+import { ImageUploaderField } from "@/components/images/image-uploader";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ProductFormData, tierLabels, fulfillmentMethodLabels } from "@/lib/validators/product";
 import { Info, DollarSign, ImageIcon } from "lucide-react";
@@ -18,7 +18,7 @@ type ProductDetailsEditorProps = {
 };
 
 // État pour les blur hashes optimisés
-interface ProductBlurState {
+type ProductBlurState = {
   blurHashes: ProductBlurHash[];
   stats: {
     totalImages: number;

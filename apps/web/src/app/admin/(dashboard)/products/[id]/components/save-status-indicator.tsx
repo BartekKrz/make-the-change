@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useEffect } from 'react';
+import { type FC, useEffect } from 'react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
 import { Button } from '@/app/admin/(dashboard)/components/ui/button';
 import type { SaveStatus } from '@/app/admin/(dashboard)/products/[id]/types';

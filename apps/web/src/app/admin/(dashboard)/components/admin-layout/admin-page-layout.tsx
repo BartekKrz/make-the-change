@@ -6,10 +6,7 @@ import { AdminPageFooter } from './footer';
 import { FilterModal } from './filter-modal';
 
 
-type AdminPageLayoutProps = PropsWithChildren
-
-
-export const AdminPageLayout = ({ children }: AdminPageLayoutProps) => (
+export const AdminPageLayout = ({ children }: PropsWithChildren) => (
   <div className="min-h-screen flex flex-col h-screen">
     {children}
   </div>

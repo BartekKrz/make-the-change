@@ -1,7 +1,7 @@
-import { forwardRef } from 'react';
+import { type ChangeEvent, forwardRef } from 'react';
 
-interface ImageInputProps {
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+type ImageInputProps =  {
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   multiple?: boolean;
   disabled?: boolean;
