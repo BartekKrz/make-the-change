@@ -378,7 +378,25 @@ export const appRouter = createRouter({
           if (input?.activeOnly) q = q.eq('is_active', true)
           if (input?.search) q = q.or(`name.ilike.%${input.search}%,slug.ilike.%${input.search}%`)
           if (input?.producerId) q = q.eq('producer_id', input.producerId)
-          if (input?.categoryId) q = q.or(`category_id.eq.${input.categoryId},secondary_category_id.eq.${input.categoryId}`)
+          
+          // Handle category filtering with hierarchy support
+          if (input?.categoryId) {
+            // Get all subcategories of the selected category
+            const { data: subcategories } = await supabase
+              .from('categories')
+              .select('id')
+              .eq('parent_id', input.categoryId)
+            
+            const subcategoryIds = subcategories?.map(cat => cat.id) || []
+            const allCategoryIds = [input.categoryId, ...subcategoryIds]
+            
+            // Build OR condition for all category IDs (including subcategories)
+            const categoryConditions = allCategoryIds
+              .map(id => `category_id.eq.${id},secondary_category_id.eq.${id}`)
+              .join(',')
+            q = q.or(categoryConditions)
+          }
+          
           if (input?.partnerSource) q = q.eq('partner_source', input.partnerSource)
           if (input?.originCountry) q = q.eq('origin_country', input.originCountry)
           if (input?.cursor) q = q.lt('id', input.cursor)
@@ -386,14 +404,30 @@ export const appRouter = createRouter({
           const { data, error } = await q
           if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
 
-          // Query for total count (without cursor and limit)
+          // Query for total count (without cursor and limit) - same logic for categories
           let countQ = supabase
             .from('products')
             .select('id', { count: 'exact', head: true })
           if (input?.activeOnly) countQ = countQ.eq('is_active', true)
           if (input?.search) countQ = countQ.or(`name.ilike.%${input.search}%,slug.ilike.%${input.search}%`)
           if (input?.producerId) countQ = countQ.eq('producer_id', input.producerId)
-          if (input?.categoryId) countQ = countQ.or(`category_id.eq.${input.categoryId},secondary_category_id.eq.${input.categoryId}`)
+          
+          // Handle category filtering with hierarchy support for count query
+          if (input?.categoryId) {
+            // Reuse the same subcategory logic
+            const { data: subcategories } = await supabase
+              .from('categories')
+              .select('id')
+              .eq('parent_id', input.categoryId)
+            
+            const subcategoryIds = subcategories?.map(cat => cat.id) || []
+            const allCategoryIds = [input.categoryId, ...subcategoryIds]
+            
+            const categoryConditions = allCategoryIds
+              .map(id => `category_id.eq.${id},secondary_category_id.eq.${id}`)
+              .join(',')
+            countQ = countQ.or(categoryConditions)
+          }
           if (input?.partnerSource) countQ = countQ.eq('partner_source', input.partnerSource)
           if (input?.originCountry) countQ = countQ.eq('origin_country', input.originCountry)
           const { count, error: countError } = await countQ

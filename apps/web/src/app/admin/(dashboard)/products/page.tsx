@@ -17,10 +17,44 @@ import { Product } from '@/app/admin/(dashboard)/products/components/product';
 
 const pageSize = 18;
 
-// Type explicite pour éviter l'inférence complexe
+
 type SelectOption = { value: string; label: string };
 
-// Helper function pour simplifier le mapping
+
+const createCategoryHierarchy = (categories: any[] | undefined): SelectOption[] => {
+  if (!categories) return [{ value: 'all', label: 'Toutes les catégories' }];
+  
+  
+  const rootCategories = categories.filter(cat => !cat.parent_id);
+  const subCategories = categories.filter(cat => cat.parent_id);
+  
+  const options: SelectOption[] = [{ value: 'all', label: 'Toutes les catégories' }];
+  
+  
+  rootCategories.forEach(root => {
+    
+    options.push({ value: root.id, label: root.name });
+    
+    
+    const children = subCategories.filter(sub => sub.parent_id === root.id);
+    children.forEach(child => {
+      options.push({ value: child.id, label: `  └── ${child.name}` });
+    });
+  });
+  
+  
+  const orphanCategories = subCategories.filter(sub => 
+    !rootCategories.some(root => root.id === sub.parent_id) &&
+    !subCategories.some(other => other.id === sub.parent_id)
+  );
+  orphanCategories.forEach(orphan => {
+    options.push({ value: orphan.id, label: `⚠️ ${orphan.name}` });
+  });
+  
+  return options;
+};
+
+
 const createSelectOptions = <T extends { id: string; name: string }>(
   items: T[] | undefined,
   allLabel: string
@@ -74,10 +108,7 @@ const createSelectOptions = <T extends { id: string; name: string }>(
   );
 
   const categoryOptions = useMemo((): SelectOption[] => 
-    createSelectOptions(
-      categories?.filter(cat => !cat.parent_id), 
-      'Toutes les catégories'
-    ), 
+    createCategoryHierarchy(categories), 
     [categories]
   );
 
@@ -93,7 +124,7 @@ const createSelectOptions = <T extends { id: string; name: string }>(
   return (
     <AdminPageLayout>
       <AdminPageHeader>
-        
+        {/* Version mobile */}
         <div className="md:hidden space-y-3">
           <div className="flex items-center gap-2">
             <AdminPageHeader.Search
@@ -107,11 +138,11 @@ const createSelectOptions = <T extends { id: string; name: string }>(
           <CreateButton href="/admin/products/new" label="Nouveau produit" className="w-full" />
         </div>
 
-        
+        {/* Version desktop */}
         <div className="hidden md:block space-y-4">
-          
+          {/* Ligne 1: Recherche et bouton principal */}
           <div className="flex items-center gap-4">
-            <div className="flex-1">
+            <div className="flex-1 max-w-md">
               <AdminPageHeader.Search
                 value={search}
                 onChange={setSearch}
@@ -119,14 +150,19 @@ const createSelectOptions = <T extends { id: string; name: string }>(
                 isLoading={isLoading || isFetching}
               />
             </div>
-            <CreateButton href="/admin/products/new" label="Nouveau produit" />
+            <div className="flex items-center gap-3">
+              <div className="text-sm text-muted-foreground">
+                {totalProducts} produit{totalProducts > 1 ? 's' : ''}
+              </div>
+              <CreateButton href="/admin/products/new" label="Nouveau produit" />
+            </div>
           </div>
 
-          
+          {/* Ligne 2: Contrôles de filtrage et vue */}
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 flex-wrap flex-1">
               <SimpleSelect
-                placeholder="Sélectionner un partenaire"
+                placeholder="Tous les partenaires"
                 value={selectedProducerId || 'all'}
                 onValueChange={(value) => setSelectedProducerId(value === 'all' ? undefined : value)}
                 options={producerOptions}
@@ -134,11 +170,11 @@ const createSelectOptions = <T extends { id: string; name: string }>(
               />
               
               <SimpleSelect
-                placeholder="Sélectionner une catégorie"
+                placeholder="Toutes les catégories"
                 value={selectedCategoryId || 'all'}
                 onValueChange={(value) => setSelectedCategoryId(value === 'all' ? undefined : value)}
                 options={categoryOptions}
-                className="w-48"
+                className="w-52"
               />
               
               <CheckboxWithLabel
@@ -146,20 +182,9 @@ const createSelectOptions = <T extends { id: string; name: string }>(
                 onCheckedChange={(v) => setActiveOnly(Boolean(v))}
                 label="Actifs uniquement"
               />
-              
-              {(selectedProducerId || selectedCategoryId || activeOnly) && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={resetFilters}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Effacer les filtres
-                </Button>
-              )}
             </div>
 
-            <div className="flex-shrink-0">
+            <div className="flex items-center gap-3">
               <ViewToggle value={view} onChange={setView} />
             </div>
           </div>
@@ -184,7 +209,6 @@ const createSelectOptions = <T extends { id: string; name: string }>(
             variant={view === 'map' ? 'grid' : view}
             items={products}
             isLoading={isLoading}
-            gridCols={3}
             renderSkeleton={() => view === 'grid' ? <ProductCardSkeleton /> : <ProductListSkeleton />}
             emptyState={{
               icon: Package,

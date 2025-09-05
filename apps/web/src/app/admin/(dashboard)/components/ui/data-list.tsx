@@ -56,7 +56,7 @@ export const DataList = <T,>({
   isLoading,
   getItemKey,
   className,
-  gridCols = 2,
+  gridCols = 3,
   spacing = 'md',
   testId = 'data-list'
 }: DataListProps<T>) => {
