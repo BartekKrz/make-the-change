@@ -16,7 +16,7 @@ import { Input } from '@/app/admin/(dashboard)/components/ui/input'
 import { SimpleSelect } from '@/app/admin/(dashboard)/components/ui/select'
 import { Building2, Mail, Plus } from 'lucide-react'
 import { partnerStatusLabels } from '@make-the-change/api/validators/partner';
-import { FC } from 'react'
+import { type FC } from 'react'
 
 const statusOptions = Object.entries(partnerStatusLabels).map(([value, label]) => ({ value, label }));
 

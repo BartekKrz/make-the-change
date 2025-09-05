@@ -29,7 +29,8 @@ const sizeMap = {
 } as const;
 
 
-const PlaceholderSVG: FC<{ className?: string }> = ({ className }) => (
+const PlaceholderSVG: FC<{ className?: string }> = ({ className }) => {
+  return (
   <div className={cn(
     'bg-gradient-to-br from-muted/60 to-muted/40 flex items-center justify-center rounded-lg',
     'border border-border/20',
@@ -37,17 +38,20 @@ const PlaceholderSVG: FC<{ className?: string }> = ({ className }) => (
   )}>
     <Package className="w-1/2 h-1/2 text-muted-foreground/40" />
   </div>
-);
+  );
+};
 
 
-const InitialsFallback: FC<{ initials: string; className?: string }> = ({ initials, className }) => (
+const InitialsFallback: FC<{ initials: string; className?: string }> = ({ initials, className }) => {
+  return (
   <div className={cn(
     'bg-primary/10 flex items-center justify-center rounded-lg text-xs font-medium text-primary',
     className
   )}>
     {initials}
   </div>
-);
+  );
+};
 
 
 const ImageCountBadge: FC<{ count: number; onClick?: () => void }> = ({ count, onClick }) => {

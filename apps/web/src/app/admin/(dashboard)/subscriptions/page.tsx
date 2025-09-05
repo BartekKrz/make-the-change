@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, FC } from 'react'
+import { useState, useEffect, type FC } from 'react'
 import { DataList, DataCard } from '@/app/admin/(dashboard)/components/ui/data-list'
 import { ListContainer } from '@/app/admin/(dashboard)/components/ui/list-container'
 import { SubscriptionListItem } from '@/app/admin/(dashboard)/components/subscriptions/subscription-list-item'

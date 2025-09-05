@@ -1,6 +1,6 @@
 'use client'
 
-import { FC } from 'react'
+import { type FC } from 'react'
 import { Menu } from 'lucide-react'
 import { Button } from '@/app/admin/(dashboard)/components/ui/button'
 import { useAdminSidebar } from '@/app/admin/(dashboard)/components/layout/admin-sidebar-context'

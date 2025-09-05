@@ -1,6 +1,6 @@
 'use client'
 
-import { FC } from 'react'
+import { type FC } from 'react'
 import { Menu, Search, Bell } from 'lucide-react'
 import { Button } from '@/app/admin/(dashboard)/components/ui/button'
 import { CompactThemeToggle } from '@/app/admin/(dashboard)/components/theme/compact-theme-toggle'

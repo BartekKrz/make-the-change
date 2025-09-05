@@ -1,5 +1,5 @@
 'use client';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { type ComponentProps, useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '@/app/admin/(dashboard)/components/ui/button';

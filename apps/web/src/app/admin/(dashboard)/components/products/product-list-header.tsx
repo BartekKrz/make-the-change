@@ -5,7 +5,7 @@ import { Badge } from '@/app/admin/(dashboard)/components/badge'
 import { getInitials } from '@/app/admin/(dashboard)/components/ui/format-utils'
 import { ProductImage, getMainProductImage } from '@/components/images/product-image'
 import type { BlurHashData } from '@/lib/types/blurhash'
-import { FC } from 'react'
+import { type FC } from 'react'
 
 type Product =  {
   id: string
@@ -22,6 +22,7 @@ type ProductListHeaderProps =  {
 }
 
 export const ProductListHeader: FC<ProductListHeaderProps> = ({ product }) => {
+  
   const mainImage = getMainProductImage(product.images);
   const initials = getInitials(product.name);
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { type FC, useState } from 'react';
 import Image from 'next/image';
 import { GripVertical, X, Eye, ArrowLeft, ArrowRight } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';

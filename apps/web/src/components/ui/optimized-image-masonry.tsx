@@ -6,7 +6,7 @@
 
 'use client';
 
-import { FC } from 'react';
+import { type FC } from 'react';
 import Image from 'next/image';
 import { Trash2, Edit3, Eye, GripVertical } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';

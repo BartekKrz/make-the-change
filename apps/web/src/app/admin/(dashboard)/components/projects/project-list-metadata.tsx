@@ -1,7 +1,7 @@
 'use client'
 import { Target, Box, User } from 'lucide-react'
 import { formatCurrency } from '@/app/admin/(dashboard)/components/ui/format-utils'
-import { FC } from 'react'
+import { type FC } from 'react'
 
 type Project =  {
   type: string

@@ -1,6 +1,6 @@
 'use client'
 
-import { FC } from 'react'
+import { type FC } from 'react'
 import { MinimalPagination } from '@/app/admin/(dashboard)/components/ui/minimal-pagination'
 
 type PaginationInfo = {

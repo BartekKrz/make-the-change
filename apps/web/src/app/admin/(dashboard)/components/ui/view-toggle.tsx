@@ -1,5 +1,5 @@
 "use client"
-import { FC } from 'react'
+import { type FC } from 'react'
 import { Button } from '@/app/admin/(dashboard)/components/ui/button'
 import { LayoutGrid, List, MapPin } from 'lucide-react'
 

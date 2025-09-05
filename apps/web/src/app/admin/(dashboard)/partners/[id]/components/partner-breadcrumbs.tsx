@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { ChevronRight, Home, Building2 } from 'lucide-react';
 
 type PartnerData = {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { UserDetailLayout } from '@/app/admin/(dashboard)/users/[id]/components/user-detail-layout';
 import { UserCompactHeader } from '@/app/admin/(dashboard)/users/[id]/components/user-compact-header';
 import { UserDetailsEditor } from '@/app/admin/(dashboard)/users/[id]/components/user-details-editor';

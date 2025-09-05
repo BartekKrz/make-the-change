@@ -3,10 +3,10 @@ import { type ViewMode } from '../ui/view-toggle';
 import { ViewToggle } from '../ui/view-toggle';
 import { Button } from '../ui/button';
 import { CheckboxWithLabel } from '../ui/checkbox';
-
+import { type ReactNode } from 'react';
 
 type FiltersProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export const Filters = ({ children }: FiltersProps) => (
@@ -95,15 +95,17 @@ type ToggleFilterProps = {
   label: string;
 };
 
-const ToggleFilter = ({ checked, onCheckedChange, label }: ToggleFilterProps) => (
-  <div>
-    <CheckboxWithLabel
-      checked={checked}
-      onCheckedChange={(checked) => onCheckedChange(Boolean(checked))}
-      label={label}
-    />
-  </div>
-);
+const ToggleFilter = ({ checked, onCheckedChange, label }: ToggleFilterProps) => {
+  return (
+    <div>
+      <CheckboxWithLabel
+        checked={checked}
+        onCheckedChange={(checked) => onCheckedChange(Boolean(checked))}
+        label={label}
+      />
+    </div>
+  );
+};
 
 
 Filters.View = ViewFilter;

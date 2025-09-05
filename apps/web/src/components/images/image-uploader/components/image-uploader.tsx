@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from 'react';
+import { type FC, useRef, useState } from 'react';
 import { ImageDisplay } from './image-display';
 import { ImageUploadArea } from './image-upload-area';
 import { ImageInput } from './image-input';
@@ -9,15 +9,15 @@ import { Loader2, AlertCircle } from 'lucide-react';
 type ImageUploaderProps =  {
   currentImage?: string;
   onImageSelect?: (file: File | null) => void;
-  onImagesSelect?: (files: File[]) => void; // Nouveau pour images multiples
+  onImagesSelect?: (files: File[]) => void; 
   onImageRemove?: () => void;
-  onUploadComplete?: () => void; // Nouveau callback pour nettoyer l'état après upload
+  onUploadComplete?: () => void; 
   width?: string;
   height?: string;
   disabled?: boolean;
-  multiple?: boolean; // Support pour images multiples
+  multiple?: boolean; 
   className?: string;
-  isUploading?: boolean; // État de loading externe
+  isUploading?: boolean; 
 }
 
 export const ImageUploader: FC<ImageUploaderProps> = ({
@@ -65,13 +65,13 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
       console.log('📁 [ImageUploader] Files détectés:', files.length, 'multiple:', multiple);
       
       if (multiple) {
-        // En mode multiple, traiter TOUS les fichiers (même s'il n'y en a qu'un)
+        
         const fileArray = Array.from(files);
         console.log('📁 [ImageUploader] Mode multiple, appel onImagesSelect avec:', fileArray.length, 'files');
         if (onImagesSelect) {
           try {
             await onImagesSelect(fileArray);
-            // Nettoyer l'état local après upload réussi pour éviter l'affichage
+            
             clearImage();
             if (fileInputRef.current) {
               fileInputRef.current.value = '';
@@ -84,13 +84,13 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
           console.log('⚠️ [ImageUploader] onImagesSelect non défini');
         }
       } else {
-        // Upload single (compatibilité)
+        
         const file = files[0];
         console.log('📁 [ImageUploader] Mode single, appel onImageSelect avec:', file.name);
         if (onImageSelect) {
           try {
             await onImageSelect(file);
-            // Nettoyer l'état local après upload réussi
+            
             clearImage();
             if (fileInputRef.current) {
               fileInputRef.current.value = '';
@@ -116,7 +116,7 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
     }
   };
 
-  // Gestion du drag & drop
+  
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     if (!disabled) {
@@ -138,14 +138,14 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       if (multiple) {
-        // Drag & drop multiple - traiter TOUS les fichiers
+        
         const fileArray = Array.from(files);
         handleImageUpload({ target: { files: fileArray } } as any);
         
         if (onImagesSelect) {
           try {
             await onImagesSelect(fileArray);
-            // Nettoyer l'état local après upload réussi pour éviter l'affichage
+            
             clearImage();
             if (fileInputRef.current) {
               fileInputRef.current.value = '';
@@ -156,7 +156,7 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
           }
         }
       } else {
-        // Drag & drop single (compatibilité)
+        
         const file = files[0];
         handleImageUpload({ target: { files: [file] } } as any);
         
@@ -176,8 +176,8 @@ export const ImageUploader: FC<ImageUploaderProps> = ({
     }
   };
 
-  // En mode multiple, ne jamais afficher d'image dans la zone d'upload
-  // Les images sont gérées par ImageMasonry séparément
+  
+  
   const displayImage = multiple ? undefined : (uploadedImageSrc || currentImage);
 
   return (

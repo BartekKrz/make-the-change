@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, FC } from 'react'
+import { useState, type FC } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card'
 import { Input } from '@/app/admin/(dashboard)/components/ui/input'

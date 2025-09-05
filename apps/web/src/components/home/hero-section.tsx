@@ -3,8 +3,9 @@
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import type { FC } from 'react'
 
-export const HeroSection = () => {
+export const HeroSection: FC = () => {
   return (
     <section className="relative overflow-hidden pt-20 pb-16 bg-gradient-to-br from-background via-muted/5 to-background">
       {/* Background avec effet grid */}

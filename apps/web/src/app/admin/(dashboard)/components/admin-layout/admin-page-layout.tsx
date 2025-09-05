@@ -5,13 +5,11 @@ import { AdminPageContent } from './content';
 import { AdminPageFooter } from './footer';
 import { FilterModal } from './filter-modal';
 
-
 export const AdminPageLayout = ({ children }: PropsWithChildren) => (
   <div className="min-h-screen flex flex-col h-screen">
     {children}
   </div>
 );
-
 
 AdminPageLayout.Header = AdminPageHeader;
 AdminPageLayout.Content = AdminPageContent;

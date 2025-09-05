@@ -1,6 +1,6 @@
 import {  Images, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { FC } from 'react';
+import { type FC } from 'react';
 
 type ImageUploadAreaProps = {
   onClick: () => void;

@@ -3,13 +3,13 @@
  * Types pour la gestion des placeholders intelligents
  */
 
-export interface BlurHashData {
+export type BlurHashData = {
   url: string;
   blurhash: string;
   type: 'logo' | 'cover' | 'gallery' | 'hero' | 'product';
 }
 
-export interface BlurHashImageProps {
+export type BlurHashImageProps = {
   src: string;
   blurHash: string;
   alt: string;
@@ -18,7 +18,7 @@ export interface BlurHashImageProps {
   height?: number;
 }
 
-export interface UseImageWithBlurHashResult {
+export type UseImageWithBlurHashResult = {
   src: string;
   blurHash: string;
   hasBlurHash: boolean;

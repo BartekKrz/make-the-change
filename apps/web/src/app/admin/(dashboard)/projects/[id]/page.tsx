@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation'
 import { trpc } from '@/lib/trpc'
 import { useMemo } from 'react'
-import { FC } from 'react'
+import { type FC } from 'react'
 import { supabase } from '@/supabase/client'
 import { ProjectDetailController } from '@/app/admin/(dashboard)/projects/[id]/components/project-detail-controller'
 

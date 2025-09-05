@@ -1,7 +1,7 @@
 'use client'
 
 import { Zap, Box, User } from 'lucide-react'
-import { FC } from 'react'
+import { type FC } from 'react'
 
 type Product =  {
   price_points: number
@@ -17,7 +17,7 @@ type ProductListMetadataProps = {
   product: Product
 }
 
-export const ProductListMetadata: FC<ProductListMetadataProps> = ({ product }) => (
+export const ProductListMetadata: FC<ProductListMetadataProps> = ({product}) => (
   <div className="space-y-2">
     <div className="flex items-center gap-4 flex-wrap">
       <div className="flex items-center gap-2 transition-colors duration-200 md:group-hover:text-foreground group-active:text-foreground">

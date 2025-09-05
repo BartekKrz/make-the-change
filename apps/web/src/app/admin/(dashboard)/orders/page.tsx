@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { FC } from 'react'
+import { type FC } from 'react'
 import { trpc } from '@/lib/trpc'
 import { DataList, DataCard } from '@/app/admin/(dashboard)/components/ui/data-list'
 import { ListContainer } from '@/app/admin/(dashboard)/components/ui/list-container'

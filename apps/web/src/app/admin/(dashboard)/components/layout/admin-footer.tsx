@@ -1,6 +1,6 @@
 'use client'
 
-import { FC } from 'react'
+import { type FC } from 'react'
 
 export const AdminFooter: FC = () => (
   <footer className="hidden md:flex h-12 border-t border-border bg-card/50 backdrop-blur-sm items-center justify-between px-6 text-sm text-muted-foreground shrink-0">

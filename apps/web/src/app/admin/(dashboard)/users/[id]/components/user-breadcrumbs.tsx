@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { ChevronRight, Home, User } from 'lucide-react';
 
 type UserData = {
@@ -14,6 +14,7 @@ type UserBreadcrumbsProps = {
 };
 
 export const UserBreadcrumbs: FC<UserBreadcrumbsProps> = ({ userData }) => {
+  
   return (
     <div className='max-w-7xl mx-auto px-4 md:px-8 pt-4 md:pt-6 pb-2'>
       <nav aria-label='Breadcrumb' className='flex items-center gap-2 text-sm text-muted-foreground'>

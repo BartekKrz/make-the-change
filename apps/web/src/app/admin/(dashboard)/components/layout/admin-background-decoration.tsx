@@ -1,6 +1,6 @@
 'use client'
 
-import { FC } from 'react'
+import { type FC } from 'react'
 
 export const AdminBackgroundDecoration: FC = () => (
   <div className="fixed inset-0 z-[1] pointer-events-none">

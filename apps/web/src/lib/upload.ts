@@ -12,7 +12,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 // Client admin pour upload
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
-export interface UploadOptions {
+export type UploadOptions = {
   bucket: 'projects' | 'products' | 'producers' | 'users' | 'categories'
   folder?: string
   fileName?: string
@@ -21,7 +21,7 @@ export interface UploadOptions {
   quality?: number
 }
 
-export interface UploadResult {
+export type UploadResult = {
   success: boolean
   url?: string
   publicUrl?: string

@@ -3,7 +3,7 @@
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
-import type { ElementRef, ComponentPropsWithoutRef } from 'react';
+import type { ElementRef, ComponentPropsWithoutRef, FC } from 'react';
 import { forwardRef } from 'react';
 
 const Select = SelectPrimitive.Root;
@@ -165,14 +165,15 @@ export type SimpleSelectProps = {
   disabled?: boolean;
 };
 
-export const SimpleSelect = ({
+export const SimpleSelect: FC<SimpleSelectProps> = ({
   placeholder = 'Sélectionner...',
   value,
   onValueChange,
   options,
   className,
   disabled
-}: SimpleSelectProps) => {
+}) => {
+  
   return (
     <Select value={value} onValueChange={onValueChange} disabled={disabled}>
       <SelectTrigger className={className}>

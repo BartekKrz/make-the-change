@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { ImageActionButtons } from './image-action-buttons';
 import { cn } from '@/lib/utils';
-import { FC } from 'react';
+import { type FC } from 'react';
 
 type ImageDisplayProps = {
   src: string;

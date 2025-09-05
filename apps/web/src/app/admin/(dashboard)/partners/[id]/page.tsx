@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation'
 import { trpc } from '@/lib/trpc'
 import { useMemo } from 'react'
-import { FC } from 'react'
+import { type FC } from 'react'
 import { PartnerDetailController } from '@/app/admin/(dashboard)/partners/[id]/components/partner-detail-controller'
 import { PartnerFormData } from '@make-the-change/api/validators/partner';
 

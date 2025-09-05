@@ -1,6 +1,6 @@
 'use client';
 
-import { FC } from 'react';
+import { type FC } from 'react';
 import { CreditCard, Euro, Calendar, Edit, X, Save } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
 import { Button } from '@/app/admin/(dashboard)/components/ui/button';

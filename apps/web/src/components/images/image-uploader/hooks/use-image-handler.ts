@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, type ChangeEvent } from 'react';
 
 export const useImageHandler = () => {
   // Support pour images multiples

@@ -11,7 +11,8 @@ const ReactQueryDevtools =
     ? dynamic(() => import('@tanstack/react-query-devtools').then(m => ({ default: m.ReactQueryDevtools })), { ssr: false })
     : (() => null) as unknown as React.ComponentType<{ initialIsOpen?: boolean }>
 
-export const Providers: FC<PropsWithChildren> = ({ children }) => {
+export const Providers: FC<PropsWithChildren> = ({children}) => {
+  
   const [queryClient] = useState(
     () =>
       new QueryClient({

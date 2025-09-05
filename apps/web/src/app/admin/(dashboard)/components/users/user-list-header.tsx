@@ -2,6 +2,7 @@
 
 import { Badge } from '@/app/admin/(dashboard)/components/badge'
 import { getInitials } from '@/app/admin/(dashboard)/components/ui/format-utils'
+import type { FC } from 'react'
 
 type User = {
   id: string
@@ -14,7 +15,7 @@ type UserListHeaderProps = {
   user: User
 }
 
-export const UserListHeader = ({ user }: UserListHeaderProps) => {
+export const UserListHeader: FC<UserListHeaderProps> = ({ user }) => {
   return (
     <div className="flex items-center gap-2 md:gap-3">
       {}

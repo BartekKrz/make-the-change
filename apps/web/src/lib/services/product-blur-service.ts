@@ -11,7 +11,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Types
-export interface ProductBlurHash {
+export type ProductBlurHash = {
   url: string
   blurHash: string
   width?: number
@@ -19,7 +19,7 @@ export interface ProductBlurHash {
   fileSize?: number
 }
 
-export interface ProductWithBlur {
+export type ProductWithBlur = {
   id: string
   name: string
   slug: string

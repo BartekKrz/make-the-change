@@ -1,5 +1,5 @@
 'use client';
-import { FC, type ReactNode } from 'react';
+import { type FC, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Plus, Search } from 'lucide-react';
 import { ViewToggle, type ViewMode } from '../ui/view-toggle';

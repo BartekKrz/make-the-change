@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app
 import { SimpleSelect } from '@/app/admin/(dashboard)/components/ui/select'
 import { Input } from '@/app/admin/(dashboard)/components/ui/input'
 import Link from 'next/link'
-import { FC } from 'react'
+import { type FC } from 'react'
 
 const MapContainer = dynamic(() => import('@/components/ui/map-container'), {
   ssr: false,

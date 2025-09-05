@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect } from 'react'
-import { FC } from 'react'
+import { type FC } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card'

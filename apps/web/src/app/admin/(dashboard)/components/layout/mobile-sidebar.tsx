@@ -1,6 +1,6 @@
 'use client'
 
-import { FC } from 'react'
+import { type FC } from 'react'
 import { useEffect, useState } from 'react'
 import { X, LayoutDashboard, Package, ShoppingCart, Users } from 'lucide-react'
 import { Button } from '@/app/admin/(dashboard)/components/ui/button'

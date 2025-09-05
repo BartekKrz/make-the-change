@@ -3,13 +3,13 @@
  * Service pour générer automatiquement les blurDataURL pour Next.js
  */
 
-interface BlurDataResult {
+type BlurDataResult = {
   blurDataURL: string;
   width?: number;
   height?: number;
 }
 
-interface BlurGenerationOptions {
+type BlurGenerationOptions = {
   width?: number;
   height?: number;
   quality?: number;

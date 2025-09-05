@@ -4,7 +4,7 @@ import { AdminListItem } from '@/app/admin/(dashboard)/components/ui/admin-list-
 import { Building2, Mail } from 'lucide-react'
 import { Badge } from '@/app/admin/(dashboard)/components/badge'
 import { getInitials } from '@/app/admin/(dashboard)/components/ui/format-utils'
-import { FC, ReactNode } from 'react'
+import { type FC, type ReactNode } from 'react'
 
 type Partner =  {
   id: string

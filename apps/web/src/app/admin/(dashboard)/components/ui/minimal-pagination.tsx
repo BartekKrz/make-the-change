@@ -1,6 +1,6 @@
 'use client';
 
-import { FC } from 'react';
+import { type FC } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 

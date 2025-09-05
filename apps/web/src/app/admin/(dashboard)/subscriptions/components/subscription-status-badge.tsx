@@ -1,11 +1,12 @@
 import { Badge } from '@/app/admin/(dashboard)/components/badge';
 import type { Subscription } from '@/lib/types/subscription';
+import type { FC } from 'react';
 
-interface SubscriptionStatusBadgeProps {
+type SubscriptionStatusBadgeProps = {
   status: Subscription['status'];
 }
 
-export function SubscriptionStatusBadge({ status }: SubscriptionStatusBadgeProps) {
+export const SubscriptionStatusBadge: FC<SubscriptionStatusBadgeProps> = ({ status }) => {
   const variants = {
     active: { color: 'green' as const, label: 'Actif' },
     suspended: { color: 'yellow' as const, label: 'Suspendu' },

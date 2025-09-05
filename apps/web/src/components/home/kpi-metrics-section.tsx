@@ -3,8 +3,9 @@
 import { motion } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/card'
 import { Users, Euro, Zap, ShoppingBag } from 'lucide-react'
+import type { FC } from 'react'
 
-interface MetricsProps {
+type MetricsProps = {
   metrics?: {
     membersCount: number
     revenueEngaged: number
@@ -13,7 +14,7 @@ interface MetricsProps {
   }
 }
 
-export const KPIMetricsSection = ({ metrics }: MetricsProps) => {
+export const KPIMetricsSection: FC<MetricsProps> = ({ metrics }) => {
   const defaultMetrics = {
     membersCount: 1247,
     revenueEngaged: 89450,

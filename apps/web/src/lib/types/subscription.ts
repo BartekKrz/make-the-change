@@ -1,4 +1,4 @@
-export interface Subscription {
+export type Subscription = {
   id: string;
   user_id: string;
   subscription_tier: 'ambassadeur_standard' | 'ambassadeur_premium';
@@ -31,7 +31,7 @@ export interface Subscription {
   };
 }
 
-export interface SubscriptionFilters {
+export type SubscriptionFilters = {
   page?: number;
   limit?: number;
   search?: string;

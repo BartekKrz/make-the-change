@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState } from 'react';
 import { ImageUploader } from '../components/image-uploader';
 import { useToast } from '@/hooks/use-toast';
@@ -20,7 +21,7 @@ type ImageUploaderFieldProps = {
   productId?: string;
 }
 
-export const ImageUploaderField = ({
+export const ImageUploaderField: FC<ImageUploaderFieldProps> = ({
   field,
   onImagesChange,
   width = 'w-full',
@@ -28,7 +29,7 @@ export const ImageUploaderField = ({
   disabled = false,
   multiple = false,
   productId
-}: ImageUploaderFieldProps) => {
+}) => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   

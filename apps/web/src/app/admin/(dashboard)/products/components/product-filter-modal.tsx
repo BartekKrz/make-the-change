@@ -24,18 +24,17 @@ type FilterModalProps = {
   setView: (view: ViewMode) => void;
 };
 
-export const ProductFilterModal: FC<FilterModalProps> = (props) => {
-  const { 
-    isOpen, 
-    onClose, 
-    producers, 
-    selectedProducerId, 
-    setSelectedProducerId,
-    activeOnly,
-    setActiveOnly,
-    view,
-    setView
-  } = props;
+export const ProductFilterModal: FC<FilterModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  producers, 
+  selectedProducerId, 
+  setSelectedProducerId,
+  activeOnly,
+  setActiveOnly,
+  view,
+  setView
+}) => {
 
   const [dragY, setDragY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);

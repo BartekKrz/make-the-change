@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation'
 import { trpc } from '@/lib/trpc'
 import { useMemo } from 'react'
-import { FC } from 'react'
+import { type FC } from 'react'
 import { OrderDetailController } from '@/app/admin/(dashboard)/orders/[id]/components/order-detail-controller'
 const AdminOrderEditPage: FC = () => {
   const params = useParams<{ id: string }>()

@@ -1,6 +1,7 @@
 'use client'
 
 import { Mail, Shield } from 'lucide-react'
+import type { FC } from 'react'
 
 type User = {
   email: string
@@ -11,7 +12,7 @@ type UserListMetadataProps = {
   user: User
 }
 
-export const UserListMetadata = ({ user }: UserListMetadataProps) => {
+export const UserListMetadata: FC<UserListMetadataProps> = ({ user }) => {
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 transition-colors duration-200 md:group-hover:text-foreground group-active:text-foreground">

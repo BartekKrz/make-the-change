@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState } from 'react';
 import { ImageUploader } from './image-uploader';
 import { cn } from '@/lib/utils';
@@ -12,13 +13,13 @@ type MultiImageUploaderProps =  {
   className?: string;
 }
 
-export const MultiImageUploader = ({
+export const MultiImageUploader: FC<MultiImageUploaderProps> = ({
   currentImages = [],
   onImagesChange,
   maxImages = 10,
   disabled = false,
   className = ''
-}: MultiImageUploaderProps) => {
+}) => {
   const [uploadingCount, setUploadingCount] = useState(0);
 
   const handleImageSelect = async (file: File | null) => {

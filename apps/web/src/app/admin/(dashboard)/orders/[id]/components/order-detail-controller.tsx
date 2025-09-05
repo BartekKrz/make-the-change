@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { OrderDetailLayout } from '@/app/admin/(dashboard)/orders/[id]/components/order-detail-layout';
 import { OrderCompactHeader } from '@/app/admin/(dashboard)/orders/[id]/components/order-compact-header';
 import { OrderDetailsEditor } from '@/app/admin/(dashboard)/orders/[id]/components/order-details-editor';

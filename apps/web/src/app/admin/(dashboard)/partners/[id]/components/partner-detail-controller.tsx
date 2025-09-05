@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { PartnerDetailLayout } from '@/app/admin/(dashboard)/partners/[id]/components/partner-detail-layout';
 import { PartnerCompactHeader } from '@/app/admin/(dashboard)/partners/[id]/components/partner-compact-header';
 import { PartnerDetailsEditor } from '@/app/admin/(dashboard)/partners/[id]/components/partner-details-editor';

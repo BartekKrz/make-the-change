@@ -3,19 +3,20 @@
 import { motion } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/card'
 import { TreePine, Flower, Zap, Users } from 'lucide-react'
+import type { FC } from 'react'
 
-interface ImpactMetrics {
+type ImpactMetrics = {
   treesPlanted: number
   beehivesSupported: number
   co2Offset: number
   localJobs: number
 }
 
-interface ImpactMetricsSectionProps {
+type ImpactMetricsSectionProps = {
   metrics?: ImpactMetrics
 }
 
-export const ImpactMetricsSection = ({ metrics }: ImpactMetricsSectionProps) => {
+export const ImpactMetricsSection: FC<ImpactMetricsSectionProps> = ({ metrics }) => {
   const defaultMetrics: ImpactMetrics = {
     treesPlanted: 1250,
     beehivesSupported: 45,

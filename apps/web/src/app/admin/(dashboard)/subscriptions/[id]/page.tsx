@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation'
 import { trpc } from '@/lib/trpc'
-import { FC } from 'react'
+import { type FC } from 'react'
 import { SubscriptionDetailController } from '@/app/admin/(dashboard)/subscriptions/[id]/components/subscription-detail-controller'
 
 const AdminSubscriptionEditPage: FC = () => {

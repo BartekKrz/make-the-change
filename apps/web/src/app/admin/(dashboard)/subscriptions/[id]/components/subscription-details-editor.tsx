@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, ChangeEvent } from 'react';
+import { type FC, type ChangeEvent } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card';
 import { Input } from '@/app/admin/(dashboard)/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/admin/(dashboard)/components/ui/select';

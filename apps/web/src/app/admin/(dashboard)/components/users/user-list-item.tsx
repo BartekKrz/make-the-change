@@ -3,6 +3,7 @@
 import { AdminListItem } from '@/app/admin/(dashboard)/components/ui/admin-list-item'
 import { UserListHeader } from './user-list-header'
 import { UserListMetadata } from './user-list-metadata'
+import type { FC } from 'react'
 
 type User = {
   id: string
@@ -17,7 +18,7 @@ type UserListItemProps = {
   actions?: React.ReactNode
 }
 
-export const UserListItem = ({ user, actions }: UserListItemProps) => {
+export const UserListItem: FC<UserListItemProps> = ({ user, actions }) => {
   return (
     <AdminListItem
       href={`/admin/users/${user.id}`}

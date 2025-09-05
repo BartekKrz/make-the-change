@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button'
 import { MapPin, Target, TrendingUp, Calendar } from 'lucide-react'
 import Link from 'next/link'
+import type { FC } from 'react'
 
-interface FeaturedProject {
+type FeaturedProject = {
   id: string
   name: string
   location: string
@@ -19,11 +20,11 @@ interface FeaturedProject {
   image?: string
 }
 
-interface FeaturedProjectsSectionProps {
+type FeaturedProjectsSectionProps = {
   projects?: FeaturedProject[]
 }
 
-export const FeaturedProjectsSection = ({ projects }: FeaturedProjectsSectionProps) => {
+export const FeaturedProjectsSection: FC<FeaturedProjectsSectionProps> = ({ projects }) => {
   const defaultProjects: FeaturedProject[] = [
     {
       id: '1',

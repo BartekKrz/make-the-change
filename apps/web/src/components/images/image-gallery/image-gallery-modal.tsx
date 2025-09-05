@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useEffect, useState, useCallback } from 'react';
+import { type FC, useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight, Eye, Edit3, Trash2 } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';

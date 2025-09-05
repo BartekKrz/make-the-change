@@ -1,6 +1,6 @@
 'use client'
 
-import type { ReactNode } from 'react'
+import type { ReactNode, FC } from 'react'
 import { cn } from '@/app/admin/(dashboard)/components/cn'
 
 type ListContainerProps = {
@@ -8,7 +8,7 @@ type ListContainerProps = {
   className?: string
 }
 
-export const ListContainer = ({ children, className }: ListContainerProps) => {
+export const ListContainer: FC<ListContainerProps> = ({ children, className }) => {
   return (
     <div className={cn(
       'divide-y divide-border/40 dark:divide-border/80',
