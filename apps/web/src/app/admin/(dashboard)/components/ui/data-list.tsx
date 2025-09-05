@@ -381,3 +381,178 @@ export const DataCard = Object.assign(DataCardComponent, {
   ContentItem: DataCardContentItem,
   Footer: DataCardFooter
 });
+
+// DataListItem - Composant pour les vues en liste avec composition
+export type DataListItemProps = {
+  href?: string;
+  onClick?: () => void;
+  className?: string;
+  testId?: string;
+};
+
+const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
+  children,
+  href,
+  onClick,
+  className,
+  testId
+}) => {
+  const router = useRouter();
+
+  const baseClasses = cn(
+    'group relative cursor-pointer',
+    '[padding:var(--density-spacing-md)] [margin:calc(var(--density-spacing-md)*-1)]',
+    'transition-all duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]',
+    'border border-transparent [border-radius:var(--radius-surface)]',
+    'md:hover:bg-gradient-to-r md:hover:from-primary/5 md:hover:via-background/20 md:hover:to-orange-500/5',
+    'md:hover:shadow-lg md:hover:shadow-primary/10 md:hover:border-primary/20',
+    'md:hover:scale-[1.005] md:hover:-translate-y-0.5',
+    'active:bg-gradient-to-r active:from-primary/4 active:via-background/15 active:to-orange-500/4',
+    'active:shadow-md active:shadow-primary/8 active:border-primary/15',
+    'active:scale-[0.998] active:translate-y-0',
+    'backdrop-blur-sm',
+    className
+  );
+
+  const handleCardClick = (event: React.MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (target.closest('a[href]') || target.closest('button')) {
+      return;
+    }
+
+    if (href) {
+      router.push(href);
+    }
+    onClick?.();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleCardClick(event as any);
+    }
+  };
+
+  return (
+    <div
+      className={baseClasses}
+      data-testid={testId}
+      onClick={handleCardClick}
+      onKeyDown={handleKeyDown}
+      role={onClick || href ? 'button' : undefined}
+      tabIndex={onClick || href ? 0 : undefined}
+    >
+      {/* Link invisible pour la navigation */}
+      {href && (
+        <div
+          className="absolute inset-0 z-10 block"
+          aria-label="Accéder aux détails"
+        />
+      )}
+
+      {/* Contenu avec z-index plus élevé */}
+      <div className="relative z-20 flex items-center justify-between pointer-events-none">
+        <div className="flex-1 min-w-0">
+          {children}
+        </div>
+
+        {/* Chevron indicator */}
+        {href && (
+          <div className="flex-shrink-0 ml-4 transition-all duration-300 md:group-hover:translate-x-1 md:group-hover:scale-110 group-active:translate-x-0.5 group-active:scale-105">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/10 [border-radius:var(--radius-pill)] scale-150 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300" />
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="drop-shadow-sm relative z-10"
+              >
+                <defs>
+                  <linearGradient id={`chevronGradient-${href.replace(/\W/g, '')}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#3b82f6" />
+                    <stop offset="100%" stopColor="#f59e0b" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="m9 18 6-6-6-6"
+                  stroke={`url(#chevronGradient-${href.replace(/\W/g, '')})`}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="opacity-50 md:group-hover:opacity-100 group-active:opacity-70 transition-all duration-300"
+                />
+              </svg>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Effets visuels */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/3 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none [border-radius:var(--radius-surface)]" />
+      <div className="absolute inset-0 ring-2 ring-primary/20 ring-offset-2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 [border-radius:var(--radius-surface)] pointer-events-none" />
+    </div>
+  );
+};
+
+type DataListItemHeaderProps = {
+  className?: string;
+};
+
+const DataListItemHeader: FC<PropsWithChildren<DataListItemHeaderProps>> = ({ 
+  children, 
+  className 
+}) => (
+  <div className={cn('[margin-bottom:var(--density-spacing-sm)]', className)}>
+    {children}
+  </div>
+);
+
+type DataListItemContentProps = {
+  className?: string;
+};
+
+const DataListItemContent: FC<PropsWithChildren<DataListItemContentProps>> = ({ 
+  children, 
+  className 
+}) => (
+  <div className={cn(
+    'space-y-2 text-sm text-muted-foreground transition-colors duration-300 md:group-hover:text-foreground/90',
+    className
+  )}>
+    {children}
+  </div>
+);
+
+type DataListItemActionsProps = {
+  className?: string;
+};
+
+const DataListItemActions: FC<PropsWithChildren<DataListItemActionsProps>> = ({ 
+  children, 
+  className 
+}) => {
+  const handleActionClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  return (
+    <div
+      className={cn(
+        'relative z-30 [margin-top:var(--density-spacing-md)] [padding-top:var(--density-spacing-sm)] border-t border-border/20 pointer-events-auto',
+        className
+      )}
+      onClick={handleActionClick}
+    >
+      {children}
+    </div>
+  );
+};
+
+export const DataListItem = Object.assign(DataListItemComponent, {
+  Header: DataListItemHeader,
+  Content: DataListItemContent,
+  Actions: DataListItemActions
+});

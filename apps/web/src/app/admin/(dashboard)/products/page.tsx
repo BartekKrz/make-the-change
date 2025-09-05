@@ -3,7 +3,7 @@ import { type FC, useCallback, useEffect, useMemo, useRef, useState } from 'reac
 import { Box, Package, Star, Zap } from 'lucide-react';
 import { AdminPageLayout, Filters, FilterModal } from '@/app/admin/(dashboard)/components/admin-layout';
 import { type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle';
-import { DataCard, DataList } from '@/app/admin/(dashboard)/components/ui/data-list';
+import { DataCard, DataList, DataListItem } from '@/app/admin/(dashboard)/components/ui/data-list';
 import { Badge } from '@/app/admin/(dashboard)/components/badge';
 import { Button } from '@/app/admin/(dashboard)/components/ui/button';
 import { CheckboxWithLabel } from '@/app/admin/(dashboard)/components/ui/checkbox';
@@ -11,73 +11,12 @@ import { SimpleSelect } from '@/app/admin/(dashboard)/components/ui/select';
 import { AdminPagination } from '@/app/admin/(dashboard)/components/layout/admin-pagination';
 import { trpc } from '@/lib/trpc';
 import { EmptyState } from '@/app/admin/(dashboard)/components/ui/empty-state';
-import { AdminListItem } from '../components/ui/admin-list-item';
 import { ProductListHeader } from '../components/products/product-list-header';
 import { ProductListMetadata } from '../components/products/product-list-metadata';
+import { ProductCardSkeleton, ProductListSkeleton } from './components/product-card';
 
 const pageSize = 18;
 
-// Skeleton spécialisé pour les cartes de produits
-const ProductCardSkeleton: FC = () => (
-  <DataCard>
-    <DataCard.Header>
-      <DataCard.Title>
-        <div className="flex items-center gap-3">
-          {/* Image du produit */}
-          <div className="w-12 h-12 bg-gray-200 [border-radius:var(--radius-surface)] animate-pulse flex-shrink-0" />
-          
-          {/* Titre et badges */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap mb-1">
-              <div className="w-32 h-5 bg-gray-200 [border-radius:var(--radius-xs)] animate-pulse" />
-              <div className="w-12 h-4 bg-gray-200 [border-radius:var(--radius-pill)] animate-pulse" />
-              <div className="w-4 h-4 bg-gray-200 [border-radius:var(--radius-xs)] animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </DataCard.Title>
-    </DataCard.Header>
-    
-    <DataCard.Content>
-      {/* Points et stock */}
-      <div className="flex items-center gap-4 flex-wrap text-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-3.5 h-3.5 bg-gray-200 [border-radius:var(--radius-xs)] animate-pulse" />
-          <div className="w-16 h-3 bg-gray-200 [border-radius:var(--radius-xs)] animate-pulse" />
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="w-3.5 h-3.5 bg-gray-200 [border-radius:var(--radius-xs)] animate-pulse" />
-          <div className="w-20 h-3 bg-gray-200 [border-radius:var(--radius-xs)] animate-pulse" />
-        </div>
-      </div>
-      
-      {/* Badges des catégories */}
-      <div className="flex flex-wrap gap-2 mt-2">
-        <div className="w-16 h-6 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
-        <div className="w-20 h-6 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
-        <div className="w-18 h-6 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
-      </div>
-    </DataCard.Content>
-    
-    <DataCard.Footer>
-      <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-        <div className="w-8 h-8 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
-        <div className="w-8 h-8 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
-        <div className="w-8 h-8 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
-        <div className="w-12 h-8 bg-gray-200 [border-radius:var(--radius-sm)] animate-pulse" />
-      </div>
-    </DataCard.Footer>
-  </DataCard>
-);
-
-// Skeleton spécialisé pour la vue liste
-const ProductListSkeleton: FC = () => (
-  <div className="surface-panel animate-pulse" 
-       style={{ minHeight: 'calc(var(--density-card-padding) * 4)' }}>
-    <div className="h-4 bg-gray-300 rounded mb-2" />
-    <div className="h-3 bg-gray-200 rounded w-3/4" />
-  </div>
-);
 
 type ProductProps = {
   product: any;
@@ -212,7 +151,7 @@ const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
             </Badge>
           )}
           {product.secondary_category && (
-            <Badge color="green">
+            <Badge color="gray">
               {product.secondary_category.name}
             </Badge>
           )}
@@ -233,12 +172,19 @@ const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
     </DataCard>
   );
 
-  return   <AdminListItem
-      href={`/admin/products/${product.id}`}
-      header={<ProductListHeader product={product} />}
-      metadata={<ProductListMetadata product={product} />}
-      actions={actions}
-    />
+  return (
+    <DataListItem href={`/admin/products/${product.id}`}>
+      <DataListItem.Header>
+        <ProductListHeader product={product} />
+      </DataListItem.Header>
+      <DataListItem.Content>
+        <ProductListMetadata product={product} />
+      </DataListItem.Content>
+      <DataListItem.Actions>
+        {actions}
+      </DataListItem.Actions>
+    </DataListItem>
+  );
 };
 
  const ProductsPage: FC = () => {
