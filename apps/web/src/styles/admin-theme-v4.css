@@ -26,17 +26,23 @@
   }
 
   /* Micro Components */
+  /* Badges et Pills - Utiliser couleur accent pour l'information */
   .micro-badge {
     border-radius: var(--radius-xs);
     padding: 0.125rem 0.375rem;
     font-size: 0.75rem;
     font-weight: 500;
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
   }
 
   .micro-pill {
     border-radius: var(--radius-pill);
     padding: 0.25rem 0.75rem;
     font-size: 0.875rem;
+    background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    color: var(--color-accent-dark);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 20%, transparent);
   }
   .admin-page-container {
     min-height: 100vh;
@@ -124,6 +130,18 @@
     height: var(--button-action-height);
   }
 
+  /* Boutons d'action - Utiliser couleur primaire */
+  .admin-button-action {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+    border: 1px solid var(--color-primary);
+  }
+  
+  .admin-button-action:hover {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+  }
+
   .admin-button-action:focus-visible {
     outline: 2px solid;
     outline-color: var(--color-primary);
@@ -134,11 +152,14 @@
     border-radius: 9999px;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
     transition: all 200ms ease;
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
   }
 
   .admin-button-fab:hover {
     box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
     transform: scale(1.05);
+    background-color: var(--color-primary-dark);
   }
 
   .admin-button-fab:active {
@@ -157,10 +178,11 @@
     border-radius: 0.375rem;
   }
 
+  /* Badges de filtre - Utiliser couleur accent pour l'information */
   .admin-filter-badge {
     width: 0.5rem;
     height: 0.5rem;
-    background-color: var(--color-primary);
+    background-color: var(--color-accent);
     border-radius: 9999px;
     margin-left: 0.25rem;
   }

@@ -10,30 +10,32 @@
   --color-popover: #ffffff;
   --color-popover-foreground: #111827;
 
-  /* Primary - Émeraude Dynamique */
-  --color-primary: #059669;
-  --color-primary-light: #0ba872;
-  --color-primary-dark: #008b5b;
-  --color-primary-foreground: #f0fdfa;
+  /* Primary - Vert Olivier Professionnel (Nature/Huile) */
+  --color-primary: #6b7c32;
+  --color-primary-light: #7d8f3a;
+  --color-primary-dark: #5a6829;
+  --color-primary-foreground: #f7f8f2;
 
-  /* Secondary - Neutres Chauds */
-  --color-secondary: #f3f4f6;
-  --color-secondary-dark: #e5e7eb;
-  --color-secondary-foreground: #111827;
+  /* Secondary - Terres Méditerranéennes */
+  --color-secondary: #f4f1eb;
+  --color-secondary-dark: #e8e2d6;
+  --color-secondary-foreground: #3c2e20;
 
-  /* Accent - Ambre Sophistiqué */
-  --color-accent: #f59e0b;
-  --color-accent-light: #f7a21b;
-  --color-accent-dark: #d97706;
-  --color-accent-foreground: #451a03;
+  /* Accent - Miel Doré Subtil (Soleil/Miel) */
+  --color-accent: #d4a574;
+  --color-accent-light: #ddb485;
+  --color-accent-dark: #c19660;
+  --color-accent-foreground: #2d1f14;
 
-  /* Palette Nature */
-  --color-emerald: #10b981;
-  --color-emerald-light: #34c759;
-  --color-ocean: #1e90ff;
-  --color-ocean-light: #4a9eff;
-  --color-earth: #8b6914;
+  /* Palette Biodiversité - Couleurs Contextuelles */
+  --color-olive: #6b7c32;        /* Huile d'olive, projets nature */
+  --color-olive-light: #7d8f3a;
+  --color-honey: #d4a574;        /* Miel, produits sucrés */
+  --color-honey-light: #ddb485;
+  --color-earth: #8b6914;        /* Terre, agriculture */
   --color-earth-light: #a67c1a;
+  --color-ocean: #4a90a4;        /* Eau, projets aquatiques */
+  --color-ocean-light: #5ba3b8;
 
   /* Sémantiques */
   --color-success: #10b981;
@@ -115,19 +117,19 @@
   --color-popover: #0f1419;
   --color-popover-foreground: #f8fafc;
 
-  --color-primary: #10b981;
-  --color-primary-light: #34d399;
-  --color-primary-dark: #059669;
-  --color-primary-foreground: #064e3b;
+  --color-primary: #7d8f3a;
+  --color-primary-light: #8fa045;
+  --color-primary-dark: #6b7c32;
+  --color-primary-foreground: #f7f8f2;
 
-  --color-secondary: #374151;
-  --color-secondary-dark: #1f2937;
-  --color-secondary-foreground: #f8fafc;
+  --color-secondary: #3c3530;
+  --color-secondary-dark: #2a251f;
+  --color-secondary-foreground: #f4f1eb;
 
-  --color-accent: #f59e0b;
-  --color-accent-light: #fbbf24;
-  --color-accent-dark: #d97706;
-  --color-accent-foreground: #451a03;
+  --color-accent: #ddb485;
+  --color-accent-light: #e6c396;
+  --color-accent-dark: #d4a574;
+  --color-accent-foreground: #2d1f14;
 
   --color-muted: #374151;
   --color-muted-foreground: #9ca3af;
@@ -172,6 +174,108 @@
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* 🎯 Design System - Action vs Information */
+  
+  /* Actions (Primary Color) - Éléments cliquables - Style subtil */
+  .action-primary {
+    border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+    background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+    color: var(--color-primary);
+  }
+  
+  .action-primary:hover {
+    border-color: var(--color-primary);
+    background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  }
+  
+  .link-primary {
+    color: var(--color-primary);
+  }
+  
+  .link-primary:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+  }
+  
+  .text-primary {
+    color: var(--color-primary);
+  }
+
+  /* Information - Style très subtil et moderne */
+  .badge-subtle {
+    background-color: var(--color-muted);
+    color: var(--color-muted-foreground);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
+  .tag-subtle {
+    background-color: color-mix(in srgb, var(--color-muted) 50%, transparent);
+    color: var(--color-muted-foreground);
+    border: 1px solid var(--color-border);
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+  }
+  
+  .text-data {
+    color: var(--color-foreground);
+    font-weight: 500;
+  }
+
+  /* Couleurs d'accent très subtiles - uniquement pour les éléments importants */
+  .badge-accent-subtle {
+    background-color: color-mix(in srgb, var(--color-accent) 3%, var(--color-muted));
+    color: color-mix(in srgb, var(--color-accent) 60%, var(--color-muted-foreground));
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
+  .text-accent-subtle {
+    color: color-mix(in srgb, var(--color-accent) 50%, var(--color-muted-foreground));
+  }
+
+  /* Classes contextuelles biodiversité - À utiliser avec parcimonie */
+  .badge-olive {
+    background-color: color-mix(in srgb, var(--color-olive) 8%, var(--color-muted));
+    color: color-mix(in srgb, var(--color-olive) 80%, var(--color-foreground));
+  }
+  
+  .badge-honey {
+    background-color: color-mix(in srgb, var(--color-honey) 8%, var(--color-muted));
+    color: color-mix(in srgb, var(--color-honey) 80%, var(--color-foreground));
+  }
+  
+  .badge-earth {
+    background-color: color-mix(in srgb, var(--color-earth) 8%, var(--color-muted));
+    color: color-mix(in srgb, var(--color-earth) 80%, var(--color-foreground));
+  }
+  
+  .badge-ocean {
+    background-color: color-mix(in srgb, var(--color-ocean) 8%, var(--color-muted));
+    color: color-mix(in srgb, var(--color-ocean) 80%, var(--color-foreground));
+  }
+
+  /* Status Colors - Pour différents états */
+  .status-success {
+    background-color: var(--color-success);
+    color: var(--color-success-foreground);
+  }
+  
+  .status-warning {
+    background-color: var(--color-warning);
+    color: var(--color-warning-foreground);
+  }
+  
+  .status-destructive {
+    background-color: var(--color-destructive);
+    color: var(--color-destructive-foreground);
   }
 }
 

@@ -24,6 +24,26 @@ type ProductProps = {
   };
 };
 
+const getProductContextClass = (product: any) => {
+  const name = product.name?.toLowerCase() || '';
+  const category = product.category?.name?.toLowerCase() || '';
+  const producer = product.producer?.name?.toLowerCase() || '';
+  
+  if (name.includes('miel') || name.includes('honey') || category.includes('miel')) {
+    return 'badge-honey';
+  }
+  if (name.includes('huile') || name.includes('olive') || name.includes('oil')) {
+    return 'badge-olive';
+  }
+  if (name.includes('eau') || name.includes('water') || name.includes('aqua') || producer.includes('ocean')) {
+    return 'badge-ocean';
+  }
+  if (producer.includes('terre') || category.includes('agriculture') || name.includes('terre')) {
+    return 'badge-earth';
+  }
+  return 'badge-accent-subtle';
+};
+
 export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
   const pendingRequest = useRef<NodeJS.Timeout | null>(null);
   const utils = trpc.useUtils();
@@ -93,19 +113,19 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
 
   const actions = (
     <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-      <Button size="sm" variant="outline" className="control-button" 
+      <Button size="sm" variant="outline" className="action-primary control-button" 
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(1); }}>
         +1
       </Button>
-      <Button disabled={product.stock_quantity === 0} size="sm" variant="outline" className="control-button"
+      <Button disabled={product.stock_quantity === 0} size="sm" variant="outline" className="action-primary control-button"
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(-1); }}>
         -1
       </Button>
-      <Button size="sm" variant="outline" className="control-button"
+      <Button size="sm" variant="outline" className="action-primary control-button"
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(); }}>
         {product.featured ? '★' : '☆'}
       </Button>
-      <Button size="sm" variant="outline" className="control-button"
+      <Button size="sm" variant="outline" className="action-primary control-button"
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(); }}>
         {product.is_active ? 'Off' : 'On'}
       </Button>
@@ -123,47 +143,46 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
         >
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-medium">{product.name}</span>
-            <Badge color={product.is_active ? 'green' : 'red'}>
+            <span className={`tag-subtle ${!product.is_active ? 'text-red-600' : ''}`}>
               {product.is_active ? 'actif' : 'inactif'}
-            </Badge>
-            {product.featured && <Star className="w-4 h-4 text-yellow-500" />}
+            </span>
+            {product.featured && <Star className="w-4 h-4 text-accent-subtle fill-current" />}
           </div>
         </DataCard.Title>
       </DataCard.Header>
       <DataCard.Content>
-        <div className="flex items-center gap-4 flex-wrap text-sm text-muted-foreground">
-          <div className="flex items-center gap-3">
-            <Zap className="w-3.5 h-3.5" />
-            <span>{product.price_points} pts</span>
+        <div className="flex items-center gap-4 flex-wrap text-sm">
+          <div className="flex items-center gap-2">
+            <Zap className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-data">{product.price_points} pts</span>
           </div>
-          <div className="flex items-center gap-3">
-            <Box className="w-3.5 h-3.5" />
-            <span>Stock: {product.stock_quantity ?? 0}</span>
+          <div className="flex items-center gap-2">
+            <Box className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-data">Stock: {product.stock_quantity ?? 0}</span>
           </div>
         </div>
           
         <div className="flex flex-wrap gap-2 mt-2">
           {product.category && (
-            <Badge color="green">
+            <span className="badge-subtle">
               {product.category.name}
-            </Badge>
+            </span>
           )}
           {product.secondary_category && (
-            <Badge color="gray">
+            <span className="tag-subtle">
               {product.secondary_category.name}
-            </Badge>
+            </span>
           )}
           {product.producer && (
-            <Badge color="blue">
+            <span className={getProductContextClass(product)}>
               {product.producer.name}
-            </Badge>
+            </span>
           )}
           {product.partner_source && (
-            <Badge color="yellow">
+            <span className="tag-subtle">
               {product.partner_source}
-            </Badge>
+            </span>
           )}
-            
         </div>
       </DataCard.Content>
       <DataCard.Footer>{actions}</DataCard.Footer>
@@ -190,31 +209,31 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
         
                 <span className="font-mono text-xs text-muted-foreground">{product.slug}</span>
         
-                <Badge color={product.is_active ? 'green' : 'red'}>
+                <span className={`tag-subtle ${!product.is_active ? 'text-red-600' : ''}`}>
                   {product.is_active ? 'actif' : 'inactif'}
-                </Badge>
+                </span>
         
-                {product.featured && <Star className="w-4 h-4 text-yellow-500" />}
+                {product.featured && <Star className="w-4 h-4 text-accent-subtle fill-current" />}
               </div>
             </div>
       </DataListItem.Header>
       <DataListItem.Content>
         <div className="space-y-2">
     <div className="flex items-center gap-4 flex-wrap">
-      <div className="flex items-center gap-2 transition-colors duration-200 md:group-hover:text-foreground group-active:text-foreground">
-        <Zap className="w-4 h-4 text-primary/70 md:group-hover:text-primary group-active:text-primary transition-colors duration-200" />
-        <span className="text-sm">{product.price_points} pts</span>
+      <div className="flex items-center gap-2">
+        <Zap className="w-4 h-4 text-muted-foreground" />
+        <span className="text-sm text-data">{product.price_points} pts</span>
       </div>
 
-      <div className="flex items-center gap-2 transition-colors duration-200 md:group-hover:text-foreground group-active:text-foreground">
-        <Box className="w-4 h-4 text-orange-500/70 md:group-hover:text-orange-500 group-active:text-orange-500 transition-colors duration-200" />
-        <span className="text-sm">Stock: {product.stock_quantity ?? 0}</span>
+      <div className="flex items-center gap-2">
+        <Box className="w-4 h-4 text-muted-foreground" />
+        <span className="text-sm text-data">Stock: {product.stock_quantity ?? 0}</span>
       </div>
 
       {product.producer && (
-        <div className="flex items-center gap-2 transition-colors duration-200 md:group-hover:text-foreground group-active:text-foreground">
-          <User className="w-4 h-4 text-blue-500/70 md:group-hover:text-blue-500 group-active:text-blue-500 transition-colors duration-200" />
-          <span className="text-sm">{product.producer.name}</span>
+        <div className="flex items-center gap-2">
+          <User className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">{product.producer.name}</span>
         </div>
       )}
     </div>
