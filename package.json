@@ -23,6 +23,7 @@
     "test": "turbo test",
     "clean": "turbo clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "types:generate": "./scripts/generate-types.sh",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "turbo build && changeset publish"

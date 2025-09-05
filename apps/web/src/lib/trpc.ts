@@ -2,8 +2,12 @@
 import { createTRPCReact } from '@trpc/react-query';
 import { httpBatchLink, loggerLink } from '@trpc/client';
 import type { AppRouter } from '@make-the-change/api';
+import type { inferRouterOutputs, inferRouterInputs } from '@trpc/server';
 
 export const trpc = createTRPCReact<AppRouter>();
+
+export type RouterOutputs = inferRouterOutputs<AppRouter>;
+export type RouterInputs = inferRouterInputs<AppRouter>;
 
 export const trpcClient = trpc.createClient({
   links: [

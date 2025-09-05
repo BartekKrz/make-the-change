@@ -9,6 +9,7 @@
     ".": "./src/index.ts",
     "./context": "./src/context.ts",
     "./routers": "./src/routers.ts",
+    "./types": "./src/types/index.ts",
     "./validators/partner": "./src/validators/partner.ts"
   },
   "scripts": {

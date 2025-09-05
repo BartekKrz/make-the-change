@@ -13,6 +13,17 @@ import { partnerRouter } from './router/admin/partner';
 import { adminSubscriptionsRouter } from './router/admin/subscriptions';
 import { imagesRouter } from './router/admin/images';
 import { categoriesRouter } from './router/admin/categories';
+import type { 
+  Product, 
+  ProductWithRelations, 
+  ProductListResponse,
+  Producer,
+  Category,
+  Order,
+  OrderWithItems,
+  User,
+  Project
+} from './types/database';
 
 // Supabase service client for server-side ops
 const supabaseUrl = process.env.SUPABASE_URL as string
@@ -341,7 +352,7 @@ export const appRouter = createRouter({
             })
             .optional()
         )
-        .query(async ({ input }) => {
+        .query(async ({ input }): Promise<ProductListResponse> => {
           // Query for items
           let q = supabase
             .from('products')
@@ -389,7 +400,7 @@ export const appRouter = createRouter({
           if (countError) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: countError.message })
 
           return { 
-            items: data, 
+            items: data as ProductWithRelations[], 
             nextCursor: data?.at(-1)?.id ?? null,
             total: count ?? 0
           }
@@ -412,14 +423,14 @@ export const appRouter = createRouter({
             min_tier: z.enum(['explorateur', 'protecteur', 'ambassadeur']).default('explorateur'),
           })
         )
-        .mutation(async ({ input }) => {
+        .mutation(async ({ input }): Promise<Product> => {
           const { data, error } = await supabase
             .from('products')
             .insert(input as any)
             .select()
             .single()
           if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
-          return data
+          return data as Product
         }),
 
       update: adminProcedure
@@ -445,7 +456,7 @@ export const appRouter = createRouter({
               .refine((p) => Object.keys(p).length > 0, 'Patch cannot be empty'),
           })
         )
-        .mutation(async ({ input }) => {
+        .mutation(async ({ input }): Promise<Product> => {
           console.log('🔄 Backend: admin.products.update - Début');
           console.log('📦 Input reçu:', JSON.stringify(input, null, 2));
 
@@ -489,7 +500,7 @@ export const appRouter = createRouter({
           });
 
           console.log('🎉 Backend: admin.products.update - Succès');
-          return data;
+          return data as Product;
         }),
 
       inventoryAdjust: adminProcedure
@@ -522,14 +533,14 @@ export const appRouter = createRouter({
         }),
 
       producers: adminProcedure
-        .query(async () => {
+        .query(async (): Promise<Producer[]> => {
           const { data, error } = await supabase
             .from('producers')
             .select('id, name, slug')
             .eq('status', 'active')
             .order('name', { ascending: true })
           if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
-          return data
+          return data as Producer[]
         }),
     }),
 
