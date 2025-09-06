@@ -131,7 +131,7 @@ export const DataList = <T,>({
   return (
     <div className={cn('space-y-6', className)} data-testid={testId}>
       {variant === 'grid' ? (
-        <div className={cn('grid', getGridClasses(gridCols), getSpacingClasses(spacing), 'items-stretch')}>
+        <div className={cn('grid', getGridClasses(gridCols), getSpacingClasses(spacing), 'items-stretch', 'auto-rows-fr')}>
           {items.map((item, index) => (
             <div key={getKey(item, index)} className='h-full'>
               {renderItem(item)}
@@ -196,7 +196,7 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
 
   const CardContent = () => (
     <>
-      {/* Image de fond optionnelle */}
+      
       {image && imageAlt && (
         <div className='absolute top-0 right-0 w-20 h-20 overflow-hidden [border-radius:var(--radius-surface)_var(--radius-surface)_0_0] opacity-10 md:group-hover:opacity-20 transition-opacity duration-300'>
           <Image
@@ -209,10 +209,10 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
         </div>
       )}
       
-      {}
+      
       <div className='relative [&_a]:relative [&_a]:z-10 [&_button]:relative [&_button]:z-10'>{children}</div>
 
-      {}
+      
       <div className='absolute inset-0 [border-radius:var(--radius-surface)] bg-gradient-to-r from-primary/5 via-background/20 to-orange-500/5 opacity-0 md:group-hover:opacity-100 group-active:opacity-60 transition-opacity duration-300' />
       <div className='absolute inset-0 [border-radius:var(--radius-surface)] bg-gradient-to-br from-background/30 via-background/20 to-background/30' />
       <div className='absolute inset-0 [border-radius:var(--radius-surface)] shadow-2xl shadow-primary/20 opacity-0 md:group-hover:opacity-100 group-active:opacity-50 transition-opacity duration-300 -z-10' />
@@ -341,7 +341,7 @@ type DataCardContentProps = {
 };
 
 const DataCardContent: FC<PropsWithChildren<DataCardContentProps>> = ({ children, className }) => (
-  <div className={cn('flex flex-col gap-y-1 flex-wrap gap-x-4 mt-6 mb-6 space-y-4 flex-grow', className)}>
+  <div className={cn('flex flex-col  mt-6 space-y-4 flex-1', className)}>
     {children}
   </div>
 );
@@ -518,7 +518,7 @@ const DataListItemContent: FC<PropsWithChildren<DataListItemContentProps>> = ({
   className 
 }) => (
   <div className={cn(
-    'space-y-2 text-sm text-muted-foreground transition-colors duration-300 md:group-hover:text-foreground/90',
+    'space-y-2  text-sm text-muted-foreground transition-colors duration-300 md:group-hover:text-foreground/90',
     className
   )}>
     {children}
