@@ -127,7 +127,7 @@
     font-size: 0.75rem;
     white-space: nowrap;
     padding: 0 0.5rem;
-    height: var(--button-action-height);
+    height: 2rem;
   }
 
   /* Boutons d'action - Utiliser couleur primaire */

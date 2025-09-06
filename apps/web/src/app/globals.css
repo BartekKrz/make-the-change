@@ -205,21 +205,28 @@
 
   /* Information - Style très subtil et moderne */
   .badge-subtle {
-    background-color: var(--color-muted);
-    color: var(--color-muted-foreground);
     padding: 0.25rem 0.75rem;
     border-radius: var(--radius-pill);
     font-size: 0.75rem;
     font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    background-color: var(--color-muted);
+    color: var(--color-muted-foreground);
   }
   
   .tag-subtle {
-    background-color: color-mix(in srgb, var(--color-muted) 50%, transparent);
-    color: var(--color-muted-foreground);
-    border: 1px solid var(--color-border);
     padding: 0.125rem 0.5rem;
     border-radius: var(--radius-sm);
     font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    background-color: color-mix(in srgb, var(--color-muted) 50%, transparent);
+    color: var(--color-muted-foreground);
+    border: 1px solid var(--color-border);
   }
   
   .text-data {
@@ -229,35 +236,66 @@
 
   /* Couleurs d'accent très subtiles - uniquement pour les éléments importants */
   .badge-accent-subtle {
-    background-color: color-mix(in srgb, var(--color-accent) 3%, var(--color-muted));
-    color: color-mix(in srgb, var(--color-accent) 60%, var(--color-muted-foreground));
     padding: 0.25rem 0.75rem;
     border-radius: var(--radius-pill);
     font-size: 0.75rem;
     font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    background-color: color-mix(in srgb, var(--color-accent) 3%, var(--color-muted));
+    color: color-mix(in srgb, var(--color-accent) 60%, var(--color-muted-foreground));
   }
   
   .text-accent-subtle {
     color: color-mix(in srgb, var(--color-accent) 50%, var(--color-muted-foreground));
   }
 
-  /* Classes contextuelles biodiversité - À utiliser avec parcimonie */
+  /* Classes contextuelles biodiversité - Style unifié */
   .badge-olive {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
     background-color: color-mix(in srgb, var(--color-olive) 8%, var(--color-muted));
     color: color-mix(in srgb, var(--color-olive) 80%, var(--color-foreground));
   }
   
   .badge-honey {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
     background-color: color-mix(in srgb, var(--color-honey) 8%, var(--color-muted));
     color: color-mix(in srgb, var(--color-honey) 80%, var(--color-foreground));
   }
   
   .badge-earth {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
     background-color: color-mix(in srgb, var(--color-earth) 8%, var(--color-muted));
     color: color-mix(in srgb, var(--color-earth) 80%, var(--color-foreground));
   }
   
   .badge-ocean {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
     background-color: color-mix(in srgb, var(--color-ocean) 8%, var(--color-muted));
     color: color-mix(in srgb, var(--color-ocean) 80%, var(--color-foreground));
   }
