@@ -20,7 +20,7 @@ const SelectTrigger = forwardRef<
     ref={ref}
     className={cn(
       // Base layout with design system tokens
-      'flex h-[var(--density-button-height)] w-full items-center justify-between',
+      'flex h-[var(--density-button-height)] w-full items-center justify-between cursor-pointer',
       'rounded-[var(--radius-control)] bg-background border border-border',
       'px-[var(--density-spacing-md)] py-[var(--density-spacing-sm)]',
       'text-sm font-medium text-foreground leading-relaxed',
@@ -254,7 +254,7 @@ export const SimpleSelect: FC<SimpleSelectProps> = ({
 }) => {
   
   return (
-    <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+    <Select  value={value} onValueChange={onValueChange} disabled={disabled}>
       <SelectTrigger className={className}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

@@ -385,9 +385,12 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
     'active:shadow-[var(--shadow-surface)] active:shadow-primary/8',
     'active:border-primary/40 active:scale-[0.999] active:translate-y-0',
     
-    // Enhanced focus with design system
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
+    // Enhanced focus with design system - only for keyboard navigation
+    'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
     'focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+    
+    // Remove focus styling for mouse interactions
+    'focus:not(:focus-visible):ring-0 focus:not(:focus-visible):ring-offset-0',
     
     // Modern glass effect
     'md:hover:backdrop-blur-md',
@@ -397,6 +400,8 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
   const handleCardClick = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
     if (target.closest('a[href]') || target.closest('button')) {
+      // Remove focus from the container when clicking on interactive elements
+      (event.currentTarget as HTMLElement)?.blur();
       return;
     }
 

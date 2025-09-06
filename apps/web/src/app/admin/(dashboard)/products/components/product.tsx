@@ -5,7 +5,6 @@ import { trpc } from "@/lib/trpc";
 import { type FC, useRef, startTransition } from "react";
 import { Package, Star, Zap, Box, User, Plus, Minus, Eye, EyeOff } from "lucide-react";
 import { DataCard, DataListItem } from "@/app/admin/(dashboard)/components/ui/data-list";
-import { getInitials } from "@/app/admin/(dashboard)/components/ui/format-utils";
 import type { RouterOutputs, RouterInputs } from '@/lib/trpc';
 import { cn } from "@/lib/utils";
 
@@ -53,6 +52,14 @@ const getProductContextClass = (product: ProductItem) => {
 export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilterChange }) => {
   const pendingRequest = useRef<NodeJS.Timeout | null>(null);
   const utils = trpc.useUtils();
+  
+  // Helper to remove focus from parent list item
+  const removeFocusFromParent = (e: any) => {
+    const listContainer = e.currentTarget.closest('[role="button"]');
+    if (listContainer) {
+      (listContainer as HTMLElement).blur();
+    }
+  };
   
   const updateProduct = trpc.admin.products.update.useMutation({
     onMutate: async ({ id, patch }) => {
@@ -156,7 +163,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
             size="sm" 
             variant="ghost" 
             className="h-10 px-3 rounded-none border-0 text-muted-foreground hover:text-primary hover:bg-primary/8 transition-all duration-200 active:scale-95"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(1); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFocusFromParent(e); adjustStock(1); }}
             title="Augmenter le stock"
             aria-label="Augmenter le stock"
           >
@@ -175,7 +182,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
             size="sm" 
             variant="ghost"
             className="h-10 px-3 rounded-none border-0 text-muted-foreground hover:text-destructive hover:bg-destructive/8 disabled:hover:text-muted-foreground disabled:hover:bg-transparent transition-all duration-200 active:scale-95"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(-1); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFocusFromParent(e); adjustStock(-1); }}
             title="Diminuer le stock"
             aria-label="Diminuer le stock"
           >
@@ -193,7 +200,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
               ? "bg-success border-success shadow-sm" 
               : "bg-muted border-border hover:bg-muted/80"
           )}
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(); }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFocusFromParent(e); toggleActive(); }}
           role="switch"
           aria-checked={product.is_active ? "true" : "false"}
           aria-label={product.is_active ? "Masquer le produit" : "Afficher le produit"}
@@ -354,8 +361,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                   src={product.images?.[0]}
                   alt={product.name}
                   size="xs"
-                  fallbackType="initials"
-                  initials={getInitials(product.name)}
+                  icon={Package}
                 />
               </div>
               <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -372,6 +378,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
+                      removeFocusFromParent(e);
                       if (onFilterChange) {
                         console.log('Filter by featured products');
                       }
@@ -411,6 +418,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  removeFocusFromParent(e);
                   if (onFilterChange && product.producer) {
                     onFilterChange.setProducer(product.producer.id);
                   }
@@ -433,6 +441,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  removeFocusFromParent(e);
                   if (onFilterChange && product.category) {
                     onFilterChange.setCategory(product.category.id);
                   }
@@ -448,6 +457,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  removeFocusFromParent(e);
                   if (onFilterChange && product.secondary_category) {
                     onFilterChange.setCategory(product.secondary_category.id);
                   }
@@ -470,6 +480,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  removeFocusFromParent(e);
                   if (onFilterChange) {
                     onFilterChange.addTag(tag);
                   }

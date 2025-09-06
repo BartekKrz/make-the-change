@@ -37,7 +37,7 @@ type CheckboxWithLabelProps = {
 const CheckboxWithLabel = forwardRef<ElementRef<typeof CheckboxPrimitive.Root>, CheckboxWithLabelProps>(
   ({ className, label, description, error, ...props }, ref: ForwardedRef<ElementRef<typeof CheckboxPrimitive.Root>>) => (
     <div className='space-y-2'>
-      <div className='flex items-center space-x-2'>
+      <div className='flex items-center space-x-2 cursor-pointer'>
         <Checkbox ref={ref} className={className} {...props} />
         {label && (
           <label
