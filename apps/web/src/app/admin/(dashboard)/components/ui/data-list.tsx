@@ -325,8 +325,8 @@ const DataCardTitle: FC<PropsWithChildren<DataCardTitleProps>> = ({
         />
       )}
       {shouldShowIcon && (
-        <div className='w-12 h-12 [border-radius:var(--radius-surface)] bg-gradient-to-br from-primary/10 to-orange-500/10 flex items-center justify-center border border-primary/20 flex-shrink-0'>
-          <Icon size={20} className='text-muted-foreground' />
+        <div className='w-21 h-21 [border-radius:var(--radius-surface)] bg-gradient-to-br from-primary/10 to-orange-500/10 flex items-center justify-center border border-primary/20 flex-shrink-0'>
+          <Icon size={32} className='text-muted-foreground' />
         </div>
       )}
       <div className='flex-1 min-w-0'>

@@ -9,9 +9,10 @@ import { getInitials } from "@/app/admin/(dashboard)/components/ui/format-utils"
 import type { RouterOutputs, RouterInputs } from '@/lib/trpc';
 
 type ProductUpdateInput = RouterInputs['admin']['products']['update']['patch'];
+type ProductItem = RouterOutputs['admin']['products']['list']['items'][number];
 
 type ProductProps = {
-  product: RouterOutputs['admin']['products']['list']['items'][number];
+  product: ProductItem;
   view: 'grid' | 'list';
   queryParams: {
     cursor?: string;
@@ -23,7 +24,7 @@ type ProductProps = {
   };
 };
 
-const getProductContextClass = (product: RouterOutputs['admin']['products']['list']['items'][number]) => {
+const getProductContextClass = (product: ProductItem) => {
   const name = product.name?.toLowerCase() || '';
   const category = product.category?.name?.toLowerCase() || '';
   const producer = product.producer?.name?.toLowerCase() || '';
@@ -53,11 +54,23 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
       const previousData = utils.admin.products.list.getData(queryParams);
 
       if (previousData?.items) {
+        const updateProductItem = (product: ProductItem): ProductItem => {
+          if (product.id === id) {
+            const updated: ProductItem = { ...product };
+            if (patch.stock_quantity !== undefined) {
+              updated.stock_quantity = patch.stock_quantity;
+            }
+            if (patch.is_active !== undefined) {
+              updated.is_active = patch.is_active;
+            }
+            return updated;
+          }
+          return product;
+        };
+        
         const updatedData = {
           ...previousData,
-          items: previousData.items.map((product: any) => 
-            product.id === id ? { ...product, ...patch } : product
-          )
+          items: previousData.items.map(updateProductItem)
         };
         utils.admin.products.list.setData(queryParams, updatedData);
       }
@@ -78,11 +91,23 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
     const currentData = utils.admin.products.list.getData(queryParams);
     
     if (currentData?.items) {
+      const updateProduct = (p: ProductItem): ProductItem => {
+        if (p.id === product.id) {
+          const updated: ProductItem = { ...p };
+          if (patch.stock_quantity !== undefined) {
+            updated.stock_quantity = patch.stock_quantity;
+          }
+          if (patch.is_active !== undefined) {
+            updated.is_active = patch.is_active;
+          }
+          return updated;
+        }
+        return p;
+      };
+      
       const optimisticData = {
         ...currentData,
-        items: currentData.items.map((p) => 
-          p.id === product.id ? { ...p, ...patch } : p
-        )
+        items: currentData.items.map(updateProduct)
       };
       utils.admin.products.list.setData(queryParams, optimisticData);
     }
