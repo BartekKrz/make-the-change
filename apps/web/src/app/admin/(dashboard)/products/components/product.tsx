@@ -2,7 +2,7 @@
 import { ProductImage } from "@/components/images/product-image";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
-import { FC, useRef, useCallback } from "react";
+import { type FC, useRef, startTransition } from "react";
 import { Package, Star, Zap, Box, User, Plus, Minus, Eye, EyeOff } from "lucide-react";
 import { DataCard, DataListItem } from "@/app/admin/(dashboard)/components/ui/data-list";
 import { getInitials } from "@/app/admin/(dashboard)/components/ui/format-utils";
@@ -49,87 +49,97 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
   const utils = trpc.useUtils();
   
   const updateProduct = trpc.admin.products.update.useMutation({
-    onMutate: async ({ id, patch }: { id: string; patch: ProductUpdateInput }) => {
+    onMutate: async ({ id, patch }) => {
       await utils.admin.products.list.cancel();
       const previousData = utils.admin.products.list.getData(queryParams);
 
-      if (previousData?.items) {
-        const updateProductItem = (product: ProductItem): ProductItem => {
-          if (product.id === id) {
-            const updated: ProductItem = { ...product };
-            if (patch.stock_quantity !== undefined) {
-              updated.stock_quantity = patch.stock_quantity;
-            }
-            if (patch.is_active !== undefined) {
-              updated.is_active = patch.is_active;
-            }
-            return updated;
-          }
-          return product;
-        };
+      // ✅ React 19: Optimistic update simplifié avec TanStack Query
+      utils.admin.products.list.setData(queryParams, (old) => {
+        if (!old?.items) return old;
         
-        const updatedData = {
-          ...previousData,
-          items: previousData.items.map(updateProductItem)
+        return {
+          ...old,
+          items: old.items.map((item: ProductItem) => {
+            if (item.id === id) {
+              const updated: ProductItem = { ...item };
+              if (patch.stock_quantity !== undefined) {
+                updated.stock_quantity = patch.stock_quantity;
+              }
+              if (patch.is_active !== undefined) {
+                updated.is_active = patch.is_active;
+              }
+              return updated;
+            }
+            return item;
+          })
         };
-        utils.admin.products.list.setData(queryParams, updatedData);
-      }
-      return { previousData, queryKey: queryParams };
+      });
+
+      return { previousData };
     },
     onError: (_err: any, _variables: any, context: any) => {
-      if (context?.previousData && context.queryKey) {
-        utils.admin.products.list.setData(context.queryKey, context.previousData);
+      if (context?.previousData) {
+        utils.admin.products.list.setData(queryParams, context.previousData);
       }
     },
   });
   
-  const debouncedMutation = useCallback((patch: ProductUpdateInput, delay = 500) => {
+  
+  // ✅ React 19: Fonction simple avec debouncing et startTransition
+  const debouncedMutation = (patch: ProductUpdateInput, delay = 500) => {
     if (pendingRequest.current) {
       clearTimeout(pendingRequest.current);
     }
 
-    const currentData = utils.admin.products.list.getData(queryParams);
-    
-    if (currentData?.items) {
-      const updateProduct = (p: ProductItem): ProductItem => {
-        if (p.id === product.id) {
-          const updated: ProductItem = { ...p };
-          if (patch.stock_quantity !== undefined) {
-            updated.stock_quantity = patch.stock_quantity;
-          }
-          if (patch.is_active !== undefined) {
-            updated.is_active = patch.is_active;
-          }
-          return updated;
-        }
-        return p;
-      };
+    // Optimistic update immédiat avec startTransition
+    startTransition(() => {
+      const currentData = utils.admin.products.list.getData(queryParams);
       
-      const optimisticData = {
-        ...currentData,
-        items: currentData.items.map(updateProduct)
-      };
-      utils.admin.products.list.setData(queryParams, optimisticData);
-    }
+      if (currentData?.items) {
+        const optimisticData = {
+          ...currentData,
+          items: currentData.items.map((p: ProductItem) => {
+            if (p.id === product.id) {
+              const updated: ProductItem = { ...p };
+              if (patch.stock_quantity !== undefined) {
+                updated.stock_quantity = patch.stock_quantity;
+              }
+              if (patch.is_active !== undefined) {
+                updated.is_active = patch.is_active;
+              }
+              return updated;
+            }
+            return p;
+          })
+        };
+        utils.admin.products.list.setData(queryParams, optimisticData);
+      }
+    });
 
+    // Mutation serveur différée
     pendingRequest.current = setTimeout(() => {
       updateProduct.mutate({ id: product.id, patch });
       pendingRequest.current = null;
     }, delay);
-  }, [product.id, updateProduct, utils, queryParams]);
+  };
 
-  const adjustStock = useCallback((delta: number) => {
+  // ✅ React 19: Plus besoin de useCallback - React Compiler optimise automatiquement
+  const adjustStock = (delta: number) => {
     const currentStock = product.stock_quantity || 0;
     const newStock = Math.max(0, currentStock + delta);
     if (newStock === currentStock) return;
-    debouncedMutation({ stock_quantity: newStock });
-  }, [product.stock_quantity, debouncedMutation]);
+    
+    startTransition(() => {
+      debouncedMutation({ stock_quantity: newStock });
+    });
+  };
 
-  
-  const toggleActive = useCallback(() => {
+  const toggleActive = () => {
     const newActive = !product.is_active;
-    debouncedMutation({ is_active: newActive }, 300);
-  }, [product.is_active, debouncedMutation]);
+    startTransition(() => {
+      debouncedMutation({ is_active: newActive }, 300);
+    });
+  };
 
   const actions = (
     <div className="flex items-center gap-2 flex-wrap">
