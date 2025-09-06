@@ -101,11 +101,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
     debouncedMutation({ stock_quantity: newStock });
   }, [product.stock_quantity, debouncedMutation]);
 
-  const toggleFeature = useCallback(() => {
-    const newFeatured = !product.featured;
-    debouncedMutation({ featured: newFeatured }, 300);
-  }, [product.featured, debouncedMutation]);
-
+  
   const toggleActive = useCallback(() => {
     const newActive = !product.is_active;
     debouncedMutation({ is_active: newActive }, 300);
@@ -121,10 +117,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(-1); }}>
         -1
       </Button>
-      <Button size="sm" variant="outline" className="action-primary control-button"
-        onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFeature(); }}>
-        {product.featured ? '★' : '☆'}
-      </Button>
+      
       <Button size="sm" variant="outline" className="action-primary control-button"
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(); }}>
         {product.is_active ? 'Off' : 'On'}
@@ -146,7 +139,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
             <span className={`tag-subtle ${!product.is_active ? 'text-red-600' : ''}`}>
               {product.is_active ? 'actif' : 'inactif'}
             </span>
-            {product.featured && <Star className="w-4 h-4 text-accent-subtle fill-current" />}
+            
           </div>
         </DataCard.Title>
       </DataCard.Header>
