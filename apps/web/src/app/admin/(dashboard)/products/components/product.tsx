@@ -246,7 +246,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
         >
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-medium">{product.name}</span>
-            <span className="font-medium">{product.short_description}</span>
+            <span className="font-medium text-xs text-gray-600">{product.short_description}</span>
           </div>
         </DataCard.Title>
       </DataCard.Header>
@@ -359,74 +359,127 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
         
                 <span className="font-mono text-xs text-muted-foreground">{product.slug}</span>
         
-                <span className={`tag-subtle ${!product.is_active ? 'text-red-600' : ''}`}>
-                  {product.is_active ? 'actif' : 'inactif'}
-                </span>
-        
-                {product.featured && <Star className="w-4 h-4 text-accent-subtle fill-current" />}
+             
+                {product.featured && (
+                  <button
+                    className="transition-all duration-200 hover:scale-110 hover:text-accent hover:drop-shadow-sm active:scale-95 cursor-pointer pointer-events-auto"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (onFilterChange) {
+                        console.log('Filter by featured products');
+                      }
+                    }}
+                    title="Filtrer par produits mis en avant"
+                  >
+                    <Star className="w-4 h-4 text-accent-subtle fill-current" />
+                  </button>
+                )}
               </div>
             </div>
       </DataListItem.Header>
       <DataListItem.Content>
-        <div className="space-y-2">
-    <div className="space-y-3">
-      {/* Métriques principales */}
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-5 h-5 rounded bg-accent/10">
-            <Zap className="w-3 h-3 text-accent" />
-          </div>
-          <div className="flex items-baseline gap-1">
-            <span className="text-sm font-semibold text-foreground tabular-nums">{product.price_points}</span>
-            <span className="text-xs text-muted-foreground">pts</span>
-          </div>
-        </div>
+        <div className="space-y-3">
+          {/* Métriques principales */}
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center w-5 h-5 rounded bg-accent/10">
+                <Zap className="w-3 h-3 text-accent" />
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-sm font-semibold text-foreground tabular-nums">{product.price_points}</span>
+                <span className="text-xs text-muted-foreground">pts</span>
+              </div>
+            </div>
 
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-5 h-5 rounded bg-muted/40">
-            <Box className="w-3 h-3 text-muted-foreground" />
-          </div>
-          <span className="text-sm font-medium text-foreground tabular-nums">{product.stock_quantity ?? 0}</span>
-        </div>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center w-5 h-5 rounded bg-muted/40">
+                <Box className="w-3 h-3 text-muted-foreground" />
+              </div>
+              <span className="text-sm font-medium text-foreground tabular-nums">{product.stock_quantity ?? 0}</span>
+            </div>
 
-        {product.producer && (
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <User className="w-4 h-4" />
-            <span className="text-sm font-medium truncate max-w-[120px]" title={product.producer.name}>
-              {product.producer.name}
-            </span>
+            {product.producer && (
+              <button
+                className="flex items-center gap-2 text-muted-foreground hover:shadow-sm hover:brightness-110 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (onFilterChange && product.producer) {
+                    onFilterChange.setProducer(product.producer.id);
+                  }
+                }}
+                title={`Filtrer par producteur: ${product.producer.name}`}
+              >
+                <User className="w-4 h-4" />
+                <span className="text-sm font-medium truncate max-w-[120px]">
+                  {product.producer.name}
+                </span>
+              </button>
+            )}
           </div>
-        )}
-      </div>
-      
-      {/* Tags subtils */}
-      {product.tags && product.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {product.tags.slice(0, 4).map(tag => (
-            <button 
-              key={tag} 
-              className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-muted/50 text-muted-foreground border border-muted/60 rounded-md hover:bg-muted hover:text-foreground hover:border-muted-foreground/80 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (onFilterChange) {
-                  onFilterChange.addTag(tag);
-                }
-              }}
-              title={`Filtrer par tag: ${tag}`}
-            >
-              {tag}
-            </button>
-          ))}
-          {product.tags.length > 4 && (
-            <span className="inline-flex items-center px-2 py-0.5 text-xs text-muted-foreground">
-              +{product.tags.length - 4} autres
-            </span>
-          )}
+
+          {/* Badges et tags cliquables */}
+          <div className="flex flex-wrap gap-2">
+            {product.category && (
+              <button 
+                className="badge-subtle hover:bg-primary/15 hover:text-primary hover:border-primary/30 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (onFilterChange && product.category) {
+                    onFilterChange.setCategory(product.category.id);
+                  }
+                }}
+                title={`Filtrer par catégorie: ${product.category.name}`}
+              >
+                {product.category.name}
+              </button>
+            )}
+            {product.secondary_category && (
+              <button 
+                className="tag-subtle hover:bg-accent/20 hover:text-accent-dark hover:border-accent/40 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (onFilterChange && product.secondary_category) {
+                    onFilterChange.setCategory(product.secondary_category.id);
+                  }
+                }}
+                title={`Filtrer par sous-catégorie: ${product.secondary_category.name}`}
+              >
+                {product.secondary_category.name}
+              </button>
+            )}
+            {product.partner_source && (
+              <span className="tag-subtle">
+                {product.partner_source}
+              </span>
+            )}
+            {/* Tags cliquables */}
+            {product.tags?.slice(0, 4).map(tag => (
+              <button 
+                key={tag} 
+                className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-muted/50 text-muted-foreground border border-muted/60 rounded-md hover:bg-muted hover:text-foreground hover:border-muted-foreground/80 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (onFilterChange) {
+                    onFilterChange.addTag(tag);
+                  }
+                }}
+                title={`Filtrer par tag: ${tag}`}
+              >
+                {tag}
+              </button>
+            ))}
+            {product.tags && product.tags.length > 4 && (
+              <span className="inline-flex items-center px-2 py-0.5 text-xs text-muted-foreground">
+                +{product.tags.length - 4} autres
+              </span>
+            )}
+          </div>
         </div>
-      )}
-    </div>
-  </div>
       </DataListItem.Content>
       <DataListItem.Actions>
         {actions}

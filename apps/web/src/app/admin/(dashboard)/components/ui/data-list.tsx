@@ -5,6 +5,7 @@ import type { LucideIcon } from 'lucide-react';
 import { useCallback } from 'react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ProductImage } from '@/components/images/product-image';
 
@@ -88,9 +89,9 @@ export const DataList = <T,>({
             ))}
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-5">
             {Array.from({ length: skeletonItems }).map((_, index) => (
-              <div key={index}>
+              <div key={index} className="py-1">
                 {renderSkeleton()}
               </div>
             ))}
@@ -139,9 +140,9 @@ export const DataList = <T,>({
           ))}
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-5">
           {items.map((item, index) => (
-            <div key={getKey(item, index)}>
+            <div key={getKey(item, index)} className="py-1">
               {renderItem(item)}
             </div>
           ))}
@@ -364,23 +365,32 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
   const router = useRouter();
 
   const baseClasses = cn(
+    // Base layout & behavior
     'group relative cursor-pointer',
     '[padding:var(--density-spacing-md)] [margin:calc(var(--density-spacing-md)*-1)]',
-   
-    'transition-all duration-200 ease-out',
-    'border border-transparent [border-radius:var(--radius-surface)]',
-    'will-change-transform',
-   
-    'md:hover:bg-gradient-to-r md:hover:from-primary/6 md:hover:via-background/40 md:hover:to-orange-500/6',
-    'md:hover:shadow-md md:hover:shadow-primary/8 md:hover:border-primary/25',
-    'md:hover:scale-[1.003] md:hover:-translate-y-0.5',
-   
-    'active:bg-gradient-to-r active:from-primary/8 active:via-background/50 active:to-orange-500/8',
-    'active:shadow-sm active:shadow-primary/6 active:border-primary/30',
-    'active:scale-[0.997] active:translate-y-0',
-   
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2',
-    'backdrop-blur-sm',
+    'rounded-[var(--radius-surface)] border border-transparent',
+    'will-change-transform backdrop-blur-sm',
+    
+    // Unified transition system 2025
+    'transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]',
+    
+    // Modern hover states with design system colors
+    'md:hover:bg-gradient-to-r md:hover:from-primary/8 md:hover:via-background/60 md:hover:to-accent/5',
+    'md:hover:shadow-[var(--shadow-card)] md:hover:shadow-primary/12',
+    'md:hover:border-primary/30 md:hover:scale-[1.001] md:hover:-translate-y-0.5',
+    'md:hover:z-10 md:hover:relative',
+    
+    // Refined active states
+    'active:bg-gradient-to-r active:from-primary/12 active:via-background/70 active:to-accent/8',
+    'active:shadow-[var(--shadow-surface)] active:shadow-primary/8',
+    'active:border-primary/40 active:scale-[0.999] active:translate-y-0',
+    
+    // Enhanced focus with design system
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
+    'focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+    
+    // Modern glass effect
+    'md:hover:backdrop-blur-md',
     className
   );
 
@@ -412,11 +422,13 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
       role={onClick || href ? 'button' : undefined}
       tabIndex={onClick || href ? 0 : undefined}
     >
-      {/* Link invisible pour la navigation */}
+      {/* Invisible navigation overlay with improved accessibility */}
       {href && (
-        <div
-          className="absolute inset-0 z-10 block"
-          aria-label="Accéder aux détails"
+        <Link
+          href={href}
+          className="absolute inset-0 z-10 block rounded-[var(--radius-surface)]"
+          aria-label="Accéder aux détails de cet élément"
+          tabIndex={-1}
         />
       )}
 
@@ -426,26 +438,29 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
           {children}
         </div>
 
-        {/* Chevron indicator amélioré */}
+          {/* Modern chevron indicator 2025 */}
         {href && (
-          <div className="flex-shrink-0 ml-4 transition-all duration-200 ease-out md:group-hover:translate-x-1 md:group-hover:scale-110 group-active:translate-x-0.5 group-active:scale-105">
+          <div className="flex-shrink-0 ml-4 transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)] md:group-hover:translate-x-1.5 md:group-hover:scale-110 group-active:translate-x-0.5 group-active:scale-105">
             <div className="relative">
-              <div className="absolute inset-0 bg-primary/15 [border-radius:var(--radius-pill)] scale-150 opacity-0 md:group-hover:opacity-100 transition-all duration-200 ease-out" />
+              {/* Animated background bubble */}
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/15 rounded-[var(--radius-pill)] scale-0 opacity-0 md:group-hover:scale-150 md:group-hover:opacity-100 transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.34,1.56,0.64,1)]" />
+              
+              {/* Enhanced chevron with micro-interaction */}
               <svg
                 width="20"
                 height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="drop-shadow-sm relative z-10 transition-transform duration-200 ease-out"
+                className="relative z-10 drop-shadow-sm transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]"
               >
                 <path
                   d="m9 18 6-6-6-6"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="opacity-60 text-primary md:group-hover:opacity-100 group-active:opacity-80 transition-all duration-200 ease-out"
+                  className="text-primary opacity-50 md:group-hover:opacity-100 md:group-hover:stroke-[3] group-active:opacity-80 transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]"
                 />
               </svg>
             </div>
@@ -453,9 +468,14 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
         )}
       </div>
 
-      {/* Effets visuels modernes 2025 */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/4 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 ease-out pointer-events-none [border-radius:var(--radius-surface)]" />
-      <div className="absolute inset-0 ring-2 ring-primary/30 ring-offset-2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 ease-out [border-radius:var(--radius-surface)] pointer-events-none" />
+      {/* Advanced visual effects 2025 */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/3 to-accent/2 opacity-0 md:group-hover:opacity-100 transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)] pointer-events-none rounded-[var(--radius-surface)]" />
+      
+      {/* Shimmer effect on hover */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent opacity-0 md:group-hover:opacity-100 transition-all duration-[var(--transition-slow)] ease-out pointer-events-none rounded-[var(--radius-surface)] translate-x-[-100%] md:group-hover:translate-x-[100%]" />
+      
+      {/* Enhanced focus ring */}
+      <div className="absolute inset-0 ring-2 ring-primary/40 ring-offset-2 ring-offset-background opacity-0 group-focus-within:opacity-100 transition-all duration-[var(--transition-fast)] ease-out rounded-[var(--radius-surface)] pointer-events-none" />
     </div>
   );
 };
@@ -482,7 +502,11 @@ const DataListItemContent: FC<PropsWithChildren<DataListItemContentProps>> = ({
   className 
 }) => (
   <div className={cn(
-    'space-y-2  text-sm text-muted-foreground transition-colors duration-300 md:group-hover:text-foreground/90',
+    // Enhanced content spacing and typography 2025
+    'space-y-[var(--density-spacing-sm)] text-sm text-muted-foreground',
+    'transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]',
+    'md:group-hover:text-foreground/95 md:group-hover:scale-[1.01]',
+    'group-active:text-foreground/85',
     className
   )}>
     {children}
@@ -505,7 +529,11 @@ const DataListItemActions: FC<PropsWithChildren<DataListItemActionsProps>> = ({
   return (
     <div
       className={cn(
-        'relative z-30 [margin-top:var(--density-spacing-md)] [padding-top:var(--density-spacing-sm)] border-t border-border/20 pointer-events-auto',
+        // Enhanced actions area with modern styling
+        'relative z-30 mt-[var(--density-spacing-md)] pt-[var(--density-spacing-sm)]',
+        'border-t border-border/30 pointer-events-auto',
+        'transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]',
+        'md:group-hover:border-border/50 md:group-hover:pt-[calc(var(--density-spacing-sm)*1.1)]',
         className
       )}
       onClick={handleActionClick}
