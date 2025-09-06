@@ -210,7 +210,7 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
       )}
       
       
-      <div className='relative [&_a]:relative [&_a]:z-10 [&_button]:relative [&_button]:z-10'>{children}</div>
+      <div className='relative flex flex-col h-full [&_a]:relative [&_a]:z-10 [&_button]:relative [&_button]:z-10'>{children}</div>
 
       
       <div className='absolute inset-0 [border-radius:var(--radius-surface)] bg-gradient-to-r from-primary/5 via-background/20 to-orange-500/5 opacity-0 md:group-hover:opacity-100 group-active:opacity-60 transition-opacity duration-300' />
@@ -341,7 +341,7 @@ type DataCardContentProps = {
 };
 
 const DataCardContent: FC<PropsWithChildren<DataCardContentProps>> = ({ children, className }) => (
-  <div className={cn('flex flex-col  mt-6 space-y-4 flex-1', className)}>
+  <div className={cn('flex flex-col  gap-2 flex-1 mb-4', className)}>
     {children}
   </div>
 );
@@ -353,7 +353,7 @@ type DataCardFooterProps = {
 const DataCardFooter: FC<PropsWithChildren<DataCardFooterProps>> = ({ children, className }) => (
   <div
     className={cn(
-      'border-t p-3 text-primary flex items-center justify-between text-sm font-medium group border-border pt-4 mt-auto',
+      'border-t px-0 pb-3 text-primary flex items-center justify-between text-sm font-medium group border-border pt-4 mt-auto',
       className
     )}
   >

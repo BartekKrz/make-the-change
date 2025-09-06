@@ -345,6 +345,8 @@ export const appRouter = createRouter({
               search: z.string().optional(),
               producerId: z.string().uuid().optional(),
               categoryId: z.string().uuid().optional(),
+              tags: z.array(z.string()).optional(),
+              sortBy: z.enum(['created_at_desc', 'created_at_asc', 'name_asc', 'name_desc', 'price_asc', 'price_desc', 'featured_first']).default('created_at_desc'),
               partnerSource: z.string().optional(),
               originCountry: z.string().optional(),
               limit: z.number().int().min(1).max(100).default(50),
@@ -353,6 +355,27 @@ export const appRouter = createRouter({
             .optional()
         )
         .query(async ({ input }): Promise<ProductListResponse> => {
+          // Helper function to apply sorting
+          const applySorting = (query: any, sortBy: string) => {
+            switch (sortBy) {
+              case 'created_at_asc':
+                return query.order('created_at', { ascending: true })
+              case 'name_asc':
+                return query.order('name', { ascending: true })
+              case 'name_desc':
+                return query.order('name', { ascending: false })
+              case 'price_asc':
+                return query.order('price_points', { ascending: true })
+              case 'price_desc':
+                return query.order('price_points', { ascending: false })
+              case 'featured_first':
+                return query.order('featured', { ascending: false }).order('created_at', { ascending: false })
+              case 'created_at_desc':
+              default:
+                return query.order('created_at', { ascending: false })
+            }
+          }
+
           // Query for items
           let q = supabase
             .from('products')
@@ -374,7 +397,10 @@ export const appRouter = createRouter({
                 slug
               )
             `)
-            .order('created_at', { ascending: false })
+          
+          // Apply sorting
+          q = applySorting(q, input?.sortBy || 'created_at_desc')
+          
           if (input?.activeOnly) q = q.eq('is_active', true)
           if (input?.search) q = q.or(`name.ilike.%${input.search}%,slug.ilike.%${input.search}%`)
           if (input?.producerId) q = q.eq('producer_id', input.producerId)
@@ -399,6 +425,14 @@ export const appRouter = createRouter({
           
           if (input?.partnerSource) q = q.eq('partner_source', input.partnerSource)
           if (input?.originCountry) q = q.eq('origin_country', input.originCountry)
+          
+          // Handle tags filtering - products must contain ALL selected tags
+          if (input?.tags && input.tags.length > 0) {
+            input.tags.forEach(tag => {
+              q = q.contains('tags', [tag])
+            })
+          }
+          
           if (input?.cursor) q = q.lt('id', input.cursor)
           q = q.limit(input?.limit ?? 50)
           const { data, error } = await q
@@ -430,6 +464,14 @@ export const appRouter = createRouter({
           }
           if (input?.partnerSource) countQ = countQ.eq('partner_source', input.partnerSource)
           if (input?.originCountry) countQ = countQ.eq('origin_country', input.originCountry)
+          
+          // Handle tags filtering for count query
+          if (input?.tags && input.tags.length > 0) {
+            for (const tag of input.tags) {
+              countQ = countQ.contains('tags', [tag])
+            }
+          }
+          
           const { count, error: countError } = await countQ
           if (countError) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: countError.message })
 
@@ -564,6 +606,52 @@ export const appRouter = createRouter({
             .single()
           if (error) throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found' })
           return data
+        }),
+
+      tags: adminProcedure
+        .input(
+          z.object({
+            activeOnly: z.boolean().default(true),
+            withStats: z.boolean().default(true),
+          }).optional()
+        )
+        .query(async ({ input }) => {
+          let query = supabase.from('products').select('tags')
+          
+          if (input?.activeOnly) {
+            query = query.eq('is_active', true)
+          }
+          
+          const { data: products, error } = await query
+          if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
+          
+          // Extract and count all tags
+          const tagCounts = new Map<string, number>()
+          
+          products?.forEach((product: any) => {
+            if (product.tags && Array.isArray(product.tags)) {
+              product.tags.forEach((tag: any) => {
+                if (tag && typeof tag === 'string' && tag.trim()) {
+                  const normalizedTag = tag.trim().toLowerCase()
+                  tagCounts.set(normalizedTag, (tagCounts.get(normalizedTag) || 0) + 1)
+                }
+              })
+            }
+          })
+          
+          // Convert to array and sort by usage count
+          const tags = Array.from(tagCounts.entries())
+            .map(([tag, count]) => ({
+              tag,
+              count: input?.withStats ? count : undefined
+            }))
+            .sort((a, b) => (b.count || 0) - (a.count || 0))
+          
+          return {
+            tags: tags.map(t => t.tag),
+            tagStats: input?.withStats ? tags : undefined,
+            total: tags.length
+          }
         }),
 
       producers: adminProcedure

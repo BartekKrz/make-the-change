@@ -1,11 +1,12 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
+
 import { Button } from '@/components/ui/button'
 import { MapPin, Target, TrendingUp, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import type { FC } from 'react'
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/app/admin/(dashboard)/components/ui/card'
 
 type FeaturedProject = {
   id: string

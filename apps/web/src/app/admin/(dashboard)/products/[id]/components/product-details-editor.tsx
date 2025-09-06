@@ -3,11 +3,12 @@ import { ImageGalleryModal } from "@/components/images/image-gallery";
 import { OptimizedImageMasonry } from "@/components/ui/optimized-image-masonry";
 import { ProductBlurService, type ProductBlurHash } from "@/lib/services/product-blur-service";
 import { ImageUploaderField } from "@/components/images/image-uploader";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
 import { ProductFormData, tierLabels, fulfillmentMethodLabels } from "@/lib/validators/product";
 import { Info, DollarSign, ImageIcon } from "lucide-react";
 import { type FC, type PropsWithChildren, useState, useEffect } from "react";
 import type { SaveStatus } from "@/app/admin/(dashboard)/products/[id]/types";
+import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card";
 
 type ProductDetailsEditorProps = {
   productData: ProductFormData & { id: string };

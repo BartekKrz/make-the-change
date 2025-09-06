@@ -1,5 +1,5 @@
 "use client"
-import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { type FC, useCallback, useEffect, useMemo, useState, useTransition, useDeferredValue, useOptimistic } from 'react';
 import { Package } from 'lucide-react';
 import { AdminPageLayout, Filters, FilterModal } from '@/app/admin/(dashboard)/components/admin-layout';
 import { AdminPageHeader, CreateButton } from '@/app/admin/(dashboard)/components/admin-layout/header';
@@ -10,7 +10,7 @@ import { Button } from '@/app/admin/(dashboard)/components/ui/button';
 import { CheckboxWithLabel } from '@/app/admin/(dashboard)/components/ui/checkbox';
 import { SimpleSelect } from '@/app/admin/(dashboard)/components/ui/select';
 import { AdminPagination } from '@/app/admin/(dashboard)/components/layout/admin-pagination';
-import { trpc } from '@/lib/trpc';
+import { RouterOutputs, trpc } from '@/lib/trpc';
 import { EmptyState } from '@/app/admin/(dashboard)/components/ui/empty-state';
 import { ProductCardSkeleton, ProductListSkeleton } from '@/app/admin/(dashboard)/products/components/product-card';
 import { Product } from '@/app/admin/(dashboard)/products/components/product';
@@ -20,8 +20,12 @@ const pageSize = 18;
 
 type SelectOption = { value: string; label: string };
 
+type Categories = RouterOutputs['admin']['categories']['list'];
 
-const createCategoryHierarchy = (categories: any[] | undefined): SelectOption[] => {
+
+type SortOption = 'created_at_desc' | 'created_at_asc' | 'name_asc' | 'name_desc' | 'price_asc' | 'price_desc' | 'featured_first';
+
+const createCategoryHierarchy = (categories: Categories | undefined): SelectOption[] => {
   if (!categories) return [{ value: 'all', label: 'Toutes les catégories' }];
   
   
@@ -63,32 +67,62 @@ const createSelectOptions = <T extends { id: string; name: string }>(
   ...(items?.map(item => ({ value: item.id, label: item.name })) || [])
 ];
 
+
+const sortOptions: SelectOption[] = [
+  { value: 'created_at_desc', label: 'Plus récents' },
+  { value: 'created_at_asc', label: 'Plus anciens' },
+  { value: 'name_asc', label: 'Nom (A-Z)' },
+  { value: 'name_desc', label: 'Nom (Z-A)' },
+  { value: 'price_asc', label: 'Prix croissant' },
+  { value: 'price_desc', label: 'Prix décroissant' },
+  { value: 'featured_first', label: 'Mis en avant' },
+];
+
+
+const defaultProducerOptions: SelectOption[] = [{ value: 'all', label: 'Tous les partenaires' }];
+const defaultCategoryOptions: SelectOption[] = [{ value: 'all', label: 'Toutes les catégories' }];
+const defaultTagOptions: SelectOption[] = [];
+
+
+const sortSelectionItems = sortOptions.map(option => ({
+  id: option.value,
+  name: option.label
+}));
+
  const ProductsPage: FC = () => {
   const [search, setSearch] = useState('');
   const [activeOnly, setActiveOnly] = useState(false);
   const [selectedProducerId, setSelectedProducerId] = useState<string | undefined>();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>();
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<SortOption>('created_at_desc');
   const [cursor, setCursor] = useState<string | undefined>();
   const [view, setView] = useState<ViewMode>('grid');
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);  
-  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  
+  // React 19: hooks pour les performances
+  const [isPendingFilters, startFilterTransition] = useTransition();
+  const deferredSearch = useDeferredValue(search);
+  const [optimisticTags, removeOptimisticTag] = useOptimistic(
+    selectedTags,
+    (currentTags, tagToRemove: string) => currentTags.filter(tag => tag !== tagToRemove)
+  );
 
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 300);
-    return () => clearTimeout(timer);
-  }, [search]);
 
   const queryParams = useMemo(() => ({
     cursor,
-    search: debouncedSearch || undefined,
+    search: deferredSearch || undefined,
     activeOnly: activeOnly || undefined,
     producerId: selectedProducerId === 'all' ? undefined : selectedProducerId,
     categoryId: selectedCategoryId === 'all' ? undefined : selectedCategoryId,
+    tags: selectedTags.length > 0 ? selectedTags : undefined,
+    sortBy: sortBy || undefined,
     limit: pageSize,
-  }), [cursor, debouncedSearch, activeOnly, selectedProducerId, selectedCategoryId]);
+  }), [cursor, deferredSearch, activeOnly, selectedProducerId, selectedCategoryId, selectedTags, sortBy]);
 
-  const { data: producers } = trpc.admin.products.producers.useQuery();
-  const { data: categories } = trpc.admin.categories.list.useQuery({ activeOnly: true });
+  const { data: producers, isPending: isPendingProducers } = trpc.admin.products.producers.useQuery();
+  const { data: categories, isPending: isPendingCategories } = trpc.admin.categories.list.useQuery({ activeOnly: true });
+  const { data: tagsData, isPending: isPendingTags } = trpc.admin.products.tags.useQuery({ activeOnly: true, withStats: true });
   const { 
     data: productsData,
     isLoading, 
@@ -102,24 +136,61 @@ const createSelectOptions = <T extends { id: string; name: string }>(
   const totalProducts = productsData?.total || 0;
   const totalPages = Math.ceil(totalProducts / pageSize);
 
+
   const producerOptions = useMemo((): SelectOption[] => 
-    createSelectOptions(producers, 'Tous les partenaires'), 
-    [producers]
+    (isPendingProducers || !producers) ? defaultProducerOptions : createSelectOptions(producers, 'Tous les partenaires'), 
+    [producers, isPendingProducers]
   );
 
   const categoryOptions = useMemo((): SelectOption[] => 
-    createCategoryHierarchy(categories), 
-    [categories]
+    (isPendingCategories || !categories) ? defaultCategoryOptions : createCategoryHierarchy(categories), 
+    [categories, isPendingCategories]
   );
 
+  const tagOptions = useMemo((): SelectOption[] => {
+    if (isPendingTags || !tagsData) return defaultTagOptions;
+    if (!tagsData?.tags) return [];
+    return tagsData.tags.map(tag => ({
+      value: tag,
+      label: tag
+    }));
+  }, [tagsData, isPendingTags]);
+
+  
+  const hasActiveFilters = useMemo(() => Boolean(
+    search.trim() ||
+    activeOnly ||
+    selectedProducerId ||
+    selectedCategoryId ||
+    selectedTags.length > 0 ||
+    sortBy !== 'created_at_desc'
+  ), [search, activeOnly, selectedProducerId, selectedCategoryId, selectedTags, sortBy]);
+
+  // Handlers optimisés avec useTransition
+  const handleFilterChange = useCallback((filterFn: () => void) => {
+    startFilterTransition(filterFn);
+  }, [startFilterTransition]);
+
   const resetFilters = useCallback(() => {
-    setSearch(''); 
-    setActiveOnly(false); 
-    setSelectedProducerId(undefined); 
-    setSelectedCategoryId(undefined);
-    setCursor(undefined); 
+    startFilterTransition(() => {
+      setSearch(''); 
+      setActiveOnly(false); 
+      setSelectedProducerId(undefined); 
+      setSelectedCategoryId(undefined);
+      setSelectedTags([]);
+      setSortBy('created_at_desc');
+      setCursor(undefined); 
+    });
     refetch();
-  }, [refetch]);
+  }, [refetch, startFilterTransition]);
+
+  // Handler optimisé pour la suppression de tags avec useOptimistic
+  const handleRemoveTag = useCallback((tagToRemove: string) => {
+    removeOptimisticTag(tagToRemove); // UX immédiate
+    handleFilterChange(() => {
+      setSelectedTags(prev => prev.filter(tag => tag !== tagToRemove));
+    });
+  }, [removeOptimisticTag, handleFilterChange]);
 
   return (
     <AdminPageLayout>
@@ -151,41 +222,100 @@ const createSelectOptions = <T extends { id: string; name: string }>(
               />
             </div>
             <div className="flex items-center gap-3">
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-muted-foreground flex items-center gap-2">
                 {totalProducts} produit{totalProducts > 1 ? 's' : ''}
+                {isPendingFilters && (
+                  <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                    <div className="animate-spin w-3 h-3 border border-muted-foreground/30 border-t-muted-foreground rounded-full"></div>
+                    Filtrage...
+                  </span>
+                )}
               </div>
               <CreateButton href="/admin/products/new" label="Nouveau produit" />
             </div>
           </div>
 
           {/* Ligne 2: Contrôles de filtrage et vue */}
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
             <div className="flex items-center gap-3 flex-wrap flex-1">
               <SimpleSelect
                 placeholder="Tous les partenaires"
                 value={selectedProducerId || 'all'}
-                onValueChange={(value) => setSelectedProducerId(value === 'all' ? undefined : value)}
+                onValueChange={(value) => handleFilterChange(() => setSelectedProducerId(value === 'all' ? undefined : value))}
                 options={producerOptions}
                 className="w-48"
+                disabled={isPendingProducers || !producers || isPendingFilters}
               />
               
               <SimpleSelect
                 placeholder="Toutes les catégories"
                 value={selectedCategoryId || 'all'}
-                onValueChange={(value) => setSelectedCategoryId(value === 'all' ? undefined : value)}
+                onValueChange={(value) => handleFilterChange(() => setSelectedCategoryId(value === 'all' ? undefined : value))}
                 options={categoryOptions}
                 className="w-52"
+                disabled={isPendingCategories || !categories || isPendingFilters}
+              />
+              
+              <SimpleSelect
+                placeholder="Trier par"
+                value={sortBy}
+                onValueChange={(value) => handleFilterChange(() => setSortBy(value as SortOption))}
+                options={sortOptions}
+                className="w-44"
+                disabled={isPendingFilters}
+              />
+              
+              {/* Tags selector */}
+              <SimpleSelect
+                placeholder="Tags..."
+                value=""
+                onValueChange={(value) => {
+                  if (value && !selectedTags.includes(value)) {
+                    handleFilterChange(() => setSelectedTags([...selectedTags, value]));
+                  }
+                }}
+                options={tagOptions}
+                className="w-40"
+                disabled={isPendingTags || !tagsData || isPendingFilters}
               />
               
               <CheckboxWithLabel
                 checked={activeOnly}
-                onCheckedChange={(v) => setActiveOnly(Boolean(v))}
+                onCheckedChange={(v) => handleFilterChange(() => setActiveOnly(Boolean(v)))}
                 label="Actifs uniquement"
+                disabled={isPendingFilters}
               />
-            </div>
-
-            <div className="flex items-center gap-3">
+              
+              {/* ViewToggle maintenant dans le même conteneur */}
               <ViewToggle value={view} onChange={setView} />
+              
+              {/* Bouton pour effacer tous les filtres */}
+              {hasActiveFilters && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetFilters}
+                  className="text-xs px-3 py-2 h-auto text-muted-foreground hover:text-foreground border-dashed"
+                >
+                  Effacer filtres
+                </Button>
+              )}
+              
+              {/* Affichage des tags sélectionnés avec useOptimistic */}
+              {optimisticTags.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {optimisticTags.map(tag => (
+                    <span 
+                      key={tag}
+                      className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-primary/10 text-primary border border-primary/20 rounded-md cursor-pointer hover:bg-primary/20"
+                      onClick={() => handleRemoveTag(tag)}
+                    >
+                      {tag}
+                      <span className="text-primary/60 hover:text-primary">×</span>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -257,9 +387,17 @@ const createSelectOptions = <T extends { id: string; name: string }>(
           />
           
           <Filters.Selection
+            items={sortSelectionItems}
+            selectedId={sortBy}
+            onSelectionChange={(id) => handleFilterChange(() => setSortBy((id || 'created_at_desc') as SortOption))}
+            label="Trier par"
+            allLabel=""
+          />
+          
+          <Filters.Selection
             items={producers || []}
             selectedId={selectedProducerId}
-            onSelectionChange={setSelectedProducerId}
+            onSelectionChange={(id) => handleFilterChange(() => setSelectedProducerId(id))}
             label="Partenaire"
             allLabel="Tous les partenaires"
           />
@@ -267,16 +405,45 @@ const createSelectOptions = <T extends { id: string; name: string }>(
           <Filters.Selection
             items={categories?.filter(cat => !cat.parent_id) || []}
             selectedId={selectedCategoryId}
-            onSelectionChange={setSelectedCategoryId}
+            onSelectionChange={(id) => handleFilterChange(() => setSelectedCategoryId(id))}
             label="Catégorie"
             allLabel="Toutes les catégories"
           />
           
+          <Filters.Selection
+            items={tagsData?.tags?.map(tag => ({ id: tag, name: tag })) || []}
+            selectedId=""
+            onSelectionChange={(tagId) => {
+              if (tagId && !selectedTags.includes(tagId)) {
+                handleFilterChange(() => setSelectedTags([...selectedTags, tagId]));
+              }
+            }}
+            label="Tags"
+            allLabel=""
+          />
+          
           <Filters.Toggle
             checked={activeOnly}
-            onCheckedChange={setActiveOnly}
+            onCheckedChange={(v) => handleFilterChange(() => setActiveOnly(v))}
             label="Afficher uniquement les éléments actifs"
           />
+          
+          {/* Bouton pour effacer tous les filtres en mobile */}
+          {hasActiveFilters && (
+            <div className="pt-4 border-t border-border/30">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  resetFilters();
+                  setIsFilterModalOpen(false);
+                }}
+                className="w-full text-muted-foreground hover:text-foreground border-dashed"
+              >
+                Effacer tous les filtres
+              </Button>
+            </div>
+          )}
         </Filters>
       </FilterModal>
     </AdminPageLayout>

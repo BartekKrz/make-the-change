@@ -53,7 +53,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
       await utils.admin.products.list.cancel();
       const previousData = utils.admin.products.list.getData(queryParams);
 
-      // ✅ React 19: Optimistic update simplifié avec TanStack Query
+      
       utils.admin.products.list.setData(queryParams, (old) => {
         if (!old?.items) return old;
         
@@ -85,13 +85,13 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
   });
   
   
-  // ✅ React 19: Fonction simple avec debouncing et startTransition
+  
   const debouncedMutation = (patch: ProductUpdateInput, delay = 500) => {
     if (pendingRequest.current) {
       clearTimeout(pendingRequest.current);
     }
 
-    // Optimistic update immédiat avec startTransition
+    
     startTransition(() => {
       const currentData = utils.admin.products.list.getData(queryParams);
       
@@ -116,14 +116,14 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
       }
     });
 
-    // Mutation serveur différée
+    
     pendingRequest.current = setTimeout(() => {
       updateProduct.mutate({ id: product.id, patch });
       pendingRequest.current = null;
     }, delay);
   };
 
-  // ✅ React 19: Plus besoin de useCallback - React Compiler optimise automatiquement
+  
   const adjustStock = (delta: number) => {
     const currentStock = product.stock_quantity || 0;
     const newStock = Math.max(0, currentStock + delta);
@@ -209,6 +209,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
         >
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-medium">{product.name}</span>
+            <span className="font-medium">{product.short_description}</span>
           </div>
         </DataCard.Title>
       </DataCard.Header>
@@ -245,6 +246,12 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
               {product.partner_source}
             </span>
           )}
+          {/* Affichage des tags */}
+          {product.tags?.slice(0, 3).map(tag => (
+            <span key={tag} className="inline-flex items-center px-2 py-1 text-xs bg-primary/10 text-primary border border-primary/20 rounded-md">
+              {tag}
+            </span>
+          ))}
         </div>
       </DataCard.Content>
       <DataCard.Footer>{actions}</DataCard.Footer>
@@ -299,6 +306,17 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
         </div>
       )}
     </div>
+    
+    {/* Tags dans la vue liste */}
+    {product.tags && product.tags.length > 0 && (
+      <div className="flex flex-wrap gap-1 mt-2">
+        {product.tags.slice(0, 4).map(tag => (
+          <span key={tag} className="inline-flex items-center px-2 py-1 text-xs bg-primary/10 text-primary border border-primary/20 rounded-md">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
   </div>
       </DataListItem.Content>
       <DataListItem.Actions>

@@ -1,7 +1,7 @@
 'use client'
 
+import { Card, CardContent } from '@/app/admin/(dashboard)/components/ui/card'
 import { motion } from 'framer-motion'
-import { Card, CardContent } from '@/components/ui/card'
 import { TreePine, Flower, Zap, Users } from 'lucide-react'
 import type { FC } from 'react'
 
