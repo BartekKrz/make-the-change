@@ -1,8 +1,8 @@
 "use client"
-import { type FC, useCallback, useEffect, useMemo, useState, useTransition, useDeferredValue, useOptimistic } from 'react';
+import { type FC, useCallback, useMemo, useState, useTransition, useDeferredValue, useOptimistic } from 'react';
 import { Package, Plus } from 'lucide-react';
 import { AdminPageLayout, Filters, FilterModal } from '@/app/admin/(dashboard)/components/admin-layout';
-import { AdminPageHeader, CreateButton } from '@/app/admin/(dashboard)/components/admin-layout/header';
+import { AdminPageHeader } from '@/app/admin/(dashboard)/components/admin-layout/header';
 import { ViewToggle, type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle';
 import { FilterButton } from '@/app/admin/(dashboard)/components/admin-layout/filter-modal';
 import {  DataList } from '@/app/admin/(dashboard)/components/ui/data-list';
@@ -12,7 +12,7 @@ import { SimpleSelect } from '@/app/admin/(dashboard)/components/ui/select';
 import { AdminPagination } from '@/app/admin/(dashboard)/components/layout/admin-pagination';
 import { RouterOutputs, trpc } from '@/lib/trpc';
 import { EmptyState } from '@/app/admin/(dashboard)/components/ui/empty-state';
-import { ProductCardSkeleton, ProductListSkeleton } from '@/app/admin/(dashboard)/products/components/product-card';
+import { ProductCardSkeleton, ProductListSkeleton } from '@/app/admin/(dashboard)/products/components/product-card-skeleton';
 import { Product } from '@/app/admin/(dashboard)/products/components/product';
 import Link from 'next/link';
 

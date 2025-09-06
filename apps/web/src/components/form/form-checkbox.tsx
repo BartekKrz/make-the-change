@@ -3,7 +3,8 @@
 import { type FC } from 'react'
 import { useAppForm } from '@/components/form'
 import { Checkbox } from '@/app/admin/(dashboard)/components/ui/checkbox'
-import { Badge } from '@/app/admin/(dashboard)/components/badge'
+import { Badge } from '@/app/admin/(dashboard)/components/ui/badge'
+
 
 type FormCheckboxProps = {
   label: string
