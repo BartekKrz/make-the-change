@@ -352,12 +352,12 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                   initials={getInitials(product.name)}
                 />
               </div>
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <h3 className="text-base font-medium text-foreground truncate">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <h3 className="text-lg font-semibold text-foreground truncate leading-tight tracking-tight">
                   {product.name}
                 </h3>
         
-                <span className="font-mono text-xs text-muted-foreground">{product.slug}</span>
+                <span className="font-mono text-xs text-muted-foreground/80 tracking-wider uppercase">{product.slug}</span>
         
              
                 {product.featured && (
@@ -386,9 +386,9 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
               <div className="flex items-center justify-center w-5 h-5 rounded bg-accent/10">
                 <Zap className="w-3 h-3 text-accent" />
               </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-sm font-semibold text-foreground tabular-nums">{product.price_points}</span>
-                <span className="text-xs text-muted-foreground">pts</span>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-base font-bold text-foreground tabular-nums tracking-tight">{product.price_points}</span>
+                <span className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide">pts</span>
               </div>
             </div>
 
@@ -396,7 +396,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
               <div className="flex items-center justify-center w-5 h-5 rounded bg-muted/40">
                 <Box className="w-3 h-3 text-muted-foreground" />
               </div>
-              <span className="text-sm font-medium text-foreground tabular-nums">{product.stock_quantity ?? 0}</span>
+              <span className="text-sm font-semibold text-foreground tabular-nums tracking-tight">{product.stock_quantity ?? 0}</span>
             </div>
 
             {product.producer && (
@@ -412,7 +412,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                 title={`Filtrer par producteur: ${product.producer.name}`}
               >
                 <User className="w-4 h-4" />
-                <span className="text-sm font-medium truncate max-w-[120px]">
+                <span className="text-sm font-medium truncate max-w-[120px] leading-relaxed">
                   {product.producer.name}
                 </span>
               </button>
@@ -460,7 +460,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
             {product.tags?.slice(0, 4).map(tag => (
               <button 
                 key={tag} 
-                className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-muted/50 text-muted-foreground border border-muted/60 rounded-md hover:bg-muted hover:text-foreground hover:border-muted-foreground/80 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
+                className="inline-flex items-center px-2.5 py-1 text-xs font-medium bg-muted/50 text-muted-foreground border border-muted/60 rounded-md hover:bg-muted hover:text-foreground hover:border-muted-foreground/80 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto tracking-wide leading-tight"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -474,7 +474,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
               </button>
             ))}
             {product.tags && product.tags.length > 4 && (
-              <span className="inline-flex items-center px-2 py-0.5 text-xs text-muted-foreground">
+              <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium text-muted-foreground/60 tracking-wide">
                 +{product.tags.length - 4} autres
               </span>
             )}
