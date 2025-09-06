@@ -3,10 +3,9 @@ import { ProductImage } from "@/components/images/product-image";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { FC, useRef, useCallback } from "react";
-import { Package, Star, Zap, Box, User } from "lucide-react";
+import { Package, Star, Zap, Box, User, Plus, Minus, Eye, EyeOff } from "lucide-react";
 import { DataCard, DataListItem } from "@/app/admin/(dashboard)/components/ui/data-list";
 import { getInitials } from "@/app/admin/(dashboard)/components/ui/format-utils";
-import { Badge } from "@/app/admin/(dashboard)/components/ui/badge";
 import type { RouterOutputs, RouterInputs } from '@/lib/trpc';
 
 type ProductUpdateInput = RouterInputs['admin']['products']['update']['patch'];
@@ -24,7 +23,7 @@ type ProductProps = {
   };
 };
 
-const getProductContextClass = (product: any) => {
+const getProductContextClass = (product: RouterOutputs['admin']['products']['list']['items'][number]) => {
   const name = product.name?.toLowerCase() || '';
   const category = product.category?.name?.toLowerCase() || '';
   const producer = product.producer?.name?.toLowerCase() || '';
@@ -49,7 +48,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
   const utils = trpc.useUtils();
   
   const updateProduct = trpc.admin.products.update.useMutation({
-    onMutate: async ({ id, patch }: { id: string; patch: any }) => {
+    onMutate: async ({ id, patch }: { id: string; patch: ProductUpdateInput }) => {
       await utils.admin.products.list.cancel();
       const previousData = utils.admin.products.list.getData(queryParams);
 
@@ -81,7 +80,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
     if (currentData?.items) {
       const optimisticData = {
         ...currentData,
-        items: currentData.items.map((p: any) => 
+        items: currentData.items.map((p) => 
           p.id === product.id ? { ...p, ...patch } : p
         )
       };
@@ -108,19 +107,58 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
   }, [product.is_active, debouncedMutation]);
 
   const actions = (
-    <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-      <Button size="sm" variant="outline" className="action-primary control-button" 
-        onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(1); }}>
-        +1
-      </Button>
-      <Button disabled={product.stock_quantity === 0} size="sm" variant="outline" className="action-primary control-button"
-        onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(-1); }}>
-        -1
-      </Button>
+    <div className="flex items-center gap-2 flex-wrap">
       
-      <Button size="sm" variant="outline" className="action-primary control-button"
-        onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(); }}>
-        {product.is_active ? 'Off' : 'On'}
+      <div className="flex items-center rounded-lg border border-primary/20 overflow-hidden bg-primary/5 shadow-sm">
+        <Button 
+          size="sm" 
+          variant="ghost" 
+          className="h-10 px-3 rounded-none border-0 hover:bg-primary/15 transition-colors"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(1); }}
+          title="Augmenter le stock"
+        >
+          <Plus className="w-4 h-4 text-primary" />
+        </Button>
+        <div className="px-4 py-2 bg-primary/10 text-sm font-mono min-w-[3rem] text-center border-x border-primary/20 text-primary font-semibold">
+          {product.stock_quantity || 0}
+        </div>
+        <Button 
+          disabled={product.stock_quantity === 0}
+          size="sm" 
+          variant="ghost"
+          className="h-10 px-3 rounded-none border-0 hover:bg-primary/15 disabled:opacity-50 transition-colors"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(-1); }}
+          title="Diminuer le stock"
+        >
+          <Minus className="w-4 h-4 text-primary" />
+        </Button>
+      </div>
+
+      
+
+      
+      <Button 
+        size="sm" 
+        variant="outline" 
+        className={`h-10 px-4 transition-all duration-200 ${
+          product.is_active 
+            ? 'bg-primary/12 border-primary/25 text-primary hover:bg-primary/18 shadow-sm' 
+            : 'bg-muted/50 border-muted-foreground/20 text-muted-foreground hover:bg-muted/80'
+        }`}
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(); }}
+        title={product.is_active ? "Masquer le produit" : "Afficher le produit"}
+      >
+        {product.is_active ? (
+          <>
+            <Eye className="w-4 h-4 mr-1" />
+            Visible
+          </>
+        ) : (
+          <>
+            <EyeOff className="w-4 h-4 mr-1" />
+            Masqué
+          </>
+        )}
       </Button>
     </div>
   );
@@ -136,10 +174,6 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
         >
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-medium">{product.name}</span>
-            <span className={`tag-subtle ${!product.is_active ? 'text-red-600' : ''}`}>
-              {product.is_active ? 'actif' : 'inactif'}
-            </span>
-            
           </div>
         </DataCard.Title>
       </DataCard.Header>
