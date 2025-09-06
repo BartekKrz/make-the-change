@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
 import { useAuth } from '@/hooks/use-auth';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/app/admin/(dashboard)/components/theme/theme-toggle';
 
 const navigationSections = [

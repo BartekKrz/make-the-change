@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState, useCallback, type FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/app/admin/(dashboard)/components/theme/theme-toggle';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/app/admin/(dashboard)/components/cn';

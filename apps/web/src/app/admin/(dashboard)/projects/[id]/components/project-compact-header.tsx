@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { type FC } from 'react';
 import { Target, Star, Euro, Calendar, Edit, X, Save, Info, ChevronDown, ChevronUp, TrendingUp } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 
 type ProjectData = {
   id: string;

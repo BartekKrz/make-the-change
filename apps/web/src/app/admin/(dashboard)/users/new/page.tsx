@@ -11,7 +11,7 @@ import {
   type UserFormData
 } from '@/lib/validators/user'
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card'
-import { Button } from '@/app/admin/(dashboard)/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/app/admin/(dashboard)/components/badge'
 import { useFormWithToast } from '@/hooks/use-form-with-toast'
 import { FormInput, FormSelect } from '@/components/form'

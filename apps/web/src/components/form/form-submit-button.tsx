@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 
 import { Plus } from 'lucide-react';
 
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 
 import { useFormContext } from '@/components/form/form-context';
 

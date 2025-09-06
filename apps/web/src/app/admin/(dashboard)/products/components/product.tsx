@@ -7,6 +7,7 @@ import { Package, Star, Zap, Box, User, Plus, Minus, Eye, EyeOff } from "lucide-
 import { DataCard, DataListItem } from "@/app/admin/(dashboard)/components/ui/data-list";
 import { getInitials } from "@/app/admin/(dashboard)/components/ui/format-utils";
 import type { RouterOutputs, RouterInputs } from '@/lib/trpc';
+import { cn } from "@/lib/utils";
 
 type ProductUpdateInput = RouterInputs['admin']['products']['update']['patch'];
 type ProductItem = RouterOutputs['admin']['products']['list']['items'][number];
@@ -21,6 +22,11 @@ type ProductProps = {
     producerId?: string;
     categoryId?: string;
     limit: number;
+  };
+  onFilterChange?: {
+    setCategory: (categoryId: string) => void;
+    setProducer: (producerId: string) => void;
+    addTag: (tag: string) => void;
   };
 };
 
@@ -44,7 +50,7 @@ const getProductContextClass = (product: ProductItem) => {
   return 'badge-accent-subtle';
 };
 
-export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
+export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilterChange }) => {
   const pendingRequest = useRef<NodeJS.Timeout | null>(null);
   const utils = trpc.useUtils();
   
@@ -142,59 +148,90 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
   };
 
   const actions = (
-    <div className="flex items-center gap-2 flex-wrap">
-      
-      <div className="flex items-center rounded-lg border border-primary/20 overflow-hidden bg-primary/5 shadow-sm">
-        <Button 
-          size="sm" 
-          variant="ghost" 
-          className="h-10 px-3 rounded-none border-0 hover:bg-primary/15 transition-colors"
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(1); }}
-          title="Augmenter le stock"
-        >
-          <Plus className="w-4 h-4 text-primary" />
-        </Button>
-        <div className="px-4 py-2 bg-primary/10 text-sm font-mono min-w-[3rem] text-center border-x border-primary/20 text-primary font-semibold">
-          {product.stock_quantity || 0}
+    <div className="flex items-center justify-between w-full gap-4">
+      <div className="flex items-center gap-3">
+        {/* Stock Control */}
+        <div className="inline-flex items-center bg-white border border-border rounded-xl shadow-sm overflow-hidden group">
+          <Button 
+            size="sm" 
+            variant="ghost" 
+            className="h-10 px-3 rounded-none border-0 text-muted-foreground hover:text-primary hover:bg-primary/8 transition-all duration-200 active:scale-95"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(1); }}
+            title="Augmenter le stock"
+            aria-label="Augmenter le stock"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+          
+          <div className="relative px-4 py-2 min-w-[4rem] text-center border-x border-border bg-muted/30">
+            <span className="text-sm font-semibold tabular-nums text-foreground">
+              {product.stock_quantity || 0}
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          </div>
+          
+          <Button 
+            disabled={product.stock_quantity === 0}
+            size="sm" 
+            variant="ghost"
+            className="h-10 px-3 rounded-none border-0 text-muted-foreground hover:text-destructive hover:bg-destructive/8 disabled:hover:text-muted-foreground disabled:hover:bg-transparent transition-all duration-200 active:scale-95"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(-1); }}
+            title="Diminuer le stock"
+            aria-label="Diminuer le stock"
+          >
+            <Minus className="w-4 h-4" />
+          </Button>
         </div>
-        <Button 
-          disabled={product.stock_quantity === 0}
-          size="sm" 
-          variant="ghost"
-          className="h-10 px-3 rounded-none border-0 hover:bg-primary/15 disabled:opacity-50 transition-colors"
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustStock(-1); }}
-          title="Diminuer le stock"
-        >
-          <Minus className="w-4 h-4 text-primary" />
-        </Button>
       </div>
 
-      
-
-      
-      <Button 
-        size="sm" 
-        variant="outline" 
-        className={`h-10 px-4 transition-all duration-200 ${
-          product.is_active 
-            ? 'bg-primary/12 border-primary/25 text-primary hover:bg-primary/18 shadow-sm' 
-            : 'bg-muted/50 border-muted-foreground/20 text-muted-foreground hover:bg-muted/80'
-        }`}
-        onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(); }}
-        title={product.is_active ? "Masquer le produit" : "Afficher le produit"}
-      >
-        {product.is_active ? (
-          <>
-            <Eye className="w-4 h-4 mr-1" />
-            Visible
-          </>
-        ) : (
-          <>
-            <EyeOff className="w-4 h-4 mr-1" />
-            Masqué
-          </>
-        )}
-      </Button>
+      {/* Visibility Toggle */}
+      <div className="flex items-center gap-2">
+        <div 
+          className={cn(
+            "relative inline-flex h-6 w-11 cursor-pointer rounded-full border-2 transition-all duration-200 ease-in-out focus-within:ring-2 focus-within:ring-primary/20",
+            product.is_active 
+              ? "bg-success border-success shadow-sm" 
+              : "bg-muted border-border hover:bg-muted/80"
+          )}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleActive(); }}
+          role="switch"
+          aria-checked={product.is_active ? "true" : "false"}
+          aria-label={product.is_active ? "Masquer le produit" : "Afficher le produit"}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (!(e.key === 'Enter' || e.key === ' ')) return;
+            e.preventDefault();
+            e.stopPropagation();
+            toggleActive();
+          }}
+        >
+          <span
+            className={cn(
+              "inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform duration-200 ease-in-out",
+              product.is_active ? "translate-x-5" : "translate-x-0"
+            )}
+          />
+        </div>
+        
+        <div className="flex items-center gap-1.5 text-sm">
+          <div className={cn(
+            "flex items-center justify-center transition-colors duration-200",
+            product.is_active ? "text-success" : "text-muted-foreground"
+          )}>
+            {product.is_active ? (
+              <Eye className="w-4 h-4" />
+            ) : (
+              <EyeOff className="w-4 h-4" />
+            )}
+          </div>
+          <span className={cn(
+            "font-medium transition-colors duration-200",
+            product.is_active ? "text-foreground" : "text-muted-foreground"
+          )}>
+            {product.is_active ? "Visible" : "Masqué"}
+          </span>
+        </div>
+      </div>
     </div>
   );
 
@@ -227,30 +264,74 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
           
         <div className="flex flex-wrap gap-2 mt-2">
           {product.category && (
-            <span className="badge-subtle">
+            <button 
+              className="badge-subtle hover:bg-primary/15 hover:text-primary hover:border-primary/30 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (onFilterChange && product.category) {
+                  onFilterChange.setCategory(product.category.id);
+                }
+              }}
+              title={`Filtrer par catégorie: ${product.category.name}`}
+            >
               {product.category.name}
-            </span>
+            </button>
           )}
           {product.secondary_category && (
-            <span className="tag-subtle">
+            <button 
+              className="tag-subtle hover:bg-accent/20 hover:text-accent-dark hover:border-accent/40 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (onFilterChange && product.secondary_category) {
+                  onFilterChange.setCategory(product.secondary_category.id);
+                }
+              }}
+              title={`Filtrer par sous-catégorie: ${product.secondary_category.name}`}
+            >
               {product.secondary_category.name}
-            </span>
+            </button>
           )}
           {product.producer && (
-            <span className={getProductContextClass(product)}>
+            <button 
+              className={cn(
+                getProductContextClass(product),
+                "hover:shadow-sm hover:scale-105 hover:brightness-110 transition-all duration-200 cursor-pointer active:scale-95"
+              )}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (onFilterChange && product.producer) {
+                  onFilterChange.setProducer(product.producer.id);
+                }
+              }}
+              title={`Filtrer par producteur: ${product.producer.name}`}
+            >
               {product.producer.name}
-            </span>
+            </button>
           )}
           {product.partner_source && (
             <span className="tag-subtle">
               {product.partner_source}
             </span>
           )}
-          {/* Affichage des tags */}
+          {/* Tags cliquables */}
           {product.tags?.slice(0, 3).map(tag => (
-            <span key={tag} className="inline-flex items-center px-2 py-1 text-xs bg-primary/10 text-primary border border-primary/20 rounded-md">
+            <button 
+              key={tag} 
+              className="inline-flex items-center px-2 py-1 text-xs bg-muted/50 text-muted-foreground border border-muted/60 rounded-md hover:bg-muted hover:text-foreground hover:border-muted-foreground/80 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (onFilterChange) {
+                  onFilterChange.addTag(tag);
+                }
+              }}
+              title={`Filtrer par tag: ${tag}`}
+            >
               {tag}
-            </span>
+            </button>
           ))}
         </div>
       </DataCard.Content>
@@ -288,35 +369,63 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams }) => {
       </DataListItem.Header>
       <DataListItem.Content>
         <div className="space-y-2">
-    <div className="flex items-center gap-4 flex-wrap">
-      <div className="flex items-center gap-2">
-        <Zap className="w-4 h-4 text-muted-foreground" />
-        <span className="text-sm text-data">{product.price_points} pts</span>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <Box className="w-4 h-4 text-muted-foreground" />
-        <span className="text-sm text-data">Stock: {product.stock_quantity ?? 0}</span>
-      </div>
-
-      {product.producer && (
+    <div className="space-y-3">
+      {/* Métriques principales */}
+      <div className="flex items-center gap-6">
         <div className="flex items-center gap-2">
-          <User className="w-4 h-4 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">{product.producer.name}</span>
+          <div className="flex items-center justify-center w-5 h-5 rounded bg-accent/10">
+            <Zap className="w-3 h-3 text-accent" />
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-sm font-semibold text-foreground tabular-nums">{product.price_points}</span>
+            <span className="text-xs text-muted-foreground">pts</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center w-5 h-5 rounded bg-muted/40">
+            <Box className="w-3 h-3 text-muted-foreground" />
+          </div>
+          <span className="text-sm font-medium text-foreground tabular-nums">{product.stock_quantity ?? 0}</span>
+        </div>
+
+        {product.producer && (
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <User className="w-4 h-4" />
+            <span className="text-sm font-medium truncate max-w-[120px]" title={product.producer.name}>
+              {product.producer.name}
+            </span>
+          </div>
+        )}
+      </div>
+      
+      {/* Tags subtils */}
+      {product.tags && product.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {product.tags.slice(0, 4).map(tag => (
+            <button 
+              key={tag} 
+              className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-muted/50 text-muted-foreground border border-muted/60 rounded-md hover:bg-muted hover:text-foreground hover:border-muted-foreground/80 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (onFilterChange) {
+                  onFilterChange.addTag(tag);
+                }
+              }}
+              title={`Filtrer par tag: ${tag}`}
+            >
+              {tag}
+            </button>
+          ))}
+          {product.tags.length > 4 && (
+            <span className="inline-flex items-center px-2 py-0.5 text-xs text-muted-foreground">
+              +{product.tags.length - 4} autres
+            </span>
+          )}
         </div>
       )}
     </div>
-    
-    {/* Tags dans la vue liste */}
-    {product.tags && product.tags.length > 0 && (
-      <div className="flex flex-wrap gap-1 mt-2">
-        {product.tags.slice(0, 4).map(tag => (
-          <span key={tag} className="inline-flex items-center px-2 py-1 text-xs bg-primary/10 text-primary border border-primary/20 rounded-md">
-            {tag}
-          </span>
-        ))}
-      </div>
-    )}
   </div>
       </DataListItem.Content>
       <DataListItem.Actions>

@@ -3,7 +3,7 @@
 import { type FC, useState, useEffect, type TouchEvent } from 'react';
 import { X } from 'lucide-react';
 import { ViewToggle, type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { CheckboxWithLabel } from '@/app/admin/(dashboard)/components/ui/checkbox';
 
 

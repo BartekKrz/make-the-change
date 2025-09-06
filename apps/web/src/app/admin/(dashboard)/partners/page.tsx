@@ -11,7 +11,7 @@ import { AdminPageContainer } from '@/app/admin/(dashboard)/components/layout/ad
 import { AdminPageHeader } from '@/app/admin/(dashboard)/components/layout/admin-page-header'
 import { AdminPagination } from '@/app/admin/(dashboard)/components/layout/admin-pagination'
 import { ViewToggle, type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle'
-import { Button } from '@/app/admin/(dashboard)/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/app/admin/(dashboard)/components/ui/input'
 import { SimpleSelect } from '@/app/admin/(dashboard)/components/ui/select'
 import { Building2, Mail, Plus } from 'lucide-react'

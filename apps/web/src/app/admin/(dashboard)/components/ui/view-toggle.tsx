@@ -1,6 +1,6 @@
 "use client"
 import { type FC } from 'react'
-import { Button } from '@/app/admin/(dashboard)/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { LayoutGrid, List, MapPin } from 'lucide-react'
 
 export type ViewMode = 'grid' | 'list' | 'map'

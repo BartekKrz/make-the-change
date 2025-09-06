@@ -9,7 +9,7 @@ import { ArrowLeft, Package, Plus } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/app/admin/(dashboard)/components/badge';
 import { useAppForm, FormInput, FormTextArea, FormSelect } from '@/components/form';
 

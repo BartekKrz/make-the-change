@@ -4,7 +4,7 @@ import { type FC, useState } from 'react';
 import Image from 'next/image';
 import { GripVertical, X, Eye, ArrowLeft, ArrowRight } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 
 type ImageManagerProps = {
   images: string[];

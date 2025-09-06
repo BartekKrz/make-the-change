@@ -2,7 +2,7 @@
 
 import { type FC } from 'react'
 import { Menu } from 'lucide-react'
-import { Button } from '@/app/admin/(dashboard)/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { useAdminSidebar } from '@/app/admin/(dashboard)/components/layout/admin-sidebar-context'
 import { CompactThemeToggle } from '@/app/admin/(dashboard)/components/theme/compact-theme-toggle'
 

@@ -6,7 +6,7 @@ import { type FC } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card'
-import { Button } from '@/app/admin/(dashboard)/components/ui/button'
+import { Button } from '@/components/ui/button'
 
 const AdminDashboardPage = () => {
   const { user, loading, signOut } = useAuth()

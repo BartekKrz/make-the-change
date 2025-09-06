@@ -3,7 +3,7 @@
 import type { FC, PropsWithChildren } from 'react';
 import { Building2, Mail, Save } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { useFormWithToast } from '@/hooks/use-form-with-toast';
 import { FormInput, FormSelect, FormTextArea } from '@/components/form';
 import { partnerFormSchema, partnerStatusLabels, type PartnerFormData } from '@make-the-change/api/validators/partner';

@@ -2,7 +2,7 @@
 
 import { type FC } from 'react'
 import { Menu, Search, Bell } from 'lucide-react'
-import { Button } from '@/app/admin/(dashboard)/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { CompactThemeToggle } from '@/app/admin/(dashboard)/components/theme/compact-theme-toggle'
 import { useMobile } from '@/app/admin/(dashboard)/components/layout/mobile-context'
 

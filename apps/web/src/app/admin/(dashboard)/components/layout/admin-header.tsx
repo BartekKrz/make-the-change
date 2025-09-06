@@ -2,7 +2,7 @@
 
 import { type FC } from 'react'
 import { ThemeToggle } from '@/app/admin/(dashboard)/components/theme/theme-toggle'
-import { Button } from '@/app/admin/(dashboard)/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Bell, Search, User } from 'lucide-react'
 
 export const AdminHeader: FC = () => (

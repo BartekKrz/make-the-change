@@ -12,7 +12,7 @@ import {
 } from '@/lib/validators/product'
 import { generateSlug } from '@/lib/form-utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card'
-import { Button } from '@/app/admin/(dashboard)/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/app/admin/(dashboard)/components/badge'
 import { useAppForm, FormInput, FormTextArea, FormSelect, FormCheckbox } from '@/components/form'
 import { ArrowLeft, Package, Plus } from 'lucide-react'

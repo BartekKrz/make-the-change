@@ -1,9 +1,10 @@
 'use client';
 import { type ViewMode } from '../ui/view-toggle';
 import { ViewToggle } from '../ui/view-toggle';
-import { Button } from '../ui/button';
+
 import { CheckboxWithLabel } from '../ui/checkbox';
 import { FC, type ReactNode } from 'react';
+import { Button } from '@/components/ui/button';
 
 type FiltersProps = {
   children: ReactNode;

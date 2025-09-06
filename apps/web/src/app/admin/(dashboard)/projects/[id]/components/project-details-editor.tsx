@@ -3,7 +3,7 @@
 import type { FC, PropsWithChildren } from 'react';
 import { Save, ImageIcon, Info, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { useFormWithToast } from '@/hooks/use-form-with-toast';
 import { FormInput, FormSelect, FormTextArea } from '@/components/form';
 import {  projectTypeLabels, projectStatusLabels, type ProjectFormData } from '@/lib/validators/project';

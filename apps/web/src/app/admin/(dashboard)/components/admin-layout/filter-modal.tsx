@@ -1,7 +1,7 @@
 'use client';
 import { type FC, type ReactNode } from 'react';
 import { Filter } from 'lucide-react';
-import { Button } from '../ui/button';
+
 import { 
   Drawer,
   DrawerContent,
@@ -10,6 +10,7 @@ import {
   DrawerTitle,
   DrawerClose,
 } from '../ui/drawer';
+import { Button } from '@/components/ui/button';
 
 // Version avec props - plus explicite et testable
 type FilterButtonProps = {

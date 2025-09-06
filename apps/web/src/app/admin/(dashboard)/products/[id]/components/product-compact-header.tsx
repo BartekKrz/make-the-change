@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { trpc } from '@/lib/trpc';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { 
   Dialog, 
   DialogContent, 

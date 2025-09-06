@@ -1,12 +1,11 @@
 'use client';
 
-import type { FC, PropsWithChildren, ReactNode } from 'react';
+import type { FC, PropsWithChildren, ReactNode, KeyboardEvent, MouseEvent } from 'react';
 import type { LucideIcon } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useCallback } from 'react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { ProductImage } from '@/components/images/product-image';
 
 export type DataListProps<T> = {
@@ -105,25 +104,26 @@ export const DataList = <T,>({
     const EmptyIcon = emptyState.icon;
     return (
       <div className={cn('space-y-6', className)} data-testid={testId}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className='text-center py-12'
-        >
+        <div className='text-center py-12 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 ease-out'>
           {EmptyIcon && (
             <div className='flex items-center justify-center mb-4'>
-              <div className='p-4 bg-muted/30 rounded-2xl'>
+              <div className='p-4 bg-muted/30 rounded-2xl animate-in fade-in-0 scale-in-95 duration-500 delay-150'>
                 <EmptyIcon className='w-8 h-8 text-muted-foreground' />
               </div>
             </div>
           )}
-          <h3 className='text-lg font-semibold text-foreground mb-2'>{emptyState.title}</h3>
+          <h3 className='text-lg font-semibold text-foreground mb-2 animate-in fade-in-0 slide-in-from-bottom-2 duration-500 delay-300'>
+            {emptyState.title}
+          </h3>
           {emptyState.description && (
-            <p className='text-muted-foreground mb-6 max-w-md mx-auto'>{emptyState.description}</p>
+            <p className='text-muted-foreground mb-6 max-w-md mx-auto animate-in fade-in-0 slide-in-from-bottom-1 duration-500 delay-500'>
+              {emptyState.description}
+            </p>
           )}
-          {emptyState.action}
-        </motion.div>
+          <div className="animate-in fade-in-0 slide-in-from-bottom-1 duration-500 delay-700">
+            {emptyState.action}
+          </div>
+        </div>
       </div>
     );
   }
@@ -156,7 +156,6 @@ export type DataCardProps = {
   href?: string;
   onClick?: () => void;
   testId?: string;
-  prefetch?: boolean | null;
   image?: string;
   imageAlt?: string;
 };
@@ -167,36 +166,49 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
   href,
   onClick,
   testId,
-  prefetch = null,
   image,
   imageAlt
 }) => {
   const router = useRouter();
 
-  useEffect(() => {
-    if (href && prefetch !== false) {
-      router.prefetch(href);
-    }
-  }, [href, prefetch, router]);
-  const baseClasses =
-    'surface-card group relative backdrop-blur-md p-6 overflow-hidden h-full flex flex-col';
+  const baseClasses = cn(
+    'group relative bg-white border border-border/50 rounded-xl p-6 overflow-hidden h-full flex flex-col',
+   
+    'transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]',
+    'hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-border',
+    'hover:-translate-y-2',
+   
+    'active:translate-y-0 active:scale-[0.98] active:shadow-[0_2px_10px_rgb(0,0,0,0.1)]',
+    'active:duration-100 active:ease-out',
+    'will-change-transform'
+  );
 
-  const motionProps = {
-    whileHover: {
-      y: -4,
-      scale: 1.01
-    },
-    transition: {
-      type: 'spring' as const,
-      stiffness: 500,
-      damping: 30,
-      mass: 0.8
+ 
+  const handleCardClick = useCallback((event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (target.closest('a[href]') || target.closest('button')) {
+      return;
     }
-  };
+
+   
+    if (href) {
+      router.push(href);
+    }
+    
+   
+    onClick?.();
+  }, [href, router, onClick]);
+
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleCardClick(event as any);
+    }
+  }, [handleCardClick]);
 
   const CardContent = () => (
     <>
-      
+      {/* Image d'arrière-plan */}
       {image && imageAlt && (
         <div className='absolute top-0 right-0 w-20 h-20 overflow-hidden [border-radius:var(--radius-surface)_var(--radius-surface)_0_0] opacity-10 md:group-hover:opacity-20 transition-opacity duration-300'>
           <Image
@@ -209,77 +221,29 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
         </div>
       )}
       
-      
+      {/* Contenu principal */}
       <div className='relative flex flex-col h-full [&_a]:relative [&_a]:z-10 [&_button]:relative [&_button]:z-10'>{children}</div>
 
-      
-      <div className='absolute inset-0 [border-radius:var(--radius-surface)] bg-gradient-to-r from-primary/5 via-background/20 to-orange-500/5 opacity-0 md:group-hover:opacity-100 group-active:opacity-60 transition-opacity duration-300' />
-      <div className='absolute inset-0 [border-radius:var(--radius-surface)] bg-gradient-to-br from-background/30 via-background/20 to-background/30' />
-      <div className='absolute inset-0 [border-radius:var(--radius-surface)] shadow-2xl shadow-primary/20 opacity-0 md:group-hover:opacity-100 group-active:opacity-50 transition-opacity duration-300 -z-10' />
     </>
   );
 
-  if (href) {
-    const handleCardClick = (event: React.MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (target.closest('a[href]') || target.closest('button')) {
-        return;
-      }
-
-      router.push(href);
-      onClick?.();
-    };
-
-    return (
-      <motion.div
-        className={cn(
-          baseClasses,
-          className,
-          'cursor-pointer',
-          'md:hover:border-primary-200/50 md:hover:shadow-[0_0_0_1px_rgb(59_130_246_/_0.4),0_0_0_2px_rgb(251_146_60_/_0.2)]'
-        )}
-        data-testid={testId}
-        onClick={handleCardClick}
-        {...motionProps}
-      >
-        <CardContent />
-      </motion.div>
-    );
-  }
-
-  const handleCardClick = (event: React.MouseEvent) => {
-    const target = event.target as HTMLElement;
-    if (target.closest('a[href]') || target.closest('button')) {
-      return;
-    }
-
-    onClick?.();
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleCardClick(event as any);
-    }
-  };
-
+ 
   return (
-    <motion.div
+    <div
       className={cn(
         baseClasses,
         className,
-        onClick && 'cursor-pointer',
-        'md:hover:border-primary-200/50 md:hover:shadow-[0_0_0_1px_rgb(59_130_246_/_0.4),0_0_0_2px_rgb(251_146_60_/_0.2)]'
+       
+        (href || onClick) && 'cursor-pointer'
       )}
       data-testid={testId}
-      onClick={handleCardClick}
-      onKeyDown={handleKeyDown}
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      {...motionProps}
+      onClick={href || onClick ? handleCardClick : undefined}
+      onKeyDown={href || onClick ? handleKeyDown : undefined}
+      role={href || onClick ? 'button' : undefined}
+      tabIndex={href || onClick ? 0 : undefined}
     >
       <CardContent />
-    </motion.div>
+    </div>
   );
 };
 
@@ -402,19 +366,25 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
   const baseClasses = cn(
     'group relative cursor-pointer',
     '[padding:var(--density-spacing-md)] [margin:calc(var(--density-spacing-md)*-1)]',
-    'transition-all duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]',
+   
+    'transition-all duration-200 ease-out',
     'border border-transparent [border-radius:var(--radius-surface)]',
-    'md:hover:bg-gradient-to-r md:hover:from-primary/5 md:hover:via-background/20 md:hover:to-orange-500/5',
-    'md:hover:shadow-lg md:hover:shadow-primary/10 md:hover:border-primary/20',
-    'md:hover:scale-[1.005] md:hover:-translate-y-0.5',
-    'active:bg-gradient-to-r active:from-primary/4 active:via-background/15 active:to-orange-500/4',
-    'active:shadow-md active:shadow-primary/8 active:border-primary/15',
-    'active:scale-[0.998] active:translate-y-0',
+    'will-change-transform',
+   
+    'md:hover:bg-gradient-to-r md:hover:from-primary/6 md:hover:via-background/40 md:hover:to-orange-500/6',
+    'md:hover:shadow-md md:hover:shadow-primary/8 md:hover:border-primary/25',
+    'md:hover:scale-[1.003] md:hover:-translate-y-0.5',
+   
+    'active:bg-gradient-to-r active:from-primary/8 active:via-background/50 active:to-orange-500/8',
+    'active:shadow-sm active:shadow-primary/6 active:border-primary/30',
+    'active:scale-[0.997] active:translate-y-0',
+   
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2',
     'backdrop-blur-sm',
     className
   );
 
-  const handleCardClick = (event: React.MouseEvent) => {
+  const handleCardClick = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
     if (target.closest('a[href]') || target.closest('button')) {
       return;
@@ -426,7 +396,7 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
     onClick?.();
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
+  const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       handleCardClick(event as any);
@@ -456,32 +426,26 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
           {children}
         </div>
 
-        {/* Chevron indicator */}
+        {/* Chevron indicator amélioré */}
         {href && (
-          <div className="flex-shrink-0 ml-4 transition-all duration-300 md:group-hover:translate-x-1 md:group-hover:scale-110 group-active:translate-x-0.5 group-active:scale-105">
+          <div className="flex-shrink-0 ml-4 transition-all duration-200 ease-out md:group-hover:translate-x-1 md:group-hover:scale-110 group-active:translate-x-0.5 group-active:scale-105">
             <div className="relative">
-              <div className="absolute inset-0 bg-primary/10 [border-radius:var(--radius-pill)] scale-150 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-primary/15 [border-radius:var(--radius-pill)] scale-150 opacity-0 md:group-hover:opacity-100 transition-all duration-200 ease-out" />
               <svg
                 width="20"
                 height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="drop-shadow-sm relative z-10"
+                className="drop-shadow-sm relative z-10 transition-transform duration-200 ease-out"
               >
-                <defs>
-                  <linearGradient id={`chevronGradient-${href.replace(/\W/g, '')}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#3b82f6" />
-                    <stop offset="100%" stopColor="#f59e0b" />
-                  </linearGradient>
-                </defs>
                 <path
                   d="m9 18 6-6-6-6"
-                  stroke={`url(#chevronGradient-${href.replace(/\W/g, '')})`}
+                  stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="opacity-50 md:group-hover:opacity-100 group-active:opacity-70 transition-all duration-300"
+                  className="opacity-60 text-primary md:group-hover:opacity-100 group-active:opacity-80 transition-all duration-200 ease-out"
                 />
               </svg>
             </div>
@@ -489,9 +453,9 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
         )}
       </div>
 
-      {/* Effets visuels */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/3 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none [border-radius:var(--radius-surface)]" />
-      <div className="absolute inset-0 ring-2 ring-primary/20 ring-offset-2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 [border-radius:var(--radius-surface)] pointer-events-none" />
+      {/* Effets visuels modernes 2025 */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/4 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 ease-out pointer-events-none [border-radius:var(--radius-surface)]" />
+      <div className="absolute inset-0 ring-2 ring-primary/30 ring-offset-2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 ease-out [border-radius:var(--radius-surface)] pointer-events-none" />
     </div>
   );
 };
@@ -533,7 +497,7 @@ const DataListItemActions: FC<PropsWithChildren<DataListItemActionsProps>> = ({
   children, 
   className 
 }) => {
-  const handleActionClick = (event: React.MouseEvent) => {
+  const handleActionClick = (event: MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
   };

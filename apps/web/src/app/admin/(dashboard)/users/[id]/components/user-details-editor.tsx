@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import type { FC, PropsWithChildren } from 'react';
 import { User, Shield, Mail, Save } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { useFormWithToast } from '@/hooks/use-form-with-toast';
 import { FormInput, FormSelect } from '@/components/form';
 import { z } from 'zod';

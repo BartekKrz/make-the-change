@@ -3,7 +3,7 @@
 import { type FC } from 'react';
 import { Building2, Mail, Link as LinkIcon, Edit, X, Save } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { PartnerFormData } from '@make-the-change/api/validators/partner';
 
 type PartnerCompactHeaderProps = {

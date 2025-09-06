@@ -3,7 +3,7 @@
 import { type FC } from 'react';
 import { ShoppingCart, User, Calendar, DollarSign, Edit, X, Save } from 'lucide-react';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 
 type OrderData = { id: string; customerName: string; status: string; createdAt: string; total?: number; };
 type OrderCompactHeaderProps = { orderData: OrderData; isEditing?: boolean; onEditToggle?: (editing: boolean) => void; onSave?: () => void; isSaving?: boolean; };

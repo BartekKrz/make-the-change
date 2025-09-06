@@ -2,7 +2,7 @@
 import { type FC } from 'react';
 import { type ComponentProps, useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/app/admin/(dashboard)/components/cn';
 import { CheckCircle2, SendIcon } from 'lucide-react';
 

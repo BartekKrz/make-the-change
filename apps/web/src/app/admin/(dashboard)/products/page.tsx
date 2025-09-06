@@ -6,7 +6,7 @@ import { AdminPageHeader, CreateButton } from '@/app/admin/(dashboard)/component
 import { ViewToggle, type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle';
 import { FilterButton } from '@/app/admin/(dashboard)/components/admin-layout/filter-modal';
 import {  DataList } from '@/app/admin/(dashboard)/components/ui/data-list';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { CheckboxWithLabel } from '@/app/admin/(dashboard)/components/ui/checkbox';
 import { SimpleSelect } from '@/app/admin/(dashboard)/components/ui/select';
 import { AdminPagination } from '@/app/admin/(dashboard)/components/layout/admin-pagination';
@@ -100,7 +100,7 @@ const sortSelectionItems = sortOptions.map(option => ({
   const [view, setView] = useState<ViewMode>('grid');
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);  
   
-  // React 19: hooks pour les performances
+  
   const [isPendingFilters, startFilterTransition] = useTransition();
   const deferredSearch = useDeferredValue(search);
   const [optimisticTags, removeOptimisticTag] = useOptimistic(
@@ -166,7 +166,7 @@ const sortSelectionItems = sortOptions.map(option => ({
     sortBy !== 'created_at_desc'
   ), [search, activeOnly, selectedProducerId, selectedCategoryId, selectedTags, sortBy]);
 
-  // Handlers optimisés avec useTransition
+  
   const handleFilterChange = useCallback((filterFn: () => void) => {
     startFilterTransition(filterFn);
   }, [startFilterTransition]);
@@ -184,9 +184,9 @@ const sortSelectionItems = sortOptions.map(option => ({
     refetch();
   }, [refetch, startFilterTransition]);
 
-  // Handler optimisé pour la suppression de tags avec useOptimistic
+  
   const handleRemoveTag = useCallback((tagToRemove: string) => {
-    removeOptimisticTag(tagToRemove); // UX immédiate
+    removeOptimisticTag(tagToRemove); 
     handleFilterChange(() => {
       setSelectedTags(prev => prev.filter(tag => tag !== tagToRemove));
     });
@@ -222,15 +222,7 @@ const sortSelectionItems = sortOptions.map(option => ({
               />
             </div>
             <div className="flex items-center gap-3">
-              <div className="text-sm text-muted-foreground flex items-center gap-2">
-                {totalProducts} produit{totalProducts > 1 ? 's' : ''}
-                {isPendingFilters && (
-                  <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                    <div className="animate-spin w-3 h-3 border border-muted-foreground/30 border-t-muted-foreground rounded-full"></div>
-                    Filtrage...
-                  </span>
-                )}
-              </div>
+              
               <CreateButton href="/admin/products/new" label="Nouveau produit" />
             </div>
           </div>
@@ -356,6 +348,17 @@ const sortSelectionItems = sortOptions.map(option => ({
                 product={product} 
                 view={view === 'map' ? 'grid' : view} 
                 queryParams={queryParams}
+                onFilterChange={{
+                  setCategory: (categoryId: string) => 
+                    handleFilterChange(() => setSelectedCategoryId(categoryId)),
+                  setProducer: (producerId: string) => 
+                    handleFilterChange(() => setSelectedProducerId(producerId)),
+                  addTag: (tag: string) => {
+                    if (!selectedTags.includes(tag)) {
+                      handleFilterChange(() => setSelectedTags([...selectedTags, tag]));
+                    }
+                  }
+                }}
               />
             )}
           />

@@ -13,7 +13,7 @@ import {
   type PartnerFormData
 } from '@make-the-change/api/validators/partner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card';
-import { Button } from '@/app/admin/(dashboard)/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { FormInput, FormSelect, FormTextArea } from '@/components/form';
 import { generateSlug } from '@/lib/form-utils';
 

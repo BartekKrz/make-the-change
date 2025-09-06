@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { useToast } from '@/hooks/use-toast'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/admin/(dashboard)/components/ui/card'
 import { Input } from '@/app/admin/(dashboard)/components/ui/input'
-import { Button } from '@/app/admin/(dashboard)/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { SimpleSelect } from '@/app/admin/(dashboard)/components/ui/select'
 
 import { AdminPageContainer } from '@/app/admin/(dashboard)/components/layout/admin-page-container'
