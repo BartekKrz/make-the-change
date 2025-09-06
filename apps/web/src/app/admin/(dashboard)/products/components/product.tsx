@@ -244,9 +244,9 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
           imageAlt={product.name} 
           images={product.images || undefined}
         >
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-medium">{product.name}</span>
-            <span className="font-medium text-xs text-gray-600">{product.short_description}</span>
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="font-semibold text-lg leading-tight tracking-tight">{product.name}</span>
+            <span className="font-medium text-xs text-muted-foreground/80 leading-relaxed">{product.short_description}</span>
           </div>
         </DataCard.Title>
       </DataCard.Header>
@@ -254,11 +254,17 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
         <div className="flex items-center gap-4 flex-wrap text-sm">
           <div className="flex items-center gap-2">
             <Zap className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-data">{product.price_points} pts</span>
+            <div className="flex items-baseline gap-1">
+              <span className="font-bold text-base text-foreground tabular-nums tracking-tight">{product.price_points}</span>
+              <span className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide">pts</span>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Box className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-data">Stock: {product.stock_quantity ?? 0}</span>
+            <div className="flex items-baseline gap-1">
+              <span className="font-semibold text-sm text-foreground tabular-nums tracking-tight">{product.stock_quantity ?? 0}</span>
+              <span className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide">stock</span>
+            </div>
           </div>
         </div>
           

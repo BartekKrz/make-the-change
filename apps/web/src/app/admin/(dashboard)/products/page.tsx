@@ -1,6 +1,6 @@
 "use client"
 import { type FC, useCallback, useEffect, useMemo, useState, useTransition, useDeferredValue, useOptimistic } from 'react';
-import { Package } from 'lucide-react';
+import { Package, Plus } from 'lucide-react';
 import { AdminPageLayout, Filters, FilterModal } from '@/app/admin/(dashboard)/components/admin-layout';
 import { AdminPageHeader, CreateButton } from '@/app/admin/(dashboard)/components/admin-layout/header';
 import { ViewToggle, type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle';
@@ -14,6 +14,7 @@ import { RouterOutputs, trpc } from '@/lib/trpc';
 import { EmptyState } from '@/app/admin/(dashboard)/components/ui/empty-state';
 import { ProductCardSkeleton, ProductListSkeleton } from '@/app/admin/(dashboard)/products/components/product-card';
 import { Product } from '@/app/admin/(dashboard)/products/components/product';
+import Link from 'next/link';
 
 const pageSize = 18;
 
@@ -206,7 +207,12 @@ const sortSelectionItems = sortOptions.map(option => ({
             />
             <FilterButton onClick={() => setIsFilterModalOpen(true)} />
           </div>
-          <CreateButton href="/admin/products/new" label="Nouveau produit" className="w-full" />
+          <Link href={"/admin/products/new"} className="w-full">
+          <Button variant="accent" size="sm" className="w-full" >
+            Nouveau produit
+          </Button>
+          </Link>
+          
         </div>
 
         {/* Version desktop */}
@@ -223,7 +229,12 @@ const sortSelectionItems = sortOptions.map(option => ({
             </div>
             <div className="flex items-center gap-3">
               
-              <CreateButton href="/admin/products/new" label="Nouveau produit" />
+              <Link href={"/admin/products/new"} className="w-full">
+          <Button icon={<Plus />} size="sm" className="w-full" >
+            Nouveau produit
+          </Button>
+          </Link>
+          
             </div>
           </div>
 
