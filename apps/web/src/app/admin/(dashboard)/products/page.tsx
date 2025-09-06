@@ -5,7 +5,7 @@ import { AdminPageLayout, Filters, FilterModal } from '@/app/admin/(dashboard)/c
 import { AdminPageHeader } from '@/app/admin/(dashboard)/components/admin-layout/header';
 import { ViewToggle, type ViewMode } from '@/app/admin/(dashboard)/components/ui/view-toggle';
 import { FilterButton } from '@/app/admin/(dashboard)/components/admin-layout/filter-modal';
-import {  DataList } from '@/app/admin/(dashboard)/components/ui/data-list';
+import { DataList } from '@/app/admin/(dashboard)/components/ui/data-list';
 import { Button } from '@/components/ui/button';
 import { CheckboxWithLabel } from '@/app/admin/(dashboard)/components/ui/checkbox';
 import { SimpleSelect } from '@/app/admin/(dashboard)/components/ui/select';
@@ -137,6 +137,18 @@ const sortSelectionItems = sortOptions.map(option => ({
   const totalProducts = productsData?.total || 0;
   const totalPages = Math.ceil(totalProducts / pageSize);
 
+  // Calculer si des filtres sont actifs
+  const isFilterActive = useMemo(() => {
+    return !!(
+      deferredSearch ||
+      activeOnly ||
+      (selectedProducerId && selectedProducerId !== 'all') ||
+      (selectedCategoryId && selectedCategoryId !== 'all') ||
+      (selectedTags && selectedTags.length > 0) ||
+      (sortBy && sortBy !== 'created_at_desc')
+    );
+  }, [deferredSearch, activeOnly, selectedProducerId, selectedCategoryId, selectedTags, sortBy]);
+
 
   const producerOptions = useMemo((): SelectOption[] => 
     (isPendingProducers || !producers) ? defaultProducerOptions : createSelectOptions(producers, 'Tous les partenaires'), 
@@ -196,7 +208,7 @@ const sortSelectionItems = sortOptions.map(option => ({
   return (
     <AdminPageLayout>
       <AdminPageHeader>
-        {/* Version mobile */}
+        
         <div className="md:hidden space-y-3">
           <div className="flex items-center gap-2">
             <AdminPageHeader.Search
@@ -205,7 +217,10 @@ const sortSelectionItems = sortOptions.map(option => ({
               placeholder="Rechercher des produits..."
               isLoading={isLoading || isFetching}
             />
-            <FilterButton onClick={() => setIsFilterModalOpen(true)} />
+            <FilterButton 
+              onClick={() => setIsFilterModalOpen(true)} 
+              isActive={isFilterActive}
+            />
           </div>
           <Link href={"/admin/products/new"} className="w-full">
           <Button variant="accent" size="sm" className="w-full" >
@@ -215,9 +230,9 @@ const sortSelectionItems = sortOptions.map(option => ({
           
         </div>
 
-        {/* Version desktop */}
+        
         <div className="hidden md:block space-y-4">
-          {/* Ligne 1: Recherche et bouton principal */}
+          
           <div className="flex items-center gap-4">
             <div className="flex-1 max-w-md">
               <AdminPageHeader.Search
@@ -238,7 +253,7 @@ const sortSelectionItems = sortOptions.map(option => ({
             </div>
           </div>
 
-          {/* Ligne 2: Contrôles de filtrage et vue */}
+          
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3 flex-wrap flex-1">
               <SimpleSelect
@@ -268,7 +283,7 @@ const sortSelectionItems = sortOptions.map(option => ({
                 disabled={isPendingFilters}
               />
               
-              {/* Tags selector */}
+              
               <SimpleSelect
                 placeholder="Tags..."
                 value=""
@@ -289,10 +304,10 @@ const sortSelectionItems = sortOptions.map(option => ({
                 disabled={isPendingFilters}
               />
               
-              {/* ViewToggle maintenant dans le même conteneur */}
+              
               <ViewToggle value={view} onChange={setView} />
               
-              {/* Bouton pour effacer tous les filtres */}
+              
               {hasActiveFilters && (
                 <Button
                   variant="outline"
@@ -304,7 +319,7 @@ const sortSelectionItems = sortOptions.map(option => ({
                 </Button>
               )}
               
-              {/* Affichage des tags sélectionnés avec useOptimistic */}
+              
               {optimisticTags.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {optimisticTags.map(tag => (
@@ -442,7 +457,7 @@ const sortSelectionItems = sortOptions.map(option => ({
             label="Afficher uniquement les éléments actifs"
           />
           
-          {/* Bouton pour effacer tous les filtres en mobile */}
+          
           {hasActiveFilters && (
             <div className="pt-4 border-t border-border/30">
               <Button
