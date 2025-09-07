@@ -63,6 +63,12 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
   }
 
+  .dark .admin-header {
+    background-color: rgba(10, 10, 10, 0.4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
   /* Mobile: position below mobile header */
   @media (max-width: 767px) {
     .admin-header {

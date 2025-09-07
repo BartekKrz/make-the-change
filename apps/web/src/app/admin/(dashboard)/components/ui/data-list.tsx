@@ -108,7 +108,7 @@ export const DataList = <T,>({
         <div className='text-center py-12 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 ease-out'>
           {EmptyIcon && (
             <div className='flex items-center justify-center mb-4'>
-              <div className='p-4 bg-muted/30 rounded-2xl animate-in fade-in-0 scale-in-95 duration-500 delay-150'>
+              <div className='p-4 bg-muted/30 dark:bg-muted/20 rounded-2xl animate-in fade-in-0 scale-in-95 duration-500 delay-150'>
                 <EmptyIcon className='w-8 h-8 text-muted-foreground' />
               </div>
             </div>
@@ -173,13 +173,16 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
   const router = useRouter();
 
   const baseClasses = cn(
-    'group relative bg-white border border-border/50 rounded-xl p-6 overflow-hidden h-full flex flex-col',
+    // Base styling with dark theme support
+    'group relative bg-background dark:bg-card border border-border/50 dark:border-border/30 rounded-xl p-6 overflow-hidden h-full flex flex-col',
    
+    // Transitions and transforms
     'transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]',
-    'hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-border',
+    'hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.3)] hover:border-border dark:hover:border-border/50',
     'hover:-translate-y-2',
    
-    'active:translate-y-0 active:scale-[0.98] active:shadow-[0_2px_10px_rgb(0,0,0,0.1)]',
+    // Active states with dark theme
+    'active:translate-y-0 active:scale-[0.98] active:shadow-[0_2px_10px_rgb(0,0,0,0.1)] dark:active:shadow-[0_2px_10px_rgb(0,0,0,0.4)]',
     'active:duration-100 active:ease-out',
     'will-change-transform'
   );
@@ -290,7 +293,7 @@ const DataCardTitle: FC<PropsWithChildren<DataCardTitleProps>> = ({
         />
       )}
       {shouldShowIcon && (
-        <div className='w-21 h-21 [border-radius:var(--radius-surface)] bg-gradient-to-br from-primary/10 to-orange-500/10 flex items-center justify-center border border-primary/20 flex-shrink-0'>
+        <div className='w-21 h-21 [border-radius:var(--radius-surface)] bg-gradient-to-br from-primary/10 dark:from-primary/15 to-orange-500/10 dark:to-orange-500/15 flex items-center justify-center border border-primary/20 dark:border-primary/30 flex-shrink-0'>
           <Icon size={32} className='text-muted-foreground' />
         </div>
       )}
@@ -318,7 +321,7 @@ type DataCardFooterProps = {
 const DataCardFooter: FC<PropsWithChildren<DataCardFooterProps>> = ({ children, className }) => (
   <div
     className={cn(
-      'border-t px-0 pb-3 text-primary flex items-center justify-between text-sm font-medium group border-border pt-4 mt-auto',
+      'border-t px-0 pb-3 text-primary dark:text-primary flex items-center justify-between text-sm font-medium group border-border dark:border-border/50 pt-4 mt-auto',
       className
     )}
   >
@@ -375,19 +378,19 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
     'transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]',
     
     // Modern hover states with design system colors
-    'md:hover:bg-gradient-to-r md:hover:from-primary/8 md:hover:via-background/60 md:hover:to-accent/5',
-    'md:hover:shadow-[var(--shadow-card)] md:hover:shadow-primary/12',
-    'md:hover:border-primary/30 md:hover:scale-[1.001] md:hover:-translate-y-0.5',
+    'md:hover:bg-gradient-to-r md:hover:from-primary/8 dark:md:hover:from-primary/12 md:hover:via-background/60 dark:md:hover:via-card/80 md:hover:to-accent/5 dark:md:hover:to-accent/8',
+    'md:hover:shadow-[var(--shadow-card)] md:hover:shadow-primary/12 dark:md:hover:shadow-black/30',
+    'md:hover:border-primary/30 dark:md:hover:border-primary/40 md:hover:scale-[1.001] md:hover:-translate-y-0.5',
     'md:hover:z-10 md:hover:relative',
     
     // Refined active states
-    'active:bg-gradient-to-r active:from-primary/12 active:via-background/70 active:to-accent/8',
-    'active:shadow-[var(--shadow-surface)] active:shadow-primary/8',
-    'active:border-primary/40 active:scale-[0.999] active:translate-y-0',
+    'active:bg-gradient-to-r active:from-primary/12 dark:active:from-primary/16 active:via-background/70 dark:active:via-card/90 active:to-accent/8 dark:active:to-accent/12',
+    'active:shadow-[var(--shadow-surface)] active:shadow-primary/8 dark:active:shadow-black/20',
+    'active:border-primary/40 dark:active:border-primary/50 active:scale-[0.999] active:translate-y-0',
     
     // Enhanced focus with design system - only for keyboard navigation
-    'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60',
-    'focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+    'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 dark:focus-visible:ring-primary/80',
+    'focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:focus-visible:ring-offset-card',
     
     // Remove focus styling for mouse interactions
     'focus:not(:focus-visible):ring-0 focus:not(:focus-visible):ring-offset-0',
@@ -474,13 +477,13 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
       </div>
 
       {/* Advanced visual effects 2025 */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/3 to-accent/2 opacity-0 md:group-hover:opacity-100 transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)] pointer-events-none rounded-[var(--radius-surface)]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/3 dark:via-primary/5 to-accent/2 dark:to-accent/4 opacity-0 md:group-hover:opacity-100 transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)] pointer-events-none rounded-[var(--radius-surface)]" />
       
       {/* Shimmer effect on hover */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent opacity-0 md:group-hover:opacity-100 transition-all duration-[var(--transition-slow)] ease-out pointer-events-none rounded-[var(--radius-surface)] translate-x-[-100%] md:group-hover:translate-x-[100%]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 dark:via-white/4 to-transparent opacity-0 md:group-hover:opacity-100 transition-all duration-[var(--transition-slow)] ease-out pointer-events-none rounded-[var(--radius-surface)] translate-x-[-100%] md:group-hover:translate-x-[100%]" />
       
       {/* Enhanced focus ring */}
-      <div className="absolute inset-0 ring-2 ring-primary/40 ring-offset-2 ring-offset-background opacity-0 group-focus-within:opacity-100 transition-all duration-[var(--transition-fast)] ease-out rounded-[var(--radius-surface)] pointer-events-none" />
+      <div className="absolute inset-0 ring-2 ring-primary/40 dark:ring-primary/60 ring-offset-2 ring-offset-background dark:ring-offset-card opacity-0 group-focus-within:opacity-100 transition-all duration-[var(--transition-fast)] ease-out rounded-[var(--radius-surface)] pointer-events-none" />
     </div>
   );
 };
@@ -536,9 +539,9 @@ const DataListItemActions: FC<PropsWithChildren<DataListItemActionsProps>> = ({
       className={cn(
         // Enhanced actions area with modern styling
         'relative z-30 mt-[var(--density-spacing-md)] pt-[var(--density-spacing-sm)]',
-        'border-t border-border/30 pointer-events-auto',
+        'border-t border-border/30 dark:border-border/20 pointer-events-auto',
         'transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]',
-        'md:group-hover:border-border/50 md:group-hover:pt-[calc(var(--density-spacing-sm)*1.1)]',
+        'md:group-hover:border-border/50 dark:md:group-hover:border-border/40 md:group-hover:pt-[calc(var(--density-spacing-sm)*1.1)]',
         className
       )}
       onClick={handleActionClick}

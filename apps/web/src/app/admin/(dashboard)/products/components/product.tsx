@@ -157,8 +157,8 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
   const actions = (
     <div className="flex items-center justify-between w-full gap-4">
       <div className="flex items-center gap-3">
-        {/* Stock Control */}
-        <div className="inline-flex items-center bg-white border border-border rounded-xl shadow-sm overflow-hidden group">
+        {/* Stock Control - Enhanced for dark theme */}
+        <div className="inline-flex items-center bg-background dark:bg-card border border-border dark:border-border rounded-xl shadow-sm dark:shadow-black/10 overflow-hidden group">
           <Button 
             size="sm" 
             variant="ghost" 
@@ -170,11 +170,11 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
             <Plus className="w-4 h-4" />
           </Button>
           
-          <div className="relative px-4 py-2 min-w-[4rem] text-center border-x border-border bg-muted/30">
-            <span className="text-sm font-semibold tabular-nums text-foreground">
+          <div className="relative px-4 py-2 min-w-[4rem] text-center border-x border-border dark:border-border bg-muted/30 dark:bg-muted/20">
+            <span className="text-sm font-semibold tabular-nums text-foreground dark:text-foreground">
               {product.stock_quantity || 0}
             </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 dark:via-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
           
           <Button 
@@ -195,10 +195,10 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
       <div className="flex items-center gap-2">
         <div 
           className={cn(
-            "relative inline-flex h-6 w-11 cursor-pointer rounded-full border-2 transition-all duration-200 ease-in-out focus-within:ring-2 focus-within:ring-primary/20",
+            "relative inline-flex h-6 w-11 cursor-pointer rounded-full border-2 transition-all duration-200 ease-in-out focus-within:ring-2 focus-within:ring-primary/20 dark:focus-within:ring-primary/30",
             product.is_active 
-              ? "bg-success border-success shadow-sm" 
-              : "bg-muted border-border hover:bg-muted/80"
+              ? "bg-success dark:bg-success border-success dark:border-success shadow-sm dark:shadow-success/20" 
+              : "bg-muted dark:bg-muted border-border dark:border-border hover:bg-muted/80 dark:hover:bg-muted/60"
           )}
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFocusFromParent(e); toggleActive(); }}
           role="switch"
@@ -214,7 +214,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
         >
           <span
             className={cn(
-              "inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform duration-200 ease-in-out",
+              "inline-block h-5 w-5 transform rounded-full bg-background dark:bg-background shadow-sm dark:shadow-black/20 transition-transform duration-200 ease-in-out",
               product.is_active ? "translate-x-5" : "translate-x-0"
             )}
           />
@@ -223,7 +223,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
         <div className="flex items-center gap-1.5 text-sm">
           <div className={cn(
             "flex items-center justify-center transition-colors duration-200",
-            product.is_active ? "text-success" : "text-muted-foreground"
+            product.is_active ? "text-success dark:text-success" : "text-muted-foreground dark:text-muted-foreground"
           )}>
             {product.is_active ? (
               <Eye className="w-4 h-4" />
@@ -233,7 +233,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
           </div>
           <span className={cn(
             "font-medium transition-colors duration-200",
-            product.is_active ? "text-foreground" : "text-muted-foreground"
+            product.is_active ? "text-foreground dark:text-foreground" : "text-muted-foreground dark:text-muted-foreground"
           )}>
             {product.is_active ? "Visible" : "Masqué"}
           </span>
@@ -278,7 +278,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
         <div className="flex flex-wrap gap-2 mt-2">
           {product.category && (
             <button 
-              className="badge-subtle hover:bg-primary/15 hover:text-primary hover:border-primary/30 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
+              className="badge-subtle hover:bg-primary/15 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-primary hover:border-primary/30 dark:hover:border-primary/40 hover:shadow-sm dark:hover:shadow-primary/10 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -293,7 +293,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
           )}
           {product.secondary_category && (
             <button 
-              className="tag-subtle hover:bg-accent/20 hover:text-accent-dark hover:border-accent/40 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
+              className="tag-subtle hover:bg-accent/20 dark:hover:bg-accent/25 hover:text-accent-dark dark:hover:text-accent hover:border-accent/40 dark:hover:border-accent/50 hover:shadow-sm dark:hover:shadow-accent/10 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -333,7 +333,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
           {product.tags?.slice(0, 3).map(tag => (
             <button 
               key={tag} 
-              className="inline-flex items-center px-2 py-1 text-xs bg-muted/50 text-muted-foreground border border-muted/60 rounded-md hover:bg-muted hover:text-foreground hover:border-muted-foreground/80 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
+              className="inline-flex items-center px-2 py-1 text-xs bg-muted/50 dark:bg-muted/30 text-muted-foreground dark:text-muted-foreground border border-muted/60 dark:border-muted/40 rounded-md hover:bg-muted dark:hover:bg-muted/60 hover:text-foreground dark:hover:text-foreground hover:border-muted-foreground/80 dark:hover:border-muted-foreground/60 hover:shadow-sm dark:hover:shadow-black/20 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -414,7 +414,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
 
             {product.producer && (
               <button
-                className="flex items-center gap-2 text-muted-foreground hover:shadow-sm hover:brightness-110 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
+                className="flex items-center gap-2 text-muted-foreground dark:text-muted-foreground hover:shadow-sm dark:hover:shadow-black/20 hover:brightness-110 dark:hover:brightness-125 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -437,7 +437,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
           <div className="flex flex-wrap gap-2">
             {product.category && (
               <button 
-                className="badge-subtle hover:bg-primary/15 hover:text-primary hover:border-primary/30 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
+                className="badge-subtle hover:bg-primary/15 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-primary hover:border-primary/30 dark:hover:border-primary/40 hover:shadow-sm dark:hover:shadow-primary/10 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -453,7 +453,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
             )}
             {product.secondary_category && (
               <button 
-                className="tag-subtle hover:bg-accent/20 hover:text-accent-dark hover:border-accent/40 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
+                className="tag-subtle hover:bg-accent/20 dark:hover:bg-accent/25 hover:text-accent-dark dark:hover:text-accent hover:border-accent/40 dark:hover:border-accent/50 hover:shadow-sm dark:hover:shadow-accent/10 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -476,7 +476,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
             {product.tags?.slice(0, 4).map(tag => (
               <button 
                 key={tag} 
-                className="inline-flex items-center px-2.5 py-1 text-xs font-medium bg-muted/50 text-muted-foreground border border-muted/60 rounded-md hover:bg-muted hover:text-foreground hover:border-muted-foreground/80 hover:shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto tracking-wide leading-tight"
+                className="inline-flex items-center px-2.5 py-1 text-xs font-medium bg-muted/50 dark:bg-muted/30 text-muted-foreground dark:text-muted-foreground border border-muted/60 dark:border-muted/40 rounded-md hover:bg-muted dark:hover:bg-muted/60 hover:text-foreground dark:hover:text-foreground hover:border-muted-foreground/80 dark:hover:border-muted-foreground/60 hover:shadow-sm dark:hover:shadow-black/20 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto tracking-wide leading-tight"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();

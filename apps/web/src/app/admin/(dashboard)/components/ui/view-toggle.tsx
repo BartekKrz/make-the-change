@@ -25,7 +25,7 @@ export const ViewToggle: FC<ViewToggleProps> = ({
   if (availableViews.length <= 1) return null
 
   return (
-    <div className='inline-flex items-center gap-1 rounded-xl border border-border/60 bg-background/50 backdrop-blur-sm p-1'>
+    <div className='inline-flex items-center gap-1 rounded-xl border border-border/60 dark:border-border/40 bg-background/50 dark:bg-card/60 backdrop-blur-sm p-1'>
       {availableViews.map((viewMode) => {
         const { icon: Icon, label } = VIEW_CONFIG[viewMode]
         const isActive = value === viewMode

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import type { ButtonHTMLAttributes, ReactNode, ForwardedRef } from 'react';
 
 const buttonVariants = cva(
-  'control-button relative cursor-pointer overflow-hidden inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 group will-change-transform',
+  'control-button relative cursor-pointer overflow-hidden inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 dark:focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:focus-visible:ring-offset-card disabled:pointer-events-none disabled:opacity-50 dark:disabled:opacity-40 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 group will-change-transform',
   {
     variants: {
       variant: {
@@ -34,10 +34,10 @@ const buttonVariants = cva(
           'bg-info text-info-foreground shadow-sm [@media(hover:hover)]:hover:shadow-lg [@media(hover:hover)]:hover:shadow-info/15 [@media(hover:hover)]:hover:brightness-110 active:scale-[0.98] active:shadow-sm',
 
         outline:
-          'border border-border bg-white text-foreground shadow-sm [@media(hover:hover)]:hover:bg-primary [@media(hover:hover)]:hover:text-primary-foreground [@media(hover:hover)]:hover:border-primary [@media(hover:hover)]:hover:shadow-md active:scale-[0.98] active:shadow-sm',
+          'border border-border bg-background dark:bg-card text-foreground dark:text-foreground shadow-sm dark:shadow-black/10 [@media(hover:hover)]:hover:bg-primary [@media(hover:hover)]:hover:text-primary-foreground [@media(hover:hover)]:hover:border-primary [@media(hover:hover)]:hover:shadow-md dark:[@media(hover:hover)]:hover:shadow-black/25 dark:[@media(hover:hover)]:hover:bg-primary dark:[@media(hover:hover)]:hover:border-primary active:scale-[0.98] active:shadow-sm dark:active:shadow-black/15',
 
         ghost:
-          'text-foreground [@media(hover:hover)]:hover:bg-secondary/50 [@media(hover:hover)]:hover:text-foreground active:scale-[0.98] active:bg-secondary/70',
+          'text-foreground dark:text-foreground [@media(hover:hover)]:hover:bg-secondary/50 dark:[@media(hover:hover)]:hover:bg-muted/40 [@media(hover:hover)]:hover:text-foreground dark:[@media(hover:hover)]:hover:text-foreground active:scale-[0.98] active:bg-secondary/70 dark:active:bg-muted/60',
 
         link:
           'text-primary underline-offset-4 [@media(hover:hover)]:hover:underline [@media(hover:hover)]:hover:text-primary-dark active:text-primary-dark/80',
@@ -46,7 +46,7 @@ const buttonVariants = cva(
           'bg-gradient-primary text-primary-foreground shadow-lg [@media(hover:hover)]:hover:shadow-xl [@media(hover:hover)]:hover:shadow-primary/25 active:scale-[0.98] gradient-shift',
 
         glass:
-          'glass-card text-foreground [@media(hover:hover)]:hover:bg-card/95 [@media(hover:hover)]:hover:shadow-lg active:scale-[0.98]',
+          'glass-card text-foreground dark:text-foreground [@media(hover:hover)]:hover:bg-card/95 dark:[@media(hover:hover)]:hover:bg-card/70 [@media(hover:hover)]:hover:shadow-lg dark:[@media(hover:hover)]:hover:shadow-black/40 active:scale-[0.98] dark:active:bg-card/80',
 
         nature:
           'bg-mesh-nature text-primary-foreground shadow-lg [@media(hover:hover)]:hover:shadow-xl [@media(hover:hover)]:hover:shadow-emerald/20 active:scale-[0.98]'
@@ -110,12 +110,22 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {/* Effet shimmer pour variants spéciaux */}
         {shouldShowShimmer && (
-          <div className='absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] [@media(hover:hover)]:group-hover:translate-x-[100%] transition-transform duration-500 ease-out' />
+          <div className='absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 dark:via-white/12 to-white/0 translate-x-[-100%] [@media(hover:hover)]:group-hover:translate-x-[100%] transition-transform duration-500 ease-out' />
         )}
 
         {/* Effet shimmer pour outline */}
         {shimmer && !isDisabled && variant === 'outline' && (
-          <div className='absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/8 to-primary/0 translate-x-[-100%] [@media(hover:hover)]:group-hover:translate-x-[100%] transition-transform duration-500 ease-out' />
+          <div className='absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/8 dark:via-primary/15 to-primary/0 translate-x-[-100%] [@media(hover:hover)]:group-hover:translate-x-[100%] transition-transform duration-500 ease-out' />
+        )}
+
+        {/* Effet shimmer pour ghost */}
+        {shimmer && !isDisabled && variant === 'ghost' && (
+          <div className='absolute inset-0 bg-gradient-to-r from-secondary/0 via-secondary/12 dark:via-muted/20 to-secondary/0 translate-x-[-100%] [@media(hover:hover)]:group-hover:translate-x-[100%] transition-transform duration-500 ease-out' />
+        )}
+
+        {/* Effet shimmer pour glass */}
+        {shimmer && !isDisabled && variant === 'glass' && (
+          <div className='absolute inset-0 bg-gradient-to-r from-card/0 via-card/15 dark:via-card/25 to-card/0 translate-x-[-100%] [@media(hover:hover)]:group-hover:translate-x-[100%] transition-transform duration-500 ease-out' />
         )}
 
         {/* Contenu principal */}
