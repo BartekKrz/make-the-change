@@ -1,22 +1,6 @@
-import { FeaturedProjectsSection } from "@/components/home/featured-projects-section";
-import { HeroSection } from "@/components/home/hero-section";
-import { ImpactMetricsSection } from "@/components/home/impact-metrics-section";
-import { KPIMetricsSection } from "@/components/home/kpi-metrics-section";
+import { redirect } from 'next/navigation';
 
-export default function HomePage() {
-  return (
-    <div className="min-h-screen">
-      {/* Hero Section avec métriques temps réel */}
-      <HeroSection />
-      
-      {/* KPIs Business */}
-      <KPIMetricsSection />
-      
-      {/* Projets en Vedette */}
-      <FeaturedProjectsSection />
-      
-      {/* Métriques d'Impact */}
-      <ImpactMetricsSection />
-    </div>
-  )
+export default function RootPage() {
+  // Rediriger automatiquement vers la locale par défaut
+  redirect('/fr');
 }

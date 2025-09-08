@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { LocalizedLink } from '@/components/localized-link'
 import type { FC } from 'react'
 
 export const HeroSection: FC = () => {
@@ -51,10 +51,10 @@ export const HeroSection: FC = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <Button size="lg" className="h-14 px-8 shadow-lg hover:shadow-xl transition-all" asChild>
-              <Link href="/projects">Découvrir les Projets</Link>
+              <LocalizedLink href="/projects">Découvrir les Projets</LocalizedLink>
             </Button>
             <Button size="lg" variant="outline" className="h-14 px-8 border-2 hover:bg-primary/5" asChild>
-              <Link href="/shop">Visiter la Boutique</Link>
+              <LocalizedLink href="/shop">Visiter la Boutique</LocalizedLink>
             </Button>
           </motion.div>
         </motion.div>

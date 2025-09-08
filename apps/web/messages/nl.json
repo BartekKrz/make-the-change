@@ -1,0 +1,225 @@
+{
+  "common": {
+    "loading": "Laden...",
+    "error": "Er is een fout opgetreden",
+    "success": "Succesvol",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "add": "Toevoegen",
+    "back": "Terug",
+    "next": "Volgende",
+    "previous": "Vorige",
+    "search": "Zoeken",
+    "filter": "Filteren"
+  },
+  "navigation": {
+    "home": "Home",
+    "admin": "Beheer",
+    "dashboard": "Dashboard",
+    "products": "Producten",
+    "projects": "Projecten",
+    "subscriptions": "Abonnementen",
+    "users": "Gebruikers",
+    "settings": "Instellingen",
+    "logout": "Uitloggen"
+  },
+  "auth": {
+    "login": "Inloggen",
+    "email": "Email",
+    "password": "Wachtwoord",
+    "login_button": "Inloggen",
+    "forgot_password": "Wachtwoord vergeten?",
+    "invalid_credentials": "Ongeldige inloggegevens"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Beheerder Dashboard",
+      "welcome": "Welkom in uw beheergebied",
+      "statistics": "Statistieken"
+    },
+    "products": {
+      "title": "Productbeheer",
+      "new_product": "Nieuw Product",
+      "product_list": "Productlijst",
+      "name": "Productnaam",
+      "price": "Prijs",
+      "status": "Status",
+      "actions": "Acties",
+      "search_placeholder": "Producten zoeken...",
+      "filters": {
+        "all_partners": "Alle partners",
+        "all_categories": "Alle categorieën",
+        "sort_by": "Sorteren op",
+        "tags_placeholder": "Tags...",
+        "active_only": "Alleen actieve",
+        "clear_filters": "Filters wissen",
+        "clear_all_filters": "Alle filters wissen",
+        "reset": "Opnieuw instellen"
+      },
+      "sort": {
+        "newest": "Meest recent",
+        "oldest": "Oudste",
+        "name_asc": "Naam (A-Z)",
+        "name_desc": "Naam (Z-A)",
+        "price_asc": "Prijs oplopend",
+        "price_desc": "Prijs aflopend",
+        "featured": "Uitgelicht eerst"
+      },
+      "stock": {
+        "increase": "Voorraad verhogen",
+        "decrease": "Voorraad verlagen",
+        "label": "voorraad",
+        "points_label": "ptn"
+      },
+      "visibility": {
+        "hide": "Product verbergen",
+        "show": "Product tonen",
+        "visible": "Zichtbaar",
+        "hidden": "Verborgen"
+      },
+      "filters_tooltip": {
+        "category": "Filteren op categorie: {name}",
+        "subcategory": "Filteren op subcategorie: {name}",
+        "producer": "Filteren op producent: {name}",
+        "tag": "Filteren op tag: {tag}",
+        "featured": "Filteren op uitgelichte producten"
+      },
+      "other_tags": "{count} andere",
+      "filter_modal": {
+        "partner": "Partner",
+        "category": "Categorie",
+        "tags": "Tags",
+        "active_only_description": "Toon alleen actieve items"
+      },
+      "empty_state": {
+        "title": "Geen producten",
+        "description": "Geen resultaten voor deze filters."
+      },
+      "error": {
+        "loading_title": "Laadprobleem",
+        "loading_description": "Kan producten niet laden",
+        "retry": "Opnieuw proberen"
+      },
+      "status": {
+        "active": "Actief",
+        "inactive": "Inactief",
+        "changing": "Wijzigen...",
+        "activate": "Activeren",
+        "deactivate": "Deactiveren",
+        "toggle_tooltip": "Klik om het product te {action}",
+        "modal": {
+          "title": "Product {action}",
+          "description": {
+            "activate": "Het product wordt zichtbaar in de winkel en beschikbaar voor verkoop.",
+            "deactivate": "Het product wordt uit de winkel gehaald en niet meer beschikbaar voor verkoop."
+          },
+          "cancel": "Annuleren"
+        }
+      },
+      "partner": {
+        "none": "Geen partner",
+        "loading": "Laden...",
+        "not_found": "Partner niet gevonden",
+        "view_tooltip": "Partner {name} bekijken"
+      },
+      "featured": {
+        "short": "Uitgelicht",
+        "full": "Uitgelicht"
+      },
+      "details": {
+        "show": "Details tonen",
+        "hide": "Details verbergen"
+      },
+      "edit": {
+        "sections": {
+          "general": "Algemene Informatie",
+          "pricing": "Prijs & Configuratie",
+          "images": "Afbeeldingen"
+        },
+        "fields": {
+          "name": "Productnaam",
+          "slug": "Slug",
+          "short_description": "Korte Beschrijving",
+          "description": "Beschrijving",
+          "price_points": "Prijs in Punten",
+          "stock_quantity": "Voorraad",
+          "min_tier": "Minimum Tier",
+          "fulfillment_method": "Uitvoeringsmethode"
+        },
+        "placeholders": {
+          "name": "Productnaam",
+          "slug": "product-slug",
+          "short_description": "Korte productbeschrijving...",
+          "description": "Gedetailleerde productbeschrijving...",
+          "min_tier": "Selecteer een tier",
+          "fulfillment_method": "Selecteer een methode"
+        },
+        "blur_system": {
+          "title": "🚀 Schaalbaar DB Blur Systeem",
+          "images": "Afbeeldingen",
+          "with_blur": "Met blur",
+          "missing": "Ontbreekt",
+          "coverage": "Dekking",
+          "loading": "Blur hashes laden vanuit DB..."
+        },
+        "images": {
+          "add": "Afbeeldingen toevoegen"
+        }
+      }
+    },
+    "projects": {
+      "title": "Projectbeheer",
+      "new_project": "Nieuw Project",
+      "project_list": "Projectlijst",
+      "map_view": "Kaartweergave",
+      "name": "Projectnaam",
+      "location": "Locatie",
+      "status": "Status",
+      "investment_goal": "Investeringsdoel"
+    },
+    "partners": {
+      "title": "Partnerbeheer",
+      "description": "Partnerbeheer"
+    },
+    "orders": {
+      "title": "Bestellingbeheer",
+      "description": "Bestelling tracking"
+    },
+    "sidebar": {
+      "dashboard": {
+        "label": "Dashboard",
+        "description": "Overzicht en statistieken"
+      },
+      "management": {
+        "label": "Beheer"
+      },
+      "logout": "Uitloggen",
+      "close_menu": "Navigatiemenu sluiten",
+      "main_navigation": "Hoofdnavigatie",
+      "mobile_navigation_menu": "Mobiele navigatiemenu"
+    },
+    "subscriptions": {
+      "title": "Abonnementenbeheer",
+      "new_subscription": "Nieuw Abonnement",
+      "subscription_list": "Abonnementenlijst",
+      "user": "Gebruiker",
+      "plan": "Plan",
+      "status": "Status",
+      "start_date": "Startdatum",
+      "end_date": "Einddatum"
+    }
+  },
+  "ui": {
+    "view_modes": {
+      "grid": "Raster",
+      "list": "Lijst",
+      "map": "Kaart"
+    }
+  },
+  "metadata": {
+    "title": "Make the CHANGE - Ecologisch Platform",
+    "description": "Investeer in ecologische projecten en ontdek duurzame producten"
+  }
+}

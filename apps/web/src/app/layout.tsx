@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import '@/app/globals.css'
-import { Providers } from '@/app/providers'
 import type { FC, PropsWithChildren } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
+
 export const metadata: Metadata = {
   title: 'Make the CHANGE - Plateforme Écologique',
   description: 'Investissez dans des projets écologiques et découvrez des produits durables',
@@ -13,14 +13,10 @@ export const metadata: Metadata = {
 
 const RootLayout: FC<PropsWithChildren> = ({
   children,
-}) =>  (
-  <html lang="fr">
+}) => (
+  <html>
     <body className={inter.className}>
-      <Providers>
-        <div className="min-h-screen bg-background text-text">
-          <main>{children}</main>
-        </div>
-      </Providers>
+      {children}
     </body>
   </html>
 )

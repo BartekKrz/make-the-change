@@ -1,0 +1,225 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter"
+  },
+  "navigation": {
+    "home": "Home",
+    "admin": "Administration",
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "projects": "Projects",
+    "subscriptions": "Subscriptions",
+    "users": "Users",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "login_button": "Log in",
+    "forgot_password": "Forgot password?",
+    "invalid_credentials": "Invalid credentials"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "welcome": "Welcome to your administration area",
+      "statistics": "Statistics"
+    },
+    "products": {
+      "title": "Product Management",
+      "new_product": "New Product",
+      "product_list": "Product List",
+      "name": "Product Name",
+      "price": "Price",
+      "status": "Status",
+      "actions": "Actions",
+      "search_placeholder": "Search products...",
+      "filters": {
+        "all_partners": "All partners",
+        "all_categories": "All categories",
+        "sort_by": "Sort by",
+        "tags_placeholder": "Tags...",
+        "active_only": "Active only",
+        "clear_filters": "Clear filters",
+        "clear_all_filters": "Clear all filters",
+        "reset": "Reset"
+      },
+      "sort": {
+        "newest": "Most recent",
+        "oldest": "Oldest",
+        "name_asc": "Name (A-Z)",
+        "name_desc": "Name (Z-A)",
+        "price_asc": "Price ascending",
+        "price_desc": "Price descending",
+        "featured": "Featured first"
+      },
+      "stock": {
+        "increase": "Increase stock",
+        "decrease": "Decrease stock",
+        "label": "stock",
+        "points_label": "pts"
+      },
+      "visibility": {
+        "hide": "Hide product",
+        "show": "Show product",
+        "visible": "Visible",
+        "hidden": "Hidden"
+      },
+      "filters_tooltip": {
+        "category": "Filter by category: {name}",
+        "subcategory": "Filter by subcategory: {name}",
+        "producer": "Filter by producer: {name}",
+        "tag": "Filter by tag: {tag}",
+        "featured": "Filter by featured products"
+      },
+      "other_tags": "{count} others",
+      "filter_modal": {
+        "partner": "Partner",
+        "category": "Category",
+        "tags": "Tags",
+        "active_only_description": "Show only active items"
+      },
+      "empty_state": {
+        "title": "No products",
+        "description": "No results for these filters."
+      },
+      "error": {
+        "loading_title": "Loading error",
+        "loading_description": "Unable to load products",
+        "retry": "Retry"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "changing": "Changing...",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "toggle_tooltip": "Click to {action} the product",
+        "modal": {
+          "title": "{action} product",
+          "description": {
+            "activate": "The product will be visible in the store and available for sale.",
+            "deactivate": "The product will be removed from the store and no longer available for sale."
+          },
+          "cancel": "Cancel"
+        }
+      },
+      "partner": {
+        "none": "No partner",
+        "loading": "Loading...",
+        "not_found": "Partner not found",
+        "view_tooltip": "View partner {name}"
+      },
+      "featured": {
+        "short": "Featured",
+        "full": "Featured"
+      },
+      "details": {
+        "show": "Show details",
+        "hide": "Hide details"
+      },
+      "edit": {
+        "sections": {
+          "general": "General Information",
+          "pricing": "Pricing & Configuration",
+          "images": "Images"
+        },
+        "fields": {
+          "name": "Product Name",
+          "slug": "Slug",
+          "short_description": "Short Description",
+          "description": "Description",
+          "price_points": "Price in Points",
+          "stock_quantity": "Stock Quantity",
+          "min_tier": "Minimum Tier",
+          "fulfillment_method": "Fulfillment Method"
+        },
+        "placeholders": {
+          "name": "Product name",
+          "slug": "product-slug",
+          "short_description": "Short product description...",
+          "description": "Detailed product description...",
+          "min_tier": "Select a tier",
+          "fulfillment_method": "Select a method"
+        },
+        "blur_system": {
+          "title": "🚀 Scalable DB Blur System",
+          "images": "Images",
+          "with_blur": "With blur",
+          "missing": "Missing",
+          "coverage": "Coverage",
+          "loading": "Loading blur hashes from DB..."
+        },
+        "images": {
+          "add": "Add images"
+        }
+      }
+    },
+    "projects": {
+      "title": "Project Management",
+      "new_project": "New Project",
+      "project_list": "Project List",
+      "map_view": "Map View",
+      "name": "Project Name",
+      "location": "Location",
+      "status": "Status",
+      "investment_goal": "Investment Goal"
+    },
+    "partners": {
+      "title": "Partner Management",
+      "description": "Partner management"
+    },
+    "orders": {
+      "title": "Order Management",
+      "description": "Order tracking"
+    },
+    "sidebar": {
+      "dashboard": {
+        "label": "Dashboard",
+        "description": "Overview and statistics"
+      },
+      "management": {
+        "label": "Management"
+      },
+      "logout": "Logout",
+      "close_menu": "Close navigation menu",
+      "main_navigation": "Main navigation",
+      "mobile_navigation_menu": "Mobile navigation menu"
+    },
+    "subscriptions": {
+      "title": "Subscription Management",
+      "new_subscription": "New Subscription",
+      "subscription_list": "Subscription List",
+      "user": "User",
+      "plan": "Plan",
+      "status": "Status",
+      "start_date": "Start Date",
+      "end_date": "End Date"
+    }
+  },
+  "ui": {
+    "view_modes": {
+      "grid": "Grid",
+      "list": "List",
+      "map": "Map"
+    }
+  },
+  "metadata": {
+    "title": "Make the CHANGE - Ecological Platform",
+    "description": "Invest in ecological projects and discover sustainable products"
+  }
+}

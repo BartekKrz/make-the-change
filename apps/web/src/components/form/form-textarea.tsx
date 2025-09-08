@@ -2,7 +2,7 @@
 
 import { forwardRef } from 'react';
 
-import { TextArea, type TextAreaProps } from '@/app/admin/(dashboard)/components/ui/textarea';
+import { TextArea, type TextAreaProps } from '@/app/[locale]/admin/(dashboard)/components/ui/textarea';
 import { FormField, type FormFieldProps } from '@/components/form/form-field';
 
 import type { FieldApi } from '@tanstack/react-form';

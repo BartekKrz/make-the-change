@@ -9,7 +9,7 @@
 import { type FC } from 'react';
 import Image from 'next/image';
 import { Trash2, Edit3, Eye, GripVertical } from 'lucide-react';
-import { cn } from '@/app/admin/(dashboard)/components/cn';
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { ProductBlurService, type ProductBlurHash } from '@/lib/services/product-blur-service';
 import { 
   DndContext, 

@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
   type SimpleSelectProps
-} from '@/app/admin/(dashboard)/components/ui/select';
+} from '@/app/[locale]/admin/(dashboard)/components/ui/select';
 import { FormField, type FormFieldProps } from '@/components/form/form-field';
 
 import type { FieldApi } from '@tanstack/react-form';

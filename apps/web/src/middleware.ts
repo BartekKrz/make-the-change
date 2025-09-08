@@ -1,13 +1,28 @@
 
+import createIntlMiddleware from 'next-intl/middleware'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { routing } from './i18n/routing'
+
+// Créer le middleware next-intl
+const intlMiddleware = createIntlMiddleware(routing)
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  if (pathname.startsWith('/admin')) {
-    if (pathname === '/admin/login') {
+  // TOUJOURS appliquer l'internationalisation en premier
+  // Mais continuer le traitement même s'il y a une réponse
+  const intlResponse = intlMiddleware(request)
+  
+  // Si intl veut rediriger, on le fait (par exemple /admin -> /fr/admin)
+  if (intlResponse && intlResponse.status === 307) {
+    return intlResponse
+  }
+
+  // Gérer l'authentification pour les routes admin  
+  if (pathname.startsWith('/admin') || pathname.match(/^\/[a-z]{2}\/admin/)) {
+    if (pathname === '/admin/login' || pathname.match(/^\/[a-z]{2}\/admin\/login$/)) {
       return NextResponse.next()
     }
 
@@ -29,7 +44,10 @@ export async function middleware(request: NextRequest) {
       const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) {
-        const loginUrl = new URL('/admin/login', request.url)
+        // Extraire la locale du pathname
+        const localeMatch = pathname.match(/^\/([a-z]{2})\//)
+        const locale = localeMatch ? localeMatch[1] : 'fr'
+        const loginUrl = new URL(`/${locale}/admin/login`, request.url)
         loginUrl.searchParams.set('redirect', pathname)
         return NextResponse.redirect(loginUrl)
       }
@@ -41,7 +59,10 @@ export async function middleware(request: NextRequest) {
       if (allow.length) {
         const email = (user.email || '').toLowerCase()
         if (!allow.includes(email)) {
-          const loginUrl = new URL('/admin/login', request.url)
+          // Extraire la locale du pathname  
+          const localeMatch = pathname.match(/^\/([a-z]{2})\//)
+          const locale = localeMatch ? localeMatch[1] : 'fr'
+          const loginUrl = new URL(`/${locale}/admin/login`, request.url)
           loginUrl.searchParams.set('redirect', pathname)
           loginUrl.searchParams.set('denied', '1')
           return NextResponse.redirect(loginUrl)
@@ -52,7 +73,10 @@ export async function middleware(request: NextRequest) {
 
     } catch (error) {
       console.error('Middleware auth error:', error)
-      const loginUrl = new URL('/admin/login', request.url)
+      // Extraire la locale du pathname
+      const localeMatch = pathname.match(/^\/([a-z]{2})\//)
+      const locale = localeMatch ? localeMatch[1] : 'fr'
+      const loginUrl = new URL(`/${locale}/admin/login`, request.url)
       loginUrl.searchParams.set('redirect', pathname)
       return NextResponse.redirect(loginUrl)
     }
@@ -63,6 +87,8 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    '/',
+    '/(fr|en|nl)/:path*',
     '/admin/:path*',
   ]
 }

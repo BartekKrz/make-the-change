@@ -3,7 +3,7 @@
 import { type FC, useState } from 'react';
 import Image from 'next/image';
 import { GripVertical, X, Eye, ArrowLeft, ArrowRight } from 'lucide-react';
-import { cn } from '@/app/admin/(dashboard)/components/cn';
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { Button } from '@/components/ui/button';
 
 type ImageManagerProps = {

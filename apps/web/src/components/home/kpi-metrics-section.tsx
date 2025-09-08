@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent } from '@/app/admin/(dashboard)/components/ui/card'
+import { Card, CardContent } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
 import { motion } from 'framer-motion'
 import { Users, Euro, Zap, ShoppingBag } from 'lucide-react'
 import type { FC } from 'react'

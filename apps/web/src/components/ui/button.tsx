@@ -100,6 +100,20 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       !isDisabled &&
       ['default', 'accent', 'hero'].includes(variant || 'default');
 
+    if (asChild) {
+      return (
+        <Comp
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          disabled={isDisabled}
+          aria-disabled={isDisabled ? 'true' : undefined}
+          {...props}
+        >
+          {children}
+        </Comp>
+      );
+    }
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}

@@ -2,7 +2,7 @@
 
 import { type ReactNode } from 'react';
 
-import { cn } from '@/app/admin/(dashboard)/components/cn';
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 
 import type { FC } from 'react';
 

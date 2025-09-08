@@ -1,0 +1,225 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "success": "Succès",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "admin": "Administration",
+    "dashboard": "Tableau de bord",
+    "products": "Produits",
+    "projects": "Projets",
+    "subscriptions": "Abonnements",
+    "users": "Utilisateurs",
+    "settings": "Paramètres",
+    "logout": "Se déconnecter"
+  },
+  "auth": {
+    "login": "Se connecter",
+    "email": "Email",
+    "password": "Mot de passe",
+    "login_button": "Se connecter",
+    "forgot_password": "Mot de passe oublié ?",
+    "invalid_credentials": "Identifiants invalides"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Tableau de bord administrateur",
+      "welcome": "Bienvenue dans votre espace d'administration",
+      "statistics": "Statistiques"
+    },
+    "products": {
+      "title": "Gestion des produits",
+      "new_product": "Nouveau produit",
+      "product_list": "Liste des produits",
+      "name": "Nom du produit",
+      "price": "Prix",
+      "status": "Statut",
+      "actions": "Actions",
+      "search_placeholder": "Rechercher des produits...",
+      "filters": {
+        "all_partners": "Tous les partenaires",
+        "all_categories": "Toutes les catégories",
+        "sort_by": "Trier par",
+        "tags_placeholder": "Tags...",
+        "active_only": "Actifs uniquement",
+        "clear_filters": "Effacer filtres",
+        "clear_all_filters": "Effacer tous les filtres",
+        "reset": "Réinitialiser"
+      },
+      "sort": {
+        "newest": "Plus récents",
+        "oldest": "Plus anciens",
+        "name_asc": "Nom (A-Z)",
+        "name_desc": "Nom (Z-A)",
+        "price_asc": "Prix croissant",
+        "price_desc": "Prix décroissant",
+        "featured": "Mis en avant"
+      },
+      "stock": {
+        "increase": "Augmenter le stock",
+        "decrease": "Diminuer le stock",
+        "label": "stock",
+        "points_label": "pts"
+      },
+      "visibility": {
+        "hide": "Masquer le produit",
+        "show": "Afficher le produit",
+        "visible": "Visible",
+        "hidden": "Masqué"
+      },
+      "filters_tooltip": {
+        "category": "Filtrer par catégorie: {name}",
+        "subcategory": "Filtrer par sous-catégorie: {name}",
+        "producer": "Filtrer par producteur: {name}",
+        "tag": "Filtrer par tag: {tag}",
+        "featured": "Filtrer par produits mis en avant"
+      },
+      "other_tags": "{count} autres",
+      "filter_modal": {
+        "partner": "Partenaire",
+        "category": "Catégorie",
+        "tags": "Tags",
+        "active_only_description": "Afficher uniquement les éléments actifs"
+      },
+      "empty_state": {
+        "title": "Aucun produit",
+        "description": "Aucun résultat pour ces filtres."
+      },
+      "error": {
+        "loading_title": "Erreur de chargement",
+        "loading_description": "Impossible de charger les produits",
+        "retry": "Réessayer"
+      },
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif",
+        "changing": "Changement...",
+        "activate": "Activer",
+        "deactivate": "Désactiver",
+        "toggle_tooltip": "Cliquer pour {action} le produit",
+        "modal": {
+          "title": "{action} le produit",
+          "description": {
+            "activate": "Le produit sera visible dans la boutique et disponible à la vente.",
+            "deactivate": "Le produit sera retiré de la boutique et ne sera plus disponible à la vente."
+          },
+          "cancel": "Annuler"
+        }
+      },
+      "partner": {
+        "none": "Aucun partenaire",
+        "loading": "Chargement...",
+        "not_found": "Partenaire introuvable",
+        "view_tooltip": "Voir le partenaire {name}"
+      },
+      "featured": {
+        "short": "Vedette",
+        "full": "En vedette"
+      },
+      "details": {
+        "show": "Afficher les détails",
+        "hide": "Masquer les détails"
+      },
+      "edit": {
+        "sections": {
+          "general": "Informations générales",
+          "pricing": "Prix & Configuration",
+          "images": "Images"
+        },
+        "fields": {
+          "name": "Nom du produit",
+          "slug": "Slug",
+          "short_description": "Description courte",
+          "description": "Description",
+          "price_points": "Prix en points",
+          "stock_quantity": "Quantité en stock",
+          "min_tier": "Niveau minimum",
+          "fulfillment_method": "Méthode de livraison"
+        },
+        "placeholders": {
+          "name": "Nom du produit",
+          "slug": "slug-du-produit",
+          "short_description": "Description courte du produit...",
+          "description": "Description détaillée du produit...",
+          "min_tier": "Sélectionner un niveau",
+          "fulfillment_method": "Sélectionner une méthode"
+        },
+        "blur_system": {
+          "title": "🚀 Système DB Blur Scalable",
+          "images": "Images",
+          "with_blur": "Avec blur",
+          "missing": "Manquants",
+          "coverage": "Couverture",
+          "loading": "Chargement des blur hashes depuis la DB..."
+        },
+        "images": {
+          "add": "Ajouter des images"
+        }
+      }
+    },
+    "projects": {
+      "title": "Gestion des projets",
+      "new_project": "Nouveau projet", 
+      "project_list": "Liste des projets",
+      "map_view": "Vue carte",
+      "name": "Nom du projet",
+      "location": "Localisation",
+      "status": "Statut",
+      "investment_goal": "Objectif d'investissement"
+    },
+    "partners": {
+      "title": "Gestion des partenaires",
+      "description": "Gestion des partenaires"
+    },
+    "orders": {
+      "title": "Suivi des commandes",
+      "description": "Suivi des commandes"
+    },
+    "sidebar": {
+      "dashboard": {
+        "label": "Tableau de bord",
+        "description": "Vue d'ensemble et statistiques"
+      },
+      "management": {
+        "label": "Gestion"
+      },
+      "logout": "Déconnexion",
+      "close_menu": "Fermer le menu de navigation",
+      "main_navigation": "Navigation principale",
+      "mobile_navigation_menu": "Menu de navigation mobile"
+    },
+    "subscriptions": {
+      "title": "Gestion des abonnements",
+      "new_subscription": "Nouvel abonnement",
+      "subscription_list": "Liste des abonnements",
+      "user": "Utilisateur",
+      "plan": "Plan",
+      "status": "Statut",
+      "start_date": "Date de début",
+      "end_date": "Date de fin"
+    }
+  },
+  "ui": {
+    "view_modes": {
+      "grid": "Grille",
+      "list": "Liste",
+      "map": "Carte"
+    }
+  },
+  "metadata": {
+    "title": "Make the CHANGE - Plateforme Écologique",
+    "description": "Investissez dans des projets écologiques et découvrez des produits durables"
+  }
+}

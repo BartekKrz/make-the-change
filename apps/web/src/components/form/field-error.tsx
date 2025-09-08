@@ -2,7 +2,7 @@
 
 import type { FC } from 'react';
 
-import { cn } from '@/app/admin/(dashboard)/components/cn';
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 
 export type FieldErrorProps = {
   errors?: string[];

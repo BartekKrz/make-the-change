@@ -1,0 +1,114 @@
+'use client'
+
+import Link from 'next/link'
+import type { ReactNode, MouseEvent, FC } from 'react'
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn'
+
+type AdminListItemProps =  {
+  href: string
+  header: ReactNode
+  metadata: ReactNode
+  actions?: ReactNode
+  className?: string
+}
+
+export const AdminListItem: FC<AdminListItemProps> = ({
+  href,
+  header,
+  metadata,
+  actions,
+  className
+}) => {
+  const handleActionClick = (e: MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  return (
+    <div
+      className={cn(
+        'group relative cursor-pointer',
+        '[padding:var(--density-spacing-md)] [margin:calc(var(--density-spacing-md)*-1)]',
+        'transition-all duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]',
+        'border border-transparent [border-radius:var(--radius-surface)]',
+        'md:hover:bg-gradient-to-r md:hover:from-primary/5 md:hover:via-background/20 md:hover:to-orange-500/5',
+        'md:hover:shadow-lg md:hover:shadow-primary/10 md:hover:border-primary/20',
+        'md:hover:scale-[1.005] md:hover:-translate-y-0.5',
+        'active:bg-gradient-to-r active:from-primary/4 active:via-background/15 active:to-orange-500/4',
+        'active:shadow-md active:shadow-primary/8 active:border-primary/15',
+        'active:scale-[0.998] active:translate-y-0',
+        'backdrop-blur-sm',
+        className
+      )}
+    >
+      {}
+      <Link
+        href={href}
+        className="absolute inset-0 z-10 block"
+        aria-label={`Accéder aux détails`}
+        tabIndex={0}
+      />
+
+      <div className="relative z-20 flex items-center justify-between pointer-events-none">
+        <div className="flex-1 min-w-0">
+          {}
+          <div className="[margin-bottom:var(--density-spacing-sm)]">
+            {header}
+          </div>
+
+          {}
+          <div className="space-y-2 text-sm text-muted-foreground transition-colors duration-300 md:group-hover:text-foreground/90">
+            {metadata}
+          </div>
+
+          {}
+          {actions && (
+            <div
+              className="relative z-30 [margin-top:var(--density-spacing-md)] [padding-top:var(--density-spacing-sm)] border-t border-border/20 pointer-events-auto"
+              onClick={handleActionClick}
+            >
+              {actions}
+            </div>
+          )}
+        </div>
+
+        {}
+        <div className="flex-shrink-0 ml-4 transition-all duration-300 md:group-hover:translate-x-1 md:group-hover:scale-110 group-active:translate-x-0.5 group-active:scale-105">
+          <div className="relative">
+            {}
+            <div className="absolute inset-0 bg-primary/10 [border-radius:var(--radius-pill)] scale-150 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300" />
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="drop-shadow-sm relative z-10"
+            >
+              <defs>
+                <linearGradient id={`chevronGradient-${href.replace(/\W/g, '')}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#3b82f6" />
+                  <stop offset="100%" stopColor="#f59e0b" />
+                </linearGradient>
+              </defs>
+              <path
+                d="m9 18 6-6-6-6"
+                stroke={`url(#chevronGradient-${href.replace(/\W/g, '')})`}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="opacity-50 md:group-hover:opacity-100 group-active:opacity-70 transition-all duration-300"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      {}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/3 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 pointer-events-none [border-radius:var(--radius-surface)]" />
+
+      {}
+      <div className="absolute inset-0 ring-2 ring-primary/20 ring-offset-2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 [border-radius:var(--radius-surface)] pointer-events-none" />
+    </div>
+  )
+}

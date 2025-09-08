@@ -2,7 +2,7 @@
 
 import { forwardRef } from 'react';
 
-import { Input, type InputProps } from '@/app/admin/(dashboard)/components/ui/input';
+import { Input, type InputProps } from '@/app/[locale]/admin/(dashboard)/components/ui/input';
 import { FormField, type FormFieldProps } from '@/components/form/form-field';
 
 import type { FieldApi } from '@tanstack/react-form';
