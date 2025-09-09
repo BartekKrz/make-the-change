@@ -11,3 +11,7 @@ export { FilterButton, FilterModal } from './filter-modal';
 
 
 export { Filters } from './generic-filters';
+
+
+export { AdminDetailLayout } from '../layout/admin-detail-layout';
+export { AdminDetailHeader, AdminDetailActions } from '../layout/admin-detail-header';

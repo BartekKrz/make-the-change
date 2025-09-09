@@ -34,6 +34,15 @@
     "invalid_credentials": "Identifiants invalides"
   },
   "admin": {
+    "common": {
+      "retry": "Réessayer",
+      "preview": "Aperçu",
+      "select_placeholder": "Sélectionner...",
+      "breadcrumbs": {
+        "dashboard": "Tableau de bord",
+        "products": "Produits"
+      }
+    },
     "dashboard": {
       "title": "Tableau de bord administrateur",
       "welcome": "Bienvenue dans votre espace d'administration",
@@ -136,7 +145,15 @@
         "sections": {
           "general": "Informations générales",
           "pricing": "Prix & Configuration",
-          "images": "Images"
+          "images": "Images",
+          "advanced_settings": "Paramètres avancés",
+          "status_visibility": "Statut et visibilité",
+          "commercial": "Informations commerciales",
+          "logistics": "Logistique & Expédition",
+          "categorization": "Catégorisation & Tags",
+          "lifecycle": "Cycle de vie",
+          "seo": "SEO & Référencement",
+          "product_details": "Détails produit"
         },
         "fields": {
           "name": "Nom du produit",
@@ -146,7 +163,28 @@
           "price_points": "Prix en points",
           "stock_quantity": "Quantité en stock",
           "min_tier": "Niveau minimum",
-          "fulfillment_method": "Méthode de livraison"
+          "fulfillment_method": "Méthode de livraison",
+          "is_active": "Produit actif",
+          "featured": "Produit en vedette",
+          "is_hero_product": "Produit héros",
+          "price_eur_equivalent": "Prix équivalent EUR",
+          "weight_grams": "Poids (grammes)",
+          "origin_country": "Pays d'origine",
+          "partner_source": "Source partenaire",
+          "category_id": "Catégorie principale",
+          "secondary_category_id": "Catégorie secondaire",
+          "tags": "Tags",
+          "tags_description": "Séparés par des virgules",
+          "launch_date": "Date de lancement",
+          "discontinue_date": "Date d'arrêt",
+          "seo_title": "Titre SEO",
+          "seo_title_description": "Maximum 60 caractères",
+          "seo_description": "Description SEO",
+          "seo_description_description": "Maximum 160 caractères",
+          "allergens": "Allergènes",
+          "allergens_description": "Séparés par des virgules",
+          "certifications": "Certifications",
+          "certifications_description": "Bio, équitable, etc. Séparées par des virgules"
         },
         "placeholders": {
           "name": "Nom du produit",
@@ -154,8 +192,66 @@
           "short_description": "Description courte du produit...",
           "description": "Description détaillée du produit...",
           "min_tier": "Sélectionner un niveau",
-          "fulfillment_method": "Sélectionner une méthode"
+          "fulfillment_method": "Sélectionner une méthode",
+          "origin_country": "France, Belgique...",
+          "partner_source": "Habeebee, Ilanga...",
+          "category": "Sélectionner une catégorie",
+          "secondary_category": "Catégorie secondaire (optionnel)",
+          "tags": "bio, local, artisanal...",
+          "seo_title": "Titre optimisé pour les moteurs de recherche",
+          "seo_description": "Description SEO courte et accrocheuse",
+          "allergens": "gluten, noix, lait...",
+          "certifications": "bio, équitable, AOC..."
         },
+        "fulfillment": {
+          "dropship": "Dropshipping",
+          "stock": "En stock", 
+          "ondemand": "Sur commande"
+        },
+        "tiers": {
+          "all": "Tous niveaux",
+          "explorateur": "Explorateur",
+          "protecteur": "Protecteur",
+          "ambassadeur": "Ambassadeur"
+        },
+        "status": {
+          "active": "Actif",
+          "active_description": "Le produit est visible pour les utilisateurs",
+          "featured": "En vedette",
+          "featured_description": "Affichage prioritaire dans les listes",
+          "hero": "Produit héros",
+          "hero_description": "Mise en avant spéciale sur la page d'accueil"
+        },
+        "toast": {
+          "error": {
+            "title": "Erreur de sauvegarde",
+            "description": "Une erreur inconnue est survenue lors de la sauvegarde."
+          },
+          "success": {
+            "title": "Produit mis à jour",
+            "description": "Les modifications ont été sauvegardées avec succès."
+          }
+        },
+        "errors": {
+          "missing_id": {
+            "title": "ID de produit manquant",
+            "description": "L'identifiant du produit n'est pas valide ou manquant dans l'URL."
+          },
+          "not_found": {
+            "title": "Produit non trouvé",
+            "description": "Le produit demandé n'existe pas ou a été supprimé."
+          },
+          "loading": {
+            "title": "Erreur de chargement",
+            "description": "Une erreur est survenue lors du chargement du produit."
+          }
+        },
+        "loading": {
+          "title": "Chargement du produit",
+          "description": "Veuillez patienter pendant le chargement des données..."
+        },
+        "subtitle": "Produit",
+        "no_slug": "Sans slug",
         "blur_system": {
           "title": "🚀 Système DB Blur Scalable",
           "images": "Images",

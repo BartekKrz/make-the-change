@@ -63,17 +63,65 @@ export const productFormSchema = z.object({
     errorMap: () => ({ message: 'Niveau minimum invalide' })
   }).default('explorateur'),
 
-  fulfillment_method: z.enum(['stock', 'dropship'], {
+  fulfillment_method: z.enum(['stock', 'dropship', 'ondemand'], {
     errorMap: () => ({ message: 'Méthode de livraison invalide' })
   }).default('stock'),
 
   is_active: z.boolean().default(true),
   featured: z.boolean().default(false),
+  is_hero_product: z.boolean().default(false),
+  
+  // Pricing
+  price_eur_equivalent: z
+    .number()
+    .min(0, 'Le prix EUR ne peut pas être négatif')
+    .optional(),
+  
+  
+  // Stock management
+  stock_management: z.boolean().default(true),
+  
+  // Physical properties
+  weight_grams: z
+    .number()
+    .min(0, 'Le poids ne peut pas être négatif')
+    .optional(),
+  
+  dimensions: z
+    .record(z.number())
+    .optional(),
+  
+  // Categorization & Metadata
+  secondary_category_id: z.string().optional(),
+  tags: z.array(z.string()).default([]),
+  variants: z.record(z.unknown()).optional(),
+  metadata: z.record(z.unknown()).optional(),
+  
+  // Product details
+  nutrition_facts: z.record(z.unknown()).optional(),
+  allergens: z.array(z.string()).default([]),
+  certifications: z.array(z.string()).default([]),
+  seasonal_availability: z.record(z.unknown()).optional(),
+  
+  // Logistics
+  origin_country: z.string().optional(),
+  partner_source: z.string().optional(),
+  
+  // Lifecycle
+  launch_date: z.string().optional(),
+  discontinue_date: z.string().optional(),
+  
+  // SEO
+  seo_title: z.string().max(60, 'Le titre SEO ne peut pas dépasser 60 caractères').optional(),
+  seo_description: z.string().max(160, 'La description SEO ne peut pas dépasser 160 caractères').optional(),
 
   images: z
     .array(z.string().url('URL d\'image invalide'))
     .max(10, 'Maximum 10 images par produit')
     .default([]),
+  
+  blur_hashes: z.array(z.unknown()).default([]),
+  
 
   // blur_hashes: DEPRECATED - Généré automatiquement par OptimizedImage
   // Plus besoin de stocker les BlurHash manuellement
@@ -86,12 +134,12 @@ export const productFormSchema = z.object({
   message: 'Une description détaillée est requise pour les produits premium (>1000 points)',
   path: ['description']
 }).refine((data) => {
-  if (data.fulfillment_method === 'dropship' && data.stock_quantity > 0) {
+  if ((data.fulfillment_method === 'dropship' || data.fulfillment_method === 'ondemand') && data.stock_quantity > 0) {
     return false
   }
   return true
 }, {
-  message: 'Les produits en dropshipping ne peuvent pas avoir de stock',
+  message: 'Les produits en dropshipping/sur commande ne peuvent pas avoir de stock',
   path: ['stock_quantity']
 })
 

@@ -12,7 +12,14 @@
     "next": "Next",
     "previous": "Previous",
     "search": "Search",
-    "filter": "Filter"
+    "filter": "Filter",
+    "retry": "Retry",
+    "preview": "Preview",
+    "select_placeholder": "Select...",
+    "breadcrumbs": {
+      "dashboard": "Dashboard",
+      "products": "Products"
+    }
   },
   "navigation": {
     "home": "Home",
@@ -34,6 +41,15 @@
     "invalid_credentials": "Invalid credentials"
   },
   "admin": {
+    "common": {
+      "retry": "Retry",
+      "preview": "Preview",
+      "select_placeholder": "Select...",
+      "breadcrumbs": {
+        "dashboard": "Dashboard",
+        "products": "Products"
+      }
+    },
     "dashboard": {
       "title": "Admin Dashboard",
       "welcome": "Welcome to your administration area",
@@ -136,7 +152,15 @@
         "sections": {
           "general": "General Information",
           "pricing": "Pricing & Configuration",
-          "images": "Images"
+          "images": "Images",
+          "advanced_settings": "Advanced Settings",
+          "status_visibility": "Status & Visibility",
+          "commercial": "Commercial Information",
+          "logistics": "Logistics & Shipping",
+          "categorization": "Categorization & Tags",
+          "lifecycle": "Lifecycle",
+          "seo": "SEO & Referencing",
+          "product_details": "Product Details"
         },
         "fields": {
           "name": "Product Name",
@@ -146,7 +170,28 @@
           "price_points": "Price in Points",
           "stock_quantity": "Stock Quantity",
           "min_tier": "Minimum Tier",
-          "fulfillment_method": "Fulfillment Method"
+          "fulfillment_method": "Fulfillment Method",
+          "is_active": "Product Active",
+          "featured": "Featured Product",
+          "is_hero_product": "Hero Product",
+          "price_eur_equivalent": "EUR Equivalent Price",
+          "weight_grams": "Weight (grams)",
+          "origin_country": "Origin Country",
+          "partner_source": "Partner Source",
+          "category_id": "Main Category",
+          "secondary_category_id": "Secondary Category",
+          "tags": "Tags",
+          "tags_description": "Separated by commas",
+          "launch_date": "Launch Date",
+          "discontinue_date": "Discontinue Date",
+          "seo_title": "SEO Title",
+          "seo_title_description": "Maximum 60 characters",
+          "seo_description": "SEO Description",
+          "seo_description_description": "Maximum 160 characters",
+          "allergens": "Allergens",
+          "allergens_description": "Separated by commas",
+          "certifications": "Certifications",
+          "certifications_description": "Organic, fair trade, etc. Separated by commas"
         },
         "placeholders": {
           "name": "Product name",
@@ -166,7 +211,56 @@
         },
         "images": {
           "add": "Add images"
-        }
+        },
+        "fulfillment": {
+          "dropship": "Dropshipping",
+          "stock": "In Stock",
+          "ondemand": "On Demand"
+        },
+        "tiers": {
+          "all": "All levels",
+          "explorateur": "Explorer",
+          "protecteur": "Protector",
+          "ambassadeur": "Ambassador"
+        },
+        "status": {
+          "active": "Active",
+          "active_description": "The product is visible to users",
+          "featured": "Featured",
+          "featured_description": "Priority display in lists",
+          "hero": "Hero Product",
+          "hero_description": "Special highlight on homepage"
+        },
+        "toast": {
+          "error": {
+            "title": "Save Error",
+            "description": "An unknown error occurred while saving."
+          },
+          "success": {
+            "title": "Product Updated",
+            "description": "Changes have been saved successfully."
+          }
+        },
+        "errors": {
+          "missing_id": {
+            "title": "Missing Product ID",
+            "description": "The product identifier is invalid or missing in the URL."
+          },
+          "not_found": {
+            "title": "Product Not Found",
+            "description": "The requested product does not exist or has been deleted."
+          },
+          "loading": {
+            "title": "Loading Error",
+            "description": "An error occurred while loading the product."
+          }
+        },
+        "loading": {
+          "title": "Loading Product",
+          "description": "Please wait while loading data..."
+        },
+        "subtitle": "Product",
+        "no_slug": "No slug"
       }
     },
     "projects": {
