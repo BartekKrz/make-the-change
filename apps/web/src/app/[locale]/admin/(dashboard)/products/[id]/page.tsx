@@ -1,5 +1,4 @@
 "use client"
-
 import { type FC, useCallback, useMemo, useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useTranslations } from 'next-intl';
