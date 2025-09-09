@@ -214,3 +214,4 @@ export class SupabaseProductService {
     return query;
   }
 }
+

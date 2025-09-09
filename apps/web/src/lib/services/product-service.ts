@@ -151,3 +151,4 @@ export interface ProductData {
   discontinue_date?: string
   stock_management: boolean
 }
+

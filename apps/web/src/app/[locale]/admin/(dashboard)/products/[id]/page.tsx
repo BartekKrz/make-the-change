@@ -3,7 +3,7 @@
 import { type FC, useCallback, useMemo, useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useTranslations } from 'next-intl';
-import { RouterOutputs, trpc } from '@/lib/trpc'
+import { RouterOutputs, RouterInputs, trpc } from '@/lib/trpc'
 import { useToast } from '@/hooks/use-toast'
 import { useEntityForm } from '@/hooks/use-entity-form'
 import type { ProductFormData } from '@/lib/validators/product'
@@ -14,22 +14,37 @@ import { AdminPageLayout } from '@/app/[locale]/admin/(dashboard)/components/adm
 import { AdminDetailLayout } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-detail-layout'
 import { AdminDetailHeader, AdminDetailActions } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-detail-header'
 import { DetailView } from '@/app/[locale]/admin/(dashboard)/components/ui/detail-view'
-
 import { FormSelect, FormToggle } from '@/app/[locale]/admin/(dashboard)/components/ui/form-components'
 import { Input } from '../../components/ui/input';
 import { TextArea } from '../../components/ui/textarea';
+import { TagsAutocomplete } from '@/app/[locale]/admin/(dashboard)/components/ui/tags-autocomplete';
+import { SingleAutocomplete } from '@/app/[locale]/admin/(dashboard)/components/ui/single-autocomplete';
 
-// Import des composants images de l'ancienne version
 import { ImageGalleryModal } from "@/components/images/image-gallery";
 import { OptimizedImageMasonry } from "@/components/ui/optimized-image-masonry";
 import { ProductBlurService, type ProductBlurHash } from "@/lib/services/product-blur-service";
 import { ImageUploaderField } from "@/components/images/image-uploader";
+import { ModernDatePicker } from "@/components/ui/date-picker";
 
 const isValidProductId = (id: string | undefined): id is string => {
   return typeof id === 'string' && id.length > 0
 }
 
 type ProductDetail = RouterOutputs['admin']['products']['detail'];
+type ProductUpdateInput = RouterInputs['admin']['products']['update'];
+type ProductPatch = ProductUpdateInput['patch'];
+
+
+// Type wrapper pour éviter l'erreur de récursion TypeScript
+type MutationContext = {
+  prevDetail?: ProductDetail
+}
+
+// Types strictement typés sans any
+type ProductUpdateMutationInput = {
+  id: string
+  patch: Partial<ProductDetail>
+}
 
 // État pour les blur hashes optimisés
 type ProductBlurState = {
@@ -88,38 +103,47 @@ const AdminProductEditPageNew: FC = () => {
     }
   )
 
-  const updateMutation = trpc.admin.products.update.useMutation({
-    onMutate: async (variables) => {
-      const { id, patch } = variables
-      await utils.admin.products.detail.cancel({ productId: id })
-      const prevDetail = utils.admin.products.detail.getData({ productId: id })
-      if (prevDetail) {
-        utils.admin.products.detail.setData({ productId: id }, { ...prevDetail, ...patch })
+  // Solution d'expert : Fonction wrapper pour éviter la récursion TypeScript
+  const createUpdateMutation = () => {
+    return trpc.admin.products.update.useMutation({
+      onMutate: async (variables: ProductUpdateMutationInput): Promise<MutationContext> => {
+        const { id, patch } = variables
+        await utils.admin.products.detail.cancel({ productId: id })
+        const prevDetail = utils.admin.products.detail.getData({ productId: id })
+        
+        if (prevDetail) {
+          const optimisticUpdate: ProductDetail = { ...prevDetail, ...patch }
+          utils.admin.products.detail.setData({ productId: id }, optimisticUpdate)
+        }
+        
+        return { prevDetail }
+      },
+      onError: (error: unknown, variables: ProductUpdateMutationInput, context?: MutationContext) => {
+        if (context?.prevDetail) {
+          utils.admin.products.detail.setData({ productId: variables.id }, context.prevDetail)
+        }
+        const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue'
+        toast({
+          variant: 'destructive',
+          title: t('admin.products.edit.toast.error.title'),
+          description: errorMessage || t('admin.products.edit.toast.error.description'),
+        })
+      },
+      onSuccess: (data: ProductDetail) => {
+        toast({
+          variant: 'default',
+          title: t('admin.products.edit.toast.success.title'),
+          description: t('admin.products.edit.toast.success.description'),
+        })
+      },
+      onSettled: (_data: ProductDetail | undefined, _error: unknown, variables: ProductUpdateMutationInput) => {
+        utils.admin.products.detail.invalidate({ productId: variables.id })
+        utils.admin.products.list.invalidate()
       }
-      return { prevDetail }
-    },
-    onError: (err, variables, context) => {
-      if (context?.prevDetail) {
-        utils.admin.products.detail.setData({ productId: variables.id }, context.prevDetail)
-      }
-      toast({
-        variant: 'destructive',
-        title: t('admin.products.edit.toast.error.title'),
-        description: err.message || t('admin.products.edit.toast.error.description'),
-      })
-    },
-    onSuccess: () => {
-      toast({
-        variant: 'default',
-        title: t('admin.products.edit.toast.success.title'),
-        description: t('admin.products.edit.toast.success.description'),
-      })
-    },
-    onSettled: (data, error, variables) => {
-      utils.admin.products.detail.invalidate({ productId: variables.id })
-      utils.admin.products.list.invalidate()
-    }
-  })
+    })
+  }
+  
+  const updateMutation = createUpdateMutation()
   
   const handleSave = useCallback(async (patch: Partial<ProductFormData>) => {
     if (isValidProductId(productId)) {
@@ -275,19 +299,15 @@ const AdminProductEditPageNew: FC = () => {
               <AdminDetailActions
                 saveStatus={saveStatus}
                 onSaveAll={entityForm.saveAll}
-                primaryActions={
-                  <Button size="sm" variant="outline">
-                    {t('admin.common.preview')}
-                  </Button>
-                }
+                
               />
             }
           />
         }
       >
         <DetailView variant="cards" spacing="md" gridCols={2}>
-          {/* Section Informations générales */}
-          <DetailView.Section icon={Info} title={t('admin.products.edit.sections.general')}>
+          {/* 1. ESSENTIEL - Informations de base */}
+          <DetailView.Section icon={Info} title="Informations essentielles">
             <DetailView.Field 
               label={t('admin.products.edit.fields.name')} 
               required
@@ -307,27 +327,43 @@ const AdminProductEditPageNew: FC = () => {
               />
             </DetailView.Field>
 
-            <DetailView.Field label={t('admin.products.edit.fields.short_description')}>
-              <TextArea
-                placeholder={t('admin.products.edit.placeholders.short_description')}
-                rows={3}
-                value={currentData.short_description || ''}
-                onChange={(e) => entityForm.updateField('short_description', e.target.value)}
+            <DetailView.Field label={t('admin.products.edit.fields.category_id')} required>
+              <SingleAutocomplete
+                value={currentData.category_id}
+                onChange={(value) => entityForm.updateField('category_id', value || '')}
+                suggestions={[
+                  'Miels & Apiculture',
+                  'Huiles & Olives',
+                  'Produits transformés',
+                  'Épices & Condiments',
+                  'Cosmétiques naturels',
+                  'Artisanat local',
+                  'Produits saisonniers',
+                  'Agriculture biologique',
+                  'Commerce équitable',
+                  'Produits de la mer'
+                ]}
+                placeholder="Rechercher une catégorie..."
+                allowCreate={true}
               />
             </DetailView.Field>
 
-            <DetailView.Field label={t('admin.products.edit.fields.description')}>
-              <TextArea
-                placeholder={t('admin.products.edit.placeholders.description')}
-                rows={6}
-                value={currentData.description || ''}
-                onChange={(e) => entityForm.updateField('description', e.target.value)}
+            <DetailView.Field label={t('admin.products.edit.fields.min_tier')} required>
+              <FormSelect
+                value={currentData.min_tier || ''}
+                onChange={(value) => entityForm.updateField('min_tier', value)}
+                options={[
+                  { value: 'explorateur', label: t('admin.products.edit.tiers.explorateur') },
+                  { value: 'protecteur', label: t('admin.products.edit.tiers.protecteur') },
+                  { value: 'ambassadeur', label: t('admin.products.edit.tiers.ambassadeur') }
+                ]}
+                placeholder={t('admin.products.edit.placeholders.min_tier')}
               />
             </DetailView.Field>
           </DetailView.Section>
 
-          {/* Section Prix & Stock */}
-          <DetailView.Section icon={DollarSign} title={t('admin.products.edit.sections.pricing')}>
+          {/* 2. PRIX & STATUTS - Paramètres business */}
+          <DetailView.Section icon={DollarSign} title="Prix & Statuts">
             <DetailView.FieldGroup layout="grid-2">
               <DetailView.Field label={t('admin.products.edit.fields.price_points')} required>
                 <Input
@@ -338,47 +374,18 @@ const AdminProductEditPageNew: FC = () => {
                 />
               </DetailView.Field>
 
-              <DetailView.Field label={t('admin.products.edit.fields.stock_quantity')}>
+              <DetailView.Field label={t('admin.products.edit.fields.price_eur_equivalent')}>
                 <Input
                   type="number"
-                  placeholder="0"
-                  value={currentData.stock_quantity?.toString() || ''}
-                  onChange={(e) => entityForm.updateField('stock_quantity', parseInt(e.target.value) || 0)}
+                  step="0.01"
+                  placeholder="0.00"
+                  value={currentData.price_eur_equivalent?.toString() || ''}
+                  onChange={(e) => entityForm.updateField('price_eur_equivalent', parseFloat(e.target.value) || undefined)}
                 />
               </DetailView.Field>
             </DetailView.FieldGroup>
 
-            <DetailView.FieldGroup layout="grid-2" label={t('admin.products.edit.sections.advanced_settings')}>
-              <DetailView.Field label={t('admin.products.edit.fields.fulfillment_method')}>
-                <FormSelect
-                  value={currentData.fulfillment_method || ''}
-                  onChange={(value) => entityForm.updateField('fulfillment_method', value)}
-                  options={[
-                    { value: '', label: t('admin.common.select_placeholder') },
-                    { value: 'dropship', label: t('admin.products.edit.fulfillment.dropship') },
-                    { value: 'stock', label: t('admin.products.edit.fulfillment.stock') },
-                    { value: 'ondemand', label: t('admin.products.edit.fulfillment.ondemand') }
-                  ]}
-                  placeholder={t('admin.products.edit.placeholders.fulfillment_method')}
-                />
-              </DetailView.Field>
-
-              <DetailView.Field label={t('admin.products.edit.fields.min_tier')}>
-                <FormSelect
-                  value={currentData.min_tier || ''}
-                  onChange={(value) => entityForm.updateField('min_tier', value)}
-                  options={[
-                    { value: '', label: t('admin.products.edit.tiers.all') },
-                    { value: 'explorateur', label: t('admin.products.edit.tiers.explorateur') },
-                    { value: 'protecteur', label: t('admin.products.edit.tiers.protecteur') },
-                    { value: 'ambassadeur', label: t('admin.products.edit.tiers.ambassadeur') }
-                  ]}
-                  placeholder={t('admin.products.edit.placeholders.min_tier')}
-                />
-              </DetailView.Field>
-            </DetailView.FieldGroup>
-
-            <DetailView.FieldGroup layout="row" label={t('admin.products.edit.sections.status_visibility')}>
+            <DetailView.FieldGroup layout="row" label="Visibilité">
               <DetailView.Field label={t('admin.products.edit.fields.is_active')}>
                 <FormToggle
                   checked={currentData.is_active || false}
@@ -396,21 +403,6 @@ const AdminProductEditPageNew: FC = () => {
                   description={t('admin.products.edit.status.featured_description')}
                 />
               </DetailView.Field>
-            </DetailView.FieldGroup>
-          </DetailView.Section>
-
-          {/* Section Informations commerciales */}
-          <DetailView.Section icon={DollarSign} title={t('admin.products.edit.sections.commercial')}>
-            <DetailView.FieldGroup layout="grid-2">
-              <DetailView.Field label={t('admin.products.edit.fields.price_eur_equivalent')}>
-                <Input
-                  type="number"
-                  step="0.01"
-                  placeholder="0.00"
-                  value={currentData.price_eur_equivalent?.toString() || ''}
-                  onChange={(e) => entityForm.updateField('price_eur_equivalent', parseFloat(e.target.value) || undefined)}
-                />
-              </DetailView.Field>
 
               <DetailView.Field label={t('admin.products.edit.fields.is_hero_product')}>
                 <FormToggle
@@ -421,83 +413,89 @@ const AdminProductEditPageNew: FC = () => {
                 />
               </DetailView.Field>
             </DetailView.FieldGroup>
-
           </DetailView.Section>
 
-          {/* Section Logistique */}
-          <DetailView.Section icon={Package} title={t('admin.products.edit.sections.logistics')}>
+          {/* 3. CONFIGURATION - Stock & Descriptions */}
+          <DetailView.Section icon={Package} title="Configuration">
             <DetailView.FieldGroup layout="grid-2">
-              <DetailView.Field label={t('admin.products.edit.fields.weight_grams')}>
+              <DetailView.Field label={t('admin.products.edit.fields.fulfillment_method')}>
+                <SingleAutocomplete
+                  value={currentData.fulfillment_method}
+                  onChange={(value) => entityForm.updateField('fulfillment_method', value)}
+                  suggestions={[
+                    'stock',
+                    'dropship', 
+                    'ondemand'
+                  ]}
+                  placeholder="Rechercher une méthode..."
+                  allowCreate={false}
+                />
+              </DetailView.Field>
+
+              <DetailView.Field label={t('admin.products.edit.fields.stock_quantity')}>
                 <Input
                   type="number"
                   placeholder="0"
-                  value={currentData.weight_grams?.toString() || ''}
-                  onChange={(e) => entityForm.updateField('weight_grams', parseInt(e.target.value) || undefined)}
-                />
-              </DetailView.Field>
-
-              <DetailView.Field label={t('admin.products.edit.fields.origin_country')}>
-                <Input
-                  placeholder={t('admin.products.edit.placeholders.origin_country')}
-                  value={currentData.origin_country || ''}
-                  onChange={(e) => entityForm.updateField('origin_country', e.target.value || undefined)}
+                  value={currentData.stock_quantity?.toString() || ''}
+                  onChange={(e) => entityForm.updateField('stock_quantity', parseInt(e.target.value) || 0)}
                 />
               </DetailView.Field>
             </DetailView.FieldGroup>
 
-            <DetailView.Field label={t('admin.products.edit.fields.partner_source')}>
-              <Input
-                placeholder={t('admin.products.edit.placeholders.partner_source')}
-                value={currentData.partner_source || ''}
-                onChange={(e) => entityForm.updateField('partner_source', e.target.value || undefined)}
+            <DetailView.Field label={t('admin.products.edit.fields.short_description')}>
+              <TextArea
+                placeholder={t('admin.products.edit.placeholders.short_description')}
+                rows={2}
+                value={currentData.short_description || ''}
+                onChange={(e) => entityForm.updateField('short_description', e.target.value)}
+              />
+            </DetailView.Field>
+
+            <DetailView.Field label={t('admin.products.edit.fields.description')}>
+              <TextArea
+                placeholder={t('admin.products.edit.placeholders.description')}
+                rows={4}
+                value={currentData.description || ''}
+                onChange={(e) => entityForm.updateField('description', e.target.value)}
               />
             </DetailView.Field>
           </DetailView.Section>
 
-          {/* Section Catégories & Tags */}
-          <DetailView.Section icon={Info} title={t('admin.products.edit.sections.categorization')} span={2}>
+          {/* 4. MÉTADONNÉES - SEO, Tags, Dates */}
+          <DetailView.Section icon={Info} title="Métadonnées" span={2}>
             <DetailView.FieldGroup layout="grid-2">
-              <DetailView.Field label={t('admin.products.edit.fields.category_id')}>
-                <FormSelect
-                  value={currentData.category_id || ''}
-                  onChange={(value) => entityForm.updateField('category_id', value)}
-                  options={[
-                    { value: '', label: t('admin.common.select_placeholder') },
-                    { value: 'category1', label: 'Catégorie 1' },
-                    { value: 'category2', label: 'Catégorie 2' }
+              <DetailView.Field label={t('admin.products.edit.fields.secondary_category_id')}>
+                <SingleAutocomplete
+                  value={currentData.secondary_category_id}
+                  onChange={(value) => entityForm.updateField('secondary_category_id', value)}
+                  suggestions={[
+                    'Miels & Apiculture',
+                    'Huiles & Olives', 
+                    'Produits transformés',
+                    'Épices & Condiments',
+                    'Cosmétiques naturels',
+                    'Artisanat local',
+                    'Produits saisonniers',
+                    'Agriculture biologique',
+                    'Commerce équitable',
+                    'Produits de la mer'
                   ]}
-                  placeholder={t('admin.products.edit.placeholders.category')}
+                  placeholder="Rechercher une catégorie secondaire..."
+                  allowCreate={true}
                 />
               </DetailView.Field>
 
-              <DetailView.Field label={t('admin.products.edit.fields.secondary_category_id')}>
-                <FormSelect
-                  value={currentData.secondary_category_id || ''}
-                  onChange={(value) => entityForm.updateField('secondary_category_id', value || undefined)}
-                  options={[
-                    { value: '', label: t('admin.common.select_placeholder') },
-                    { value: 'category1', label: 'Catégorie 1' },
-                    { value: 'category2', label: 'Catégorie 2' }
-                  ]}
-                  placeholder={t('admin.products.edit.placeholders.secondary_category')}
+              <DetailView.Field label={t('admin.products.edit.fields.tags')} description="Recherchez ou créez des tags">
+                <TagsAutocomplete
+                  value={currentData.tags || []}
+                  onChange={(newTags) => entityForm.updateField('tags', newTags)}
+                  suggestions={['bio', 'local', 'artisanal', 'durable', 'équitable', 'miel', 'naturel', 'premium', 'traditionnel', 'madagascar']}
+                  placeholder="Rechercher des tags..."
+                  maxTags={10}
                 />
               </DetailView.Field>
             </DetailView.FieldGroup>
 
-            <DetailView.Field label={t('admin.products.edit.fields.tags')} description={t('admin.products.edit.fields.tags_description')}>
-              <Input
-                placeholder={t('admin.products.edit.placeholders.tags')}
-                value={(currentData.tags || []).join(', ')}
-                onChange={(e) => {
-                  const tags = e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-                  entityForm.updateField('tags', tags);
-                }}
-              />
-            </DetailView.Field>
-          </DetailView.Section>
-
-          {/* Section Dates */}
-          <DetailView.Section icon={Info} title={t('admin.products.edit.sections.lifecycle')}>
             <DetailView.FieldGroup layout="grid-2">
               <DetailView.Field label={t('admin.products.edit.fields.launch_date')}>
                 <Input
@@ -515,53 +513,135 @@ const AdminProductEditPageNew: FC = () => {
                 />
               </DetailView.Field>
             </DetailView.FieldGroup>
+
+            <DetailView.FieldGroup layout="grid-2">
+              <DetailView.Field label={t('admin.products.edit.fields.seo_title')} description="Max 60 caractères">
+                <Input
+                  placeholder={t('admin.products.edit.placeholders.seo_title')}
+                  value={currentData.seo_title || ''}
+                  maxLength={60}
+                  onChange={(e) => entityForm.updateField('seo_title', e.target.value || undefined)}
+                />
+              </DetailView.Field>
+
+              <DetailView.Field label={t('admin.products.edit.fields.seo_description')} description="Max 160 caractères">
+                <TextArea
+                  placeholder={t('admin.products.edit.placeholders.seo_description')}
+                  value={currentData.seo_description || ''}
+                  maxLength={160}
+                  rows={2}
+                  onChange={(e) => entityForm.updateField('seo_description', e.target.value || undefined)}
+                />
+              </DetailView.Field>
+            </DetailView.FieldGroup>
           </DetailView.Section>
 
-          {/* Section SEO */}
-          <DetailView.Section icon={Info} title={t('admin.products.edit.sections.seo')}>
-            <DetailView.Field label={t('admin.products.edit.fields.seo_title')} description={t('admin.products.edit.fields.seo_title_description')}>
-              <Input
-                placeholder={t('admin.products.edit.placeholders.seo_title')}
-                value={currentData.seo_title || ''}
-                maxLength={60}
-                onChange={(e) => entityForm.updateField('seo_title', e.target.value || undefined)}
-              />
-            </DetailView.Field>
+          {/* 5. DÉTAILS - Logistique & Caractéristiques */}
+          <DetailView.Section icon={Package} title="Détails produit" span={2}>
+            <DetailView.FieldGroup layout="grid-3">
+              <DetailView.Field label={t('admin.products.edit.fields.weight_grams')}>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={currentData.weight_grams?.toString() || ''}
+                  onChange={(e) => entityForm.updateField('weight_grams', parseInt(e.target.value) || undefined)}
+                />
+              </DetailView.Field>
 
-            <DetailView.Field label={t('admin.products.edit.fields.seo_description')} description={t('admin.products.edit.fields.seo_description_description')}>
-              <TextArea
-                placeholder={t('admin.products.edit.placeholders.seo_description')}
-                value={currentData.seo_description || ''}
-                maxLength={160}
-                rows={3}
-                onChange={(e) => entityForm.updateField('seo_description', e.target.value || undefined)}
-              />
-            </DetailView.Field>
-          </DetailView.Section>
+              <DetailView.Field label={t('admin.products.edit.fields.origin_country')}>
+                <SingleAutocomplete
+                  value={currentData.origin_country}
+                  onChange={(value) => entityForm.updateField('origin_country', value)}
+                  suggestions={[
+                    'France',
+                    'Madagascar',
+                    'Belgique',
+                    'Luxembourg',
+                    'Espagne',
+                    'Italie',
+                    'Allemagne',
+                    'Pays-Bas',
+                    'Maroc',
+                    'Tunisie',
+                    'Portugal',
+                    'Suisse'
+                  ]}
+                  placeholder="Rechercher un pays..."
+                  allowCreate={false}
+                />
+              </DetailView.Field>
 
-          {/* Section Détails produit */}
-          <DetailView.Section icon={Info} title={t('admin.products.edit.sections.product_details')} span={2}>
-            <DetailView.Field label={t('admin.products.edit.fields.allergens')} description={t('admin.products.edit.fields.allergens_description')}>
-              <Input
-                placeholder={t('admin.products.edit.placeholders.allergens')}
-                value={(currentData.allergens || []).join(', ')}
-                onChange={(e) => {
-                  const allergens = e.target.value.split(',').map(allergen => allergen.trim()).filter(allergen => allergen.length > 0);
-                  entityForm.updateField('allergens', allergens);
-                }}
-              />
-            </DetailView.Field>
+              <DetailView.Field label={t('admin.products.edit.fields.partner_source')}>
+                <SingleAutocomplete
+                  value={currentData.partner_source}
+                  onChange={(value) => entityForm.updateField('partner_source', value)}
+                  suggestions={[
+                    'HABEEBEE',
+                    'ILANGA NATURE', 
+                    'PROMIEL',
+                    'Producteur local',
+                    'Coopérative agricole',
+                    'Artisan local',
+                    'Ferme biologique'
+                  ]}
+                  placeholder="Rechercher un partenaire..."
+                  allowCreate={true}
+                />
+              </DetailView.Field>
+            </DetailView.FieldGroup>
 
-            <DetailView.Field label={t('admin.products.edit.fields.certifications')} description={t('admin.products.edit.fields.certifications_description')}>
-              <Input
-                placeholder={t('admin.products.edit.placeholders.certifications')}
-                value={(currentData.certifications || []).join(', ')}
-                onChange={(e) => {
-                  const certifications = e.target.value.split(',').map(cert => cert.trim()).filter(cert => cert.length > 0);
-                  entityForm.updateField('certifications', certifications);
-                }}
-              />
-            </DetailView.Field>
+            <DetailView.FieldGroup layout="grid-2">
+              <DetailView.Field label={t('admin.products.edit.fields.allergens')} description="Allergènes officiels selon réglementation EU">
+                <TagsAutocomplete
+                  value={currentData.allergens || []}
+                  onChange={(newAllergens) => entityForm.updateField('allergens', newAllergens)}
+                  suggestions={[
+                    'Gluten',
+                    'Lactose', 
+                    'Fruits à coque',
+                    'Arachides',
+                    'Œufs',
+                    'Poisson',
+                    'Crustacés',
+                    'Mollusques',
+                    'Soja',
+                    'Céleri',
+                    'Moutarde',
+                    'Graines de sésame',
+                    'Sulfites',
+                    'Lupin'
+                  ]}
+                  placeholder="Rechercher des allergènes..."
+                  maxTags={8}
+                />
+              </DetailView.Field>
+
+              <DetailView.Field label={t('admin.products.edit.fields.certifications')} description="Labels de qualité et certifications officielles">
+                <TagsAutocomplete
+                  value={currentData.certifications || []}
+                  onChange={(newCertifications) => entityForm.updateField('certifications', newCertifications)}
+                  suggestions={[
+                    'Agriculture Biologique',
+                    'Commerce Équitable',
+                    'Fair Trade',
+                    'AOC',
+                    'AOP',
+                    'IGP',
+                    'Label Rouge',
+                    'Demeter',
+                    'Nature & Progrès',
+                    'Rainforest Alliance',
+                    'UTZ Certified',
+                    'MSC',
+                    'ASC',
+                    'Slow Food',
+                    'Max Havelaar'
+                  ]}
+                  placeholder="Rechercher des certifications..."
+                  maxTags={5}
+                />
+              </DetailView.Field>
+            </DetailView.FieldGroup>
           </DetailView.Section>
 
           {/* Section Images - Span sur 2 colonnes */}

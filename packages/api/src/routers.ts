@@ -485,18 +485,37 @@ export const appRouter = createRouter({
       create: adminProcedure
         .input(
           z.object({
+            // Champs obligatoires
             name: z.string().min(1),
             slug: z.string().min(1),
             price_points: z.number().int().min(0),
+            
+            // Champs optionnels avec defaults
             category_id: z.string().uuid().optional(),
             producer_id: z.string().uuid().optional(),
             short_description: z.string().optional(),
             description: z.string().optional(),
-            fulfillment_method: z.enum(['stock', 'dropship']).default('dropship'),
+            fulfillment_method: z.enum(['stock', 'dropship', 'ondemand']).default('dropship'),
             is_active: z.boolean().default(true),
             featured: z.boolean().default(false),
+            is_hero_product: z.boolean().default(false),
             stock_quantity: z.number().int().min(0).default(0),
             min_tier: z.enum(['explorateur', 'protecteur', 'ambassadeur']).default('explorateur'),
+            
+            // Champs étendus optionnels
+            price_eur_equivalent: z.number().min(0).optional(),
+            secondary_category_id: z.string().uuid().optional(),
+            tags: z.array(z.string()).default([]),
+            allergens: z.array(z.string()).default([]),
+            certifications: z.array(z.string()).default([]),
+            weight_grams: z.number().int().min(0).optional(),
+            origin_country: z.string().optional(),
+            partner_source: z.string().optional(),
+            launch_date: z.string().optional(),
+            discontinue_date: z.string().optional(),
+            seo_title: z.string().max(60).optional(),
+            seo_description: z.string().max(160).optional(),
+            images: z.array(z.string().url()).max(10).default([]),
           })
         )
         .mutation(async ({ input }): Promise<Product> => {
@@ -515,19 +534,53 @@ export const appRouter = createRouter({
             id: z.string().uuid(),
             patch: z
               .object({
+                // Champs de base
                 name: z.string().optional(),
                 slug: z.string().optional(),
-                price_points: z.number().int().min(0).optional(),
                 short_description: z.string().optional(),
                 description: z.string().optional(),
+                
+                // Prix et stock
+                price_points: z.number().int().min(0).optional(),
+                price_eur_equivalent: z.number().min(0).optional(),
+                stock_quantity: z.number().int().min(0).optional(),
+                
+                // Statuts et visibilité
                 is_active: z.boolean().optional(),
                 featured: z.boolean().optional(),
-                stock_quantity: z.number().int().min(0).optional(),
+                is_hero_product: z.boolean().optional(),
+                
+                // Catégorisation
                 min_tier: z.enum(['explorateur', 'protecteur', 'ambassadeur']).optional(),
                 category_id: z.string().uuid().optional(),
+                secondary_category_id: z.string().uuid().optional(),
                 producer_id: z.string().uuid().optional(),
-                fulfillment_method: z.enum(['stock','dropship']).optional(),
-                images: z.array(z.string().url()).optional(),
+                
+                // Configuration produit
+                fulfillment_method: z.enum(['stock', 'dropship', 'ondemand']).optional(),
+                
+                // Métadonnées et tags
+                tags: z.array(z.string()).optional(),
+                allergens: z.array(z.string()).optional(),
+                certifications: z.array(z.string()).optional(),
+                
+                // Propriétés physiques
+                weight_grams: z.number().int().min(0).optional(),
+                
+                // Origine et partenaires
+                origin_country: z.string().optional(),
+                partner_source: z.string().optional(),
+                
+                // Dates de cycle de vie
+                launch_date: z.string().optional(),
+                discontinue_date: z.string().optional(),
+                
+                // SEO
+                seo_title: z.string().max(60).optional(),
+                seo_description: z.string().max(160).optional(),
+                
+                // Images
+                images: z.array(z.string().url()).max(10).optional(),
               })
               .refine((p) => Object.keys(p).length > 0, 'Patch cannot be empty'),
           })
