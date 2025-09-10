@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { ChevronDown, X } from 'lucide-react';
-import { useDropdownPortal } from '@/hooks/use-dropdown-portal';
 
 export interface SingleAutocompleteProps {
   value?: string;
@@ -25,12 +24,12 @@ export const SingleAutocomplete: React.FC<SingleAutocompleteProps> = ({
   className
 }) => {
   const [inputValue, setInputValue] = useState(value || '');
+  const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   
+  const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
-  
-  const dropdown = useDropdownPortal();
 
   // Filtrer les suggestions
   const filteredSuggestions = suggestions.filter(
@@ -45,11 +44,11 @@ export const SingleAutocomplete: React.FC<SingleAutocompleteProps> = ({
   }
 
   const openDropdown = () => {
-    dropdown.open();
+    setIsOpen(true);
   };
 
   const closeDropdown = () => {
-    dropdown.close();
+    setIsOpen(false);
     setFocusedIndex(-1);
   };
 
@@ -85,6 +84,20 @@ export const SingleAutocomplete: React.FC<SingleAutocompleteProps> = ({
     }
   };
 
+  // Click outside to close
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        closeDropdown();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
+
   // Synchroniser avec la valeur externe
   useEffect(() => {
     setInputValue(value || '');
@@ -102,7 +115,7 @@ export const SingleAutocomplete: React.FC<SingleAutocompleteProps> = ({
 
   return (
     <div 
-      ref={dropdown.triggerRef}
+      ref={containerRef}
       className={cn('relative', className)}
     >
       {/* Input avec clear button */}
@@ -150,7 +163,7 @@ export const SingleAutocomplete: React.FC<SingleAutocompleteProps> = ({
             size={16}
             className={cn(
               'text-muted-foreground transition-transform',
-              dropdown.isOpen && 'rotate-180'
+              isOpen && 'rotate-180'
             )}
           />
         </div>
@@ -161,29 +174,28 @@ export const SingleAutocomplete: React.FC<SingleAutocompleteProps> = ({
         {allowCreate ? 'Tapez pour rechercher ou créer' : 'Sélectionnez dans la liste'}
       </div>
 
-      {/* Dropdown suggestions avec Portal */}
-      {dropdown.renderInPortal(
-        options.length > 0 && (
-          <div className="z-50 mt-1 max-h-60 overflow-auto rounded-lg border border-border bg-background shadow-lg shadow-black/10">
-            <ul ref={listRef} className="p-1">
-              {options.map((option, index) => (
-                <li
-                  key={option}
-                  className={cn(
-                    'px-3 py-2 text-sm cursor-pointer rounded-md transition-colors',
-                    index === focusedIndex
-                      ? 'bg-primary text-primary-foreground'
-                      : 'hover:bg-muted',
-                    option.startsWith('Créer "') && 'italic text-muted-foreground'
-                  )}
-                  onMouseDown={() => selectOption(option)}
-                >
-                  {option}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )
+      {/* Dropdown suggestions simple */}
+      {isOpen && options.length > 0 && (
+        <div className="absolute top-full left-0 right-0 z-50 mt-1 max-h-60 overflow-auto rounded-lg border border-border bg-background shadow-lg shadow-black/10">
+          <ul ref={listRef} className="p-1">
+            {options.map((option, index) => (
+              <li
+                key={option}
+                className={cn(
+                  'px-3 py-2 text-sm cursor-pointer rounded-md transition-colors',
+                  index === focusedIndex
+                    ? 'bg-primary text-primary-foreground'
+                    : 'hover:bg-muted',
+                  option.startsWith('Créer "') && 'italic text-muted-foreground'
+                )}
+                onMouseDown={() => selectOption(option)}
+                onMouseEnter={() => setFocusedIndex(index)}
+              >
+                {option}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );

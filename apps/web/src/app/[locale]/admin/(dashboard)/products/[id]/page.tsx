@@ -18,12 +18,11 @@ import { Input } from '../../components/ui/input';
 import { TextArea } from '../../components/ui/textarea';
 import { TagsAutocomplete } from '@/app/[locale]/admin/(dashboard)/components/ui/tags-autocomplete';
 import { SingleAutocomplete } from '@/app/[locale]/admin/(dashboard)/components/ui/single-autocomplete';
-
 import { ImageGalleryModal } from "@/components/images/image-gallery";
 import { OptimizedImageMasonry } from "@/components/ui/optimized-image-masonry";
 import { ProductBlurService, type ProductBlurHash } from "@/lib/services/product-blur-service";
 import { ImageUploaderField } from "@/components/images/image-uploader";
-import { ModernDatePicker } from "@/components/ui/date-picker";
+
 
 const isValidProductId = (id: string | undefined): id is string => {
   return typeof id === 'string' && id.length > 0
@@ -217,20 +216,18 @@ const AdminProductEditPageNew: FC = () => {
     fetchProductWithBlur();
   }, [productId, product?.images]);
 
-  if (!isValidProductId(productId)) {
-    return (
-      <AdminPageLayout>
-        <div className="p-8">
-          <EmptyState
-            variant="muted"
-            icon={Package}
-            title={t('admin.products.edit.errors.missing_id.title')}
-            description={t('admin.products.edit.errors.missing_id.description')}
-          />
-        </div>
-      </AdminPageLayout>
-    )
-  }
+  if (!isValidProductId(productId)) return (
+    <AdminPageLayout>
+      <div className="p-8">
+        <EmptyState
+          variant="muted"
+          icon={Package}
+          title={t('admin.products.edit.errors.missing_id.title')}
+          description={t('admin.products.edit.errors.missing_id.description')}
+        />
+      </div>
+    </AdminPageLayout>
+  )
 
   if (error) {
     const isNotFound = error.data?.httpStatus === 404
@@ -261,20 +258,18 @@ const AdminProductEditPageNew: FC = () => {
     )
   }
 
-  if (isLoading || !product) {
-    return (
-      <AdminPageLayout>
-        <div className="p-8">
-          <EmptyState
-            variant="muted"
-            icon={Package}
-            title={t('admin.products.edit.loading.title')}
-            description={t('admin.products.edit.loading.description')}
-          />
-        </div>
-      </AdminPageLayout>
-    )
-  }
+  if (isLoading || !product) return (
+    <AdminPageLayout>
+      <div className="p-8">
+        <EmptyState
+          variant="muted"
+          icon={Package}
+          title={t('admin.products.edit.loading.title')}
+          description={t('admin.products.edit.loading.description')}
+        />
+      </div>
+    </AdminPageLayout>
+  )
 
   const currentData = entityForm.getCurrentData()
   const saveStatus = entityForm.getSaveStatus()
