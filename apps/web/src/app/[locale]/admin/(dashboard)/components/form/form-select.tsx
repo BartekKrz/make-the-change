@@ -31,10 +31,10 @@ export const FormSelect = ({
         </label>
       )}
       <select
-        value={value}
-        onChange={(e) => field.handleChange(e.target.value)}
-        onBlur={field.handleBlur}
         className={`w-full px-3 py-2 border border-input bg-background text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${hasError ? 'border-red-500 focus:border-red-500' : ''} ${className}`}
+        value={value}
+        onBlur={field.handleBlur}
+        onChange={(e) => field.handleChange(e.target.value)}
       >
         {placeholder && (
           <option value="">{placeholder}</option>

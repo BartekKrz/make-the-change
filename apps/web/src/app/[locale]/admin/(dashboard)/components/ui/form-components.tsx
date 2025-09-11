@@ -1,9 +1,12 @@
 'use client';
 
-import type { FC } from 'react';
-import { memo } from 'react';
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { ChevronDown } from 'lucide-react';
+import { memo } from 'react';
+
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+
+import type { FC } from 'react';
+
 
 export type FormSelectOption = {
   value: string;
@@ -33,9 +36,9 @@ export const FormSelect: FC<FormSelectProps> = memo(({
   return (
     <div className="relative">
       <select
-        value={value || ''}
-        onChange={(e) => onChange(e.target.value)}
+        data-testid={testId}
         disabled={disabled}
+        value={value || ''}
         className={cn(
           'w-full px-3 py-2 bg-background border border-border rounded-lg',
           'text-sm text-foreground placeholder:text-muted-foreground',
@@ -45,18 +48,18 @@ export const FormSelect: FC<FormSelectProps> = memo(({
           'appearance-none pr-10',
           className
         )}
-        data-testid={testId}
+        onChange={(e) => onChange(e.target.value)}
       >
         {placeholder && (
-          <option value="" disabled>
+          <option disabled value="">
             {placeholder}
           </option>
         )}
         {options.map((option) => (
           <option
             key={option.value}
-            value={option.value}
             disabled={option.disabled}
+            value={option.value}
           >
             {option.label}
           </option>
@@ -115,11 +118,10 @@ export const FormToggle: FC<FormToggleProps> = memo(({
   return (
     <div className={cn('flex items-start gap-3', className)} data-testid={testId}>
       <button
-        type="button"
-        role="switch"
         aria-checked={checked}
-        onClick={() => !disabled && onChange(!checked)}
         disabled={disabled}
+        role="switch"
+        type="button"
         className={cn(
           'relative inline-flex flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2',
           sizeClasses[size],
@@ -128,6 +130,7 @@ export const FormToggle: FC<FormToggleProps> = memo(({
             : 'bg-muted',
           disabled && 'opacity-50 cursor-not-allowed'
         )}
+        onClick={() => !disabled && onChange(!checked)}
       >
         <span
           aria-hidden="true"
@@ -180,16 +183,16 @@ export const FormCheckbox: FC<FormCheckboxProps> = memo(({
     <div className={cn('flex items-start gap-3', className)} data-testid={testId}>
       <div className="flex items-center h-5">
         <input
-          type="checkbox"
           checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
           disabled={disabled}
+          type="checkbox"
           className={cn(
             'w-4 h-4 text-primary bg-background border-border rounded',
             'focus:ring-2 focus:ring-primary/20 focus:ring-offset-0',
             'transition-colors duration-200',
             'disabled:opacity-50 disabled:cursor-not-allowed'
           )}
+          onChange={(e) => onChange(e.target.checked)}
         />
       </div>
       

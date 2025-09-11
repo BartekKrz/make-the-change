@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { ChevronDown, X } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 
-export interface SingleAutocompleteProps {
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+
+export type SingleAutocompleteProps = {
   value?: string;
   onChange: (value: string | undefined) => void;
   suggestions?: string[];
@@ -61,26 +62,40 @@ export const SingleAutocomplete: React.FC<SingleAutocompleteProps> = ({
 
   const clearValue = () => {
     setInputValue('');
-    onChange(undefined);
+    onChange();
     inputRef.current?.focus();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowDown') {
+    switch (e.key) {
+    case 'ArrowDown': {
       e.preventDefault();
       setFocusedIndex(prev => Math.min(prev + 1, options.length - 1));
-    } else if (e.key === 'ArrowUp') {
+    
+    break;
+    }
+    case 'ArrowUp': {
       e.preventDefault();
       setFocusedIndex(prev => Math.max(prev - 1, -1));
-    } else if (e.key === 'Enter') {
+    
+    break;
+    }
+    case 'Enter': {
       e.preventDefault();
       if (focusedIndex >= 0 && options[focusedIndex]) {
         selectOption(options[focusedIndex]);
       } else if (allowCreate && inputValue.trim()) {
         selectOption(inputValue.trim());
       }
-    } else if (e.key === 'Escape') {
+    
+    break;
+    }
+    case 'Escape': {
       closeDropdown();
+    
+    break;
+    }
+    // No default
     }
   };
 
@@ -122,8 +137,19 @@ export const SingleAutocomplete: React.FC<SingleAutocompleteProps> = ({
       <div className="relative">
         <input
           ref={inputRef}
+          disabled={disabled}
+          placeholder={placeholder}
           type="text"
           value={inputValue}
+          className={cn(
+            'w-full px-3 py-2 bg-background border border-border rounded-lg text-sm',
+            'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary',
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+            'pr-20', // Espace pour les boutons
+            className
+          )}
+          onFocus={openDropdown}
+          onKeyDown={handleKeyDown}
           onChange={(e) => {
             setInputValue(e.target.value);
             openDropdown();
@@ -133,27 +159,16 @@ export const SingleAutocomplete: React.FC<SingleAutocompleteProps> = ({
               onChange(e.target.value || undefined);
             }
           }}
-          onFocus={openDropdown}
-          onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          disabled={disabled}
-          className={cn(
-            'w-full px-3 py-2 bg-background border border-border rounded-lg text-sm',
-            'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary',
-            'disabled:opacity-50 disabled:cursor-not-allowed',
-            'pr-20', // Espace pour les boutons
-            className
-          )}
         />
         
         {/* Boutons à droite */}
         <div className="absolute inset-y-0 right-0 flex items-center pr-2 gap-1">
           {inputValue && (
             <button
-              type="button"
-              onClick={clearValue}
               className="text-muted-foreground hover:text-foreground p-1 hover:bg-muted rounded transition-colors"
               disabled={disabled}
+              type="button"
+              onClick={clearValue}
             >
               <X size={14} />
             </button>

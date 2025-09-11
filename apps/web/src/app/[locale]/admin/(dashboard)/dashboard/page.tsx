@@ -1,15 +1,15 @@
 "use client"
 
 import Link from 'next/link'
-import { useEffect } from 'react'
-import { type FC } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/hooks/use-auth'
+import { useEffect } from 'react'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { useAuth } from '@/hooks/use-auth'
 
 const AdminDashboardPage = () => {
-  const { user, loading, signOut } = useAuth()
+  const { user, loading, signOut: _signOut } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
@@ -18,15 +18,11 @@ const AdminDashboardPage = () => {
     }
   }, [user, loading, router])
 
-  const handleSignOut = async () => {
-    await signOut()
-    router.push('/admin/login')
-  }
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary" />
       </div>
     )
   }
@@ -90,16 +86,16 @@ const AdminDashboardPage = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-              <Button asChild variant="default" className="h-12 md:h-10 text-responsive">
+              <Button asChild className="h-12 md:h-10 text-responsive" variant="default">
                 <Link href="/admin/products">Gérer Produits</Link>
               </Button>
-              <Button asChild variant="accent" className="h-12 md:h-10 text-responsive">
+              <Button asChild className="h-12 md:h-10 text-responsive" variant="accent">
                 <Link href="/admin/orders">Voir Commandes</Link>
               </Button>
-              <Button asChild variant="info" className="h-12 md:h-10 text-responsive">
+              <Button asChild className="h-12 md:h-10 text-responsive" variant="info">
                 <Link href="/admin/users">Utilisateurs</Link>
               </Button>
-              <Button asChild variant="outline" className="h-12 md:h-10 text-responsive">
+              <Button asChild className="h-12 md:h-10 text-responsive" variant="outline">
                 <Link href="/demo-2025">Demo 2025</Link>
               </Button>
             </div>

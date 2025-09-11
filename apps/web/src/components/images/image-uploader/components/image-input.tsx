@@ -10,17 +10,16 @@ type ImageInputProps =  {
 export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
   ({ onChange, className = '', multiple = false, disabled = false }, ref) => (
     <input
-      type="file"
+      ref={ref}
       accept="image/*"
+      aria-label="Télécharger une image"
+      className={`absolute inset-0 w-full h-full opacity-0 z-[-1] ${className}`}
+      disabled={disabled}
+      multiple={multiple}
+      type="file"
       onChange={(e) => {
-        console.log('🎯 [ImageInput] onChange déclenché, files:', e.target.files);
         onChange(e);
       }}
-      className={`absolute inset-0 w-full h-full opacity-0 z-[-1] ${className}`}
-      ref={ref}
-      aria-label="Télécharger une image"
-      multiple={multiple}
-      disabled={disabled}
     />
   )
 );

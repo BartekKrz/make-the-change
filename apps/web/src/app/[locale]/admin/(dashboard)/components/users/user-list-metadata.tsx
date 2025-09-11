@@ -1,6 +1,7 @@
 'use client'
 
 import { Mail, Shield } from 'lucide-react'
+
 import type { FC } from 'react'
 
 type User = {

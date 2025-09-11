@@ -70,7 +70,7 @@ export class ImageUploadService {
       const filePath = this.generateFilePath(entityId, file.name, options)
       
       // Upload vers Supabase Storage
-      const { data, error } = await supabaseAdmin.storage
+      const { data: _data, error } = await supabaseAdmin.storage
         .from(options.bucket)
         .upload(filePath, optimizedFile, {
           cacheControl: '31536000', // 1 an
@@ -94,7 +94,7 @@ export class ImageUploadService {
       return {
         success: true,
         url: publicUrl,
-        publicUrl: publicUrl,
+        publicUrl,
         fileName: file.name,
         path: filePath,
       }
@@ -171,7 +171,7 @@ export class ImageUploadService {
       const ctx = canvas.getContext('2d')!
       const img = new Image()
 
-      img.onload = () => {
+      img.addEventListener('load', () => {
         // Calcul des nouvelles dimensions
         let { width, height } = img
         
@@ -205,7 +205,7 @@ export class ImageUploadService {
           'image/jpeg',
           options.quality
         )
-      }
+      })
 
       img.src = URL.createObjectURL(file)
     })
@@ -220,9 +220,9 @@ export class ImageUploadService {
     options: UploadOptions
   ): string {
     const timestamp = Date.now()
-    const extension = originalName.split('.').pop()
+    const _extension = originalName.split('.').pop()
     const cleanName = originalName
-      .replace(/[^a-zA-Z0-9.-]/g, '_')
+      .replaceAll(/[^\d.A-Za-z-]/g, '_')
       .toLowerCase()
 
     const folder = options.folder || ''

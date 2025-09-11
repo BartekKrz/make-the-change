@@ -7,8 +7,8 @@ const passwordSchema = z
   .max(128, 'Le mot de passe ne peut pas dépasser 128 caractères')
   .regex(/[A-Z]/, 'Le mot de passe doit contenir au moins une majuscule')
   .regex(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
-  .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre')
-  .regex(/[^A-Za-z0-9]/, 'Le mot de passe doit contenir au moins un caractère spécial')
+  .regex(/\d/, 'Le mot de passe doit contenir au moins un chiffre')
+  .regex(/[^\dA-Za-z]/, 'Le mot de passe doit contenir au moins un caractère spécial')
 
 export const userFormSchema = z.object({
   email: z
@@ -42,7 +42,7 @@ export const userFormSchema = z.object({
   points_balance: z
     .number()
     .min(0, 'Les points ne peuvent pas être négatifs')
-    .max(100000, 'Les points ne peuvent pas dépasser 100 000')
+    .max(100_000, 'Les points ne peuvent pas dépasser 100 000')
     .int('Les points doivent être un nombre entier')
     .default(0),
 
@@ -75,7 +75,7 @@ export const userFormSchema = z.object({
   const maxPointsByLevel = {
     explorateur: 100,
     protecteur: 1000,
-    ambassadeur: 10000
+    ambassadeur: 10_000
   }
 
   return data.points_balance <= maxPointsByLevel[data.user_level]
@@ -182,7 +182,7 @@ export const userLevelRules = {
     description: 'Investissements et produits premium'
   },
   ambassadeur: {
-    maxPoints: 10000,
+    maxPoints: 10_000,
     features: ['all_features', 'priority_support', 'advanced_analytics'],
     description: 'Accès complet avec support prioritaire'
   },

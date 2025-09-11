@@ -6,19 +6,13 @@
 
 'use client';
 
-import { type FC } from 'react';
-import Image from 'next/image';
-import { Trash2, Edit3, Eye, GripVertical } from 'lucide-react';
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
-import { ProductBlurService, type ProductBlurHash } from '@/lib/services/product-blur-service';
 import { 
   DndContext, 
   closestCenter, 
   KeyboardSensor, 
   PointerSensor, 
   useSensor, 
-  useSensors,
-  DragEndEvent
+  useSensors
 } from '@dnd-kit/core';
 import { 
   arrayMove, 
@@ -26,12 +20,21 @@ import {
   sortableKeyboardCoordinates, 
   verticalListSortingStrategy,
   rectSortingStrategy
-} from '@dnd-kit/sortable';
-import { 
+, 
   useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useIsMobile } from '@/hooks/useMediaQuery';
+import { Trash2, Edit3, Eye, GripVertical } from 'lucide-react';
+import Image from 'next/image';
+import { type FC } from 'react';
+
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+import { useIsMobile } from '@/hooks/use-media-query';
+import type { ProductBlurHash } from '@/types/blur';
+
+import type {
+  DragEndEvent
+} from '@dnd-kit/core';
 
 type OptimizedImageMasonryProps = {
   images: string[];
@@ -44,8 +47,8 @@ type OptimizedImageMasonryProps = {
   showActions?: boolean;
   enableReorder?: boolean;
   
-  // 🚀 NOUVEAU : Support pour blur hashes optimisés
-  blurHashes?: ProductBlurHash[];  // Nouveau système scalable
+  // 🚀 NOUVEAU : Support pour blur via map URL -> blur
+  imageBlurMap?: Record<string, ProductBlurHash>;
   productId?: string;              // Pour diagnostics
 };
 
@@ -93,17 +96,10 @@ const SortableImageItem: FC<{
 
   const isMobile = useIsMobile();
 
-  // 🚀 NOUVEAU : Utiliser le blur hash optimisé - TOUJOURS un blur !
-  const blurProps = blurHash 
-    ? ProductBlurService.formatBlurForNextImage(blurHash)
-    : { placeholder: 'blur', blurDataURL: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R7Dh5zNvN2GpuY8CnFrJ0' }; // Blur générique gris moyen
-
-  console.log(`🖼️ [SortableImageItem] Image ${src.slice(-15)}:`, {
-    index,
-    hasBlur: !!blurHash,
-    blurHash: blurHash?.blurHash?.slice(0, 10) + '...' || 'none',
-    blurProps: Object.keys(blurProps)
-  });
+  // Utiliser la data URL issue de la DB si disponible (zéro dépendance react-blurhash)
+  const blurProps = blurHash?.blurDataURL
+    ? { placeholder: 'blur' as const, blurDataURL: blurHash.blurDataURL }
+    : {};
 
   return (
     <div
@@ -132,12 +128,12 @@ const SortableImageItem: FC<{
 
       {/* 🚀 Image Next.js avec blur optimisé du serveur */}
       <Image
-        src={src}
-        alt={alt}
         fill
+        alt={alt}
         className="object-cover transition-all duration-200 rounded-lg"
-        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
         priority={index < 4} // Prioriser les 4 premières images
+        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        src={src}
         unoptimized={src.includes('unsplash')}
         {...blurProps} // 🚀 Blur hash du serveur !
       />
@@ -149,35 +145,32 @@ const SortableImageItem: FC<{
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
               <div className="flex items-center gap-2">
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    console.log('Prévisualisation cliquée:', src, index);
-                    onImagePreview?.(src, index);
-                  }}
                   className="bg-white/90 hover:bg-white p-2 rounded-lg shadow-md transition-colors"
                   title="Prévisualiser"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onImagePreview?.(src, index);
+                  }}
                 >
                   <Eye className="h-4 w-4 text-gray-700" />
                 </button>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    console.log('Remplacement cliqué:', src, index);
-                    onImageReplace?.(src, index);
-                  }}
                   className="bg-white/90 hover:bg-white p-2 rounded-lg shadow-md transition-colors"
                   title="Remplacer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onImageReplace?.(src, index);
+                  }}
                 >
                   <Edit3 className="h-4 w-4 text-gray-700" />
                 </button>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    console.log('Suppression cliquée:', src, index);
-                    onImageDelete?.(src, index);
-                  }}
                   className="bg-white/90 hover:bg-red-50 p-2 rounded-lg shadow-md transition-colors"
                   title="Supprimer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onImageDelete?.(src, index);
+                  }}
                 >
                   <Trash2 className="h-4 w-4 text-red-600" />
                 </button>
@@ -200,34 +193,22 @@ export const OptimizedImageMasonry: FC<OptimizedImageMasonryProps> = ({
   onImagesReorder,
   showActions = false,
   enableReorder = false,
-  blurHashes = [],    // 🚀 NOUVEAU : blur hashes optimisés
+  imageBlurMap = {},    // 🚀 NOUVEAU : blur map optimisé
   productId
 }) => {
-  console.log('🎨 [OptimizedImageMasonry] Rendu avec:', {
-    productId,
-    imagesCount: images.length,
-    blurHashesCount: blurHashes.length,
-    images: images.slice(0, 3), // Première 3 images pour debug
-    blurHashes: blurHashes.slice(0, 3) // Premiers 3 blur hashes pour debug
-  });
 
 
   // 🚀 NOUVEAU : Helper pour obtenir le blur hash d'une image
-  const getBlurForImage = (imageUrl: string): ProductBlurHash | undefined => {
-    const foundBlur = blurHashes.find(blur => blur.url === imageUrl);
-    console.log(`🔍 [OptimizedImageMasonry] Recherche blur pour ${imageUrl.slice(-20)}:`, foundBlur ? '✅ trouvé' : '❌ absent');
-    return foundBlur;
-  };
+  const getBlurForImage = (imageUrl: string): ProductBlurHash | undefined => imageBlurMap?.[imageUrl];
 
   // 🚀 NOUVEAU : Statistiques du nouveau système
   const optimizedStats = {
     totalImages: images.length,
-    withBlur: blurHashes.length,
-    missing: images.length - blurHashes.length,
-    coverage: images.length > 0 ? Math.round((blurHashes.length / images.length) * 100) : 100
+    withBlur: Object.keys(imageBlurMap).length,
+    missing: images.length - Object.keys(imageBlurMap).length,
+    coverage: images.length > 0 ? Math.round((Object.keys(imageBlurMap).length / images.length) * 100) : 100
   };
 
-  console.log('📊 [OptimizedImageMasonry] Stats système scalable:', optimizedStats);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -244,8 +225,8 @@ export const OptimizedImageMasonry: FC<OptimizedImageMasonryProps> = ({
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = images.findIndex((img) => img === active.id);
-      const newIndex = images.findIndex((img) => img === over.id);
+      const oldIndex = images.indexOf(active.id);
+      const newIndex = images.indexOf(over.id);
       
       const newImages = arrayMove(images, oldIndex, newIndex);
       onImagesReorder?.(oldIndex, newIndex, newImages);
@@ -259,19 +240,18 @@ export const OptimizedImageMasonry: FC<OptimizedImageMasonryProps> = ({
     <div className={cn("border border-border rounded-lg overflow-hidden", className)}>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 p-2">
         {images.map((imageUrl, index) => (
-          <div key={index} className="relative aspect-square min-h-[120px]">
+          <div key={imageUrl} className="relative aspect-square min-h-[120px]">
             <SortableImageItem
-              key={imageUrl}
-              src={imageUrl}
               alt={`Image ${index + 1}`}
-              index={index}
+              blurHash={getBlurForImage(imageUrl)} // 🚀 NOUVEAU : blur optimisé !
               id={imageUrl}
+              index={index}
               showActions={showActions}
+              src={imageUrl}
               onImageClick={onImageClick}
-              onImageReplace={onImageReplace}
               onImageDelete={onImageDelete}
               onImagePreview={onImagePreview}
-              blurHash={getBlurForImage(imageUrl)} // 🚀 NOUVEAU : blur optimisé !
+              onImageReplace={onImageReplace}
             />
           </div>
         ))}
@@ -283,20 +263,12 @@ export const OptimizedImageMasonry: FC<OptimizedImageMasonryProps> = ({
   if (enableReorder && !isMobile) {
     return (
       <div className="space-y-4">
-        {/* 🚀 Debug info du nouveau système optimisé */}
-        {process.env.NODE_ENV === 'development' && optimizedStats.totalImages > 0 && (
-          <div className="text-xs text-blue-600 px-2 py-1 bg-blue-50 rounded">
-            🚀 Système Blur Scalable: {optimizedStats.withBlur}/{optimizedStats.totalImages} images 
-            ({optimizedStats.coverage}% coverage) {productId && `- ${productId}`}
-          </div>
-        )}
-        
         <DndContext
-          sensors={sensors}
           collisionDetection={closestCenter}
+          sensors={sensors}
           onDragEnd={handleDragEnd}
         >
-          <SortableContext 
+            <SortableContext 
             items={images} 
             strategy={rectSortingStrategy}
           >

@@ -1,8 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import type { ReactNode, MouseEvent, FC } from 'react'
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn'
+
+import type { ReactNode, MouseEvent, FC } from 'react'
 
 type AdminListItemProps =  {
   href: string
@@ -43,9 +45,9 @@ export const AdminListItem: FC<AdminListItemProps> = ({
     >
       {}
       <Link
-        href={href}
+        aria-label="Accéder aux détails"
         className="absolute inset-0 z-10 block"
-        aria-label={`Accéder aux détails`}
+        href={href}
         tabIndex={0}
       />
 
@@ -78,26 +80,26 @@ export const AdminListItem: FC<AdminListItemProps> = ({
             {}
             <div className="absolute inset-0 bg-primary/10 [border-radius:var(--radius-pill)] scale-150 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300" />
             <svg
-              width="20"
+              className="drop-shadow-sm relative z-10"
+              fill="none"
               height="20"
               viewBox="0 0 24 24"
-              fill="none"
+              width="20"
               xmlns="http://www.w3.org/2000/svg"
-              className="drop-shadow-sm relative z-10"
             >
               <defs>
-                <linearGradient id={`chevronGradient-${href.replace(/\W/g, '')}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                <linearGradient id={`chevronGradient-${href.replaceAll(/\W/g, '')}`} x1="0%" x2="100%" y1="0%" y2="0%">
                   <stop offset="0%" stopColor="#3b82f6" />
                   <stop offset="100%" stopColor="#f59e0b" />
                 </linearGradient>
               </defs>
               <path
+                className="opacity-50 md:group-hover:opacity-100 group-active:opacity-70 transition-all duration-300"
                 d="m9 18 6-6-6-6"
-                stroke={`url(#chevronGradient-${href.replace(/\W/g, '')})`}
-                strokeWidth="2"
+                stroke={`url(#chevronGradient-${href.replaceAll(/\W/g, '')})`}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="opacity-50 md:group-hover:opacity-100 group-active:opacity-70 transition-all duration-300"
+                strokeWidth="2"
               />
             </svg>
           </div>

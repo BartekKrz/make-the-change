@@ -337,6 +337,198 @@ export const appRouter = createRouter({
     }),
 
     products: createRouter({
+      detail_enriched: adminProcedure
+        .input(z.object({ productId: z.string().uuid() }))
+        .query(async ({ input }) => {
+          // Base product
+          const { data: product, error: prodErr } = await supabase
+            .from('products')
+            .select('*')
+            .eq('id', input.productId)
+            .single()
+          if (prodErr || !product) throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found' })
+
+          // Blur aggregation
+          const { data: blurRow, error: blurErr } = await supabase
+            .from('products_with_blur_hashes')
+            .select('*')
+            .eq('id', input.productId)
+            .single()
+          if (blurErr) {
+            // Return product without blur info if view not available
+            return product
+          }
+
+          const row = blurRow as any
+          const image_blur_map: Record<string, any> = {}
+          if (Array.isArray(row?.computed_blur_hashes)) {
+            for (const it of row.computed_blur_hashes as any[]) {
+              const url = it.url ?? it.image_url
+              if (!url) continue
+              image_blur_map[url] = {
+                blurHash: it.blurHash ?? it.blur_hash ?? '',
+                blurDataURL: it.blurDataURL ?? it.blur_data_url ?? undefined,
+                width: it.width ?? undefined,
+                height: it.height ?? undefined,
+                fileSize: it.fileSize ?? it.file_size ?? undefined,
+              }
+            }
+          }
+
+          return {
+            ...product,
+            image_blur_map,
+            blur_count: row?.blur_count ?? 0,
+            total_images: row?.total_images ?? ((product as any).images?.length ?? 0),
+            blur_coverage_percent: row?.blur_coverage_percent ?? 0,
+          }
+        }),
+      blur: createRouter({
+        detail: adminProcedure
+          .input(z.object({ productId: z.string().uuid() }))
+          .query(async ({ input }) => {
+            const { data, error } = await supabase
+              .from('products_with_blur_hashes')
+              .select('*')
+              .eq('id', input.productId)
+              .single()
+            if (error) throw new TRPCError({ code: 'NOT_FOUND', message: 'Product blur not found' })
+
+            const row = data as any
+            const computed_blur_hashes = Array.isArray(row?.computed_blur_hashes)
+              ? (row.computed_blur_hashes as any[]).map((it) => ({
+                  url: it.url ?? it.image_url ?? '',
+                  blurHash: it.blurHash ?? it.blur_hash ?? '',
+                  blurDataURL: it.blurDataURL ?? it.blur_data_url ?? undefined,
+                  width: it.width ?? undefined,
+                  height: it.height ?? undefined,
+                  fileSize: it.fileSize ?? it.file_size ?? undefined,
+                }))
+              : []
+
+            return {
+              id: row.id,
+              name: row.name,
+              slug: row.slug,
+              images: (row.images as string[] | null) || [],
+              blur_count: row.blur_count || 0,
+              total_images: row.total_images || 0,
+              blur_coverage_percent: row.blur_coverage_percent || 0,
+              computed_blur_hashes,
+              created_at: row.created_at,
+              is_active: row.is_active,
+              featured: row.featured,
+              category_id: row.category_id,
+            }
+          }),
+
+        list: adminProcedure
+          .input(
+            z
+              .object({
+                isActive: z.boolean().optional(),
+                featured: z.boolean().optional(),
+                categoryId: z.string().uuid().optional(),
+                limit: z.number().int().min(1).max(200).default(50),
+                offset: z.number().int().min(0).default(0),
+              })
+              .optional()
+          )
+          .query(async ({ input }) => {
+            let q = supabase
+              .from('products_with_blur_hashes')
+              .select('*')
+
+            if (input?.isActive !== undefined) q = q.eq('is_active', input.isActive)
+            if (input?.featured !== undefined) q = q.eq('featured', input.featured)
+            if (input?.categoryId) q = q.eq('category_id', input.categoryId)
+            if (input?.offset) q = q.range(input.offset, input.offset + (input.limit ?? 50) - 1)
+            if (input?.limit) q = q.limit(input.limit)
+
+            q = q.order('created_at', { ascending: false })
+
+            const { data, error } = await q
+            if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
+            return data?.map((row: any) => ({
+              id: row.id,
+              name: row.name,
+              slug: row.slug,
+              images: (row.images as string[] | null) || [],
+              blur_count: row.blur_count || 0,
+              total_images: row.total_images || 0,
+              blur_coverage_percent: row.blur_coverage_percent || 0,
+              computed_blur_hashes: Array.isArray(row?.computed_blur_hashes)
+                ? (row.computed_blur_hashes as any[]).map((it) => ({
+                    url: it.url ?? it.image_url ?? '',
+                    blurHash: it.blurHash ?? it.blur_hash ?? '',
+                    blurDataURL: it.blurDataURL ?? it.blur_data_url ?? undefined,
+                    width: it.width ?? undefined,
+                    height: it.height ?? undefined,
+                    fileSize: it.fileSize ?? it.file_size ?? undefined,
+                  }))
+                : [],
+            })) || []
+          }),
+
+        missing: adminProcedure
+          .input(z.object({ limit: z.number().int().min(1).max(100).default(10) }).optional())
+          .query(async ({ input }) => {
+            const { data, error } = await supabase
+              .from('products_missing_blur')
+              .select('*')
+              .limit(input?.limit ?? 10)
+            if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
+            return data
+          }),
+
+        repair: adminProcedure
+          .input(z.object({ productId: z.string().uuid() }))
+          .mutation(async ({ input }) => {
+            const { data, error } = await supabase
+              .from('products_with_blur_hashes')
+              .select('id, images, computed_blur_hashes')
+              .eq('id', input.productId)
+              .single()
+            if (error) throw new TRPCError({ code: 'NOT_FOUND', message: 'Product not found' })
+
+            const images: string[] = Array.isArray((data as any)?.images) ? (data as any).images as string[] : []
+            const existing = Array.isArray((data as any)?.computed_blur_hashes) ? (data as any).computed_blur_hashes as Array<{ url?: string; image_url?: string }> : []
+            const existingUrls = new Set(
+              existing
+                .map((b) => b.url ?? b.image_url)
+                .filter((u): u is string => typeof u === 'string' && !!u)
+            )
+            const missing = images.filter((url) => !existingUrls.has(url))
+
+            if (missing.length === 0) return { success: true, repaired: 0, totalMissing: 0 }
+
+            const supabaseUrl = process.env.SUPABASE_URL as string
+            const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY as string
+
+            let repaired = 0
+            for (const imageUrl of missing) {
+              try {
+                const resp = await fetch(`${supabaseUrl}/functions/v1/generate-blur-hash`, {
+                  method: 'POST',
+                  headers: {
+                    Authorization: `Bearer ${supabaseServiceKey}`,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ imageUrl, entityType: 'product', entityId: input.productId }),
+                })
+                if (resp.ok) {
+                  const r = await resp.json().catch(() => null)
+                  if (!r || r.success === false) {
+                    // continue
+                  } else {
+                    repaired += 1
+                  }
+                }
+              } catch {}
+            }
+            return { success: true, repaired, totalMissing: missing.length }
+          }),
+      }),
       list: adminProcedure
         .input(
           z
@@ -475,11 +667,27 @@ export const appRouter = createRouter({
           const { count, error: countError } = await countQ
           if (countError) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: countError.message })
 
-          return { 
-            items: data as ProductWithRelations[], 
-            nextCursor: data?.at(-1)?.id ?? null,
-            total: count ?? 0
+          // Enrich cover blur for list (products_cover_blur)
+          let items = (data as ProductWithRelations[]) || []
+          const ids = items.map((p: any) => p.id).filter(Boolean)
+          if (ids.length > 0) {
+            const { data: covers, error: coverErr } = await supabase
+              .from('products_cover_blur')
+              .select('id, cover_blur_data_url, cover_blur_hash, cover_image')
+              .in('id', ids)
+
+            if (!coverErr && covers) {
+              const map = new Map<string, any>(covers.map((c: any) => [c.id, c]))
+              items = items.map((it: any) => {
+                const c = map.get(it.id)
+                return c
+                  ? { ...it, cover_blur_data_url: c.cover_blur_data_url, cover_blur_hash: c.cover_blur_hash, cover_image: c.cover_image }
+                  : it
+              })
+            }
           }
+
+          return { items, nextCursor: data?.at(-1)?.id ?? null, total: count ?? 0 }
         }),
 
       create: adminProcedure

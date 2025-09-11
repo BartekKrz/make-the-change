@@ -1,5 +1,6 @@
 import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge';
 import type { Subscription } from '@/lib/types/subscription';
+
 import type { FC } from 'react';
 
 type SubscriptionStatusBadgeProps = {

@@ -1,29 +1,31 @@
 "use client"
-import { DataList, DataCard } from '@/app/[locale]/admin/(dashboard)/components/ui/data-list'
-import { ListContainer } from '@/app/[locale]/admin/(dashboard)/components/ui/list-container'
-import { UserListItem } from '@/app/[locale]/admin/(dashboard)/components/users/user-list-item'
-import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
 import { User, Mail, Shield, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { useToast } from '@/hooks/use-toast'
-import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { type FC, useState, useEffect } from 'react'
+
+import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
 import { AdminPageContainer } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-container'
 import { AdminPageHeader } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-header'
 import { AdminPagination } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-pagination'
-import { ViewToggle, type ViewMode } from '@/app/[locale]/admin/(dashboard)/components/ui/view-toggle'
+import { DataList, DataCard } from '@/app/[locale]/admin/(dashboard)/components/ui/data-list'
+import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
+import { ListContainer } from '@/app/[locale]/admin/(dashboard)/components/ui/list-container'
 import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select'
+import { ViewToggle, type ViewMode } from '@/app/[locale]/admin/(dashboard)/components/ui/view-toggle'
+import { UserListItem } from '@/app/[locale]/admin/(dashboard)/components/users/user-list-item'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/hooks/use-toast'
 import { trpc } from '@/lib/trpc'
-import { type FC, useState, useEffect } from 'react'
+
 
 const AdminUsersPage: FC = () => {
   const { toast } = useToast()
   const [search, setSearch] = useState('')
-  const [role, setRole] = useState<string | undefined>(undefined)
+  const [role, setRole] = useState<string | undefined>()
   const utils = trpc.useUtils()
 
   const [view, setView] = useState<ViewMode>('grid')
-  const [cursor, setCursor] = useState<string | undefined>(undefined)
+  const [cursor, setCursor] = useState<string | undefined>()
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 20
 
@@ -86,41 +88,41 @@ const AdminUsersPage: FC = () => {
     <AdminPageContainer>
       <AdminPageHeader>
         <Input
+          className="max-w-xs"
           placeholder="Rechercher par nom ou email"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-xs"
         />
         <SimpleSelect
+          className="w-[180px]"
           placeholder="Filtrer par rôle"
           value={role}
-          onValueChange={setRole}
           options={[
             { value: 'admin', label: 'Admin' },
             { value: 'user', label: 'User' },
           ]}
-          className="w-[180px]"
+          onValueChange={setRole}
         />
-        {(isLoading || isFetching) && <span className="text-xs text-muted-foreground" aria-live="polite">Chargement…</span>}
+        {(isLoading || isFetching) && <span aria-live="polite" className="text-xs text-muted-foreground">Chargement…</span>}
 
         <Link href="/admin/users/new">
-          <Button size="sm" className="flex items-center gap-2">
+          <Button className="flex items-center gap-2" size="sm">
             <Plus className="h-4 w-4" />
             Nouvel utilisateur
           </Button>
         </Link>
         <ViewToggle
+          availableViews={['grid', 'list']}
           value={view}
           onChange={setView}
-          availableViews={['grid', 'list']}
         />
       </AdminPageHeader>
       {view === 'grid' ? (
 
         <DataList
-          items={users}
-          isLoading={isLoading}
           gridCols={3}
+          isLoading={isLoading}
+          items={users}
           emptyState={{
             title: 'Aucun utilisateur',
             description: 'Aucun résultat pour ces filtres.',

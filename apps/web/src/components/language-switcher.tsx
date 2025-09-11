@@ -1,6 +1,7 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
+
 import { useRouter, usePathname } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 
@@ -19,12 +20,12 @@ export function LanguageSwitcher() {
       {routing.locales.map((loc) => (
         <button
           key={loc}
-          onClick={() => handleLocaleChange(loc)}
           className={`px-2 py-1 text-sm rounded border ${
             locale === loc
               ? 'bg-primary text-primary-foreground'
               : 'bg-background text-foreground hover:bg-accent'
           }`}
+          onClick={() => handleLocaleChange(loc)}
         >
           {loc.toUpperCase()}
         </button>

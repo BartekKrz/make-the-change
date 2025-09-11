@@ -1,9 +1,9 @@
 'use client';
 
-import { forwardRef } from 'react';
-
-import { Check } from 'lucide-react';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
+import { Check } from 'lucide-react';
+import { forwardRef, useId } from 'react';
+
 
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 
@@ -68,7 +68,8 @@ type CheckboxWithLabelProps = {
 
 const CheckboxWithLabel = forwardRef<ElementRef<typeof CheckboxPrimitive.Root>, CheckboxWithLabelProps>(
   ({ className, label, description, error, id, ...props }, ref: ForwardedRef<ElementRef<typeof CheckboxPrimitive.Root>>) => {
-    const checkboxId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+    const reactId = useId();
+    const checkboxId = id ?? `checkbox-${reactId}`;
     
     return (
       <div className='space-y-[var(--density-spacing-sm)]'>

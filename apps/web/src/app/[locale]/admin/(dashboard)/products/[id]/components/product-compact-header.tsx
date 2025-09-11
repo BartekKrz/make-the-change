@@ -1,13 +1,12 @@
 'use client';
 
-import { type FC, useState } from 'react';
 import { Package, Star, Info, ChevronDown, ChevronUp, Building } from 'lucide-react';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { trpc } from '@/lib/trpc';
+import { type FC, useState } from 'react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
-import { Button } from '@/components/ui/button';
 import { 
   Dialog, 
   DialogContent, 
@@ -17,6 +16,9 @@ import {
   DialogFooter 
 } from '@/app/[locale]/admin/(dashboard)/components/ui/dialog';
 import type { SaveStatus } from '@/app/[locale]/admin/(dashboard)/products/[id]/types';
+import { Button } from '@/components/ui/button';
+import { trpc } from '@/lib/trpc';
+
 import { SaveStatusIndicator } from './save-status-indicator';
 
 type ProductData = {
@@ -129,11 +131,11 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
           {productData.images && productData.images.length > 0 ? (
             <div className='relative w-12 h-12 md:w-16 md:h-16 flex-shrink-0 rounded-xl overflow-hidden border border-primary/20 bg-gradient-to-br from-primary/10 to-orange-500/10'>
               <Image
-                src={productData.images[0]}
-                alt={productData.name}
                 fill
+                alt={productData.name}
                 className='object-cover'
                 sizes='(max-width: 768px) 48px, 64px'
+                src={productData.images[0]}
               />
             </div>
           ) : (
@@ -149,7 +151,6 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
 
             <div className='flex md:hidden items-center gap-2 flex-wrap'>
               <button
-                onClick={handleStatusToggle}
                 disabled={!onStatusChange || isChangingStatus}
                 className={cn(
                   'flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium border transition-all duration-200',
@@ -161,6 +162,7 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
                 title={onStatusChange ? t('admin.products.status.toggle_tooltip', { 
                   action: productData.is_active ? t('admin.products.status.deactivate') : t('admin.products.status.activate')
                 }) : undefined}
+                onClick={handleStatusToggle}
               >
                 <div className={cn('w-2 h-2 rounded-full transition-transform', statusInfo.color, isChangingStatus && 'animate-pulse')} />
                 {isChangingStatus ? t('admin.products.status.changing') : statusInfo.label}
@@ -176,7 +178,6 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
 
             <div className='hidden md:flex items-center gap-4 flex-wrap'>
               <button
-                onClick={handleStatusToggle}
                 disabled={!onStatusChange || isChangingStatus}
                 className={cn(
                   'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border transition-all duration-200',
@@ -188,6 +189,7 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
                 title={onStatusChange ? t('admin.products.status.toggle_tooltip', { 
                   action: productData.is_active ? t('admin.products.status.deactivate') : t('admin.products.status.activate')
                 }) : undefined}
+                onClick={handleStatusToggle}
               >
                 <div className={cn('w-2 h-2 rounded-full transition-transform', statusInfo.color, isChangingStatus && 'animate-pulse')} />
                 {isChangingStatus ? t('admin.products.status.changing') : statusInfo.label}
@@ -202,8 +204,8 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
 
               {shouldFetchPartner && partner ? (
                 <Link 
-                  href={`/admin/partners/${productData.producer_id}`}
                   className='flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-full text-xs font-medium hover:from-blue-500/15 hover:to-blue-600/10 transition-colors duration-200'
+                  href={`/admin/partners/${productData.producer_id}`}
                   title={t('admin.products.partner.view_tooltip', { name: partner.name })}
                 >
                   <Building className='h-3 w-3' />
@@ -221,9 +223,9 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
 
         <div className='flex items-center gap-2 flex-shrink-0 self-start md:self-auto'>
           <button
-            onClick={() => setShowMobileDetails(!showMobileDetails)}
-            className='flex md:hidden items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-md border border-border/40 hover:border-border/60'
             aria-label={showMobileDetails ? t('admin.products.details.hide') : t('admin.products.details.show')}
+            className='flex md:hidden items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-md border border-border/40 hover:border-border/60'
+            onClick={() => setShowMobileDetails(!showMobileDetails)}
           >
             <Info className='h-3 w-3' />
             {showMobileDetails ? (
@@ -242,8 +244,8 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
           <div className='flex items-center gap-2 text-xs text-muted-foreground flex-wrap'>
             {shouldFetchPartner && partner ? (
               <Link 
-                href={`/admin/partners/${productData.producer_id}`}
                 className='flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-full text-xs font-medium'
+                href={`/admin/partners/${productData.producer_id}`}
                 title={t('admin.products.partner.view_tooltip', { name: partner.name })}
               >
                 <Building className='h-3 w-3' />
@@ -263,7 +265,7 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
       )}
 
       <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
-        <DialogContent size="sm" className="max-w-md bg-white dark:bg-white border-gray-200">
+        <DialogContent className="max-w-md bg-white dark:bg-white border-gray-200" size="sm">
           <DialogHeader>
             <DialogTitle>
               {t('admin.products.status.modal.title', { 
@@ -283,11 +285,11 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
               {productData.images && productData.images.length > 0 ? (
                 <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
                   <Image
-                    src={productData.images[0]}
-                    alt={productData.name}
                     fill
+                    alt={productData.name}
                     className="object-cover"
                     sizes="64px"
+                    src={productData.images[0]}
                   />
                 </div>
               ) : (
@@ -309,8 +311,8 @@ export const ProductCompactHeader: FC<ProductCompactHeaderProps> = ({
               {t('admin.products.status.modal.cancel')}
             </Button>
             <Button 
-              onClick={confirmStatusChange}
               variant={pendingStatusChange === 'active' ? 'default' : 'destructive'}
+              onClick={confirmStatusChange}
             >
               {pendingStatusChange === 'active' ? t('admin.products.status.activate') : t('admin.products.status.deactivate')}
             </Button>

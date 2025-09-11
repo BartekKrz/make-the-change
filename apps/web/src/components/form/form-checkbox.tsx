@@ -1,9 +1,10 @@
 'use client'
 
 import { type FC } from 'react'
-import { useAppForm } from '@/components/form'
-import { Checkbox } from '@/app/[locale]/admin/(dashboard)/components/ui/checkbox'
+
 import { Badge } from '@/app/[locale]/admin/(dashboard)/components/ui/badge'
+import { Checkbox } from '@/app/[locale]/admin/(dashboard)/components/ui/checkbox'
+import { useAppForm } from '@/components/form'
 
 
 type FormCheckboxProps = {
@@ -26,10 +27,10 @@ export const FormCheckbox: FC<FormCheckboxProps> = ({
   return (
     <label className="flex items-center gap-3 cursor-pointer p-2 rounded-md hover:bg-muted/50 transition-colors">
       <Checkbox
-        id={field.name}
         checked={Boolean(field.state.value)}
-        onCheckedChange={(checked) => field.handleChange(Boolean(checked))}
+        id={field.name}
         onBlur={field.handleBlur}
+        onCheckedChange={(checked) => field.handleChange(Boolean(checked))}
       />
       <div className="flex-1">
         <span className="text-sm font-medium text-foreground">{label}</span>

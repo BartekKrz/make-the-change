@@ -1,9 +1,10 @@
 "use client"
 
 import { useParams } from 'next/navigation'
-import { trpc } from '@/lib/trpc'
 import { type FC } from 'react'
+
 import { SubscriptionDetailController } from '@/app/[locale]/admin/(dashboard)/subscriptions/[id]/components/subscription-detail-controller'
+import { trpc } from '@/lib/trpc'
 
 const AdminSubscriptionEditPage: FC = () => {
   const params = useParams<{ id: string }>()
@@ -40,7 +41,7 @@ const AdminSubscriptionEditPage: FC = () => {
 
       return { prevDetail, prevList }
     },
-    onError: (error, vars, ctx) => {
+    onError: (error, _vars, ctx) => {
       if (ctx?.prevDetail) {
         utils.admin.subscriptions.byId.setData({ id: subscriptionId! }, ctx.prevDetail)
       }
@@ -61,7 +62,7 @@ const AdminSubscriptionEditPage: FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     )
   }

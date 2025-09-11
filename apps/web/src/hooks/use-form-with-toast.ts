@@ -1,12 +1,11 @@
 
 'use client';
 
+import { useForm, type BaseFormOptions } from '@tanstack/react-form';
 import { useRouter } from 'next/navigation';
 
-import { useForm, type BaseFormOptions } from '@tanstack/react-form';
 
 import { useToast } from '@/hooks/use-toast';
-
 import type { FormToastConfig, FormMutationResult } from '@/lib/form-utils';
 
 export type UseFormWithToastOptions<TFormData, TFormValidator = any> =
@@ -57,14 +56,14 @@ export const useFormWithToast = <TFormData, TFormValidator = any>({
 
         } else {
           if (result.errors) {
-            Object.entries(result.errors).forEach(([fieldName, messages]) => {
+            for (const [fieldName, messages] of Object.entries(result.errors)) {
               if (messages.length > 0) {
                 formApi.setFieldMeta(fieldName, (prev) => ({
                   ...prev,
                   errors: messages,
                 }));
               }
-            });
+            }
           }
 
           const errorMessage = result.error || 'Une erreur est survenue';
@@ -98,12 +97,12 @@ export const useFormWithToast = <TFormData, TFormValidator = any>({
     isDirty: form.state.isDirty,
     reset: () => form.reset(),
     clearErrors: () => {
-      Object.keys(form.state.values as object).forEach((fieldName) => {
+      for (const fieldName of Object.keys(form.state.values as object)) {
         form.setFieldMeta(fieldName, (prev: any) => ({
           ...prev,
           errors: [],
         }));
-      });
+      }
     }
   };
 };

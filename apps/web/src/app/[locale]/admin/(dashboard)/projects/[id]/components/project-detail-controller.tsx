@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { type FC } from 'react';
-import { ProjectDetailLayout } from '@/app/[locale]/admin/(dashboard)/projects/[id]/components/project-detail-layout';
-import { ProjectCompactHeader } from '@/app/[locale]/admin/(dashboard)/projects/[id]/components/project-compact-header';
-import { ProjectDetailsEditor } from '@/app/[locale]/admin/(dashboard)/projects/[id]/components/project-details-editor';
+
 import { ProjectBreadcrumbs } from '@/app/[locale]/admin/(dashboard)/projects/[id]/components/project-breadcrumbs';
+import { ProjectCompactHeader } from '@/app/[locale]/admin/(dashboard)/projects/[id]/components/project-compact-header';
+import { ProjectDetailLayout } from '@/app/[locale]/admin/(dashboard)/projects/[id]/components/project-detail-layout';
+import { ProjectDetailsEditor } from '@/app/[locale]/admin/(dashboard)/projects/[id]/components/project-details-editor';
 import type { ProjectFormData } from '@/lib/validators/project';
 
 type ProjectDetailControllerProps = {
@@ -90,24 +91,14 @@ export const ProjectDetailController: FC<ProjectDetailControllerProps> = ({
 
   return (
     <ProjectDetailLayout
-      header={
-        <>
-          <ProjectBreadcrumbs projectData={projectData} />
-          <ProjectCompactHeader
-            projectData={displayData}
-            isEditing={isEditing}
-            onEditToggle={handleEditToggle}
-            onSave={handleSave}
-            isSaving={isSaving}
-          />
-        </>
-      }
       toolbar={<div />}
       content={
         <ProjectDetailsEditor
-          projectData={displayData}
           isEditing={isEditing}
           isSaving={isSaving}
+          projectData={displayData}
+          onImageRemove={handleImageRemove}
+          onImageUpload={handleImageUpload}
           onSave={async (data) => {
             const patch: Partial<ProjectFormData> = {};
             for (const key of [
@@ -123,9 +114,19 @@ export const ProjectDetailController: FC<ProjectDetailControllerProps> = ({
             }
             setIsEditing(false);
           }}
-          onImageUpload={handleImageUpload}
-          onImageRemove={handleImageRemove}
         />
+      }
+      header={
+        <>
+          <ProjectBreadcrumbs projectData={projectData} />
+          <ProjectCompactHeader
+            isEditing={isEditing}
+            isSaving={isSaving}
+            projectData={displayData}
+            onEditToggle={handleEditToggle}
+            onSave={handleSave}
+          />
+        </>
       }
     />
   );

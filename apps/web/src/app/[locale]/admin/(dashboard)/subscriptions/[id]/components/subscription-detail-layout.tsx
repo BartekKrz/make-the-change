@@ -32,7 +32,7 @@ export const SubscriptionDetailLayout: FC<SubscriptionDetailLayoutProps> = ({
           {header}
 
           {}
-          <div className='hidden md:block px-8 pb-4'></div>
+          <div className='hidden md:block px-8 pb-4' />
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { type FC, type ChangeEvent } from 'react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card';
 import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/[locale]/admin/(dashboard)/components/ui/select';
@@ -48,7 +49,7 @@ export const SubscriptionDetailsEditor: FC<SubscriptionDetailsEditorProps> = ({
         <CardContent className='space-y-4'>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div className='space-y-2'>
-              <label htmlFor='subscription_tier' className='text-sm font-medium'>Type d&apos;abonnement</label>
+              <label className='text-sm font-medium' htmlFor='subscription_tier'>Type d&apos;abonnement</label>
               {isEditing ? (
                 <Select
                   value={subscription.subscription_tier}
@@ -72,7 +73,7 @@ export const SubscriptionDetailsEditor: FC<SubscriptionDetailsEditorProps> = ({
             </div>
 
             <div className='space-y-2'>
-              <label htmlFor='status' className='text-sm font-medium'>Statut</label>
+              <label className='text-sm font-medium' htmlFor='status'>Statut</label>
               {isEditing ? (
                 <Select
                   value={subscription.status}
@@ -100,7 +101,7 @@ export const SubscriptionDetailsEditor: FC<SubscriptionDetailsEditorProps> = ({
             </div>
 
             <div className='space-y-2'>
-              <label htmlFor='billing_frequency' className='text-sm font-medium'>Fréquence de facturation</label>
+              <label className='text-sm font-medium' htmlFor='billing_frequency'>Fréquence de facturation</label>
               {isEditing ? (
                 <Select
                   value={subscription.billing_frequency}
@@ -126,14 +127,14 @@ export const SubscriptionDetailsEditor: FC<SubscriptionDetailsEditorProps> = ({
             </div>
 
             <div className='space-y-2'>
-              <label htmlFor='amount_eur' className='text-sm font-medium'>Montant (€)</label>
+              <label className='text-sm font-medium' htmlFor='amount_eur'>Montant (€)</label>
               {isEditing ? (
                 <Input
                   id='amount_eur'
+                  placeholder='0.00'
                   type='number'
                   value={subscription.amount_eur || ''}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('amount_eur', parseFloat(e.target.value) || 0)}
-                  placeholder='0.00'
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('amount_eur', Number.parseFloat(e.target.value) || 0)}
                 />
               ) : (
                 <div className='p-2 bg-muted rounded-md'>
@@ -143,7 +144,7 @@ export const SubscriptionDetailsEditor: FC<SubscriptionDetailsEditorProps> = ({
             </div>
 
             <div className='space-y-2'>
-              <label htmlFor='start_date' className='text-sm font-medium'>Date de début</label>
+              <label className='text-sm font-medium' htmlFor='start_date'>Date de début</label>
               {isEditing ? (
                 <Input
                   id='start_date'
@@ -159,7 +160,7 @@ export const SubscriptionDetailsEditor: FC<SubscriptionDetailsEditorProps> = ({
             </div>
 
             <div className='space-y-2'>
-              <label htmlFor='end_date' className='text-sm font-medium'>Date de fin</label>
+              <label className='text-sm font-medium' htmlFor='end_date'>Date de fin</label>
               {isEditing ? (
                 <Input
                   id='end_date'
@@ -176,19 +177,19 @@ export const SubscriptionDetailsEditor: FC<SubscriptionDetailsEditorProps> = ({
           </div>
 
           <div className='space-y-2'>
-            <label htmlFor='auto_renew' className='text-sm font-medium'>
+            <label className='text-sm font-medium' htmlFor='auto_renew'>
               Renouvellement automatique
             </label>
             {isEditing ? (
               <div className='flex items-center space-x-2'>
                 <input
+                  checked={subscription.auto_renew || false}
+                  className='h-4 w-4'
                   id='auto_renew'
                   type='checkbox'
-                  checked={subscription.auto_renew || false}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('auto_renew', e.target.checked)}
-                  className='h-4 w-4'
                 />
-                <label htmlFor='auto_renew' className='text-sm'>
+                <label className='text-sm' htmlFor='auto_renew'>
                   {subscription.auto_renew ? 'Activé' : 'Désactivé'}
                 </label>
               </div>
@@ -200,14 +201,14 @@ export const SubscriptionDetailsEditor: FC<SubscriptionDetailsEditorProps> = ({
           </div>
 
           <div className='space-y-2'>
-            <label htmlFor='notes' className='text-sm font-medium'>Notes</label>
+            <label className='text-sm font-medium' htmlFor='notes'>Notes</label>
             {isEditing ? (
               <TextArea
                 id='notes'
-                value={subscription.notes || ''}
-                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleChange('notes', e.target.value)}
                 placeholder='Notes sur cet abonnement...'
                 rows={3}
+                value={subscription.notes || ''}
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleChange('notes', e.target.value)}
               />
             ) : (
               <div className='p-2 bg-muted rounded-md min-h-[80px]'>

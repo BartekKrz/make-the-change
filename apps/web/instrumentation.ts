@@ -10,9 +10,16 @@ export async function register() {
   }
 
   // Initialize performance monitoring
-  if (typeof window !== 'undefined') {
+  if (typeof window === 'undefined') {
+    // Server-side instrumentation
+    
+    // TODO: Add server-side monitoring
+    // Examples:
+    // - Database connection monitoring
+    // - API response time tracking
+    // - Memory usage monitoring
+  } else {
     // Client-side instrumentation
-    console.log('🔧 Client instrumentation initialized')
     
     // TODO: Add your monitoring setup here
     // Examples:
@@ -27,8 +34,7 @@ export async function register() {
         const observer = new PerformanceObserver((list) => {
           for (const entry of list.getEntries()) {
             // Track performance metrics
-            const value = (entry as any).value || entry.duration || 0
-            console.log(`📊 ${entry.name}: ${value}ms`)
+            const _value = (entry as PerformanceEntry & { value?: number }).value || entry.duration || 0
           }
         })
         
@@ -37,17 +43,8 @@ export async function register() {
           buffered: true 
         })
       } catch (error) {
-        console.warn('Performance observer not available:', error)
+        console.warn('Performance observer setup failed:', error)
       }
     }
-  } else {
-    // Server-side instrumentation
-    console.log('🔧 Server instrumentation initialized')
-    
-    // TODO: Add server-side monitoring
-    // Examples:
-    // - Database connection monitoring
-    // - API response time tracking
-    // - Memory usage monitoring
   }
 }

@@ -1,12 +1,14 @@
 'use client';
 
-import type { FC, PropsWithChildren } from 'react';
 import { Save, ImageIcon, Info, DollarSign } from 'lucide-react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card';
+import { FormInput, FormSelect, FormTextArea } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { useFormWithToast } from '@/hooks/use-form-with-toast';
-import { FormInput, FormSelect, FormTextArea } from '@/components/form';
 import {  projectTypeLabels, projectStatusLabels, type ProjectFormData } from '@/lib/validators/project';
+
+import type { FC, PropsWithChildren } from 'react';
 
 type ProjectDetailsEditorProps = {
   projectData: ProjectFormData & { id: string };
@@ -70,11 +72,11 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           <form.Field name="name">
             {(field) => (
               <FormInput
+                required
+                disabled={!isEditing}
                 field={field}
                 label="Nom du projet"
                 placeholder="Nom du projet"
-                disabled={!isEditing}
-                required
               />
             )}
           </form.Field>
@@ -82,11 +84,11 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           <form.Field name="slug">
             {(field) => (
               <FormInput
+                required
+                disabled={!isEditing}
                 field={field}
                 label="Slug"
                 placeholder="slug-du-projet"
-                disabled={!isEditing}
-                required
               />
             )}
           </form.Field>
@@ -94,12 +96,12 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           <form.Field name="type">
             {(field) => (
               <FormSelect
+                required
+                disabled={!isEditing}
                 field={field}
                 label="Type de projet"
-                placeholder="Sélectionner un type"
                 options={typeOptions}
-                disabled={!isEditing}
-                required
+                placeholder="Sélectionner un type"
               />
             )}
           </form.Field>
@@ -107,11 +109,11 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           <form.Field name="description">
             {(field) => (
               <FormTextArea
+                disabled={!isEditing}
                 field={field}
                 label="Description courte"
                 placeholder="Description courte du projet..."
                 rows={3}
-                disabled={!isEditing}
               />
             )}
           </form.Field>
@@ -119,11 +121,11 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           <form.Field name="long_description">
             {(field) => (
               <FormTextArea
+                disabled={!isEditing}
                 field={field}
                 label="Description détaillée"
                 placeholder="Description détaillée du projet..."
                 rows={6}
-                disabled={!isEditing}
               />
             )}
           </form.Field>
@@ -139,12 +141,12 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           <form.Field name="target_budget">
             {(field) => (
               <FormInput
+                required
+                disabled={!isEditing}
                 field={field}
                 label="Budget cible (€)"
-                type="number"
                 placeholder="1000"
-                disabled={!isEditing}
-                required
+                type="number"
               />
             )}
           </form.Field>
@@ -152,11 +154,11 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           <form.Field name="producer_id">
             {(field) => (
               <FormInput
+                required
+                disabled={!isEditing}
                 field={field}
                 label="ID Producteur"
                 placeholder="ID du producteur"
-                disabled={!isEditing}
-                required
               />
             )}
           </form.Field>
@@ -164,11 +166,11 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           <form.Field name="status">
             {(field) => (
               <FormSelect
+                disabled={!isEditing}
                 field={field}
                 label="Statut"
-                placeholder="Sélectionner un statut"
                 options={statusOptions}
-                disabled={!isEditing}
+                placeholder="Sélectionner un statut"
               />
             )}
           </form.Field>
@@ -185,14 +187,14 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
             <div>
               <label className='block text-sm font-medium mb-2'>Ajouter des images</label>
               <input
-                type='file'
-                accept='image/*'
                 multiple
-                onChange={(e) => {
-                  const files = Array.from(e.target.files || [])
-                  files.forEach(file => onImageUpload(file))
-                }}
+                accept='image/*'
                 className='block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100'
+                type='file'
+                onChange={(e) => {
+                  const files = [...e.target.files || []]
+                  for (const file of files) onImageUpload(file)
+                }}
               />
             </div>
           )}
@@ -205,11 +207,11 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
   ];
 
   return (
-    <form onSubmit={(e) => {
+    <form className='space-y-6 md:space-y-8' onSubmit={(e) => {
       e.preventDefault();
       e.stopPropagation();
       form.handleSubmit();
-    }} className='space-y-6 md:space-y-8'>
+    }}>
       <ProjectCardsGrid>
         {contentSections.map((section) => (
           <Card key={section.id} className='transition-all duration-200 hover:shadow-lg'>
@@ -231,9 +233,9 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
       {isEditing && (
         <div className="flex justify-end">
           <Button
-            type="submit"
-            disabled={isSubmitting || isSaving}
             className="flex items-center gap-2"
+            disabled={isSubmitting || isSaving}
+            type="submit"
           >
             {(isSubmitting || isSaving) ? (
               <>

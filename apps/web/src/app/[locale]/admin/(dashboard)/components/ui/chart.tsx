@@ -1,12 +1,14 @@
 'use client'
 
-import type { FC, ComponentProps } from 'react'
 import { ResponsiveBar, type BarDatum } from '@nivo/bar'
+import { ResponsiveCalendar, type CalendarDatum } from '@nivo/calendar'
 import { ResponsiveLine, type Serie } from '@nivo/line'
 import { ResponsivePie, type PieDatum } from '@nivo/pie'
-import { ResponsiveCalendar, type CalendarDatum } from '@nivo/calendar'
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn'
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
+
+import type { FC } from 'react'
 type ChartContainerProps = {
   title?: string
   description?: string
@@ -30,7 +32,7 @@ const ChartContainer: FC<ChartContainerProps> = ({
       </CardHeader>
     )}
     <CardContent>
-      <div style={{ height: `${height}px` }} className="w-full">
+      <div className="w-full" style={{ height: `${height}px` }}>
         {children}
       </div>
     </CardContent>
@@ -80,26 +82,50 @@ const ChartBar: FC<ChartBarProps> = ({
 }) => (
   <div style={{ height: `${height}px` }}>
     <ResponsiveBar
-      data={data}
-      keys={keys}
-      indexBy={indexBy}
-      margin={margin}
-      padding={0.3}
-      valueScale={{ type: 'linear' }}
-      indexScale={{ type: 'band', round: true }}
+      animate
+      axisBottom={axisBottom}
+      axisLeft={axisLeft}
+      axisRight={null}
+      axisTop={null}
       colors={colors}
+      data={data}
       enableGridX={enableGridX}
       enableGridY={enableGridY}
       enableLabel={enableLabel}
-      labelSkipWidth={12}
+      indexBy={indexBy}
+      indexScale={{ type: 'band', round: true }}
+      keys={keys}
       labelSkipHeight={12}
+      labelSkipWidth={12}
       labelTextColor="#ffffff"
-      axisTop={null}
-      axisRight={null}
-      axisBottom={axisBottom}
-      axisLeft={axisLeft}
-      animate={true}
+      margin={margin}
       motionConfig="gentle"
+      padding={0.3}
+      valueScale={{ type: 'linear' }}
+      legends={[
+        {
+          dataFrom: 'keys',
+          anchor: 'bottom-right',
+          direction: 'column',
+          justify: false,
+          translateX: 120,
+          translateY: 0,
+          itemsSpacing: 2,
+          itemWidth: 100,
+          itemHeight: 20,
+          itemDirection: 'left-to-right',
+          itemOpacity: 0.85,
+          symbolSize: 20,
+          effects: [
+            {
+              on: 'hover',
+              style: {
+                itemOpacity: 1
+              }
+            }
+          ]
+        }
+      ]}
       theme={{
         background: 'transparent',
         textColor: 'hsl(var(--foreground))',
@@ -136,30 +162,6 @@ const ChartBar: FC<ChartBarProps> = ({
           }
         }
       }}
-      legends={[
-        {
-          dataFrom: 'keys',
-          anchor: 'bottom-right',
-          direction: 'column',
-          justify: false,
-          translateX: 120,
-          translateY: 0,
-          itemsSpacing: 2,
-          itemWidth: 100,
-          itemHeight: 20,
-          itemDirection: 'left-to-right',
-          itemOpacity: 0.85,
-          symbolSize: 20,
-          effects: [
-            {
-              on: 'hover',
-              style: {
-                itemOpacity: 1
-              }
-            }
-          ]
-        }
-      ]}
     />
   </div>
 )
@@ -197,36 +199,55 @@ const ChartLine: FC<ChartLineProps> = ({
 }) => (
   <div style={{ height: `${height}px` }}>
     <ResponsiveLine
-      data={data}
-      margin={margin}
-      xScale={{ type: 'point' }}
-      yScale={{
-        type: 'linear',
-        min: 'auto',
-        max: 'auto',
-        stacked: false,
-        reverse: false
-      }}
-      yFormat=" >-.2f"
+      animate
+      useMesh
+      areaOpacity={0.1}
+      axisBottom={axisBottom}
+      axisLeft={axisLeft}
+      axisRight={null}
+      axisTop={null}
       colors={colors}
+      curve="catmullRom"
+      data={data}
+      enableArea={enableArea}
       enableGridX={enableGridX}
       enableGridY={enableGridY}
       enablePoints={enablePoints}
-      pointSize={pointSize}
-      pointColor={{ theme: 'background' }}
-      pointBorderWidth={2}
-      pointBorderColor={{ from: 'serieColor' }}
-      pointLabelYOffset={-12}
-      enableArea={enableArea}
-      areaOpacity={0.1}
-      useMesh={true}
-      curve="catmullRom"
-      animate={true}
+      margin={margin}
       motionConfig="gentle"
-      axisTop={null}
-      axisRight={null}
-      axisBottom={axisBottom}
-      axisLeft={axisLeft}
+      pointBorderColor={{ from: 'serieColor' }}
+      pointBorderWidth={2}
+      pointColor={{ theme: 'background' }}
+      pointLabelYOffset={-12}
+      pointSize={pointSize}
+      xScale={{ type: 'point' }}
+      yFormat=" >-.2f"
+      legends={[
+        {
+          anchor: 'bottom-right',
+          direction: 'column',
+          justify: false,
+          translateX: 100,
+          translateY: 0,
+          itemsSpacing: 0,
+          itemDirection: 'left-to-right',
+          itemWidth: 80,
+          itemHeight: 20,
+          itemOpacity: 0.75,
+          symbolSize: 12,
+          symbolShape: 'circle',
+          symbolBorderColor: 'rgba(0, 0, 0, .5)',
+          effects: [
+            {
+              on: 'hover',
+              style: {
+                itemBackground: 'rgba(0, 0, 0, .03)',
+                itemOpacity: 1
+              }
+            }
+          ]
+        }
+      ]}
       theme={{
         background: 'transparent',
         textColor: 'hsl(var(--foreground))',
@@ -263,32 +284,13 @@ const ChartLine: FC<ChartLineProps> = ({
           }
         }
       }}
-      legends={[
-        {
-          anchor: 'bottom-right',
-          direction: 'column',
-          justify: false,
-          translateX: 100,
-          translateY: 0,
-          itemsSpacing: 0,
-          itemDirection: 'left-to-right',
-          itemWidth: 80,
-          itemHeight: 20,
-          itemOpacity: 0.75,
-          symbolSize: 12,
-          symbolShape: 'circle',
-          symbolBorderColor: 'rgba(0, 0, 0, .5)',
-          effects: [
-            {
-              on: 'hover',
-              style: {
-                itemBackground: 'rgba(0, 0, 0, .03)',
-                itemOpacity: 1
-              }
-            }
-          ]
-        }
-      ]}
+      yScale={{
+        type: 'linear',
+        min: 'auto',
+        max: 'auto',
+        stacked: false,
+        reverse: false
+      }}
     />
   </div>
 )
@@ -315,30 +317,23 @@ const ChartPie: FC<ChartPieProps> = ({
 }) => (
   <div style={{ height: `${height}px` }}>
     <ResponsivePie
-      data={data}
-      margin={margin}
-      innerRadius={innerRadius}
-      padAngle={padAngle}
-      cornerRadius={3}
+      animate
       activeOuterRadiusOffset={8}
-      colors={colors}
-      borderWidth={1}
-      borderColor={{
-        from: 'color',
-        modifiers: [
-          [
-            'darker',
-            0.2
-          ]
-        ]
-      }}
-      enableArcLinkLabels={enableArcLinkLabels}
+      arcLabelsSkipAngle={10}
+      arcLinkLabelsColor={{ from: 'color' }}
       arcLinkLabelsSkipAngle={10}
       arcLinkLabelsTextColor="hsl(var(--foreground))"
       arcLinkLabelsThickness={2}
-      arcLinkLabelsColor={{ from: 'color' }}
+      borderWidth={1}
+      colors={colors}
+      cornerRadius={3}
+      data={data}
       enableArcLabels={enableArcLabels}
-      arcLabelsSkipAngle={10}
+      enableArcLinkLabels={enableArcLinkLabels}
+      innerRadius={innerRadius}
+      margin={margin}
+      motionConfig="gentle"
+      padAngle={padAngle}
       arcLabelsTextColor={{
         from: 'color',
         modifiers: [
@@ -348,12 +343,14 @@ const ChartPie: FC<ChartPieProps> = ({
           ]
         ]
       }}
-      animate={true}
-      motionConfig="gentle"
-      theme={{
-        background: 'transparent',
-        textColor: 'hsl(var(--foreground))',
-        fontSize: 12,
+      borderColor={{
+        from: 'color',
+        modifiers: [
+          [
+            'darker',
+            0.2
+          ]
+        ]
       }}
       legends={[
         {
@@ -380,6 +377,11 @@ const ChartPie: FC<ChartPieProps> = ({
           ]
         }
       ]}
+      theme={{
+        background: 'transparent',
+        textColor: 'hsl(var(--foreground))',
+        fontSize: 12,
+      }}
     />
   </div>
 )
@@ -408,16 +410,16 @@ const ChartCalendar: FC<ChartCalendarProps> = ({
 }) => (
   <div style={{ height: `${height}px` }}>
     <ResponsiveCalendar
-      data={data}
-      from={from}
-      to={to}
-      emptyColor={emptyColor}
       colors={colors}
-      margin={margin}
-      yearSpacing={40}
-      monthBorderColor={monthBorderColor}
-      dayBorderWidth={2}
+      data={data}
       dayBorderColor={dayBorderColor}
+      dayBorderWidth={2}
+      emptyColor={emptyColor}
+      from={from}
+      margin={margin}
+      monthBorderColor={monthBorderColor}
+      to={to}
+      yearSpacing={40}
       legends={[
         {
           anchor: 'bottom-right',

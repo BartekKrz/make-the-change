@@ -1,6 +1,7 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { DetailView } from '../detail-view'
+import { render, screen } from '@testing-library/react'
 import { Package, DollarSign } from 'lucide-react'
+
+import { DetailView } from '../detail-view'
 
 describe('DetailView', () => {
   describe('DetailView Component', () => {
@@ -40,7 +41,7 @@ describe('DetailView', () => {
 
     it('applies correct grid columns', () => {
       render(
-        <DetailView variant="cards" gridCols={3}>
+        <DetailView gridCols={3} variant="cards">
           <div>Test content</div>
         </DetailView>
       )
@@ -53,7 +54,7 @@ describe('DetailView', () => {
   describe('DetailView.Section Component', () => {
     it('renders section with title and icon', () => {
       render(
-        <DetailView.Section title="Test Section" icon={Package}>
+        <DetailView.Section icon={Package} title="Test Section">
           <div>Section content</div>
         </DetailView.Section>
       )
@@ -64,7 +65,7 @@ describe('DetailView', () => {
 
     it('applies span classes correctly', () => {
       render(
-        <DetailView.Section title="Test" span={2}>
+        <DetailView.Section span={2} title="Test">
           <div>Content</div>
         </DetailView.Section>
       )
@@ -75,7 +76,7 @@ describe('DetailView', () => {
 
     it('shows loading indicator when loading', () => {
       render(
-        <DetailView.Section title="Test" loading>
+        <DetailView.Section loading title="Test">
           <div>Content</div>
         </DetailView.Section>
       )
@@ -112,7 +113,7 @@ describe('DetailView', () => {
 
     it('shows required indicator when required', () => {
       render(
-        <DetailView.Field label="Required Field" required>
+        <DetailView.Field required label="Required Field">
           <input type="text" />
         </DetailView.Field>
       )
@@ -122,7 +123,7 @@ describe('DetailView', () => {
 
     it('displays description when provided', () => {
       render(
-        <DetailView.Field label="Field" description="Field description">
+        <DetailView.Field description="Field description" label="Field">
           <input type="text" />
         </DetailView.Field>
       )
@@ -132,7 +133,7 @@ describe('DetailView', () => {
 
     it('displays error message when error provided', () => {
       render(
-        <DetailView.Field label="Field" error="Field error">
+        <DetailView.Field error="Field error" label="Field">
           <input type="text" />
         </DetailView.Field>
       )
@@ -143,7 +144,7 @@ describe('DetailView', () => {
 
     it('shows loading indicator when loading', () => {
       render(
-        <DetailView.Field label="Field" loading>
+        <DetailView.Field loading label="Field">
           <input type="text" />
         </DetailView.Field>
       )
@@ -173,13 +174,13 @@ describe('DetailView', () => {
         </DetailView.FieldGroup>
       )
       
-      const layoutContainer = document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-2')
+      const layoutContainer = document.querySelector(String.raw`.grid.grid-cols-1.sm\:grid-cols-2`)
       expect(layoutContainer).toBeInTheDocument()
     })
 
     it('displays description when provided', () => {
       render(
-        <DetailView.FieldGroup label="Group" description="Group description">
+        <DetailView.FieldGroup description="Group description" label="Group">
           <div>Content</div>
         </DetailView.FieldGroup>
       )
@@ -193,23 +194,23 @@ describe('DetailView', () => {
       render(
         <DetailView variant="cards">
           <DetailView.Section icon={Package} title="General">
-            <DetailView.Field label="Name" required>
-              <input type="text" defaultValue="Test Product" />
+            <DetailView.Field required label="Name">
+              <input defaultValue="Test Product" type="text" />
             </DetailView.Field>
             
-            <DetailView.Field label="Description" description="Product description">
+            <DetailView.Field description="Product description" label="Description">
               <textarea defaultValue="Test description" />
             </DetailView.Field>
           </DetailView.Section>
           
-          <DetailView.Section icon={DollarSign} title="Pricing" span={2}>
+          <DetailView.Section icon={DollarSign} span={2} title="Pricing">
             <DetailView.FieldGroup layout="grid-2">
               <DetailView.Field label="Price">
-                <input type="number" defaultValue="100" />
+                <input defaultValue="100" type="number" />
               </DetailView.Field>
               
               <DetailView.Field label="Stock">
-                <input type="number" defaultValue="50" />
+                <input defaultValue="50" type="number" />
               </DetailView.Field>
             </DetailView.FieldGroup>
           </DetailView.Section>

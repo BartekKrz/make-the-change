@@ -1,20 +1,12 @@
 'use client';
 
-import { type FC } from 'react';
-import Image from 'next/image';
-import { Trash2, Edit3, Eye, GripVertical } from 'lucide-react';
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
-import { BlurHashImage } from '@/components/ui/blur-hash-image';
-import { useImageWithBlurHash } from '@/hooks/useImageWithBlurHash';
-import type { BlurHashData } from '@/lib/types/blurhash';
 import { 
   DndContext, 
   closestCenter, 
   KeyboardSensor, 
   PointerSensor, 
   useSensor, 
-  useSensors,
-  DragEndEvent
+  useSensors
 } from '@dnd-kit/core';
 import { 
   arrayMove, 
@@ -22,16 +14,23 @@ import {
   sortableKeyboardCoordinates, 
   verticalListSortingStrategy,
   rectSortingStrategy
-} from '@dnd-kit/sortable';
-import { 
+, 
   useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useIsMobile } from '@/hooks/useMediaQuery';
+import { Trash2, Edit3, Eye, GripVertical } from 'lucide-react';
+import Image from 'next/image';
+import { type FC } from 'react';
+
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+import { useIsMobile } from '@/hooks/use-media-query';
+
+import type {
+  DragEndEvent
+} from '@dnd-kit/core';
 
 type ImageMasonryProps = {
   images: string[];
-  blurHashes?: BlurHashData[];
   className?: string;
   onImageClick?: (imageUrl: string, index: number) => void;
   onImageReplace?: (imageUrl: string, index: number) => void;
@@ -44,7 +43,6 @@ type ImageMasonryProps = {
 
 export const ImageMasonry: FC<ImageMasonryProps> = ({ 
   images, 
-  blurHashes = [],
   className, 
   onImageClick,
   onImageReplace,
@@ -56,15 +54,6 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
 }) => {
   const isMobile = useIsMobile();
   
-  // 🧪 [DEBUG] Vérification des props
-  console.log('🎯 [DEBUG] ImageMasonry props:', {
-    showActions,
-    enableReorder,
-    hasPreview: !!onImagePreview,
-    hasReplace: !!onImageReplace,
-    hasDelete: !!onImageDelete,
-    imagesCount: images.length
-  });
   
   // Configuration des sensors pour le drag & drop avec activation plus permissive
   const sensors = useSensors(
@@ -80,18 +69,14 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
 
   // Handler pour la fin du drag & drop
   const handleDragEnd = (event: DragEndEvent) => {
-    console.log('🎯 [DEBUG] Drag end event:', event);
     const { active, over } = event;
 
     if (active.id !== over?.id) {
       const oldIndex = images.findIndex((_, index) => `image-${index}` === active.id);
       const newIndex = images.findIndex((_, index) => `image-${index}` === over?.id);
       
-      console.log('🎯 [DEBUG] Drag reorder:', { oldIndex, newIndex });
-      
       if (oldIndex !== -1 && newIndex !== -1) {
         const newImages = arrayMove(images, oldIndex, newIndex);
-        console.log('🎯 [DEBUG] Calling onImagesReorder:', { oldIndex, newIndex, newImages });
         onImagesReorder?.(oldIndex, newIndex, newImages);
       }
     }
@@ -104,8 +89,7 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
     index: number; 
     className?: string;
     id: string;
-    blurHashes: BlurHashData[];
-  }> = ({ src, alt, index, className, id, blurHashes }) => {
+  }> = ({ src, alt, index, className, id }) => {
     const {
       attributes,
       listeners,
@@ -114,13 +98,6 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
       transition,
       isDragging,
     } = useSortable({ id });
-
-    // Hook BlurHash pour cette image
-    const { blurHash, hasBlurHash } = useImageWithBlurHash(
-      blurHashes,
-      src,
-      'product'
-    );
 
     const style = {
       transform: CSS.Transform.toString(transform),
@@ -145,7 +122,6 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
             className="absolute top-2 left-2 z-30 p-1 bg-black/70 rounded cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
             title="Glisser pour réorganiser"
             onClick={(e) => {
-              console.log('🎯 [DEBUG] Drag handle cliqué');
               e.stopPropagation();
             }}
           >
@@ -153,42 +129,24 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
           </div>
         )}
 
-        {/* Image avec BlurHash ou Image standard */}
-        {hasBlurHash ? (
-          <div className="relative w-full h-full overflow-hidden rounded-lg">
-            <BlurHashImage
-              src={src}
-              blurHash={blurHash}
-              alt={alt}
-              width={300}
-              height={300}
-              className={cn(
-                "w-full h-full transition-all duration-200",
-                showActions ? "group-hover:brightness-75" : "hover:brightness-90 cursor-pointer",
-                isDragging && "brightness-75"
-              )}
-            />
-          </div>
-        ) : (
-          <Image
-            src={src}
-            alt={alt}
-            fill
-            className={cn(
-              "object-cover transition-all duration-200",
-              showActions ? "group-hover:brightness-75" : "hover:brightness-90 cursor-pointer",
-              isDragging && "brightness-75"
-            )}
-            unoptimized={src.includes('unsplash')}
-          />
-        )}
+        {/* Image standard (placeholder Next/Image non utilisé ici) */}
+        <Image
+          fill
+          alt={alt}
+          src={src}
+          unoptimized={src.includes('unsplash')}
+          className={cn(
+            "object-cover transition-all duration-200",
+            showActions ? "group-hover:brightness-75" : "hover:brightness-90 cursor-pointer",
+            isDragging && "brightness-75"
+          )}
+        />
 
         {/* Click handler overlay - Réactivé mais conditionnel */}
         {!showActions && onImageClick && (
           <div 
             className="absolute inset-0 z-5 cursor-pointer"
             onClick={() => {
-              console.log('🎯 [DEBUG] Image cliquée via overlay');
               onImageClick(src, index);
             }}
           />
@@ -198,7 +156,6 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
         {showActions && (
           <div 
             className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center z-20"
-            onMouseEnter={() => console.log('🎯 [DEBUG] Overlay hover activé')}
             onMouseDown={(e) => {
               // Empêcher l'overlay d'interférer avec le drag sur le handle
               if (enableReorder) {
@@ -209,39 +166,36 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
             <div className="flex gap-2">
               {/* Bouton prévisualiser */}
               <button
+                className="p-2 bg-blue-500/90 hover:bg-blue-500 rounded-full transition-colors duration-200 shadow-lg"
+                title="Prévisualiser l'image"
                 onClick={(e) => {
-                  console.log('🖼️ [DEBUG] Bouton prévisualiser cliqué dans ImageMasonry');
                   e.stopPropagation();
                   onImagePreview?.(src, index);
                 }}
-                className="p-2 bg-blue-500/90 hover:bg-blue-500 rounded-full transition-colors duration-200 shadow-lg"
-                title="Prévisualiser l'image"
               >
                 <Eye className="w-4 h-4 text-white" />
               </button>
               
               {/* Bouton remplacer */}
               <button
+                className="p-2 bg-white/90 hover:bg-white rounded-full transition-colors duration-200 shadow-lg"
+                title="Remplacer l'image"
                 onClick={(e) => {
-                  console.log('🔄 [DEBUG] Bouton remplacer cliqué dans ImageMasonry');
                   e.stopPropagation();
                   onImageReplace?.(src, index);
                 }}
-                className="p-2 bg-white/90 hover:bg-white rounded-full transition-colors duration-200 shadow-lg"
-                title="Remplacer l'image"
               >
                 <Edit3 className="w-4 h-4 text-gray-700" />
               </button>
               
               {/* Bouton supprimer */}
               <button
+                className="p-2 bg-red-500/90 hover:bg-red-500 rounded-full transition-colors duration-200 shadow-lg"
+                title="Supprimer l'image"
                 onClick={(e) => {
-                  console.log('🗑️ [DEBUG] Bouton supprimer cliqué dans ImageMasonry');
                   e.stopPropagation();
                   onImageDelete?.(src, index);
                 }}
-                className="p-2 bg-red-500/90 hover:bg-red-500 rounded-full transition-colors duration-200 shadow-lg"
-                title="Supprimer l'image"
               >
                 <Trash2 className="w-4 h-4 text-white" />
               </button>
@@ -281,12 +235,11 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
           {images.map((imageUrl, index) => (
             <div key={index} className="relative aspect-square min-h-[120px]">
               <SortableImageItem
-                id={imageIds[index]}
-                src={imageUrl}
                 alt={`Product image ${index + 1}`}
-                index={index}
                 className="cursor-pointer"
-                blurHashes={blurHashes}
+                id={imageIds[index]}
+                index={index}
+                src={imageUrl}
               />
             </div>
           ))}
@@ -299,8 +252,8 @@ export const ImageMasonry: FC<ImageMasonryProps> = ({
   if (enableReorder && showActions) {
     return (
       <DndContext 
-        sensors={sensors}
         collisionDetection={closestCenter}
+        sensors={sensors}
         onDragEnd={handleDragEnd}
       >
         <SortableContext items={imageIds} strategy={rectSortingStrategy}>

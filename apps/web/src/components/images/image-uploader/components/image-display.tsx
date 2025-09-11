@@ -1,7 +1,9 @@
 import Image from 'next/image';
-import { ImageActionButtons } from './image-action-buttons';
-import { cn } from '@/lib/utils';
 import { type FC } from 'react';
+
+import { cn } from '@/lib/utils';
+
+import { ImageActionButtons } from './image-action-buttons';
 
 type ImageDisplayProps = {
   src: string;
@@ -20,17 +22,17 @@ export const ImageDisplay: FC<ImageDisplayProps> = ({
 }) => (
   <div className={cn('relative group w-full h-full', className)}>
     <Image
-      src={src}
-      alt="Image uploadée"
       fill
+      alt="Image uploadée"
       className="rounded-xl object-cover shadow-lg"
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      src={src}
     />
     {!disabled && (
       <ImageActionButtons 
-        onRemove={onRemove} 
+        disabled={disabled} 
         onChange={onChange} 
-        disabled={disabled}
+        onRemove={onRemove}
       />
     )}
   </div>

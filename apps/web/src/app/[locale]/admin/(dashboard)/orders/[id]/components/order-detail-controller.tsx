@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { type FC } from 'react';
-import { OrderDetailLayout } from '@/app/[locale]/admin/(dashboard)/orders/[id]/components/order-detail-layout';
-import { OrderCompactHeader } from '@/app/[locale]/admin/(dashboard)/orders/[id]/components/order-compact-header';
-import { OrderDetailsEditor } from '@/app/[locale]/admin/(dashboard)/orders/[id]/components/order-details-editor';
+
 import { OrderBreadcrumbs } from '@/app/[locale]/admin/(dashboard)/orders/[id]/components/order-breadcrumbs';
+import { OrderCompactHeader } from '@/app/[locale]/admin/(dashboard)/orders/[id]/components/order-compact-header';
+import { OrderDetailLayout } from '@/app/[locale]/admin/(dashboard)/orders/[id]/components/order-detail-layout';
+import { OrderDetailsEditor } from '@/app/[locale]/admin/(dashboard)/orders/[id]/components/order-details-editor';
 
 type OrderData = {
   id: string;
@@ -71,26 +72,26 @@ export const OrderDetailController: FC<OrderDetailControllerProps> = ({
 
   return (
     <OrderDetailLayout
+      toolbar={<div />}
+      content={
+        <OrderDetailsEditor
+          isEditing={isEditing}
+          isSaving={isSaving}
+          orderData={displayData}
+          onDataChange={handleDataChange}
+        />
+      }
       header={
         <>
           <OrderBreadcrumbs orderData={orderData} />
           <OrderCompactHeader
-            orderData={displayData}
             isEditing={isEditing}
+            isSaving={isSaving}
+            orderData={displayData}
             onEditToggle={handleEditToggle}
             onSave={handleSave}
-            isSaving={isSaving}
           />
         </>
-      }
-      toolbar={<div />}
-      content={
-        <OrderDetailsEditor
-          orderData={displayData}
-          isEditing={isEditing}
-          isSaving={isSaving}
-          onDataChange={handleDataChange}
-        />
       }
     />
   );

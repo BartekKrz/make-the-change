@@ -1,6 +1,8 @@
 'use client';
-import { type FC, type ReactNode } from 'react';
 import { Filter, X } from 'lucide-react';
+import { type FC, type ReactNode } from 'react';
+
+import { Button } from '@/components/ui/button';
 
 import { 
   Drawer,
@@ -10,7 +12,6 @@ import {
   DrawerTitle,
   DrawerClose,
 } from '../ui/drawer';
-import { Button } from '@/components/ui/button';
 
 type FilterButtonProps = {
   onClick: () => void;
@@ -21,10 +22,10 @@ const FilterButton: FC<FilterButtonProps> = ({ onClick, isActive = false }) => (
   <Button
     size="sm"
     variant={isActive ? "default" : "outline"}
-    onClick={onClick}
     className={`h-9 w-9 p-0 relative focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 ${
       isActive ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''
     }`}
+    onClick={onClick}
   >
     <Filter className="h-4 w-4" />
   </Button>
@@ -39,14 +40,14 @@ type FilterModalProps = {
 
 const FilterModal: FC<FilterModalProps> = ({ isOpen, onClose, children }) => (
   <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
-    <DrawerContent className='bg-white' onSwipeClose={onClose}>
+    <DrawerContent className="bg-white" onSwipeClose={onClose}>
       <DrawerHeader>
         <DrawerTitle>Filtres</DrawerTitle>
         <DrawerClose asChild>
           <Button
+            className="h-8 w-8 p-0"
             size="sm"
             variant="ghost"
-            className="h-8 w-8 p-0"
           >
             <X className="h-4 w-4" />
           </Button>

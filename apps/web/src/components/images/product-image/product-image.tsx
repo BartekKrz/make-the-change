@@ -1,12 +1,11 @@
 'use client';
 
-import { type FC } from 'react';
-import Image from 'next/image';
 import { Package, Images } from 'lucide-react';
+import Image from 'next/image';
+import { type FC } from 'react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
-import { BlurHashImage } from '@/components/ui/blur-hash-image';
-import { useImageWithBlurHash } from '@/hooks/useImageWithBlurHash';
-import type { BlurHashData } from '@/lib/types/blurhash';
+// BlurHash supprimé: on privilégie blurDataURL (DB) comme placeholder Next/Image
 
 type ProductImageProps = {
   src?: string;
@@ -17,7 +16,9 @@ type ProductImageProps = {
   fallbackType?: 'placeholder' | 'initials';
   initials?: string;
   images?: string[];
-  blurHashes?: BlurHashData[];
+  // Nouveau: blur direct depuis le serveur (zéro calcul client)
+  blurDataURL?: string;
+  blurHash?: string;
   onImageClick?: () => void;
 }
 
@@ -61,11 +62,8 @@ const ImageCountBadge: FC<{ count: number; onClick?: () => void }> = ({ count, o
   
   return (
     <button
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onClick?.();
-      }}
+      aria-label={`${count} photos disponibles`}
+      title={`${count} photos disponibles`}
       className={cn(
         'absolute top-1 right-1 z-10',
         'bg-black/70 backdrop-blur-sm text-white text-xs font-medium',
@@ -76,8 +74,11 @@ const ImageCountBadge: FC<{ count: number; onClick?: () => void }> = ({ count, o
         'focus:outline-none focus:ring-2 focus:ring-primary/50',
         'shadow-lg border border-white/20'
       )}
-      title={`${count} photos disponibles`}
-      aria-label={`${count} photos disponibles`}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick?.();
+      }}
     >
       <Images size={10} />
       <span>{displayCount}</span>
@@ -94,19 +95,12 @@ export const ProductImage: FC<ProductImageProps> = ({
   fallbackType = 'placeholder',
   initials,
   images,
-  blurHashes = [],
+  blurDataURL,
   onImageClick
 }) => {
   const sizeClass = sizeMap[size];
   const isValidImage = src && src.trim() !== '' && src.startsWith('http');
   const imageCount = images?.length || 0;
-
-  
-  const { blurHash, hasBlurHash } = useImageWithBlurHash(
-    blurHashes || [],
-    src || '',
-    'product'
-  );
 
   
   const dimensions = {
@@ -128,31 +122,21 @@ export const ProductImage: FC<ProductImageProps> = ({
           </>
         )}
         
-        {/* Image avec BlurHash ou Image standard selon disponibilité */}
-        {hasBlurHash ? (
-          <BlurHashImage
-            src={src}
-            blurHash={blurHash}
-            alt={alt}
-            width={dimensions.width}
-            height={dimensions.height}
-            className="w-full h-full hover:scale-105 transition-transform duration-200"
-          />
-        ) : (
-          <Image
-            src={src}
-            alt={alt}
-            fill
-            className="object-cover transition-all duration-200 hover:scale-105"
-            priority={priority}
-            unoptimized={src.includes('unsplash') || src.includes('supabase')}
-            onError={(e) => {
-              
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-            }}
-          />
-        )}
+        {/* Image unique: utilise blurDataURL si disponible, sinon placeholder vide */}
+        <Image
+          fill
+          alt={alt}
+          className="object-cover transition-all duration-200 hover:scale-105"
+          priority={priority}
+          src={src}
+          unoptimized={src.includes('unsplash') || src.includes('supabase')}
+          placeholder={(blurDataURL ? 'blur' : 'empty') as 'blur' | 'empty'}
+          blurDataURL={blurDataURL || undefined}
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.style.display = 'none';
+          }}
+        />
         
         {/* Badge compteur d'images */}
         <ImageCountBadge count={imageCount} onClick={onImageClick} />
@@ -162,7 +146,7 @@ export const ProductImage: FC<ProductImageProps> = ({
 
   
   if (fallbackType === 'initials' && initials) {
-    return <InitialsFallback initials={initials} className={cn(sizeClass, className)} />;
+    return <InitialsFallback className={cn(sizeClass, className)} initials={initials} />;
   }
 
   

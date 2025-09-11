@@ -39,13 +39,13 @@ export const useImageHandler = () => {
       const validFiles: Array<{ src: string; file: File }> = [];
       let hasError = false;
 
-      Array.from(files).forEach((file) => {
+      for (const file of files) {
         // Validation du fichier
         const validationError = validateFile(file);
         if (validationError) {
           setError(validationError);
           hasError = true;
-          return;
+          continue;
         }
 
         const reader = new FileReader();
@@ -62,7 +62,7 @@ export const useImageHandler = () => {
           hasError = true;
         };
         reader.readAsDataURL(file);
-      });
+      }
     } else {
       // Single file (compatibilité avec l'ancien système)
       const file = files[0];

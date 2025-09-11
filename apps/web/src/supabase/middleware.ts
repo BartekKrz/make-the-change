@@ -1,6 +1,8 @@
 
-import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { NextResponse } from 'next/server'
+
+import type { NextRequest} from 'next/server';
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
@@ -16,15 +18,14 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+          for (const { name, value } of cookiesToSet) request.cookies.set(name, value)
 
           response = NextResponse.next({
             request: { headers: request.headers },
           })
 
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          )
+          for (const { name, value, options } of cookiesToSet) response.cookies.set(name, value, options)
+          
         },
       },
     }
@@ -33,7 +34,7 @@ export async function updateSession(request: NextRequest) {
   const { data: { user }, error } = await supabase.auth.getUser()
 
   if (process.env.NODE_ENV === 'development' && request.nextUrl.pathname.startsWith('/admin')) {
-    console.log(`🔐 Session refresh - User: ${user?.email || 'None'}, Error: ${error?.message || 'None'}`)
+    // Development mode - no additional auth checks
   }
 
   return { response, user, error }

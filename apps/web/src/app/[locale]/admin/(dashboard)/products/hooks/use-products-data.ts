@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import { trpc } from '@/lib/trpc';
 
 type UseProductsDataOptions = {
@@ -28,16 +29,16 @@ export const useProductsData = (options: UseProductsDataOptions) => {
     if (!productsData?.items) return [];
     
     const uniqueProducers = new Map();
-    productsData.items.forEach(product => {
+    for (const product of productsData.items) {
       if (product.producer && product.producer.id && product.producer.name) {
         uniqueProducers.set(product.producer.id, {
           id: product.producer.id,
           name: product.producer.name
         });
       }
-    });
+    }
     
-    return Array.from(uniqueProducers.values()).sort((a, b) => a.name.localeCompare(b.name));
+    return [...uniqueProducers.values()].sort((a, b) => a.name.localeCompare(b.name));
   }, [productsData]);
 
   // Calculer les infos de pagination

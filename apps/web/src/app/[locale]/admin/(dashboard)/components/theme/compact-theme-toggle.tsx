@@ -1,10 +1,12 @@
 'use client';
 
 import * as Switch from '@radix-ui/react-switch';
-import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+import { useTheme } from 'next-themes';
 import { useEffect, useState, type FC } from 'react';
+
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+
 
 export const CompactThemeToggle: FC = () => {
   const { theme, setTheme } = useTheme();
@@ -34,15 +36,15 @@ export const CompactThemeToggle: FC = () => {
       <Sun className={cn('h-3.5 w-3.5 transition-all duration-300', isDark ? 'text-gray-400' : 'text-yellow-500')} />
 
       <Switch.Root
+        aria-label='Basculer entre le mode clair et sombre'
         checked={isDark}
-        onCheckedChange={toggleTheme}
         className={cn(
           'relative cursor-pointer inline-flex h-5 w-9 items-center rounded-full transition-colors',
           'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1',
           'data-[state=checked]:bg-blue-600 data-[state=unchecked]:bg-gray-300',
           'dark:data-[state=unchecked]:bg-gray-600'
         )}
-        aria-label='Basculer entre le mode clair et sombre'
+        onCheckedChange={toggleTheme}
       >
         <Switch.Thumb
           className={cn(

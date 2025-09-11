@@ -1,14 +1,16 @@
 'use client';
-import Link from 'next/link';
-import type { LucideIcon } from 'lucide-react';
-import { Layout, Receipt, Package, Users, LogOut, X, ChevronRight, MapPin, FolderOpen, CreditCard } from 'lucide-react';
-import {  useState, type FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Layout, Receipt, Package, Users, LogOut, X, ChevronRight, MapPin, FolderOpen, CreditCard } from 'lucide-react';
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import {  useState, type FC } from 'react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
-import { useAuth } from '@/hooks/use-auth';
-import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/app/[locale]/admin/(dashboard)/components/theme/theme-toggle';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/use-auth';
+
+import type { LucideIcon } from 'lucide-react';
 
 const navigationSections = [
   {
@@ -82,7 +84,7 @@ const SidebarContent: FC<SidebarContentProps> = ({ onLinkClick }) => {
             ) : (
               <section key={section.key} className='space-y-2'>
                 <div className='px-6'>
-                  <button type='button' role='button' aria-expanded={openSections[section.key]} tabIndex={0} onClick={() => handleSectionToggle(section.key)} className={cn('w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300', 'hover:bg-muted/30 active:bg-muted/50', 'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2', openSections[section.key] ? 'bg-muted/20' : 'bg-muted/10')}>
+                  <button aria-expanded={openSections[section.key]} className={cn('w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300', 'hover:bg-muted/30 active:bg-muted/50', 'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2', openSections[section.key] ? 'bg-muted/20' : 'bg-muted/10')} role='button' tabIndex={0} type='button' onClick={() => handleSectionToggle(section.key)}>
                     <div className='flex items-center gap-3'>
                       <div className={cn('w-1.5 h-5 rounded-full transition-all duration-300', openSections[section.key] ? 'bg-gradient-to-b from-primary to-orange-500' : 'bg-muted-foreground/30')} />
                       <span className={cn('text-sm font-semibold uppercase tracking-wider transition-colors duration-300', openSections[section.key] ? 'text-primary' : 'text-muted-foreground')}>{section.label}</span>
@@ -94,9 +96,9 @@ const SidebarContent: FC<SidebarContentProps> = ({ onLinkClick }) => {
                 </div>
                 <AnimatePresence initial={false}>
                   {openSections[section.key] && (
-                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }} className='overflow-hidden space-y-1'>
+                    <motion.div animate={{ height: 'auto', opacity: 1 }} className='overflow-hidden space-y-1' exit={{ height: 0, opacity: 0 }} initial={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}>
                       {section.items?.map((item, itemIndex) => (
-                        <motion.div key={item.href} initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} transition={{ delay: itemIndex * 0.05, duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }} className='px-6'>
+                        <motion.div key={item.href} animate={{ x: 0, opacity: 1 }} className='px-6' exit={{ x: -20, opacity: 0 }} initial={{ x: -20, opacity: 0 }} transition={{ delay: itemIndex * 0.05, duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}>
                           <SidebarLink href={item.href} icon={item.icon} label={item.label} onClick={onLinkClick} />
                         </motion.div>
                       ))}
@@ -125,13 +127,13 @@ const SidebarLink: FC<SidebarLinkProps> = ({ href, icon: Icon, label, onClick })
   const isActive = href === '/admin/dashboard' ? pathname === href : pathname?.startsWith(href);
 
   return (
-    <motion.div whileHover={!isActive ? { scale: 1.01 } : {}} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 400, damping: 17 }}>
-      <Link href={href} onClick={onClick} className={cn('group relative flex items-center gap-4 rounded-2xl p-4 transition-all duration-300', 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-2', isActive ? 'bg-gradient-to-r from-primary/12 to-orange-500/8 text-foreground font-semibold border border-primary/25 shadow-lg shadow-primary/10' : 'text-muted-foreground/80 hover:text-foreground border border-transparent hover:border-border/30 hover:bg-muted/30 hover:shadow-sm')} aria-current={isActive ? 'page' : undefined}>
+    <motion.div transition={{ type: 'spring', stiffness: 400, damping: 17 }} whileHover={isActive ? {} : { scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+      <Link aria-current={isActive ? 'page' : undefined} className={cn('group relative flex items-center gap-4 rounded-2xl p-4 transition-all duration-300', 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-2', isActive ? 'bg-gradient-to-r from-primary/12 to-orange-500/8 text-foreground font-semibold border border-primary/25 shadow-lg shadow-primary/10' : 'text-muted-foreground/80 hover:text-foreground border border-transparent hover:border-border/30 hover:bg-muted/30 hover:shadow-sm')} href={href} onClick={onClick}>
         <div className={cn('relative rounded-xl transition-all duration-300 flex items-center justify-center w-11 h-11', isActive ? 'bg-gradient-to-br from-primary/20 to-orange-500/15 text-primary shadow-lg shadow-primary/20' : 'bg-muted/30 text-muted-foreground/70 group-hover:bg-muted/50 group-hover:text-muted-foreground')}>
           <Icon className='h-5 w-5' />
         </div>
         <span className='block font-medium transition-all duration-300 truncate text-base'>{label}</span>
-        {isActive && <motion.div layoutId="sidebar-active-indicator" className='absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1.5 bg-gradient-to-b from-primary to-orange-500 rounded-r-full' />}
+        {isActive && <motion.div className='absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1.5 bg-gradient-to-b from-primary to-orange-500 rounded-r-full' layoutId="sidebar-active-indicator" />}
       </Link>
     </motion.div>
   );
@@ -147,7 +149,7 @@ const SignOutButton: FC = () => {
   };
 
   return (
-    <Button variant="outline" size="full" onClick={handleSignOut}>
+    <Button size="full" variant="outline" onClick={handleSignOut}>
       <LogOut className='h-4 w-4' />
       Se déconnecter
     </Button>

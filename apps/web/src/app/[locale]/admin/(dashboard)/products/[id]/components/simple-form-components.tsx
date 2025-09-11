@@ -1,9 +1,10 @@
 'use client';
 
 import { type FC } from 'react';
-import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input';
 
+import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/[locale]/admin/(dashboard)/components/ui/select';
+
 import { TextArea } from '../../../components/ui/textarea';
 
 
@@ -33,12 +34,12 @@ export const SimpleInput: FC<SimpleInputProps> = ({
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
       <Input
+        disabled={disabled}
+        placeholder={placeholder}
+        required={required}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        required={required}
-        disabled={disabled}
       />
     </div>
   );
@@ -65,11 +66,11 @@ export const SimpleTextArea: FC<SimpleTextAreaProps> = ({
     <div className="space-y-2">
       <label className="text-sm font-medium">{label}</label>
       <TextArea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
         placeholder={placeholder}
         rows={rows}
-        disabled={disabled}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
       />
     </div>
   );
@@ -95,7 +96,7 @@ export const SimpleSelect: FC<SimpleSelectProps> = ({
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium">{label}</label>
-      <Select value={value} onValueChange={onChange} disabled={disabled}>
+      <Select disabled={disabled} value={value} onValueChange={onChange}>
         <SelectTrigger>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
@@ -103,8 +104,8 @@ export const SimpleSelect: FC<SimpleSelectProps> = ({
           {options.map((option) => (
             <SelectItem
               key={option.value}
-              value={option.value}
               disabled={option.disabled}
+              value={option.value}
             >
               {option.label}
             </SelectItem>

@@ -3,12 +3,12 @@
  * Utilise les outils MCP Supabase pour interagir directement avec la base de données
  */
 
-export class SupabaseProductService {
+export const SupabaseProductService = {
 
   /**
    * Récupère tous les champs d'un produit spécifique par son ID
    */
-  static async getAllProductFields(productId: string) {
+  async getAllProductFields(productId: string) {
     try {
       // Simulation de l'appel MCP - en réalité, utiliserait mcp_supabase_execute_sql
       const query = `
@@ -53,27 +53,25 @@ export class SupabaseProductService {
         WHERE id = '${productId}'
       `;
 
-      console.log('🔍 Requête SQL pour récupérer tous les champs du produit:', query);
 
       return {
         success: true,
-        query: query,
+        query,
         message: 'Voici la requête SQL pour récupérer tous les champs du produit'
       };
 
     } catch (error) {
-      console.error('❌ Erreur lors de la récupération du produit:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Erreur inconnue'
       };
     }
-  }
+  },
 
   /**
    * Récupère tous les produits avec tous leurs champs
    */
-  static async getAllProductsFields(limit: number = 10) {
+  async getAllProductsFields(limit: number = 10) {
     try {
       const query = `
         SELECT
@@ -118,27 +116,25 @@ export class SupabaseProductService {
         LIMIT ${limit}
       `;
 
-      console.log('🔍 Requête SQL pour récupérer tous les produits avec tous leurs champs:', query);
 
       return {
         success: true,
-        query: query,
+        query,
         message: `Voici la requête SQL pour récupérer ${limit} produits avec tous leurs champs`
       };
 
     } catch (error) {
-      console.error('❌ Erreur lors de la récupération des produits:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Erreur inconnue'
       };
     }
-  }
+  },
 
   /**
    * Affiche la structure complète des champs d'un produit
    */
-  static displayProductFieldsStructure() {
+  displayProductFieldsStructure() {
     const fields = [
       'id (UUID PRIMARY KEY)',
       'name (VARCHAR)',
@@ -178,20 +174,14 @@ export class SupabaseProductService {
       'partner_source (VARCHAR)'
     ];
 
-    console.group('📋 Structure complète des champs de la table products');
-    fields.forEach((field, index) => {
-      console.log(`${index + 1}. ${field}`);
-    });
-    console.log(`\n📊 Total: ${fields.length} champs`);
-    console.groupEnd();
 
     return fields;
-  }
+  },
 
   /**
    * Génère un exemple de requête pour récupérer un produit avec toutes ses relations
    */
-  static generateProductWithRelationsQuery(productId: string) {
+  generateProductWithRelationsQuery(productId: string) {
     const query = `
       SELECT
         p.*,
@@ -209,10 +199,13 @@ export class SupabaseProductService {
       WHERE p.id = '${productId}'
     `;
 
-    console.log('🔗 Requête SQL pour récupérer un produit avec toutes ses relations:', query);
 
     return query;
-  }
-}
+  },
+};
+
+
+
+
 
 

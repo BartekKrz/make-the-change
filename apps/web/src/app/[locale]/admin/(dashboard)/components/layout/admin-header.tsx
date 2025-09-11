@@ -1,9 +1,10 @@
 'use client'
 
+import { Bell, Search, User } from 'lucide-react'
 import { type FC } from 'react'
+
 import { ThemeToggle } from '@/app/[locale]/admin/(dashboard)/components/theme/theme-toggle'
 import { Button } from '@/components/ui/button'
-import { Bell, Search, User } from 'lucide-react'
 
 export const AdminHeader: FC = () => (
   <header className="h-16 border-b border-border bg-card/50 backdrop-blur-sm flex items-center justify-between px-6 shrink-0">
@@ -17,13 +18,13 @@ export const AdminHeader: FC = () => (
 
     {}
     <div className="flex items-center gap-2">
-      <Button variant="ghost" size="sm">
+      <Button size="sm" variant="ghost">
         <Search className="w-4 h-4" />
       </Button>
-      <Button variant="ghost" size="sm">
+      <Button size="sm" variant="ghost">
         <Bell className="w-4 h-4" />
       </Button>
-      <Button variant="ghost" size="sm">
+      <Button size="sm" variant="ghost">
         <User className="w-4 h-4" />
       </Button>
       <ThemeToggle />

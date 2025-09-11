@@ -1,6 +1,5 @@
 'use client';
-import Link from 'next/link';
-import type { LucideIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   Package,
@@ -12,15 +11,18 @@ import {
   Building2,
   CreditCard
 } from 'lucide-react';
-import { useEffect, useRef, useState, useCallback, type FC } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/app/[locale]/admin/(dashboard)/components/theme/theme-toggle';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useEffect, useRef, useState, useCallback, type FC } from 'react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { useAdminSidebar } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-sidebar-context';
-import { useTranslations } from 'next-intl';
+import { ThemeToggle } from '@/app/[locale]/admin/(dashboard)/components/theme/theme-toggle';
 import { LocaleSwitcher } from '@/components/locale-switcher';
+import { Button } from '@/components/ui/button';
+
+import type { LucideIcon } from 'lucide-react';
 
 const useNavigationSections = () => {
   const tSidebar = useTranslations('admin.sidebar');
@@ -91,6 +93,8 @@ export const AdminSidebar: FC = () => {
   
   return (
     <aside
+      aria-label={tSidebar('main_navigation')}
+      role='navigation'
       className={cn(
         'hidden md:block md:relative h-full z-10',
         'w-64 lg:w-72 xl:w-80',
@@ -101,8 +105,6 @@ export const AdminSidebar: FC = () => {
         'shadow-[0_24px_48px_-12px_rgba(0,0,0,0.08),0_0_0_1px_rgba(255,255,255,0.05)]',
         'dark:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.25),0_0_0_1px_rgba(255,255,255,0.02)]'
       )}
-      role='navigation'
-      aria-label={tSidebar('main_navigation')}
     >
       <AdminSidebarContent />
     </aside>
@@ -113,7 +115,7 @@ export const AdminMobileSidebar: FC = () => {
   const { isMobileOpen, setIsMobileOpen } = useAdminSidebar();
   const closeMobileMenu = useCallback(() => setIsMobileOpen(false), [setIsMobileOpen]);
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const [isClosing, setIsClosing] = useState(false);
+  const [_isClosing, setIsClosing] = useState(false);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     management: false
   });
@@ -168,7 +170,7 @@ export const AdminMobileSidebar: FC = () => {
         if (focusable.length === 0) return;
 
         const first = focusable[0];
-        const last = focusable[focusable.length - 1];
+        const last = focusable.at(-1);
 
         if (!first || !last) return;
 
@@ -209,26 +211,24 @@ export const AdminMobileSidebar: FC = () => {
         <div className='fixed inset-0 z-[9999] md:hidden'>
           {}
           <motion.div
-            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
             className='absolute inset-0 bg-black/30 backdrop-blur-xl'
+            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
             onClick={handleOverlayClick}
           />
 
           {}
           <motion.div
             ref={sidebarRef}
-            initial={{ x: '-100%', opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
+            aria-label={tSidebar('mobile_navigation_menu')}
+            aria-modal='true'
             exit={{ x: '-100%', opacity: 0 }}
-            transition={{
-              type: 'spring',
-              damping: 25,
-              stiffness: 200,
-              duration: 0.5
-            }}
+            initial={{ x: '-100%', opacity: 0 }}
+            role='dialog'
+            tabIndex={-1}
             className={cn(
               'absolute left-0 top-0 h-full w-[92vw] max-w-[440px]',
               'flex flex-col',
@@ -239,15 +239,17 @@ export const AdminMobileSidebar: FC = () => {
               'shadow-[0_40px_80px_-12px_rgba(0,0,0,0.18),0_0_0_1px_rgba(255,255,255,0.08)]',
               'dark:shadow-[0_40px_80px_-12px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.03)]'
             )}
-            tabIndex={-1}
-            aria-modal='true'
-            role='dialog'
-            aria-label={tSidebar('mobile_navigation_menu')}
+            transition={{
+              type: 'spring',
+              damping: 25,
+              stiffness: 200,
+              duration: 0.5
+            }}
           >
             {}
             <motion.header
-              initial={{ y: -30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
+              initial={{ y: -30, opacity: 0 }}
               transition={{ delay: 0.1, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
               className={cn(
                 'flex items-center justify-between p-7 pb-5 flex-shrink-0',
@@ -256,7 +258,7 @@ export const AdminMobileSidebar: FC = () => {
             >
               {}
               <div className='flex items-center gap-4'>
-                <motion.div whileTap={{ scale: 0.95 }} className='relative group'>
+                <motion.div className='relative group' whileTap={{ scale: 0.95 }}>
                   <div
                     className={cn(
                       'w-12 h-12 rounded-3xl flex items-center justify-center relative overflow-hidden',
@@ -288,8 +290,8 @@ export const AdminMobileSidebar: FC = () => {
 
               {}
               <motion.button
+                aria-label={tSidebar('close_menu')}
                 whileTap={{ scale: 0.9, rotate: 90 }}
-                onClick={handleOverlayClick}
                 className={cn(
                   'p-3.5 rounded-3xl transition-all duration-300',
                   'bg-gradient-to-br from-muted/60 to-muted/40',
@@ -298,7 +300,7 @@ export const AdminMobileSidebar: FC = () => {
                   'active:text-foreground shadow-lg active:shadow-xl',
                   'focus:outline-none focus:ring-2 focus:ring-primary/25'
                 )}
-                aria-label={tSidebar('close_menu')}
+                onClick={handleOverlayClick}
               >
                 <X className='h-5 w-5' />
               </motion.button>
@@ -309,35 +311,35 @@ export const AdminMobileSidebar: FC = () => {
               <nav className='h-full overflow-y-auto overflow-x-hidden py-6 space-y-4 sidebar-scroll-area'>
                 {}
                 <motion.div
-                  initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
+                  className='px-4'
+                  initial={{ y: 20, opacity: 0 }}
                   transition={{
                     delay: 0.2,
                     duration: 0.4,
                     ease: [0.25, 0.46, 0.45, 0.94]
                   }}
-                  className='px-4'
                 >
                   <AdminMobileSidebarLink
+                    isPrimary
+                    description={tSidebar('dashboard.description')}
                     href='/admin/dashboard'
                     icon={LayoutDashboard}
                     label={tSidebar('dashboard.label')}
-                    description={tSidebar('dashboard.description')}
                     onClick={closeMobileMenu}
-                    isPrimary
                   />
                 </motion.div>
 
                 {}
                 <motion.div
-                  initial={{ opacity: 0, scaleX: 0 }}
                   animate={{ opacity: 1, scaleX: 1 }}
+                  className='mx-4'
+                  initial={{ opacity: 0, scaleX: 0 }}
                   transition={{
                     delay: 0.35,
                     duration: 0.3,
                     ease: [0.25, 0.46, 0.45, 0.94]
                   }}
-                  className='mx-4'
                 >
                   <div className='h-px bg-gradient-to-r from-transparent via-border/30 to-transparent' />
                 </motion.div>
@@ -358,20 +360,19 @@ export const AdminMobileSidebar: FC = () => {
                     return (
                       <motion.div
                         key={section.key}
-                        initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
+                        className='space-y-2'
+                        initial={{ y: 20, opacity: 0 }}
                         transition={{
                           delay: 0.4 + sectionIndex * 0.1,
                           duration: 0.4,
                           ease: [0.25, 0.46, 0.45, 0.94]
                         }}
-                        className='space-y-2'
                       >
                         {}
                         <div className='px-4'>
                           <motion.button
                             whileTap={{ scale: 0.98 }}
-                            onClick={() => toggleSection(section.key)}
                             className={cn(
                               'w-full flex items-center justify-between p-3 rounded-xl transition-all duration-300',
                               'active:bg-muted/50 focus:bg-muted/30',
@@ -380,6 +381,7 @@ export const AdminMobileSidebar: FC = () => {
                                 ? 'bg-gradient-to-r from-primary/10 to-accent/5 border border-primary/20'
                                 : 'bg-muted/10 border border-border/10'
                             )}
+                            onClick={() => toggleSection(section.key)}
                           >
                             <div className='flex items-center gap-3'>
                               <div
@@ -419,34 +421,34 @@ export const AdminMobileSidebar: FC = () => {
                         <AnimatePresence initial={false}>
                           {isOpen && (
                             <motion.div
-                              initial={{ height: 0, opacity: 0 }}
                               animate={{ height: 'auto', opacity: 1 }}
+                              className='overflow-hidden space-y-1'
                               exit={{ height: 0, opacity: 0 }}
+                              initial={{ height: 0, opacity: 0 }}
                               transition={{
                                 duration: 0.4,
                                 ease: [0.4, 0, 0.2, 1],
                                 opacity: { duration: 0.3 }
                               }}
-                              className='overflow-hidden space-y-1'
                             >
                               {section.items?.map((item, itemIndex) => (
                                 <motion.div
                                   key={item.href}
-                                  initial={{ x: -20, opacity: 0 }}
                                   animate={{ x: 0, opacity: 1 }}
+                                  className='px-4'
                                   exit={{ x: -20, opacity: 0 }}
+                                  initial={{ x: -20, opacity: 0 }}
                                   transition={{
                                     delay: itemIndex * 0.05,
                                     duration: 0.3,
                                     ease: [0.25, 0.46, 0.45, 0.94]
                                   }}
-                                  className='px-4'
                                 >
                                   <AdminMobileSidebarLink
+                                    description={item.description}
                                     href={item.href}
                                     icon={item.icon}
                                     label={item.label}
-                                    description={item.description}
                                     onClick={closeMobileMenu}
                                   />
                                 </motion.div>
@@ -462,10 +464,10 @@ export const AdminMobileSidebar: FC = () => {
 
             {}
             <motion.footer
-              initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
               className='p-6 pt-4 border-t border-border/10 space-y-4 flex-shrink-0 sidebar-footer-shadow'
+              initial={{ y: 30, opacity: 0 }}
+              transition={{ delay: 0.6, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               {}
               <div className='flex flex-col items-stretch gap-3 py-2'>
@@ -477,10 +479,10 @@ export const AdminMobileSidebar: FC = () => {
 
               {}
               <Button
-                variant="destructive"
                 className="w-full"
+                variant="destructive"
                 onClick={() => {
-                  console.log('Sign out clicked');
+                  // TODO: Implement sign out functionality
                 }}
               >
                 {tSidebar('logout')}
@@ -570,7 +572,7 @@ const AdminSidebarContent: FC<{ onLinkClick?: () => void }> = ({ onLinkClick }) 
           {}
           {navigationSections
             .filter((section) => !section.isStandalone)
-            .map((section, sectionIndex) => {
+            .map((section, _sectionIndex) => {
               const sectionActive = section.items?.some((item) => isActive(item.href)) ?? false;
               const isOpen = openSections[section.key] ?? sectionActive;
 
@@ -579,11 +581,10 @@ const AdminSidebarContent: FC<{ onLinkClick?: () => void }> = ({ onLinkClick }) 
                   {}
                   <div className='px-6'>
                     <button
-                      type='button'
-                      role='button'
                       aria-expanded={isOpen}
+                      role='button'
                       tabIndex={0}
-                      onClick={() => handleSectionToggle(section.key)}
+                      type='button'
                       className={cn(
                         'w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300',
                         'hover:bg-muted/30 active:bg-muted/50',
@@ -592,6 +593,7 @@ const AdminSidebarContent: FC<{ onLinkClick?: () => void }> = ({ onLinkClick }) 
                           ? 'bg-gradient-to-r from-primary/8 to-accent/5 border border-primary/15'
                           : 'bg-muted/10 border border-border/10 hover:border-border/20'
                       )}
+                      onClick={() => handleSectionToggle(section.key)}
                     >
                       <div className='flex items-center gap-3'>
                         <div
@@ -631,28 +633,28 @@ const AdminSidebarContent: FC<{ onLinkClick?: () => void }> = ({ onLinkClick }) 
                   <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
+                        className='overflow-hidden space-y-1'
                         exit={{ height: 0, opacity: 0 }}
+                        initial={{ height: 0, opacity: 0 }}
                         transition={{
                           duration: 0.4,
                           ease: [0.4, 0, 0.2, 1],
                           opacity: { duration: 0.3 }
                         }}
-                        className='overflow-hidden space-y-1'
                       >
                         {section.items?.map((item, itemIndex) => (
                           <motion.div
                             key={item.href}
-                            initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
+                            className='px-6'
                             exit={{ x: -20, opacity: 0 }}
+                            initial={{ x: -20, opacity: 0 }}
                             transition={{
                               delay: itemIndex * 0.05,
                               duration: 0.3,
                               ease: [0.25, 0.46, 0.45, 0.94]
                             }}
-                            className='px-6'
                           >
                             <AdminSidebarLink href={item.href} icon={item.icon} label={item.label} onClick={onLinkClick} />
                           </motion.div>
@@ -677,10 +679,10 @@ const AdminSidebarContent: FC<{ onLinkClick?: () => void }> = ({ onLinkClick }) 
 
         {}
         <Button
-          variant="destructive"
           className="w-full"
+          variant="destructive"
           onClick={() => {
-            console.log('Sign out clicked');
+            // TODO: Implement sign out functionality
           }}
         >
           {tSidebar('logout')}
@@ -715,14 +717,14 @@ const AdminSidebarLink: FC<AdminSidebarLinkProps> = ({
 
   return (
     <motion.div
-      whileHover={!isActive ? { scale: 1.01 } : {}}
-      whileTap={{ scale: 0.98 }}
       transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+      whileHover={isActive ? {} : { scale: 1.01 }}
+      whileTap={{ scale: 0.98 }}
     >
       <Link
-        href={href}
+        aria-current={isActive ? 'page' : undefined}
         data-testid={`sidebar-link-${testId}`}
-        onClick={onClick}
+        href={href}
         className={cn(
           'group relative flex items-center gap-4 rounded-2xl transition-all duration-300',
           'overflow-hidden cursor-pointer',
@@ -763,7 +765,7 @@ const AdminSidebarLink: FC<AdminSidebarLinkProps> = ({
 
           isActive && 'hover:scale-100 hover:shadow-none'
         )}
-        aria-current={isActive ? 'page' : undefined}
+        onClick={onClick}
       >
         {}
         <div
@@ -825,8 +827,8 @@ const AdminSidebarLink: FC<AdminSidebarLinkProps> = ({
         <div className='flex items-center gap-2'>
           {isActive && (
             <motion.div
-              initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
+              initial={{ scale: 0, rotate: -180 }}
               transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               className={cn(
                 'bg-gradient-to-r from-primary to-accent rounded-full',
@@ -837,9 +839,9 @@ const AdminSidebarLink: FC<AdminSidebarLinkProps> = ({
 
           {isHighlighted && !isActive && (
             <motion.div
-              initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               className={cn('bg-primary/60 rounded-full', isCompact ? 'w-1.5 h-1.5' : 'w-2 h-2')}
+              initial={{ scale: 0 }}
             />
           )}
         </div>
@@ -880,8 +882,8 @@ const AdminMobileSidebarLink: FC<AdminMobileSidebarProps> = ({
   return (
     <motion.div whileTap={{ scale: 0.98 }}>
       <Link
+        aria-current={isActive ? 'page' : undefined}
         href={href}
-        onClick={onClick}
         className={cn(
           'group relative flex items-center gap-4 rounded-3xl transition-all duration-300 overflow-hidden',
           'active:shadow-lg active:shadow-primary/10',
@@ -917,10 +919,11 @@ const AdminMobileSidebarLink: FC<AdminMobileSidebarProps> = ({
 
           isActive && 'active:shadow-current active:translate-y-0'
         )}
-        aria-current={isActive ? 'page' : undefined}
+        onClick={onClick}
       >
         {}
         <motion.div
+          whileTap={isActive ? {} : { scale: 0.95 }}
           className={cn(
             'relative rounded-2xl transition-all duration-300 flex items-center justify-center',
             isCompact ? 'w-10 h-10' : 'w-12 h-12',
@@ -947,7 +950,6 @@ const AdminMobileSidebarLink: FC<AdminMobileSidebarProps> = ({
                 'group-active:bg-muted/50 group-active:text-muted-foreground/80'
               ]
           )}
-          whileTap={!isActive ? { scale: 0.95 } : {}}
         >
           <Icon
             className={cn(
@@ -990,22 +992,22 @@ const AdminMobileSidebarLink: FC<AdminMobileSidebarProps> = ({
             </div>
 
             {}
-            <motion.div className='flex items-center gap-2' initial={false} animate={{ x: isActive ? 0 : -10 }}>
+            <motion.div animate={{ x: isActive ? 0 : -10 }} className='flex items-center gap-2' initial={false}>
               {isActive ? (
                 <motion.div
-                  initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   className={cn('bg-primary rounded-full', isCompact ? 'w-1.5 h-1.5' : 'w-2 h-2')}
-                />
-              ) : isHighlighted ? (
-                <motion.div
                   initial={{ scale: 0 }}
+                />
+              ) : (isHighlighted ? (
+                <motion.div
                   animate={{ scale: 1 }}
                   className={cn('bg-primary/60 rounded-full', isCompact ? 'w-1 h-1' : 'w-1.5 h-1.5')}
+                  initial={{ scale: 0 }}
                 />
               ) : (
                 <ChevronRight className='h-4 w-4 opacity-40 group-active:opacity-80 transition-opacity' />
-              )}
+              ))}
             </motion.div>
           </div>
         </div>

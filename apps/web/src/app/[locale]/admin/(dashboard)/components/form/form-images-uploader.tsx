@@ -1,6 +1,7 @@
 "use client"
 
 import { ImageUploaderField } from '@/components/images/image-uploader'
+
 import { useFieldContext } from './form-context'
 
 export type FormImagesUploaderProps = {
@@ -23,6 +24,11 @@ export const FormImagesUploader = ({
 
   return (
     <ImageUploaderField
+      disabled={disabled}
+      height={height}
+      multiple={multiple}
+      productId={productId}
+      width={width}
       field={{
         state: { value },
         handleChange: (updater) => {
@@ -30,11 +36,6 @@ export const FormImagesUploader = ({
           field.handleChange(next)
         },
       }}
-      productId={productId}
-      multiple={multiple}
-      disabled={disabled}
-      width={width}
-      height={height}
       onImagesChange={(images) => field.handleChange(images)}
     />
   )

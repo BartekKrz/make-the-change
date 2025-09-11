@@ -1,7 +1,9 @@
 /**
  * Database Types for tRPC API - Generated from Supabase
  */
-import type { Database } from './supabase'
+import type { Database as SupabaseDatabase } from './supabase'
+// Re-export the generated Database type for consumers (frontend/services)
+export type Database = SupabaseDatabase
 
 // Types de base depuis Supabase
 export type SupabaseProduct = Database['public']['Tables']['products']['Row']
@@ -17,6 +19,10 @@ export interface ProductWithRelations extends SupabaseProduct {
   producer?: SupabaseProducer | null;
   category?: SupabaseCategory | null;
   secondary_category?: SupabaseCategory | null;
+  // Blur cover (pour listes)
+  cover_blur_data_url?: string | null;
+  cover_blur_hash?: string | null;
+  cover_image?: string | null;
 }
 
 export interface ProductListResponse {

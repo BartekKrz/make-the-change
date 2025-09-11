@@ -1,7 +1,8 @@
 
 'use server'
-import { z } from 'zod'
 import { redirect } from 'next/navigation'
+import { z } from 'zod'
+
 import { createSupabaseServer } from '@/supabase/server'
 
 const schema = z.object({
@@ -32,9 +33,9 @@ export async function signInAction(_: unknown, formData: FormData) {
     const msg =
       error.message.includes('Email not confirmed')
         ? "Email non confirmé. Vérifiez votre boîte mail."
-        : error.message.includes('Invalid login credentials')
+        : (error.message.includes('Invalid login credentials')
         ? 'Identifiants incorrects.'
-        : "Erreur d'authentification."
+        : "Erreur d'authentification.")
     return { success: false, message: msg }
   }
 
@@ -43,7 +44,7 @@ export async function signInAction(_: unknown, formData: FormData) {
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean)
   const userEmail = (data.user?.email || '').toLowerCase()
-  if (allow.length && !allow.includes(userEmail)) {
+  if (allow.length > 0 && !allow.includes(userEmail)) {
     await supabase.auth.signOut()
     return { success: false, message: 'Accès refusé' }
   }

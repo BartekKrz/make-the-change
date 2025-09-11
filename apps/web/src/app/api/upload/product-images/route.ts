@@ -1,5 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { NextResponse } from 'next/server'
+
+import type { NextRequest} from 'next/server';
 
 // Configuration avec service role pour l'upload côté serveur
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -19,21 +21,20 @@ export async function POST(request: NextRequest) {
     // Déterminer si c'est un upload single ou multiple
     const files = singleFile ? [singleFile] : multipleFiles
     
-    if (!files.length || !productId) {
+    if (files.length === 0 || !productId) {
       return NextResponse.json(
         { error: 'File(s) and productId are required' },
         { status: 400 }
       )
     }
 
-    console.log(`📸 Processing ${files.length} file(s) for product ${productId}`)
 
     // Validation des fichiers
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    const allowedTypes = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
     const maxSize = 10 * 1024 * 1024 // 10MB
     
     for (const file of files) {
-      if (!allowedTypes.includes(file.type)) {
+      if (!allowedTypes.has(file.type)) {
         return NextResponse.json(
           { error: `Type de fichier non supporté: ${file.name}` },
           { status: 400 }
@@ -70,10 +71,9 @@ export async function POST(request: NextRequest) {
     // Upload de tous les fichiers
     try {
       for (const file of files) {
-        const fileName = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 11)}-${file.name.replaceAll(/[^\d.A-Za-z-]/g, '_')}`
         const filePath = `${productId}/gallery/${fileName}`
 
-        console.log(`📤 Uploading ${file.name} to ${filePath}`)
 
         const { data, error } = await supabaseAdmin.storage
           .from('products')
@@ -96,10 +96,8 @@ export async function POST(request: NextRequest) {
         newImageUrls.push(imageUrl)
         uploadedPaths.push(filePath)
         
-        console.log(`✅ Successfully uploaded ${file.name}: ${imageUrl}`)
         
         // 🚀 NOUVEAU : Générer blur hash automatiquement après upload
-        console.log(`🔄 Génération blur hash pour: ${imageUrl}`)
         try {
           const blurResponse = await fetch(`${supabaseUrl}/functions/v1/generate-blur-hash`, {
             method: 'POST',
@@ -117,7 +115,6 @@ export async function POST(request: NextRequest) {
           if (blurResponse.ok) {
             const blurResult = await blurResponse.json()
             if (blurResult.success) {
-              console.log(`✅ Blur hash généré: ${blurResult.blurHash?.slice(0, 20)}...`)
             } else {
               console.warn(`⚠️ Blur generation failed: ${blurResult.error}`)
             }
@@ -133,23 +130,36 @@ export async function POST(request: NextRequest) {
       // Ajouter les nouvelles images à la liste
       const updatedImages = [...currentImages, ...newImageUrls]
 
-      // Mettre à jour le produit avec les nouvelles images
+      // Mettre à jour le produit avec les nouvelles images (mise à jour directe)
       const { error: updateError } = await supabaseAdmin
         .from('products')
-        .update({ 
-          images: updatedImages,
-          updated_at: new Date().toISOString()
-        })
+        .update({ images: updatedImages })
         .eq('id', productId)
+        .select('images')
+        .single()
 
       if (updateError) {
-        console.error('Erreur mise à jour produit:', updateError)
+        console.error('Erreur mise à jour produit:', {
+          message: updateError.message,
+          details: (updateError as any).details,
+          hint: (updateError as any).hint,
+          code: updateError.code,
+          productId,
+          updatedImagesCount: updatedImages.length,
+        })
         // Si on ne peut pas mettre à jour la DB, on supprime les fichiers uploadés
         await supabaseAdmin.storage.from('products').remove(uploadedPaths)
-        throw new Error('Échec de la mise à jour du produit')
+        return NextResponse.json(
+          {
+            error: 'Échec de la mise à jour du produit',
+            code: updateError.code,
+            details: (updateError as any).details ?? null,
+            hint: (updateError as any).hint ?? null,
+          },
+          { status: 500 }
+        )
       }
 
-      console.log(`🎉 Successfully processed ${files.length} file(s)`)
 
       // Retourner les images mises à jour ET la première URL pour compatibilité
       return NextResponse.json({
@@ -171,7 +181,7 @@ export async function POST(request: NextRequest) {
     console.error('Upload error:', error)
     return NextResponse.json(
       { 
-        error: error instanceof Error ? error.message : 'Erreur interne du serveur' 
+        error: error instanceof Error ? error.message : 'Erreur interne du serveur'
       },
       { status: 500 }
     )
@@ -224,14 +234,13 @@ export async function DELETE(request: NextRequest) {
     const currentImages = product.images || []
     const updatedImages = currentImages.filter((img: string) => img !== imageUrl)
 
-    // Mettre à jour le produit avec les images restantes
+    // Mettre à jour le produit avec les images restantes (mise à jour directe)
     const { error: updateError } = await supabaseAdmin
       .from('products')
-      .update({ 
-        images: updatedImages,
-        updated_at: new Date().toISOString()
-      })
+      .update({ images: updatedImages })
       .eq('id', productId)
+      .select('images')
+      .single()
 
     if (updateError) {
       console.error('Erreur mise à jour produit:', updateError)
@@ -261,7 +270,7 @@ export async function PUT(request: NextRequest) {
     const file = formData.get('file') as File
     const productId = formData.get('productId') as string
     const oldImageUrl = formData.get('oldImageUrl') as string
-    const imageIndex = parseInt(formData.get('imageIndex') as string)
+    const imageIndex = Number.parseInt(formData.get('imageIndex') as string)
 
     if (!file || !productId || !oldImageUrl || isNaN(imageIndex)) {
       return NextResponse.json(
@@ -287,7 +296,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Upload du nouveau fichier
-    const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
+    const fileName = `${Date.now()}-${file.name.replaceAll(/[^\d.A-Za-z-]/g, '_')}`
     const filePath = `${productId}/gallery/${fileName}`
 
     const { data, error: uploadError } = await supabaseAdmin.storage
@@ -313,7 +322,6 @@ export async function PUT(request: NextRequest) {
     const newImageUrl = publicUrlData.publicUrl
 
     // 🚀 NOUVEAU : Générer blur hash automatiquement après upload de remplacement
-    console.log(`🔄 Génération blur hash pour remplacement: ${newImageUrl}`)
     try {
       const blurResponse = await fetch(`${supabaseUrl}/functions/v1/generate-blur-hash`, {
         method: 'POST',
@@ -331,7 +339,6 @@ export async function PUT(request: NextRequest) {
       if (blurResponse.ok) {
         const blurResult = await blurResponse.json()
         if (blurResult.success) {
-          console.log(`✅ Blur hash généré pour remplacement: ${blurResult.blurHash?.slice(0, 20)}...`)
         } else {
           console.warn(`⚠️ Blur generation failed pour remplacement: ${blurResult.error}`)
         }
@@ -365,14 +372,13 @@ export async function PUT(request: NextRequest) {
     const updatedImages = [...currentImages]
     updatedImages[imageIndex] = newImageUrl
 
-    // Mettre à jour le produit
+    // Mettre à jour le produit (mise à jour directe)
     const { error: updateError } = await supabaseAdmin
       .from('products')
-      .update({ 
-        images: updatedImages,
-        updated_at: new Date().toISOString()
-      })
+      .update({ images: updatedImages })
       .eq('id', productId)
+      .select('images')
+      .single()
 
     if (updateError) {
       console.error('Erreur mise à jour produit:', updateError)
@@ -385,8 +391,9 @@ export async function PUT(request: NextRequest) {
     }
 
     // Supprimer l'ancien fichier du storage (en arrière-plan)
-    if (oldImageUrl.includes('supabase.co/storage')) {
-      const oldPath = oldImageUrl.split('/storage/v1/object/public/products/')[1]
+    const marker = '/storage/v1/object/public/products/'
+    if (oldImageUrl.includes(marker)) {
+      const oldPath = oldImageUrl.split(marker)[1]
       if (oldPath) {
         await supabaseAdmin.storage.from('products').remove([oldPath])
       }
@@ -420,8 +427,6 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    console.log('🔄 Reordering images for product:', productId)
-    console.log('📋 New order:', images)
 
     // Mettre à jour l'ordre des images dans la base de données
     const { data, error } = await supabaseAdmin
@@ -439,7 +444,6 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    console.log('✅ Images reordered successfully:', data.images)
 
     return NextResponse.json({
       success: true,

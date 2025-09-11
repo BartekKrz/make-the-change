@@ -1,14 +1,19 @@
-import { SimpleInput, SimpleTextArea, SimpleSelect } from "./simple-form-components";
-import { ImageGalleryModal } from "@/components/images/image-gallery";
-import { OptimizedImageMasonry } from "@/components/ui/optimized-image-masonry";
-import { ProductBlurService, type ProductBlurHash } from "@/lib/services/product-blur-service";
-import { ImageUploaderField } from "@/components/images/image-uploader";
-import { ProductFormData, tierLabels, fulfillmentMethodLabels } from "@/lib/validators/product";
 import { Info, DollarSign, ImageIcon } from "lucide-react";
-import { type FC, type PropsWithChildren, useState, useEffect } from "react";
-import type { SaveStatus } from "@/app/[locale]/admin/(dashboard)/products/[id]/types";
-import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card";
 import { useTranslations } from "next-intl";
+import { type FC, type PropsWithChildren, useState, useEffect } from "react";
+
+import type { SaveStatus } from "@/app/[locale]/admin/(dashboard)/products/[id]/types";
+import { ImageGalleryModal } from "@/components/images/image-gallery";
+import { ImageUploaderField } from "@/components/images/image-uploader";
+import { OptimizedImageMasonry } from "@/components/ui/optimized-image-masonry";
+import { type ProductBlurHash } from "@/types/blur";
+import { trpc } from '@/lib/trpc';
+import type { ProductFormData} from "@/lib/validators/product";
+import { tierLabels, fulfillmentMethodLabels } from "@/lib/validators/product";
+
+import { SimpleInput, SimpleTextArea, SimpleSelect } from "./simple-form-components";
+import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card";
+
 
 type ProductDetailsEditorProps = {
   productData: ProductFormData & { id: string };
@@ -20,7 +25,7 @@ type ProductDetailsEditorProps = {
 
 // État pour les blur hashes optimisés
 type ProductBlurState = {
-  blurHashes: ProductBlurHash[];
+  imageBlurMap: Record<string, ProductBlurHash>;
   stats: {
     totalImages: number;
     withBlur: number;
@@ -63,59 +68,41 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
 
   // État pour les blur hashes du nouveau système DB
   const [blurState, setBlurState] = useState<ProductBlurState>({
-    blurHashes: [],
+    imageBlurMap: {},
     stats: { totalImages: 0, withBlur: 0, missing: 0, coverage: 100 },
     isLoading: false
   });
 
-  // Récupération des blur hashes depuis la DB
+  const blurQuery = trpc.admin.products.detail_enriched.useQuery(
+    { productId: productData.id },
+    { enabled: !!productData.id && Array.isArray(productData.images) && productData.images.length > 0, staleTime: 120000 }
+  )
+
   useEffect(() => {
-    if (!productData.id || !productData.images?.length) {
-      return;
+    if (!productData.id) return
+    if (blurQuery.isFetching) {
+      setBlurState(prev => ({ ...prev, isLoading: true }))
+      return
     }
-
-    const fetchProductWithBlur = async () => {
-      setBlurState(prev => ({ ...prev, isLoading: true }));
-      
-      try {
-        const productWithBlur = await ProductBlurService.getProductWithBlur(productData.id);
-        
-        if (productWithBlur) {
-          const stats = {
-            totalImages: productWithBlur.total_images,
-            withBlur: productWithBlur.blur_count,
-            missing: productWithBlur.total_images - productWithBlur.blur_count,
-            coverage: productWithBlur.blur_coverage_percent
-          };
-          
-          setBlurState({
-            blurHashes: productWithBlur.computed_blur_hashes,
-            stats,
-            isLoading: false
-          });
-        } else {
-          // Fallback si pas de données en DB
-          const fallbackStats = {
-            totalImages: productData.images.length,
-            withBlur: 0,
-            missing: productData.images.length,
-            coverage: 0
-          };
-          
-          setBlurState({
-            blurHashes: [],
-            stats: fallbackStats,
-            isLoading: false
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching blurhashes:', error);
-        setBlurState(prev => ({ ...prev, isLoading: false }));
+    if (!productData.images?.length) {
+      setBlurState({ imageBlurMap: {}, stats: { totalImages: 0, withBlur: 0, missing: 0, coverage: 100 }, isLoading: false })
+      return
+    }
+    const mapped: any = blurQuery.data
+    if (mapped && mapped.image_blur_map) {
+      const stats = {
+        totalImages: mapped.total_images,
+        withBlur: mapped.blur_count,
+        missing: mapped.total_images - mapped.blur_count,
+        coverage: mapped.blur_coverage_percent,
       }
-    };
-
-    fetchProductWithBlur();
-  }, [productData.id, productData.images]);
+      const normalized: Record<string, ProductBlurHash> = {}
+      Object.entries(mapped.image_blur_map as Record<string, any>).forEach(([url, v]: any) => { normalized[url] = { url, ...(v as any) } })
+      setBlurState({ imageBlurMap: normalized, stats, isLoading: false })
+    } else {
+      setBlurState({ imageBlurMap: {}, stats: { totalImages: productData.images.length, withBlur: 0, missing: productData.images.length, coverage: 0 }, isLoading: false })
+    }
+  }, [productData.id, productData.images, blurQuery.isFetching, blurQuery.data])
 
 
   const contentSections = [
@@ -127,21 +114,21 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
         <div className='space-y-4'>
           <div>
             <SimpleInput
+              required
               label={t('admin.products.edit.fields.name')}
               placeholder={t('admin.products.edit.placeholders.name')}
               value={productData.name}
               onChange={(value) => onFieldChange('name', value)}
-              required
             />
           </div>
 
           <div>
             <SimpleInput
+              required
               label={t('admin.products.edit.fields.slug')}
               placeholder={t('admin.products.edit.placeholders.slug')}
               value={productData.slug}
               onChange={(value) => onFieldChange('slug', value)}
-              required
             />
           </div>
 
@@ -175,30 +162,30 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
         <div className='space-y-4'>
           <div>
             <SimpleInput
-              label={t('admin.products.edit.fields.price_points')}
-              type="number"
-              placeholder="100"
-              value={productData.price_points?.toString() || ''}
-              onChange={(value) => onFieldChange('price_points', parseInt(value) || 0)}
               required
+              label={t('admin.products.edit.fields.price_points')}
+              placeholder="100"
+              type="number"
+              value={productData.price_points?.toString() || ''}
+              onChange={(value) => onFieldChange('price_points', Number.parseInt(value) || 0)}
             />
           </div>
 
           <div>
             <SimpleInput
               label={t('admin.products.edit.fields.stock_quantity')}
-              type="number"
               placeholder="0"
+              type="number"
               value={productData.stock_quantity?.toString() || ''}
-              onChange={(value) => onFieldChange('stock_quantity', parseInt(value) || 0)}
+              onChange={(value) => onFieldChange('stock_quantity', Number.parseInt(value) || 0)}
             />
           </div>
 
           <div>
             <SimpleSelect
               label={t('admin.products.edit.fields.min_tier')}
-              placeholder={t('admin.products.edit.placeholders.min_tier')}
               options={tierOptions}
+              placeholder={t('admin.products.edit.placeholders.min_tier')}
               value={productData.min_tier}
               onChange={(value) => onFieldChange('min_tier', value)}
             />
@@ -207,8 +194,8 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
           <div>
             <SimpleSelect
               label={t('admin.products.edit.fields.fulfillment_method')}
-              placeholder={t('admin.products.edit.placeholders.fulfillment_method')}
               options={fulfillmentOptions}
+              placeholder={t('admin.products.edit.placeholders.fulfillment_method')}
               value={productData.fulfillment_method}
               onChange={(value) => onFieldChange('fulfillment_method', value)}
             />
@@ -222,47 +209,24 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
       icon: ImageIcon,
       content: (
         <div className='w-full space-y-6'>
-          {/* 🚀 NOUVEAU : Système DB Blur - Stats debug */}
-          {process.env.NODE_ENV === 'development' && productData.images && productData.images.length > 0 && (
-            <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <h4 className="text-sm font-medium text-blue-900 mb-2">{t('admin.products.edit.blur_system.title')}</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-blue-700">
-                <div>
-                  <span className="font-medium">{t('admin.products.edit.blur_system.images')}:</span> {blurState.stats.totalImages}
-                </div>
-                <div>
-                  <span className="font-medium">{t('admin.products.edit.blur_system.with_blur')}:</span> {blurState.stats.withBlur}
-                </div>
-                <div>
-                  <span className="font-medium">{t('admin.products.edit.blur_system.missing')}:</span> {blurState.stats.missing}
-                </div>
-                <div>
-                  <span className="font-medium">{t('admin.products.edit.blur_system.coverage')}:</span> {blurState.isLoading ? '🔄' : `${blurState.stats.coverage}%`}
-                </div>
-              </div>
-              {blurState.isLoading && (
-                <div className="mt-2">
-                  <div className="bg-blue-200 rounded-full h-1">
-                    <div className="bg-blue-500 h-1 rounded-full animate-pulse" style={{ width: '60%' }} />
-                  </div>
-                  <p className="text-xs text-blue-600 mt-1">{t('admin.products.edit.blur_system.loading')}</p>
-                </div>
-              )}
-            </div>
-          )}
+          
 
           <div className='w-full space-y-6'>
             {/* 🚀 Galerie avec nouveau système DB Blur */}
             {productData.images && productData.images.length > 0 && (
               <OptimizedImageMasonry
-                images={productData.images}
+                enableReorder
+                showActions
+                imageBlurMap={blurState.imageBlurMap}
                 className='w-full'
-                showActions={true}
-                enableReorder={true}
-                blurHashes={blurState.blurHashes}  // 🚀 NOUVEAU : Blur hashes depuis DB
+                images={productData.images}
                 productId={productData.id}        // 🚀 NOUVEAU : ID pour diagnostics
                 onImageClick={(_imageUrl: string, _index: number) => {
                   // Image click handler
+                }}
+                onImageDelete={async (_imageUrl: string, index: number) => {
+                  const newImages = productData.images?.filter((_, i) => i !== index) || [];
+                  onFieldChange('images', newImages);
                 }}
                 onImagePreview={(_imageUrl: string, index: number) => {
                   setGalleryModal({
@@ -270,9 +234,6 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                     images: productData.images || [],
                     initialIndex: index
                   });
-                }}
-                onImagesReorder={async (_oldIndex: number, _newIndex: number, newImages: string[]) => {
-                  onFieldChange('images', newImages);
                 }}
                 onImageReplace={async (_imageUrl: string, index: number) => {
                   // Créer un input file pour sélectionner une nouvelle image
@@ -285,7 +246,7 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                     e.stopPropagation();
                   });
                   
-                  input.onchange = async (e) => {
+                  input.addEventListener('change', async (e) => {
                     const file = (e.target as HTMLInputElement).files?.[0];
                     if (file) {
                       try {
@@ -300,14 +261,13 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                         console.error('❌ Error during replacement:', error);
                       }
                     }
-                    document.body.removeChild(input);
-                  };
+                    input.remove();
+                  });
                   
-                  document.body.appendChild(input);
+                  document.body.append(input);
                   input.click();
                 }}
-                onImageDelete={async (_imageUrl: string, index: number) => {
-                  const newImages = productData.images?.filter((_, i) => i !== index) || [];
+                onImagesReorder={async (_oldIndex: number, _newIndex: number, newImages: string[]) => {
                   onFieldChange('images', newImages);
                 }}
               />
@@ -317,6 +277,11 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
             <div className="space-y-4">
               <label className="text-sm font-medium">{t('admin.products.edit.images.add')}</label>
               <ImageUploaderField
+                multiple
+                disabled={false}
+                height="h-32"
+                productId={productData.id}
+                width="w-full"
                 field={{
                   state: {
                     value: productData.images || []
@@ -325,22 +290,12 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
                     const newImages = typeof updater === 'function' 
                       ? updater(productData.images || [])
                       : updater;
-                    console.log('🔄 [DEBUG] ImageUploaderField handleChange appelé avec:', newImages);
-                    console.log('🔄 [DEBUG] Images actuelles avant mise à jour:', productData.images);
-                    console.log('🔄 [DEBUG] Appel de onFieldChange("images", newImages)');
                     onFieldChange('images', newImages);
                   }
                 }}
                 onImagesChange={(images) => {
-                  console.log('📷 [DEBUG] onImagesChange appelé avec:', images);
-                  console.log('📷 [DEBUG] Déclenchement de onFieldChange("images", images)');
                   onFieldChange('images', images);
                 }}
-                multiple={true}
-                productId={productData.id}
-                disabled={false}
-                width="w-full"
-                height="h-32"
               />
             </div>
           </div>
@@ -380,18 +335,13 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
       {/* Modal de prévisualisation d'images */}
       {galleryModal.isOpen && (
         <ImageGalleryModal
+          showActions
           images={galleryModal.images}
           initialIndex={galleryModal.initialIndex}
           isOpen={galleryModal.isOpen}
+          imageBlurMap={blurState.imageBlurMap}
           onClose={() => setGalleryModal(prev => ({ ...prev, isOpen: false }))}
-          showActions={true}
-          onImageReplace={async (imageUrl: string, index: number) => {
-            console.log('🔄 Replace image from modal:', imageUrl, 'index:', index);
-            setGalleryModal(prev => ({ ...prev, isOpen: false }));
-            // Logique de remplacement ici
-          }}
           onImageDelete={async (imageUrl: string, index: number) => {
-            console.log('🗑️ Delete image from modal:', imageUrl, 'index:', index);
             const newImages = productData.images?.filter((_: string, i: number) => i !== index) || [];
             onFieldChange('images', newImages);
             setGalleryModal(prev => ({ 
@@ -402,6 +352,10 @@ const ProductDetailsEditor: React.FC<ProductDetailsEditorProps> = ({
             if (newImages.length === 0) {
               setGalleryModal(prev => ({ ...prev, isOpen: false }));
             }
+          }}
+          onImageReplace={async (imageUrl: string, index: number) => {
+            setGalleryModal(prev => ({ ...prev, isOpen: false }));
+            // Logique de remplacement ici
           }}
         />
       )}

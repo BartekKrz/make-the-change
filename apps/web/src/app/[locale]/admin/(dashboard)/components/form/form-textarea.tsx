@@ -1,8 +1,10 @@
 "use client"
 
 import { forwardRef, type ForwardedRef } from 'react'
+
 import { TextArea } from '@/app/[locale]/admin/(dashboard)/components/ui/textarea'
 import { cn } from '@/lib/utils'
+
 import { useFieldContext, useFieldErrors } from './form-context'
 
 export type FormTextAreaProps = {
@@ -44,16 +46,16 @@ const FormTextAreaComponent = (
       )}
       <TextArea
         ref={ref}
-        value={value}
-        onChange={(e) => field.handleChange(e.target.value)}
-        onBlur={field.handleBlur}
+        maxLength={maxLength}
         placeholder={placeholder}
         rows={rows}
-        maxLength={maxLength}
+        value={value}
         className={cn(
           hasError && 'border-red-500 focus:border-red-500',
           className
         )}
+        onBlur={field.handleBlur}
+        onChange={(e) => field.handleChange(e.target.value)}
         {...props}
       />
       {hasError && errors[0] && (

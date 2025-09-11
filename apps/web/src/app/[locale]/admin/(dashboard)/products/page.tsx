@@ -1,21 +1,23 @@
 "use client"
-import { type FC, useCallback, useMemo, useState, useTransition, useDeferredValue, useOptimistic } from 'react';
-import { useTranslations } from 'next-intl';
 import { Package, Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { type FC, useCallback, useMemo, useState, useTransition, useDeferredValue, useOptimistic, useEffect } from 'react';
+
 import { AdminPageLayout, Filters, FilterModal } from '@/app/[locale]/admin/(dashboard)/components/admin-layout';
-import { AdminPageHeader } from '@/app/[locale]/admin/(dashboard)/components/admin-layout/header';
-import { ViewToggle, type ViewMode } from '@/app/[locale]/admin/(dashboard)/components/ui/view-toggle';
 import { FilterButton } from '@/app/[locale]/admin/(dashboard)/components/admin-layout/filter-modal';
-import { DataList } from '@/app/[locale]/admin/(dashboard)/components/ui/data-list';
-import { Button } from '@/components/ui/button';
-import { CheckboxWithLabel } from '@/app/[locale]/admin/(dashboard)/components/ui/checkbox';
-import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select';
+import { AdminPageHeader } from '@/app/[locale]/admin/(dashboard)/components/admin-layout/header';
 import { AdminPagination } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-pagination';
-import { RouterOutputs, trpc } from '@/lib/trpc';
+import { CheckboxWithLabel } from '@/app/[locale]/admin/(dashboard)/components/ui/checkbox';
+import { DataList } from '@/app/[locale]/admin/(dashboard)/components/ui/data-list';
 import { EmptyState } from '@/app/[locale]/admin/(dashboard)/components/ui/empty-state';
-import { ProductCardSkeleton, ProductListSkeleton } from '@/app/[locale]/admin/(dashboard)/products/components/product-card-skeleton';
+import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select';
+import { ViewToggle, type ViewMode } from '@/app/[locale]/admin/(dashboard)/components/ui/view-toggle';
 import { Product } from '@/app/[locale]/admin/(dashboard)/products/components/product';
+import { ProductCardSkeleton, ProductListSkeleton } from '@/app/[locale]/admin/(dashboard)/products/components/product-card-skeleton';
 import { LocalizedLink } from '@/components/localized-link';
+import { Button } from '@/components/ui/button';
+import { trpc } from '@/lib/trpc';
+import type { RouterOutputs} from '@/lib/trpc';
 
 
 const pageSize = 18;
@@ -38,25 +40,25 @@ const createCategoryHierarchy = (categories: Categories | undefined, t: (key: st
   const options: SelectOption[] = [{ value: 'all', label: t('admin.products.filters.all_categories') }];
   
   
-  rootCategories.forEach(root => {
+  for (const root of rootCategories) {
     
     options.push({ value: root.id, label: root.name });
     
     
     const children = subCategories.filter(sub => sub.parent_id === root.id);
-    children.forEach(child => {
+    for (const child of children) {
       options.push({ value: child.id, label: `  └── ${child.name}` });
-    });
-  });
+    }
+  }
   
   
   const orphanCategories = subCategories.filter(sub => 
     !rootCategories.some(root => root.id === sub.parent_id) &&
     !subCategories.some(other => other.id === sub.parent_id)
   );
-  orphanCategories.forEach(orphan => {
+  for (const orphan of orphanCategories) {
     options.push({ value: orphan.id, label: `⚠️ ${orphan.name}` });
-  });
+  }
   
   return options;
 };
@@ -140,6 +142,28 @@ const getSortSelectionItems = (t: (key: string) => string) => getSortOptions(t).
   const totalProducts = productsData?.total || 0;
   const totalPages = Math.ceil(totalProducts / pageSize);
 
+  // Debug logs – liste produits + blur cover
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') return;
+    try {
+      // Sanitize params for logging
+      const params = { ...queryParams } as any;
+      console.groupCollapsed('🧪 [Admin/Products] Liste - Debug');
+      console.log('QueryParams', params);
+      console.log('Total (API)', productsData?.total, 'Items (page)', products.length);
+      const sample = (products || []).slice(0, 5).map((p: any) => ({
+        id: p?.id,
+        name: p?.name,
+        hasCover: !!p?.images?.[0],
+        coverImage: p?.images?.[0] || null,
+        hasCoverBlurDataURL: !!p?.cover_blur_data_url,
+        hasCoverBlurHash: !!p?.cover_blur_hash,
+      }));
+      console.table(sample);
+      console.groupEnd();
+    } catch {}
+  }, [productsData, products, queryParams]);
+
   
   const isFilterActive = useMemo(() => !!(
     deferredSearch ||
@@ -216,18 +240,18 @@ const getSortSelectionItems = (t: (key: string) => string) => getSortOptions(t).
         <div className="md:hidden space-y-3">
           <div className="flex items-center gap-2">
             <AdminPageHeader.Search
+              isLoading={isLoading || isFetching}
+              placeholder={t('admin.products.search_placeholder')}
               value={search}
               onChange={setSearch}
-              placeholder={t('admin.products.search_placeholder')}
-              isLoading={isLoading || isFetching}
             />
             <FilterButton 
-              onClick={() => setIsFilterModalOpen(true)} 
-              isActive={isFilterActive}
+              isActive={isFilterActive} 
+              onClick={() => setIsFilterModalOpen(true)}
             />
           </div>
-          <LocalizedLink href={"/admin/products/new"} className="w-full">
-          <Button variant="accent" size="sm" className="w-full" >
+          <LocalizedLink className="w-full" href="/admin/products/new">
+          <Button className="w-full" size="sm" variant="accent" >
             {t('admin.products.new_product')}
           </Button>
           </LocalizedLink>
@@ -240,16 +264,16 @@ const getSortSelectionItems = (t: (key: string) => string) => getSortOptions(t).
           <div className="flex items-center gap-4">
             <div className="flex-1 max-w-md">
               <AdminPageHeader.Search
+                isLoading={isLoading || isFetching}
+                placeholder={t('admin.products.search_placeholder')}
                 value={search}
                 onChange={setSearch}
-                placeholder={t('admin.products.search_placeholder')}
-                isLoading={isLoading || isFetching}
               />
             </div>
             <div className="flex items-center gap-3">
               
-              <LocalizedLink href={"/admin/products/new"} className="w-full">
-          <Button icon={<Plus />} size="sm" className="w-full" >
+              <LocalizedLink className="w-full" href="/admin/products/new">
+          <Button className="w-full" icon={<Plus />} size="sm" >
             {t('admin.products.new_product')}
           </Button>
           </LocalizedLink>
@@ -261,34 +285,37 @@ const getSortSelectionItems = (t: (key: string) => string) => getSortOptions(t).
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3 flex-wrap flex-1">
               <SimpleSelect
+                className="w-48"
+                disabled={isPendingProducers || !producers || isPendingFilters}
+                options={producerOptions}
                 placeholder={t('admin.products.filters.all_partners')}
                 value={selectedProducerId || 'all'}
                 onValueChange={(value) => handleFilterChange(() => setSelectedProducerId(value === 'all' ? undefined : value))}
-                options={producerOptions}
-                className="w-48"
-                disabled={isPendingProducers || !producers || isPendingFilters}
               />
               
               <SimpleSelect
+                className="w-52"
+                disabled={isPendingCategories || !categories || isPendingFilters}
+                options={categoryOptions}
                 placeholder={t('admin.products.filters.all_categories')}
                 value={selectedCategoryId || 'all'}
                 onValueChange={(value) => handleFilterChange(() => setSelectedCategoryId(value === 'all' ? undefined : value))}
-                options={categoryOptions}
-                className="w-52"
-                disabled={isPendingCategories || !categories || isPendingFilters}
               />
               
               <SimpleSelect
+                className="w-44"
+                disabled={isPendingFilters}
+                options={sortOptions}
                 placeholder={t('admin.products.filters.sort_by')}
                 value={sortBy}
                 onValueChange={(value) => handleFilterChange(() => setSortBy(value as SortOption))}
-                options={sortOptions}
-                className="w-44"
-                disabled={isPendingFilters}
               />
               
               
               <SimpleSelect
+                className="w-40"
+                disabled={isPendingTags || !tagsData || isPendingFilters}
+                options={tagOptions}
                 placeholder={t('admin.products.filters.tags_placeholder')}
                 value=""
                 onValueChange={(value) => {
@@ -296,16 +323,13 @@ const getSortSelectionItems = (t: (key: string) => string) => getSortOptions(t).
                     handleFilterChange(() => setSelectedTags([...selectedTags, value]));
                   }
                 }}
-                options={tagOptions}
-                className="w-40"
-                disabled={isPendingTags || !tagsData || isPendingFilters}
               />
               
               <CheckboxWithLabel
                 checked={activeOnly}
-                onCheckedChange={(v) => handleFilterChange(() => setActiveOnly(Boolean(v)))}
-                label={t('admin.products.filters.active_only')}
                 disabled={isPendingFilters}
+                label={t('admin.products.filters.active_only')}
+                onCheckedChange={(v) => handleFilterChange(() => setActiveOnly(Boolean(v)))}
               />
               
               
@@ -314,10 +338,10 @@ const getSortSelectionItems = (t: (key: string) => string) => getSortOptions(t).
               
               {hasActiveFilters && (
                 <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={resetFilters}
                   className="text-xs px-3 py-2 h-auto text-muted-foreground hover:text-foreground border-dashed"
+                  size="sm"
+                  variant="outline"
+                  onClick={resetFilters}
                 >
                   {t('admin.products.filters.clear_filters')}
                 </Button>
@@ -346,10 +370,10 @@ const getSortSelectionItems = (t: (key: string) => string) => getSortOptions(t).
       <AdminPageLayout.Content>
         {isError ? (
           <EmptyState
-            variant="muted"
+            description={error?.message || t('admin.products.error.loading_description')}
             icon={Package}
             title={t('admin.products.error.loading_title')}
-            description={error?.message || t('admin.products.error.loading_description')}
+            variant="muted"
             action={
               <Button size="sm" variant="outline" onClick={() => refetch()}>
                 {t('admin.products.error.retry')}
@@ -358,10 +382,10 @@ const getSortSelectionItems = (t: (key: string) => string) => getSortOptions(t).
           />
         ) : (
           <DataList
-            variant={view === 'map' ? 'grid' : view}
-            items={products}
             isLoading={isLoading}
+            items={products}
             renderSkeleton={() => view === 'grid' ? <ProductCardSkeleton /> : <ProductListSkeleton />}
+            variant={view === 'map' ? 'grid' : view}
             emptyState={{
               icon: Package,
               title: t('admin.products.empty_state.title'),
@@ -376,8 +400,8 @@ const getSortSelectionItems = (t: (key: string) => string) => getSortOptions(t).
               <Product 
                 key={product.id} 
                 product={product} 
-                view={view === 'map' ? 'grid' : view} 
-                queryParams={queryParams}
+                queryParams={queryParams} 
+                view={view === 'map' ? 'grid' : view}
                 onFilterChange={{
                   setCategory: (categoryId: string) => 
                     handleFilterChange(() => setSelectedCategoryId(categoryId)),
@@ -418,58 +442,58 @@ const getSortSelectionItems = (t: (key: string) => string) => getSortOptions(t).
           />
           
           <Filters.Selection
+            allLabel=""
             items={sortSelectionItems}
+            label={t('admin.products.filters.sort_by')}
             selectedId={sortBy}
             onSelectionChange={(id) => handleFilterChange(() => setSortBy((id || 'created_at_desc') as SortOption))}
-            label={t('admin.products.filters.sort_by')}
-            allLabel=""
           />
           
           <Filters.Selection
+            allLabel={t('admin.products.filters.all_partners')}
             items={producers || []}
+            label={t('admin.products.filter_modal.partner')}
             selectedId={selectedProducerId}
             onSelectionChange={(id) => handleFilterChange(() => setSelectedProducerId(id))}
-            label={t('admin.products.filter_modal.partner')}
-            allLabel={t('admin.products.filters.all_partners')}
           />
           
           <Filters.Selection
+            allLabel={t('admin.products.filters.all_categories')}
             items={categories?.filter(cat => !cat.parent_id) || []}
+            label={t('admin.products.filter_modal.category')}
             selectedId={selectedCategoryId}
             onSelectionChange={(id) => handleFilterChange(() => setSelectedCategoryId(id))}
-            label={t('admin.products.filter_modal.category')}
-            allLabel={t('admin.products.filters.all_categories')}
           />
           
           <Filters.Selection
+            allLabel=""
             items={tagsData?.tags?.map(tag => ({ id: tag, name: tag })) || []}
+            label={t('admin.products.filter_modal.tags')}
             selectedId=""
             onSelectionChange={(tagId) => {
               if (tagId && !selectedTags.includes(tagId)) {
                 handleFilterChange(() => setSelectedTags([...selectedTags, tagId]));
               }
             }}
-            label={t('admin.products.filter_modal.tags')}
-            allLabel=""
           />
           
           <Filters.Toggle
             checked={activeOnly}
-            onCheckedChange={(v) => handleFilterChange(() => setActiveOnly(v))}
             label={t('admin.products.filter_modal.active_only_description')}
+            onCheckedChange={(v) => handleFilterChange(() => setActiveOnly(v))}
           />
           
           
           {hasActiveFilters && (
             <div className="pt-4 border-t border-border/30">
               <Button
-                variant="outline"
+                className="w-full text-muted-foreground hover:text-foreground border-dashed"
                 size="sm"
+                variant="outline"
                 onClick={() => {
                   resetFilters();
                   setIsFilterModalOpen(false);
                 }}
-                className="w-full text-muted-foreground hover:text-foreground border-dashed"
               >
                 {t('admin.products.filters.clear_all_filters')}
               </Button>

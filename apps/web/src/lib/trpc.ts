@@ -1,6 +1,7 @@
 
-import { createTRPCReact } from '@trpc/react-query';
 import { httpBatchLink, loggerLink } from '@trpc/client';
+import { createTRPCReact } from '@trpc/react-query';
+
 import type { AppRouter } from '@make-the-change/api';
 import type { inferRouterOutputs, inferRouterInputs } from '@trpc/server';
 

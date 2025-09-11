@@ -24,19 +24,19 @@ export const FormToggle = ({
     <div className="space-y-1">
       <div className="flex items-center space-x-2">
         <input
-          type="checkbox"
-          id={hideLabel ? undefined : label}
-          checked={checked}
-          onChange={(e) => field.handleChange(e.target.checked)}
-          onBlur={field.handleBlur}
           aria-label={hideLabel ? label : undefined}
+          checked={checked}
           className={`h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 ${className}`}
+          id={hideLabel ? undefined : label}
+          type="checkbox"
+          onBlur={field.handleBlur}
+          onChange={(e) => field.handleChange(e.target.checked)}
         />
         <div className="grid gap-1.5 leading-none">
           {!hideLabel && (
             <label
-              htmlFor={label}
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              htmlFor={label}
             >
               {label}
             </label>

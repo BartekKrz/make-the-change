@@ -1,6 +1,7 @@
 'use client';
 
 import { useReducer, useCallback, useMemo } from 'react';
+
 import { type SaveStatus } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-detail-header';
 
 export type EntityFormConfig<T> = {
@@ -37,7 +38,7 @@ type FormAction<T> =
 function createFormReducer<T>() {
   return (state: EntityFormState<T>, action: FormAction<T>): EntityFormState<T> => {
     switch (action.type) {
-      case 'FIELD_CHANGE':
+      case 'FIELD_CHANGE': {
         return {
           ...state,
           pendingChanges: {
@@ -46,21 +47,23 @@ function createFormReducer<T>() {
           },
           saveError: null
         };
+      }
       
-      case 'SAVE_START':
+      case 'SAVE_START': {
         return {
           ...state,
           isSaving: true,
           saveError: null
         };
+      }
       
-      case 'SAVE_SUCCESS':
+      case 'SAVE_SUCCESS': {
         const updatedChanges = { ...state.pendingChanges };
-        action.savedFields.forEach(field => {
+        for (const field of action.savedFields) {
           if (field in updatedChanges) {
             delete updatedChanges[field as keyof Partial<T>];
           }
-        });
+        }
         return {
           ...state,
           isSaving: false,
@@ -68,22 +71,26 @@ function createFormReducer<T>() {
           lastSaved: new Date(),
           saveError: null
         };
+      }
       
-      case 'SAVE_ERROR':
+      case 'SAVE_ERROR': {
         return {
           ...state,
           isSaving: false,
           saveError: action.error
         };
+      }
       
-      case 'CLEAR_ERROR':
+      case 'CLEAR_ERROR': {
         return {
           ...state,
           saveError: null
         };
+      }
       
-      default:
+      default: {
         return state;
+      }
     }
   };
 }

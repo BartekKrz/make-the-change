@@ -1,20 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+import { MapPin, Leaf, TreePine, Grape, TrendingUp as _TrendingUp, Users, Wind, Award, Plus } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
+import { useState } from 'react'
+import { type FC } from 'react'
 
-import { MapPin, Leaf, TreePine, Grape, TrendingUp, Users, Wind, Award, Plus } from 'lucide-react'
 import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
-import { trpc } from '@/lib/trpc'
 import { AdminPageContainer } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-container'
 import { AdminPageHeader } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-header'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
+import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
+import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select'
 import { ViewToggle, type ViewMode } from '@/app/[locale]/admin/(dashboard)/components/ui/view-toggle'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
-import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select'
-import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
-import Link from 'next/link'
-import { type FC } from 'react'
+import { trpc } from '@/lib/trpc'
+
 
 const MapContainer = dynamic(() => import('@/components/ui/map-container'), {
   ssr: false,
@@ -96,7 +97,7 @@ const ProjectsMapPage: FC = () => {
 
   const cityCoordinates: Record<string, [number, number]> = {
     'Antananarivo': [-18.8792, 47.5079],
-    'Toliara': [-23.3500, 43.6667],
+    'Toliara': [-23.35, 43.6667],
     'Antsiranana': [-12.2667, 49.2833],
     'Mahajanga': [-15.7167, 46.3167],
     'Fianarantsoa': [-21.4333, 47.0833],
@@ -113,10 +114,10 @@ const ProjectsMapPage: FC = () => {
     'Bruges': [51.2093, 3.2247],
 
     'Paris': [48.8566, 2.3522],
-    'Lyon': [45.7640, 4.8357],
+    'Lyon': [45.764, 4.8357],
     'Marseille': [43.2965, 5.3698],
     'Toulouse': [43.6047, 1.4442],
-    'Nice': [43.7102, 7.2620],
+    'Nice': [43.7102, 7.262],
   }
 
   const defaultCoordinates: Record<string, [number, number]> = {
@@ -169,33 +170,33 @@ const ProjectsMapPage: FC = () => {
     <AdminPageContainer>
       <AdminPageHeader>
         <Input
+          className="max-w-xs"
           placeholder="Rechercher un projet..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-xs"
         />
         <SimpleSelect
           value={selectedType}
-          onValueChange={setSelectedType}
           options={[
             { value: 'all', label: 'Tous les types' },
             { value: 'beehive', label: 'Ruches' },
             { value: 'olive_tree', label: 'Oliviers' },
             { value: 'vineyard', label: 'Vignes' }
           ]}
+          onValueChange={setSelectedType}
         />
-        {isLoading && <span className="text-xs text-muted-foreground" aria-live="polite">Chargement…</span>}
+        {isLoading && <span aria-live="polite" className="text-xs text-muted-foreground">Chargement…</span>}
 
         <Link href="/admin/projects/new">
-          <Button size="sm" className="flex items-center gap-2">
+          <Button className="flex items-center gap-2" size="sm">
             <Plus className="h-4 w-4" />
             Nouveau projet
           </Button>
         </Link>
         <ViewToggle
+          availableViews={['map']}
           value={view}
           onChange={setView}
-          availableViews={['map']}
         />
       </AdminPageHeader>
       {}
@@ -227,8 +228,8 @@ const ProjectsMapPage: FC = () => {
             <MapContainer
               projects={filteredProjects}
               selectedProject={selectedProject}
-              onProjectSelect={setSelectedProject}
               selectedType={selectedType}
+              onProjectSelect={setSelectedProject}
             />
           )}
         </CardContent>
@@ -284,11 +285,11 @@ const ProjectsMapPage: FC = () => {
 
             <div className="flex gap-2">
               <Link href={`/admin/projects/${selectedProject.id}`}>
-                <Button variant="outline" size="sm">
+                <Button size="sm" variant="outline">
                   Voir le projet
                 </Button>
               </Link>
-              <Button variant="outline" size="sm">
+              <Button size="sm" variant="outline">
                 Modifier
               </Button>
             </div>

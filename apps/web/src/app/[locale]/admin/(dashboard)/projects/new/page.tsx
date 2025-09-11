@@ -1,24 +1,20 @@
 
 'use client';
 
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-
 import { ArrowLeft, Package, Plus } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-import { trpc } from '@/lib/trpc';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge';
-import { useAppForm, FormInput, FormTextArea, FormSelect } from '@/components/form';
-
-import { useToast } from '@/hooks/use-toast';
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card';
 import { createProject } from '@/app/[locale]/admin/(dashboard)/projects/actions';
+import { useAppForm, FormInput, FormTextArea, FormSelect } from '@/components/form';
+import { Button } from '@/components/ui/button';
 import ImageUpload from '@/components/ui/image-upload';
-
+import { useToast } from '@/hooks/use-toast';
+import { trpc } from '@/lib/trpc';
 import type { ProjectFormData } from '@/lib/validators/project';
-
 import {
   defaultProjectValues,
   projectTypeLabels,
@@ -37,11 +33,11 @@ const NewProjectPage = () => {
       try {
 
         const formData = new FormData();
-        Object.entries(value).forEach(([key, val]) => {
+        for (const [key, val] of Object.entries(value)) {
           if (val != null) {
             formData.append(key, val.toString());
           }
-        });
+        }
         
         // Ajouter les images
         if (projectImages.length > 0) {
@@ -81,8 +77,8 @@ const NewProjectPage = () => {
       {}
       <div className="flex items-center gap-4">
         <Link
-          href="/admin/projects"
           className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          href="/admin/projects"
         >
           <ArrowLeft className="h-4 w-4" />
           Retour aux projets
@@ -95,11 +91,11 @@ const NewProjectPage = () => {
       </div>
 
       {}
-      <form onSubmit={(e) => {
+      <form className="space-y-6" onSubmit={(e) => {
         e.preventDefault()
         e.stopPropagation()
         form.handleSubmit()
-      }} className="space-y-6">
+      }}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {}
           <Card>
@@ -112,13 +108,13 @@ const NewProjectPage = () => {
             <CardContent className="space-y-4">
               <form.Field name="name">
                 {() => (
-                  <FormInput label="Nom du projet" placeholder="Ruche en Provence Bio" required />
+                  <FormInput required label="Nom du projet" placeholder="Ruche en Provence Bio" />
                 )}
               </form.Field>
 
               <form.Field name="slug">
                 {() => (
-                  <FormInput label="Slug (URL)" placeholder="ruche-provence-bio" required description="Utilisé dans l'URL du projet" />
+                  <FormInput required description="Utilisé dans l'URL du projet" label="Slug (URL)" placeholder="ruche-provence-bio" />
                 )}
               </form.Field>
 
@@ -158,11 +154,11 @@ const NewProjectPage = () => {
               <form.Field name="target_budget">
                 {() => (
                   <FormInput
+                    required
                     label="Budget cible (€)"
-                    type="number"
                     min="1"
                     placeholder="5000"
-                    required
+                    type="number"
                   />
                 )}
               </form.Field>
@@ -192,11 +188,11 @@ const NewProjectPage = () => {
           </CardHeader>
           <CardContent>
             <ImageUpload
-              entityId="temp-project" // Sera remplacé par l'ID réel après création
               bucket="projects"
               currentImages={projectImages}
-              onImagesChange={setProjectImages}
+              entityId="temp-project" // Sera remplacé par l'ID réel après création
               maxFiles={8}
+              onImagesChange={setProjectImages}
             />
           </CardContent>
         </Card>
@@ -212,10 +208,10 @@ const NewProjectPage = () => {
                 <div className="flex flex-wrap gap-4">
                   <label className="flex items-center gap-2">
                     <input
-                      type="checkbox"
                       checked={Boolean(field.state.value)}
-                      onChange={(e) => field.handleChange(e.target.checked)}
+                      type="checkbox"
                       onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.checked)}
                     />
                     <span className="text-sm">Projet vedette</span>
                     <Badge color={field.state.value ? "blue" : "gray"}>
@@ -239,9 +235,9 @@ const NewProjectPage = () => {
           </Button>
 
           <Button
-            type="submit"
-            disabled={!form.state.canSubmit || form.state.isSubmitting}
             className="flex items-center gap-2"
+            disabled={!form.state.canSubmit || form.state.isSubmitting}
+            type="submit"
           >
             {form.state.isSubmitting ? (
               <>

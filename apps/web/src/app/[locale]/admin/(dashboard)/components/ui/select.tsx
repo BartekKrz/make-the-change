@@ -2,9 +2,11 @@
 
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
-import type { ElementRef, ComponentPropsWithoutRef, FC } from 'react';
 import { forwardRef } from 'react';
+
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+
+import type { ElementRef, ComponentPropsWithoutRef, FC } from 'react';
 
 const Select = SelectPrimitive.Root;
 
@@ -104,6 +106,7 @@ const SelectContent = forwardRef<
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
+      position={position}
       className={cn(
         // Enhanced dropdown design 2025
         'relative z-[var(--z-overlay)] max-h-96 min-w-[12rem] overflow-hidden',
@@ -125,7 +128,6 @@ const SelectContent = forwardRef<
         
         className
       )}
-      position={position}
       {...props}
     >
       <SelectScrollUpButton />
@@ -254,13 +256,13 @@ export const SimpleSelect: FC<SimpleSelectProps> = ({
 }) => {
   
   return (
-    <Select  value={value} onValueChange={onValueChange} disabled={disabled}>
+    <Select  disabled={disabled} value={value} onValueChange={onValueChange}>
       <SelectTrigger className={className}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
         {options.map((option) => (
-          <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
+          <SelectItem key={option.value} disabled={option.disabled} value={option.value}>
             {option.label}
           </SelectItem>
         ))}

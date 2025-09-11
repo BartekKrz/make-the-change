@@ -1,7 +1,8 @@
 'use client'
 
-import type { FC, PropsWithChildren } from 'react'
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn'
+
+import type { FC, PropsWithChildren } from 'react'
 
 type ListContainerProps = {
   className?: string

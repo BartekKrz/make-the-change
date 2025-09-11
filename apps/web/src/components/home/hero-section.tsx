@@ -1,8 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
+
 import { LocalizedLink } from '@/components/localized-link'
+import { Button } from '@/components/ui/button'
+
 import type { FC } from 'react'
 
 export const HeroSection: FC = () => {
@@ -17,15 +19,15 @@ export const HeroSection: FC = () => {
 
       <div className="container mx-auto px-4 relative">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
           className="text-center max-w-4xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.8 }}
         >
           <motion.h1 
+            animate={{ opacity: 1, y: 0 }}
             className="text-5xl md:text-7xl font-bold mb-6"
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             Faites le{' '}
@@ -35,9 +37,9 @@ export const HeroSection: FC = () => {
           </motion.h1>
 
           <motion.p 
+            animate={{ opacity: 1, y: 0 }}
             className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             Investissez dans des projets écologiques durables et découvrez des produits
@@ -45,15 +47,15 @@ export const HeroSection: FC = () => {
           </motion.p>
 
           <motion.div 
+            animate={{ opacity: 1, y: 0 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <Button size="lg" className="h-14 px-8 shadow-lg hover:shadow-xl transition-all" asChild>
+            <Button asChild className="h-14 px-8 shadow-lg hover:shadow-xl transition-all" size="lg">
               <LocalizedLink href="/projects">Découvrir les Projets</LocalizedLink>
             </Button>
-            <Button size="lg" variant="outline" className="h-14 px-8 border-2 hover:bg-primary/5" asChild>
+            <Button asChild className="h-14 px-8 border-2 hover:bg-primary/5" size="lg" variant="outline">
               <LocalizedLink href="/shop">Visiter la Boutique</LocalizedLink>
             </Button>
           </motion.div>

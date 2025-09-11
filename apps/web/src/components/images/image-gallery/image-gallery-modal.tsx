@@ -1,9 +1,11 @@
 'use client';
 
-import { type FC, useEffect, useState, useMemo, useOptimistic, useActionState, useCallback } from 'react';
-import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight, Eye, Edit3, Trash2 } from 'lucide-react';
+import Image from 'next/image';
+import { type FC, useEffect, useState, useMemo, useOptimistic, useActionState, useCallback } from 'react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+import type { ProductBlurHash } from '@/types/blur';
 
 type ImageGalleryModalProps = {
   images: string[];
@@ -13,6 +15,8 @@ type ImageGalleryModalProps = {
   showActions?: boolean;
   onImageReplace?: (imageUrl: string, index: number) => void;
   onImageDelete?: (imageUrl: string, index: number) => void;
+  // Optionnel: map URL -> blur pour améliorer le rendu
+  imageBlurMap?: Record<string, ProductBlurHash>;
 };
 
 export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
@@ -22,7 +26,8 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
   onClose,
   showActions = false,
   onImageReplace,
-  onImageDelete
+  onImageDelete,
+  imageBlurMap
 }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [optimisticIndex, setOptimisticIndex] = useOptimistic(
@@ -44,6 +49,13 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
     return Math.min(optimisticIndex, images.length - 1);
   }, [optimisticIndex, images.length]);
 
+  // Blur du serveur pour l'image affichée via la map
+  const currentBlur = useMemo(() => {
+    if (!imageBlurMap || validIndex < 0 || validIndex >= images.length) return undefined;
+    const url = images[validIndex];
+    return imageBlurMap[url];
+  }, [imageBlurMap, images, validIndex]);
+
   // Effet simplifié pour fermeture
   useEffect(() => {
     if (images.length === 0) {
@@ -62,21 +74,24 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
     if (!isOpen) return;
 
     switch (event.key) {
-      case 'Escape':
+      case 'Escape': {
         onClose();
         break;
-      case 'ArrowLeft':
+      }
+      case 'ArrowLeft': {
         event.preventDefault();
         const prevIndex = optimisticIndex === 0 ? images.length - 1 : optimisticIndex - 1;
         setOptimisticIndex(prevIndex);
         setCurrentIndex(prevIndex);
         break;
-      case 'ArrowRight':
+      }
+      case 'ArrowRight': {
         event.preventDefault();
         const nextIndex = optimisticIndex === images.length - 1 ? 0 : optimisticIndex + 1;
         setOptimisticIndex(nextIndex);
         setCurrentIndex(nextIndex);
         break;
+      }
     }
   }, [isOpen, images.length, optimisticIndex, setOptimisticIndex, onClose]);
 
@@ -137,7 +152,7 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
     { success: false, error: null }
   );
 
-  if (!isOpen || !images.length) return null;
+  if (!isOpen || images.length === 0) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -151,8 +166,8 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
       <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
         {/* Bouton fermer */}
         <button
-          onClick={onClose}
           className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+          onClick={onClose}
         >
           <X className="w-6 h-6" />
         </button>
@@ -163,10 +178,10 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
             {/* Bouton remplacer */}
             <form action={replaceAction}>
               <button
-                type="submit"
-                disabled={replaceState.success === false && replaceState.error !== null}
                 className="p-2 rounded-full bg-blue-500/80 text-white hover:bg-blue-500 transition-colors disabled:opacity-50"
+                disabled={replaceState.success === false && replaceState.error !== null}
                 title="Remplacer cette image"
+                type="submit"
               >
                 <Edit3 className="w-5 h-5" />
               </button>
@@ -175,10 +190,10 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
             {/* Bouton supprimer */}
             <form action={deleteAction}>
               <button
-                type="submit"
-                disabled={deleteState.success === false && deleteState.error !== null}
                 className="p-2 rounded-full bg-red-500/80 text-white hover:bg-red-500 transition-colors disabled:opacity-50"
+                disabled={deleteState.success === false && deleteState.error !== null}
                 title="Supprimer cette image"
+                type="submit"
               >
                 <Trash2 className="w-5 h-5" />
               </button>
@@ -189,8 +204,8 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
         {/* Flèche gauche */}
         {images.length > 1 && (
           <button
-            onClick={goToPrevious}
             className="absolute left-4 z-20 p-3 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+            onClick={goToPrevious}
           >
             <ChevronLeft className="w-8 h-8" />
           </button>
@@ -201,12 +216,15 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
           <div className="relative w-full h-full flex items-center justify-center">
             {validIndex >= 0 && validIndex < images.length && (
               <Image
-                src={images[validIndex]}
-                alt={`Image ${validIndex + 1} sur ${images.length}`}
                 fill
-                className="object-contain"
-                unoptimized={images[validIndex].includes('unsplash')}
                 priority
+                alt={`Image ${validIndex + 1} sur ${images.length}`}
+                className="object-contain"
+                src={images[validIndex]}
+                unoptimized={images[validIndex].includes('unsplash')}
+                {...(currentBlur?.blurDataURL
+                  ? { placeholder: 'blur' as const, blurDataURL: currentBlur.blurDataURL }
+                  : {})}
               />
             )}
           </div>
@@ -215,8 +233,8 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
         {/* Flèche droite */}
         {images.length > 1 && (
           <button
-            onClick={goToNext}
             className="absolute right-4 z-20 p-3 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+            onClick={goToNext}
           >
             <ChevronRight className="w-8 h-8" />
           </button>
@@ -238,22 +256,22 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
               {images.map((image, index) => (
                 <button
                   key={index}
-                  onClick={() => {
-                    setOptimisticIndex(index);
-                    setCurrentIndex(index);
-                  }}
                   className={cn(
                     "relative w-12 h-12 rounded overflow-hidden border-2 transition-all",
                     index === validIndex 
                       ? "border-white scale-110" 
                       : "border-transparent hover:border-white/50"
                   )}
+                  onClick={() => {
+                    setOptimisticIndex(index);
+                    setCurrentIndex(index);
+                  }}
                 >
                   <Image
-                    src={image}
-                    alt={`Thumbnail ${index + 1}`}
                     fill
+                    alt={`Thumbnail ${index + 1}`}
                     className="object-cover"
+                    src={image}
                     unoptimized={image.includes('unsplash')}
                   />
                 </button>
@@ -272,15 +290,15 @@ export const PreviewButton: FC<{
   className?: string; 
 }> = ({ onClick, className }) => (
   <button
-    onClick={(e) => {
-      e.stopPropagation();
-      onClick();
-    }}
+    title="Prévisualiser"
     className={cn(
       "p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors",
       className
     )}
-    title="Prévisualiser"
+    onClick={(e) => {
+      e.stopPropagation();
+      onClick();
+    }}
   >
     <Eye className="w-4 h-4" />
   </button>

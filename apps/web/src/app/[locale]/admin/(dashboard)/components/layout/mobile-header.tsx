@@ -1,10 +1,11 @@
 'use client'
 
-import { type FC } from 'react'
 import { Menu, Search, Bell } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { CompactThemeToggle } from '@/app/[locale]/admin/(dashboard)/components/theme/compact-theme-toggle'
+import { type FC } from 'react'
+
 import { useMobile } from '@/app/[locale]/admin/(dashboard)/components/layout/mobile-context'
+import { CompactThemeToggle } from '@/app/[locale]/admin/(dashboard)/components/theme/compact-theme-toggle'
+import { Button } from '@/components/ui/button'
 
 export const MobileHeader: FC = () => {
   const { toggleMobileMenu } = useMobile()
@@ -22,17 +23,17 @@ export const MobileHeader: FC = () => {
 
         {}
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="p-3 rounded-2xl min-h-[44px] min-w-[44px] touch-manipulation">
+          <Button className="p-3 rounded-2xl min-h-[44px] min-w-[44px] touch-manipulation" size="sm" variant="ghost">
             <Search className="w-5 h-5" />
           </Button>
-          <Button variant="ghost" size="sm" className="p-3 rounded-2xl min-h-[44px] min-w-[44px] touch-manipulation">
+          <Button className="p-3 rounded-2xl min-h-[44px] min-w-[44px] touch-manipulation" size="sm" variant="ghost">
             <Bell className="w-5 h-5" />
           </Button>
           <CompactThemeToggle />
           <Button
-            variant="ghost"
-            size="sm"
             className="p-3 rounded-2xl min-h-[44px] min-w-[44px] touch-manipulation"
+            size="sm"
+            variant="ghost"
             onClick={toggleMobileMenu}
           >
             <Menu className="w-5 h-5" />

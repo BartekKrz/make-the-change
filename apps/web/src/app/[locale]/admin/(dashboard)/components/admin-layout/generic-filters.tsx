@@ -1,10 +1,14 @@
 'use client';
-import { type ViewMode } from '../ui/view-toggle';
-import { ViewToggle } from '../ui/view-toggle';
+
+import { Button } from '@/components/ui/button';
 
 import { CheckboxWithLabel } from '../ui/checkbox';
-import { FC, type ReactNode } from 'react';
-import { Button } from '@/components/ui/button';
+import { ViewToggle } from '../ui/view-toggle';
+
+import type { ViewMode } from '../ui/view-toggle';
+import type { FC, ReactNode } from 'react';
+
+
 
 type FiltersProps = {
   children: ReactNode;
@@ -33,9 +37,9 @@ const ViewFilter: FC<ViewFilterProps> = ({
   <div>
     <label className="text-sm font-medium mb-3 block">{label}</label>
     <ViewToggle 
+      availableViews={availableViews} 
       value={view} 
       onChange={onViewChange} 
-      availableViews={availableViews} 
     />
   </div>
 );
@@ -68,18 +72,18 @@ const SelectionFilter = ({
       <label className="text-sm font-medium mb-3 block">{label}</label>
       <div className="space-y-2">
         <Button
-          variant={selectedId === undefined ? "default" : "outline"}
-          onClick={() => onSelectionChange(undefined)}
           className="w-full justify-start"
+          variant={selectedId === undefined ? "default" : "outline"}
+          onClick={() => onSelectionChange()}
         >
           {allLabel}
         </Button>
         {items.map((item) => (
           <Button
             key={item.id}
+            className="w-full justify-start"
             variant={selectedId === item.id ? "default" : "outline"}
             onClick={() => onSelectionChange(item.id)}
-            className="w-full justify-start"
           >
             {item.name}
           </Button>
@@ -100,8 +104,8 @@ const ToggleFilter: FC<ToggleFilterProps> = ({ checked, onCheckedChange, label }
   <div>
     <CheckboxWithLabel
       checked={checked}
-      onCheckedChange={(checked) => onCheckedChange(Boolean(checked))}
       label={label}
+      onCheckedChange={(checked) => onCheckedChange(Boolean(checked))}
     />
   </div>
 );
@@ -112,4 +116,6 @@ Filters.Selection = SelectionFilter;
 Filters.Toggle = ToggleFilter;
 
 
-export { type ViewMode, type SelectionItem };
+export {  type SelectionItem };
+
+export {type ViewMode} from '../ui/view-toggle';

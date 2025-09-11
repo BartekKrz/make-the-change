@@ -118,5 +118,5 @@ export function validateInvestmentRules(investment: Investment): boolean {
 }
 
 export function calculatePointsEuroValue(points: number): number {
-  return points * 1.0
+  return points * 1
 }

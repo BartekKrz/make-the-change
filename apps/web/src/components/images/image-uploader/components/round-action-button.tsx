@@ -1,4 +1,5 @@
 import { type FC, type ReactNode, type MouseEvent } from 'react';
+
 import { cn } from '@/lib/utils';
 
 type RoundActionButtonProps = {
@@ -15,8 +16,9 @@ export const RoundActionButton: FC<RoundActionButtonProps> = ({
   disabled = false 
 } ) => (
   <button
-    onClick={onClick}
+    aria-label="Action sur l'image"
     disabled={disabled}
+    type="button"
     className={cn(
       'w-12 h-12 bg-background/95 backdrop-blur-sm rounded-full shadow-lg',
       'hover:scale-110 hover:shadow-xl transition-all duration-300',
@@ -26,8 +28,7 @@ export const RoundActionButton: FC<RoundActionButtonProps> = ({
       'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
       className
     )}
-    type="button"
-    aria-label="Action sur l'image"
+    onClick={onClick}
   >
     {children}
   </button>

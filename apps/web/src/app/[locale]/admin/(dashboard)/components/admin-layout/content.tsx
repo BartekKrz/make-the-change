@@ -1,6 +1,7 @@
 'use client';
-import type { FC, PropsWithChildren } from 'react';
 import { cn } from '../cn';
+
+import type { FC, PropsWithChildren } from 'react';
 
 type AdminPageContentProps = {
   className?: string;

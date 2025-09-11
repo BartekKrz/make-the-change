@@ -1,6 +1,6 @@
 "use client"
-import { usePathname, useRouter } from 'next/navigation';
 import { Globe, Check } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState, useMemo, useCallback, useTransition, type FC } from 'react';
 
 type LocaleOption = {
@@ -85,14 +85,14 @@ export const LocaleSwitcher: FC<CompactLocaleSwitcherProps> = ({ className }) =>
   return (
     <div className={`relative ${className || ''}`}>
       <button
-        onClick={handleToggleOpen}
+        aria-expanded={isOpen}
+        aria-label="Changer de langue"
         className={`flex cursor-pointer items-center justify-between gap-3 w-full min-w-[120px] px-4 py-3 rounded-xl transition-all duration-300 border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/20 hover:scale-[1.02] active:scale-[0.98] ${
           isOpen
             ? 'border-green-500/25 bg-gradient-to-r from-green-500/8 to-yellow-500/5 text-gray-900 dark:text-gray-100 shadow-lg shadow-green-500/10'
             : 'border-gray-200/15 dark:border-gray-700/15 hover:border-gray-200/30 dark:hover:border-gray-700/30 bg-gradient-to-r from-gray-100/20 to-gray-100/10 dark:from-gray-800/20 dark:to-gray-800/10 hover:from-gray-100/30 hover:to-gray-100/15 dark:hover:from-gray-800/30 dark:hover:to-gray-800/15 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
         }`}
-        aria-label="Changer de langue"
-        aria-expanded={isOpen}
+        onClick={handleToggleOpen}
       >
         <div className="flex items-center gap-2 min-w-0">
           <Globe className={`w-4 h-4 transition-colors duration-300 flex-shrink-0 ${
@@ -111,14 +111,14 @@ export const LocaleSwitcher: FC<CompactLocaleSwitcherProps> = ({ className }) =>
           }`}
         >
           <svg 
+            fill="none"
+            stroke="currentColor" 
+            viewBox="0 0 24 24" 
             className={`w-3 h-3 transition-colors duration-300 ${
               isOpen ? 'text-green-600 dark:text-green-400' : 'text-gray-400'
             }`}
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
           </svg>
         </div>
       </button>
@@ -139,16 +139,16 @@ export const LocaleSwitcher: FC<CompactLocaleSwitcherProps> = ({ className }) =>
               return (
                 <button
                   key={locale.code}
-                  onClick={() => switchLocale(locale.code)}
                   disabled={isSelected}
                   className={`flex cursor-pointer items-center justify-between w-full px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/20 disabled:cursor-default hover:scale-[1.02] active:scale-[0.98] ${
                     isSelected
                       ? 'bg-gradient-to-r from-green-500/12 to-yellow-500/8 text-green-600 dark:text-green-400 border border-green-500/20 shadow-lg shadow-green-500/10'
                       : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100/30 dark:hover:bg-gray-800/30 active:bg-gray-100/40 dark:active:bg-gray-800/40 border border-transparent hover:border-gray-200/20 dark:hover:border-gray-700/20'
                   }`}
+                  onClick={() => switchLocale(locale.code)}
                 >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-lg flex-shrink-0" role="img" aria-hidden="true">
+                      <span aria-hidden="true" className="text-lg flex-shrink-0" role="img">
                         {locale.flag}
                       </span>
                       <div className="min-w-0 flex-1">

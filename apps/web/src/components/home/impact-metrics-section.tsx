@@ -1,8 +1,10 @@
 'use client'
 
-import { Card, CardContent } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
 import { motion } from 'framer-motion'
 import { TreePine, Flower, Zap, Users } from 'lucide-react'
+
+import { Card, CardContent } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
+
 import type { FC } from 'react'
 
 type ImpactMetrics = {
@@ -61,17 +63,17 @@ export const ImpactMetricsSection: FC<ImpactMetricsSectionProps> = ({ metrics })
     <section className="container mx-auto px-4 py-16 bg-gradient-to-br from-green-50/50 to-blue-50/50 dark:from-green-950/20 dark:to-blue-950/20">
       <div className="text-center mb-12">
         <motion.h2 
+          animate={{ opacity: 1, y: 0 }}
           className="text-3xl md:text-4xl font-bold mb-4"
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           Notre Impact Environnemental
         </motion.h2>
         <motion.p 
+          animate={{ opacity: 1, y: 0 }}
           className="text-lg text-muted-foreground max-w-2xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           Ensemble, nous créons un impact positif mesurable sur l&apos;environnement et les communautés locales
@@ -84,8 +86,8 @@ export const ImpactMetricsSection: FC<ImpactMetricsSectionProps> = ({ metrics })
           return (
             <motion.div
               key={impact.label}
-              initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.8 }}
               transition={{ delay: index * 0.1 + 0.4, type: "spring", stiffness: 100 }}
             >
               <Card className="text-center hover:shadow-lg transition-all duration-300 group border-border/50 bg-background/60 backdrop-blur-sm">
@@ -107,9 +109,9 @@ export const ImpactMetricsSection: FC<ImpactMetricsSectionProps> = ({ metrics })
       </div>
 
       <motion.div 
+        animate={{ opacity: 1, y: 0 }}
         className="text-center mt-12"
         initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
       >
         <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-full border border-green-500/20">

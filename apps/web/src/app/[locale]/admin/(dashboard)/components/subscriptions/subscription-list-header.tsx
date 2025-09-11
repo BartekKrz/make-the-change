@@ -1,8 +1,9 @@
 'use client'
 import { CreditCard } from 'lucide-react'
+import { type FC } from 'react'
+
 import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
 import { getInitials } from '@/app/[locale]/admin/(dashboard)/components/ui/format-utils'
-import { type FC } from 'react'
 import type { Subscription } from '@/lib/types/subscription'
 
 type SubscriptionListHeaderProps = {
@@ -25,7 +26,7 @@ export const SubscriptionListHeader: FC<SubscriptionListHeaderProps> = ({ subscr
           {displayName}
         </h3>
 
-        <Badge color={subscription.status === 'active' ? 'green' : subscription.status === 'expired' ? 'red' : 'gray'}>
+        <Badge color={subscription.status === 'active' ? 'green' : (subscription.status === 'expired' ? 'red' : 'gray')}>
           {subscription.status}
         </Badge>
 

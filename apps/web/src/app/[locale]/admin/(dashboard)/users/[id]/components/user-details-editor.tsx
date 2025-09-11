@@ -1,13 +1,16 @@
 'use client';
 
-import { useCallback } from 'react';
-import type { FC, PropsWithChildren } from 'react';
 import { User, Shield, Mail, Save } from 'lucide-react';
+import { useCallback } from 'react';
+import { z } from 'zod';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card';
+import { FormInput, FormSelect } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { useFormWithToast } from '@/hooks/use-form-with-toast';
-import { FormInput, FormSelect } from '@/components/form';
-import { z } from 'zod';
+
+import type { FC, PropsWithChildren } from 'react';
+
 
 const userEditSchema = z.object({
   name: z.string().min(1, 'Le nom est requis').max(100, 'Le nom ne peut pas dépasser 100 caractères').trim(),
@@ -76,11 +79,11 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
           <form.Field name="name">
             {(field) => (
               <FormInput
+                required
+                disabled={!isEditing}
                 field={field}
                 label="Nom complet"
                 placeholder="Nom complet"
-                disabled={!isEditing}
-                required
               />
             )}
           </form.Field>
@@ -88,12 +91,12 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
           <form.Field name="email">
             {(field) => (
               <FormInput
+                required
+                disabled={!isEditing}
                 field={field}
                 label="Adresse e-mail"
-                type="email"
                 placeholder="email@example.com"
-                disabled={!isEditing}
-                required
+                type="email"
               />
             )}
           </form.Field>
@@ -109,11 +112,11 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
           <form.Field name="role">
             {(field) => (
               <FormSelect
+                disabled={!isEditing}
                 field={field}
                 label="Rôle"
-                placeholder="Sélectionner un rôle"
                 options={roleOptions}
-                disabled={!isEditing}
+                placeholder="Sélectionner un rôle"
               />
             )}
           </form.Field>
@@ -123,11 +126,11 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
               <div className='pt-2'>
                 <label className="flex items-center gap-2">
                   <input
-                    type="checkbox"
                     checked={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.checked)}
-                    onBlur={field.handleBlur}
                     disabled={!isEditing}
+                    type="checkbox"
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.checked)}
                   />
                   <span className="text-sm font-medium">Compte actif</span>
                   {field.state.value && (
@@ -143,11 +146,11 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
   ];
 
   return (
-    <form onSubmit={(e) => {
+    <form className='space-y-6 md:space-y-8' onSubmit={(e) => {
       e.preventDefault()
       e.stopPropagation()
       form.handleSubmit()
-    }} className='space-y-6 md:space-y-8'>
+    }}>
       <UserCardsGrid>
         {contentSections.map((section) => (
           <Card key={section.id} className='transition-all duration-200 hover:shadow-lg'>
@@ -170,9 +173,9 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
       {isEditing && (
         <div className="flex justify-end">
           <Button
-            type="submit"
-            disabled={isSubmitting || isSaving}
             className="flex items-center gap-2"
+            disabled={isSubmitting || isSaving}
+            type="submit"
           >
             {(isSubmitting || isSaving) ? (
               <>

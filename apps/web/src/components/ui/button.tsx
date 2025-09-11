@@ -1,7 +1,7 @@
-import { forwardRef } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -103,10 +103,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     if (asChild) {
       return (
         <Comp
-          className={cn(buttonVariants({ variant, size, className }))}
           ref={ref}
-          disabled={isDisabled}
           aria-disabled={isDisabled ? 'true' : undefined}
+          className={cn(buttonVariants({ variant, size, className }))}
+          disabled={isDisabled}
           {...props}
         >
           {children}
@@ -116,10 +116,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
-        disabled={isDisabled}
         aria-disabled={isDisabled ? 'true' : undefined}
+        className={cn(buttonVariants({ variant, size, className }))}
+        disabled={isDisabled}
         {...props}
       >
         {/* Effet shimmer pour variants spéciaux */}

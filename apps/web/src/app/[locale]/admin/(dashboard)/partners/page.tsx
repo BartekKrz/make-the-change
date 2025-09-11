@@ -1,28 +1,30 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { partnerStatusLabels } from '@make-the-change/api/validators/partner';
+import { Building2, Mail, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { trpc } from '@/lib/trpc'
-import { DataList, DataCard } from '@/app/[locale]/admin/(dashboard)/components/ui/data-list'
-import { ListContainer } from '@/app/[locale]/admin/(dashboard)/components/ui/list-container'
-import { PartnerListItem } from '@/app/[locale]/admin/(dashboard)/components/partners/partner-list-item'
+import { useState } from 'react'
+import { type FC } from 'react'
+
 import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
 import { AdminPageContainer } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-container'
 import { AdminPageHeader } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-header'
 import { AdminPagination } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-pagination'
+import { PartnerListItem } from '@/app/[locale]/admin/(dashboard)/components/partners/partner-list-item'
+import { DataList, DataCard } from '@/app/[locale]/admin/(dashboard)/components/ui/data-list'
+import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
+import { ListContainer } from '@/app/[locale]/admin/(dashboard)/components/ui/list-container'
+import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select'
 import { ViewToggle, type ViewMode } from '@/app/[locale]/admin/(dashboard)/components/ui/view-toggle'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
-import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select'
-import { Building2, Mail, Plus } from 'lucide-react'
-import { partnerStatusLabels } from '@make-the-change/api/validators/partner';
-import { type FC } from 'react'
+import { trpc } from '@/lib/trpc'
+
 
 const statusOptions = Object.entries(partnerStatusLabels).map(([value, label]) => ({ value, label }));
 
 const AdminPartnersPage: FC = () => {
   const [search, setSearch] = useState('')
-  const [status, setStatus] = useState<string | undefined>(undefined)
+  const [status, setStatus] = useState<string | undefined>()
   const [view, setView] = useState<ViewMode>('grid')
 
   const { data, isLoading, isFetching, refetch } = trpc.admin.partners.list.useQuery(
@@ -34,37 +36,37 @@ const AdminPartnersPage: FC = () => {
     <AdminPageContainer>
       <AdminPageHeader>
         <Input
+          className="max-w-xs"
           placeholder="Rechercher par nom ou email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-xs"
         />
         <SimpleSelect
+          className="w-[180px]"
+          options={statusOptions}
           placeholder="Filtrer par statut"
           value={status}
           onValueChange={setStatus}
-          options={statusOptions}
-          className="w-[180px]"
         />
-        {(isLoading || isFetching) && <span className="text-xs text-muted-foreground" aria-live="polite">Chargement…</span>}
+        {(isLoading || isFetching) && <span aria-live="polite" className="text-xs text-muted-foreground">Chargement…</span>}
 
         <Link href="/admin/partners/new">
-          <Button size="sm" className="flex items-center gap-2">
+          <Button className="flex items-center gap-2" size="sm">
             <Plus className="h-4 w-4" />
             Nouveau partenaire
           </Button>
         </Link>
         <ViewToggle
+          availableViews={['grid', 'list']}
           value={view}
           onChange={setView}
-          availableViews={['grid', 'list']}
         />
       </AdminPageHeader>
       {view === 'grid' ? (
         <DataList
-          items={data?.items ?? []}
-          isLoading={isLoading}
           gridCols={3}
+          isLoading={isLoading}
+          items={data?.items ?? []}
           emptyState={{
             icon: Building2,
             title: 'Aucun partenaire trouvé',
@@ -82,7 +84,7 @@ const AdminPartnersPage: FC = () => {
                   <div className="flex items-center gap-2">
                     <Building2 className="w-4 h-4 text-muted-foreground" />
                     <span className="font-medium">{partner.name}</span>
-                    <Badge color={partner.status === 'active' ? 'green' : partner.status === 'pending' ? 'yellow' : 'gray'}>
+                    <Badge color={partner.status === 'active' ? 'green' : (partner.status === 'pending' ? 'yellow' : 'gray')}>
                       {partnerStatusLabels[partner.status as keyof typeof partnerStatusLabels]}
                     </Badge>
                   </div>

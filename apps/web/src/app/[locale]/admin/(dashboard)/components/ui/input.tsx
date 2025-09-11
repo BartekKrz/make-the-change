@@ -1,8 +1,8 @@
 'use client';
 
+import { Eye, EyeOff } from 'lucide-react';
 import { forwardRef, useState, useId } from 'react';
 
-import { Eye, EyeOff } from 'lucide-react';
 
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 
@@ -42,7 +42,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const [showPassword, setShowPassword] = useState(false);
     const [shakeAnimation, setShakeAnimation] = useState('');
     const inputId = useId();
-    const ariaDescribedBy = error ? `${inputId}-error` : helpText ? `${inputId}-help` : undefined;
+    const ariaDescribedBy = error ? `${inputId}-error` : (helpText ? `${inputId}-help` : undefined);
 
     const inputType = showPasswordToggle ? (showPassword ? 'text' : 'password') : type;
 
@@ -96,12 +96,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
 
           <input
-            type={inputType}
+            ref={ref}
+            aria-describedby={ariaDescribedBy}
+            aria-invalid={error ? 'true' : undefined}
             id={inputId}
-            style={{
-              WebkitTextFillColor: 'var(--foreground)',
-              transition: 'background-color 5000s ease-in-out 0s'
-            }}
+            type={inputType}
             className={cn(
               'flex w-full rounded-2xl transition-all duration-300',
               variantClasses[variant],
@@ -117,11 +116,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 : 'hover:border-border hover:shadow-sm dark:hover:border-border/90 dark:hover:bg-background/95',
               className
             )}
-            ref={ref}
-            aria-invalid={error ? 'true' : undefined}
-            aria-describedby={ariaDescribedBy}
-            onFocus={() => setIsFocused(true)}
+            style={{
+              WebkitTextFillColor: 'var(--foreground)',
+              transition: 'background-color 5000s ease-in-out 0s'
+            }}
             onBlur={() => setIsFocused(false)}
+            onFocus={() => setIsFocused(true)}
             onChange={(e) => {
               handleErrorShake();
               props.onChange?.(e);
@@ -134,9 +134,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               {trailingIcon}
               {showPasswordToggle && type === 'password' && (
                 <button
+                  className='text-muted-foreground/70 cursor-pointer hover:text-foreground transition-colors p-1 rounded-lg hover:bg-muted/50'
                   type='button'
                   onClick={() => setShowPassword(!showPassword)}
-                  className='text-muted-foreground/70 cursor-pointer hover:text-foreground transition-colors p-1 rounded-lg hover:bg-muted/50'
                 >
                   {showPassword ? <EyeOff className='h-4 w-4' /> : <Eye className='h-4 w-4' />}
                 </button>
@@ -147,8 +147,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
         {(error ?? helpText) && (
           <p
-            id={ariaDescribedBy}
             className={cn('text-sm transition-colors', error ? 'text-destructive' : 'text-muted-foreground')}
+            id={ariaDescribedBy}
           >
             {error ?? helpText}
           </p>
@@ -160,7 +160,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
 const PasswordInput = forwardRef<HTMLInputElement, Omit<InputProps, 'type' | 'showPasswordToggle'>>(
   (props, ref: ForwardedRef<HTMLInputElement>) => (
-    <Input type='password' showPasswordToggle {...props} ref={ref} />
+    <Input showPasswordToggle type='password' {...props} ref={ref} />
   )
 );
 

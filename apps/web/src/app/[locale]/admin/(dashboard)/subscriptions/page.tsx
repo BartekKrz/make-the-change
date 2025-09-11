@@ -1,29 +1,29 @@
 "use client"
 
-import { useState, useEffect, type FC } from 'react'
-import { DataList, DataCard } from '@/app/[locale]/admin/(dashboard)/components/ui/data-list'
-import { ListContainer } from '@/app/[locale]/admin/(dashboard)/components/ui/list-container'
-import { SubscriptionListItem } from '@/app/[locale]/admin/(dashboard)/components/subscriptions/subscription-list-item'
-import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
 import { CreditCard, User, Plus, Settings, Euro, Calendar } from 'lucide-react'
 import Link from 'next/link'
-import { useToast } from '@/hooks/use-toast'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
-import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select'
+import { useState, useEffect, type FC } from 'react'
 
+import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
 import { AdminPageContainer } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-container'
 import { AdminPageHeader } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-header'
 import { AdminPagination } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-pagination'
+import { SubscriptionListItem } from '@/app/[locale]/admin/(dashboard)/components/subscriptions/subscription-list-item'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
+import { DataList, DataCard } from '@/app/[locale]/admin/(dashboard)/components/ui/data-list'
+import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
+import { ListContainer } from '@/app/[locale]/admin/(dashboard)/components/ui/list-container'
+import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select'
 import { ViewToggle, type ViewMode } from '@/app/[locale]/admin/(dashboard)/components/ui/view-toggle'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/hooks/use-toast'
 import { trpc } from '@/lib/trpc'
 
 const AdminSubscriptionsPage: FC = () => {
   const { toast } = useToast()
   const [search, setSearch] = useState('')
-  const [status, setStatus] = useState<'active' | 'cancelled' | 'suspended' | 'past_due' | undefined>(undefined)
-  const [subscriptionTier, setSubscriptionTier] = useState<'ambassadeur_standard' | 'ambassadeur_premium' | undefined>(undefined)
+  const [status, setStatus] = useState<'active' | 'cancelled' | 'suspended' | 'past_due' | undefined>()
+  const [subscriptionTier, setSubscriptionTier] = useState<'ambassadeur_standard' | 'ambassadeur_premium' | undefined>()
   const utils = trpc.useUtils()
 
   const handleStatusChange = (value: string) => {
@@ -35,7 +35,7 @@ const AdminSubscriptionsPage: FC = () => {
   }
 
   const [view, setView] = useState<ViewMode>('grid')
-  const [cursor, setCursor] = useState<string | undefined>(undefined)
+  const [cursor, setCursor] = useState<string | undefined>()
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 20
 
@@ -107,53 +107,53 @@ const AdminSubscriptionsPage: FC = () => {
     <AdminPageContainer>
       <AdminPageHeader>
         <Input
+          className="max-w-xs"
           placeholder="Rechercher un abonnement..."
           value={search}
           onChange={(e) => setSearch((e.target as HTMLInputElement).value)}
-          className="max-w-xs"
         />
         <SimpleSelect
+          className="w-[150px]"
           placeholder="Statut"
           value={status}
-          onValueChange={handleStatusChange}
           options={[
             { value: 'active', label: 'Actif' },
             { value: 'cancelled', label: 'Annulé' },
             { value: 'suspended', label: 'Suspendu' },
             { value: 'past_due', label: 'En retard' },
           ]}
-          className="w-[150px]"
+          onValueChange={handleStatusChange}
         />
         <SimpleSelect
+          className="w-[150px]"
           placeholder="Niveau"
           value={subscriptionTier}
-          onValueChange={handleTierChange}
           options={[
             { value: 'ambassadeur_standard', label: 'Standard' },
             { value: 'ambassadeur_premium', label: 'Premium' },
           ]}
-          className="w-[150px]"
+          onValueChange={handleTierChange}
         />
-        {(isLoading || isFetching) && <span className="text-xs text-muted-foreground" aria-live="polite">Chargement…</span>}
+        {(isLoading || isFetching) && <span aria-live="polite" className="text-xs text-muted-foreground">Chargement…</span>}
 
         <Link href="/admin/subscriptions/new">
-          <Button size="sm" className="flex items-center gap-2">
+          <Button className="flex items-center gap-2" size="sm">
             <Plus className="h-4 w-4" />
             Nouvel abonnement
           </Button>
         </Link>
         <ViewToggle
+          availableViews={['grid', 'list']}
           value={view}
           onChange={setView}
-          availableViews={['grid', 'list']}
         />
       </AdminPageHeader>
       
       {view === 'grid' ? (
         <DataList
-          items={subscriptions}
-          isLoading={isLoading}
           gridCols={3}
+          isLoading={isLoading}
+          items={subscriptions}
           emptyState={{
             title: 'Aucun abonnement trouvé',
             description: 'Aucun résultat pour ces filtres.',
@@ -234,13 +234,13 @@ const AdminSubscriptionsPage: FC = () => {
 
       <AdminPagination
         pagination={subscriptions.length > pageSize ? {
-          currentPage: currentPage,
-          pageSize: pageSize,
+          currentPage,
+          pageSize,
           totalItems: subscriptions.length,
           totalPages: Math.ceil(subscriptions.length / pageSize)
         } : {
           currentPage: 1,
-          pageSize: pageSize,
+          pageSize,
           totalItems: subscriptions.length,
           totalPages: 1
         }}

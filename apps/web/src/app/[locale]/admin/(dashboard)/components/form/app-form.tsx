@@ -1,16 +1,17 @@
 "use client"
 
-import type { ComponentType } from 'react'
 import { createFormHook } from '@tanstack/react-form'
+
+import { FormAutocomplete } from './form-autocomplete'
 import { fieldContext, formContext } from './form-context'
+import { FormDateField } from './form-date-field'
+import { FormImagesUploader } from './form-images-uploader'
+import { FormNumberField } from './form-number-field'
+import { FormSelect } from './form-select'
 import { FormTextField } from './form-text-field'
 import { FormTextArea } from './form-textarea'
-import { FormSelect } from './form-select'
 import { FormToggle } from './form-toggle'
-import { FormAutocomplete } from './form-autocomplete'
-import { FormDateField } from './form-date-field'
-import { FormNumberField } from './form-number-field'
-import { FormImagesUploader } from './form-images-uploader'
+
 import type {
   FormTextFieldProps,
   FormTextAreaProps,
@@ -21,6 +22,7 @@ import type {
   FormNumberFieldProps,
   FormImagesUploaderProps,
 } from './index'
+import type { ComponentType } from 'react'
 
 // Map des composants de champ disponibles via field.FormX, typés précisément
 const fieldComponents: {

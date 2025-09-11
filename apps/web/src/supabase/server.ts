@@ -11,8 +11,10 @@ export async function createSupabaseServer() {
         getAll: () => store.getAll(),
         setAll: (cs) => {
           try {
-            cs.forEach((c) => store.set(c.name, c.value, c.options))
-          } catch {}
+            for (const c of cs) store.set(c.name, c.value, c.options)
+          } catch (error) {
+            console.error('Cookie setting failed:', error)
+          }
         },
       },
     }

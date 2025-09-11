@@ -1,8 +1,10 @@
 'use client'
 
 import { AdminListItem } from '@/app/[locale]/admin/(dashboard)/components/ui/admin-list-item'
+
 import { ProjectListHeader } from './project-list-header'
 import { ProjectListMetadata } from './project-list-metadata'
+
 import type { FC, ReactNode } from 'react'
 
 type Project =  {
@@ -23,9 +25,9 @@ type ProjectListItemProps =  {
 
 export const ProjectListItem: FC<ProjectListItemProps> = ({ project, actions } ) => (
   <AdminListItem
-    href={`/admin/projects/${project.id}`}
-    header={<ProjectListHeader project={project} />}
-    metadata={<ProjectListMetadata project={project} />}
     actions={actions}
+    header={<ProjectListHeader project={project} />}
+    href={`/admin/projects/${project.id}`}
+    metadata={<ProjectListMetadata project={project} />}
   />
 )

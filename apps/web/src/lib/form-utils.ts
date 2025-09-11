@@ -1,5 +1,4 @@
 
-import { type FieldApi, type FormApi } from '@tanstack/react-form'
 import { type ZodType } from 'zod'
 
 export type InferZodSchema<T> = T extends ZodType<infer U> ? U : never
@@ -31,7 +30,7 @@ export function mapServerErrorsToFields(
   errors: Record<string, string[]> = {},
   form: any
 ): void {
-  Object.entries(errors).forEach(([fieldName, messages]) => {
+  for (const [fieldName, messages] of Object.entries(errors)) {
     if (messages.length > 0) {
       form.setFieldMeta(fieldName, (prev: any) => ({
         ...prev,
@@ -41,17 +40,17 @@ export function mapServerErrorsToFields(
         }
       }))
     }
-  })
+  }
 }
 
 export function clearFieldErrors(form: any): void {
-  Object.keys(form.state.values).forEach(fieldName => {
+  for (const fieldName of Object.keys(form.state.values)) {
     form.setFieldMeta(fieldName, (prev: any) => ({
       ...prev,
       errors: [],
       errorMap: {}
     }))
-  })
+  }
 }
 
 export function shouldShowFieldError(field: any): boolean {
@@ -62,10 +61,10 @@ export function generateSlug(name: string): string {
   return name
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
+    .replaceAll(/[^\d\sa-z-]/g, '')
+    .replaceAll(/\s+/g, '-')
+    .replaceAll(/-+/g, '-')
+    .replaceAll(/^-|-$/g, '')
 }
 
 export function debounce<T extends (...args: any[]) => any>(

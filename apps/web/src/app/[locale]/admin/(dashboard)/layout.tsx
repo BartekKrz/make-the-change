@@ -1,11 +1,11 @@
-import type { FC, PropsWithChildren } from 'react'
+import { AdminBackgroundDecoration } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-background-decoration'
+import { AdminMobileHeader } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-mobile-header'
+import { AdminSidebar , AdminMobileSidebar } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-sidebar'
+import { AdminSidebarProvider } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-sidebar-context'
 import { ToastProvider, ToastViewport } from '@/app/[locale]/admin/(dashboard)/components/ui/toast'
 import { Toaster } from '@/app/[locale]/admin/(dashboard)/components/ui/toaster'
-import { AdminSidebar } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-sidebar'
-import { AdminMobileSidebar } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-sidebar'
-import { AdminMobileHeader } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-mobile-header'
-import { AdminBackgroundDecoration } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-background-decoration'
-import { AdminSidebarProvider } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-sidebar-context'
+
+import type { FC, PropsWithChildren } from 'react'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0

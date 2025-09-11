@@ -1,7 +1,7 @@
 'use client';
 
-import { useToast } from '@/hooks/use-toast';
 import { ToastWithIcon, ToastClose, ToastDescription, ToastTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/toast';
+import { useToast } from '@/hooks/use-toast';
 
 export const Toaster = () => {
   const { toasts } = useToast();

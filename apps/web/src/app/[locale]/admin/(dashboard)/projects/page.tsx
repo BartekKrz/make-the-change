@@ -1,24 +1,24 @@
 
 "use client"
 
-import { useState, useEffect, type FC } from 'react'
-import { DataList, DataCard } from '@/app/[locale]/admin/(dashboard)/components/ui/data-list'
-import { ListContainer } from '@/app/[locale]/admin/(dashboard)/components/ui/list-container'
-import { ProjectListItem } from '@/app/[locale]/admin/(dashboard)/components/projects/project-list-item'
-import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
 import { Box, Star, Package, Plus, Target, User, MapPin } from 'lucide-react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useToast } from '@/hooks/use-toast'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
-import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select'
+import { useState, useEffect, type FC } from 'react'
 
+import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
 import { AdminPageContainer } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-container'
 import { AdminPageHeader } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-header'
 import { AdminPagination } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-pagination'
+import { ProjectListItem } from '@/app/[locale]/admin/(dashboard)/components/projects/project-list-item'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
+import { DataList, DataCard } from '@/app/[locale]/admin/(dashboard)/components/ui/data-list'
+import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
+import { ListContainer } from '@/app/[locale]/admin/(dashboard)/components/ui/list-container'
+import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select'
 import { ViewToggle, type ViewMode } from '@/app/[locale]/admin/(dashboard)/components/ui/view-toggle'
-import dynamic from 'next/dynamic'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/hooks/use-toast'
 import { trpc } from '@/lib/trpc'
 
 const MapContainer = dynamic(() => import('@/components/ui/map-container'), {
@@ -36,8 +36,8 @@ const MapContainer = dynamic(() => import('@/components/ui/map-container'), {
 const AdminProjectsPage: FC = () => {
   const { toast } = useToast()
   const [search, setSearch] = useState('')
-  const [status, setStatus] = useState<'active' | 'funded' | 'closed' | 'suspended' | undefined>(undefined)
-  const [type, setType] = useState<'beehive' | 'olive_tree' | 'vineyard' | undefined>(undefined)
+  const [status, setStatus] = useState<'active' | 'funded' | 'closed' | 'suspended' | undefined>()
+  const [type, setType] = useState<'beehive' | 'olive_tree' | 'vineyard' | undefined>()
   const utils = trpc.useUtils()
 
   const handleStatusChange = (value: string) => {
@@ -49,7 +49,7 @@ const AdminProjectsPage: FC = () => {
   }
 
   const [view, setView] = useState<ViewMode>('grid')
-  const [cursor, setCursor] = useState<string | undefined>(undefined)
+  const [cursor, setCursor] = useState<string | undefined>()
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 20
 
@@ -57,7 +57,7 @@ const AdminProjectsPage: FC = () => {
 
   const cityCoordinates: Record<string, [number, number]> = {
     'Antananarivo': [-18.8792, 47.5079],
-    'Toliara': [-23.3500, 43.6667],
+    'Toliara': [-23.35, 43.6667],
     'Antsiranana': [-12.2667, 49.2833],
     'Mahajanga': [-15.7167, 46.3167],
     'Fianarantsoa': [-21.4333, 47.0833],
@@ -74,10 +74,10 @@ const AdminProjectsPage: FC = () => {
     'Bruges': [51.2093, 3.2247],
 
     'Paris': [48.8566, 2.3522],
-    'Lyon': [45.7640, 4.8357],
+    'Lyon': [45.764, 4.8357],
     'Marseille': [43.2965, 5.3698],
     'Toulouse': [43.6047, 1.4442],
-    'Nice': [43.7102, 7.2620],
+    'Nice': [43.7102, 7.262],
   }
 
   const defaultCoordinates: Record<string, [number, number]> = {
@@ -194,46 +194,46 @@ const AdminProjectsPage: FC = () => {
     <AdminPageContainer>
       <AdminPageHeader>
         <Input
+          className="max-w-xs"
           placeholder="Rechercher un projet..."
           value={search}
           onChange={(e) => setSearch((e.target as HTMLInputElement).value)}
-          className="max-w-xs"
         />
         <SimpleSelect
+          className="w-[150px]"
           placeholder="Statut"
           value={status}
-          onValueChange={handleStatusChange}
           options={[
             { value: 'active', label: 'Actif' },
             { value: 'funded', label: 'Financé' },
             { value: 'closed', label: 'Fermé' },
             { value: 'suspended', label: 'Suspendu' },
           ]}
-          className="w-[150px]"
+          onValueChange={handleStatusChange}
         />
         <SimpleSelect
+          className="w-[150px]"
           placeholder="Type"
           value={type}
-          onValueChange={handleTypeChange}
           options={[
             { value: 'beehive', label: 'Ruche' },
             { value: 'olive_tree', label: 'Olivier' },
             { value: 'vineyard', label: 'Vigne' },
           ]}
-          className="w-[150px]"
+          onValueChange={handleTypeChange}
         />
-        {(isLoading || isFetching) && <span className="text-xs text-muted-foreground" aria-live="polite">Chargement…</span>}
+        {(isLoading || isFetching) && <span aria-live="polite" className="text-xs text-muted-foreground">Chargement…</span>}
 
         <Link href="/admin/projects/new">
-          <Button size="sm" className="flex items-center gap-2">
+          <Button className="flex items-center gap-2" size="sm">
             <Plus className="h-4 w-4" />
             Nouveau projet
           </Button>
         </Link>
         <ViewToggle
+          availableViews={['grid', 'list', 'map']}
           value={view}
           onChange={setView}
-          availableViews={['grid', 'list', 'map']}
         />
       </AdminPageHeader>
       {view === 'map' ? (
@@ -266,8 +266,8 @@ const AdminProjectsPage: FC = () => {
               <MapContainer
                 projects={projectLocations}
                 selectedProject={selectedProject}
-                onProjectSelect={setSelectedProject}
                 selectedType={type ?? 'all'}
+                onProjectSelect={setSelectedProject}
               />
             )}
           </CardContent>
@@ -279,7 +279,7 @@ const AdminProjectsPage: FC = () => {
                 <div className="flex items-center gap-3">
                   <div className={`p-2 rounded-full ${
                     selectedProject.type === 'beehive' ? 'bg-yellow-500' :
-                    selectedProject.type === 'olive_tree' ? 'bg-green-600' : 'bg-purple-600'
+                    (selectedProject.type === 'olive_tree' ? 'bg-green-600' : 'bg-purple-600')
                   }`}>
                     <Package className="h-5 w-5 text-white" />
                   </div>
@@ -321,11 +321,11 @@ const AdminProjectsPage: FC = () => {
 
               <div className="flex gap-2">
                 <Link href={`/admin/projects/${selectedProject.id}`}>
-                  <Button variant="outline" size="sm">
+                  <Button size="sm" variant="outline">
                     Voir le projet complet
                   </Button>
                 </Link>
-                <Button variant="outline" size="sm">
+                <Button size="sm" variant="outline">
                   Modifier
                 </Button>
               </div>
@@ -335,9 +335,9 @@ const AdminProjectsPage: FC = () => {
         </>
       ) : view === 'grid' ? (
         <DataList
-          items={projects}
-          isLoading={isLoading}
           gridCols={3}
+          isLoading={isLoading}
+          items={projects}
           emptyState={{
             title: 'Aucun projet trouvé',
             description: 'Aucun résultat pour ces filtres.',
@@ -421,8 +421,8 @@ const AdminProjectsPage: FC = () => {
 
       <AdminPagination
         pagination={projects.length > pageSize ? {
-          currentPage: currentPage,
-          pageSize: pageSize,
+          currentPage,
+          pageSize,
           totalItems: projects.length,
           totalPages: Math.ceil(projects.length / pageSize)
         } : undefined}

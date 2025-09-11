@@ -4,8 +4,10 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server'
-import { checkAuth } from '@/supabase/middleware'
 import createMiddleware from 'next-intl/middleware'
+
+import { checkAuth } from '@/supabase/middleware'
+
 import { routing } from './src/i18n/routing'
 
 // Créer le middleware i18n
@@ -14,7 +16,7 @@ const handleI18nRouting = createMiddleware(routing)
 export const config = {
   matcher: [
     // Matcher pour i18n - toutes les routes sauf API et assets
-    '/((?!api|_next|_vercel|.*\\..*).*)',
+    String.raw`/((?!api|_next|_vercel|.*\..*).*)`,
     // Routes protégées spécifiques  
     '/(fr|en|nl)/admin/:path*',
   ],
@@ -57,7 +59,7 @@ export async function middleware(request: NextRequest) {
         .map((email) => email.trim().toLowerCase())
         .filter(Boolean)
 
-      if (allowlist.length && !allowlist.includes((user.email || '').toLowerCase())) {
+      if (allowlist.length > 0 && !allowlist.includes((user.email || '').toLowerCase())) {
         const localeMatch = pathname.match(/^\/(fr|en|nl)/)
         const locale = localeMatch ? localeMatch[1] : 'fr'
         

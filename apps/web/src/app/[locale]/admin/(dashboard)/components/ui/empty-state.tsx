@@ -1,9 +1,11 @@
 'use client';
 
-import { type FC, type ReactNode } from 'react';
-import { type LucideIcon } from 'lucide-react';
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { type VariantProps, cva } from 'class-variance-authority';
+import { type LucideIcon } from 'lucide-react';
+import { type FC, type ReactNode } from 'react';
+
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+
 
 const emptyStateVariants = cva(
   'text-center',

@@ -1,16 +1,17 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import { trpc } from '@/lib/trpc'
 import { useMemo } from 'react'
 import { type FC } from 'react'
+
 import { OrderDetailController } from '@/app/[locale]/admin/(dashboard)/orders/[id]/components/order-detail-controller'
+import { trpc } from '@/lib/trpc'
 const AdminOrderEditPage: FC = () => {
   const params = useParams<{ id: string }>()
   const orderId = params?.id as string
   const utils = trpc.useUtils()
 
-  const { data: order, isLoading, error } = trpc.admin.orders.detail.useQuery(
+  const { data: order, isLoading } = trpc.admin.orders.detail.useQuery(
     { orderId },
     { enabled: !!orderId, retry: 1, retryDelay: 500 }
   )
@@ -26,7 +27,7 @@ const AdminOrderEditPage: FC = () => {
 
       return { prevDetail }
     },
-    onError: (error, vars, ctx) => {
+    onError: (error, _vars, ctx) => {
       if (ctx?.prevDetail) {
         utils.admin.orders.detail.setData({ orderId }, ctx.prevDetail)
       }
@@ -54,7 +55,7 @@ const AdminOrderEditPage: FC = () => {
         orderId,
         patch
       })
-      console.log('Commande mise à jour:', { id: orderId, patch })
+      console.warn('Updating order:', { id: orderId, patch })
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error)
       alert('Erreur lors de la sauvegarde')

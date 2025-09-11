@@ -1,9 +1,10 @@
+import { useTranslations } from 'next-intl';
+
 import { FeaturedProjectsSection } from "@/components/home/featured-projects-section";
 import { HeroSection } from "@/components/home/hero-section";
 import { ImpactMetricsSection } from "@/components/home/impact-metrics-section";
 import { KPIMetricsSection } from "@/components/home/kpi-metrics-section";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { useTranslations } from 'next-intl';
 
 export default function HomePage() {
   const t = useTranslations('metadata');

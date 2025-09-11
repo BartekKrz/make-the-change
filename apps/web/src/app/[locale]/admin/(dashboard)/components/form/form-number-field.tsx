@@ -1,8 +1,10 @@
 "use client"
 
 import { forwardRef, type ForwardedRef } from 'react'
+
 import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
 import { cn } from '@/lib/utils'
+
 import { useFieldContext, useFieldErrors } from './form-context'
 
 export type FormNumberFieldProps = {
@@ -16,7 +18,7 @@ export type FormNumberFieldProps = {
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'onBlur' | 'size' | 'type' | 'step'>
 
 const FormNumberFieldComponent = (
-  { label, placeholder, required, className, kind = 'int', emptyValue = undefined, step, ...props }: FormNumberFieldProps,
+  { label, placeholder, required, className, kind = 'int', emptyValue, step, ...props }: FormNumberFieldProps,
   ref: ForwardedRef<HTMLInputElement>
 ) => {
   const field = useFieldContext<number | null | undefined>()
@@ -45,16 +47,16 @@ const FormNumberFieldComponent = (
       {/* label non rendu ici par défaut, DetailView gère l'affichage du label */}
       <Input
         ref={ref}
-        type="number"
-        value={value}
-        onChange={(e) => handleChange(e.target.value)}
-        onBlur={field.handleBlur}
         placeholder={placeholder}
         step={step}
+        type="number"
+        value={value}
         className={cn(
           hasError && 'border-red-500 focus:border-red-500',
           className
         )}
+        onBlur={field.handleBlur}
+        onChange={(e) => handleChange(e.target.value)}
         {...props}
       />
       {hasError && errors[0] && (

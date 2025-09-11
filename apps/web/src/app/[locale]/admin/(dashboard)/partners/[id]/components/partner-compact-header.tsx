@@ -1,10 +1,12 @@
 'use client';
 
-import { type FC } from 'react';
 import { Building2, Mail, Link as LinkIcon, Edit, X, Save } from 'lucide-react';
+import { type FC } from 'react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { Button } from '@/components/ui/button';
-import { PartnerFormData } from '@make-the-change/api/validators/partner';
+
+import type { PartnerFormData } from '@make-the-change/api/validators/partner';
 
 type PartnerCompactHeaderProps = {
   partnerData: PartnerFormData & { id: string };
@@ -80,7 +82,7 @@ export const PartnerCompactHeader: FC<PartnerCompactHeaderProps> = ({
               {partnerData.website && (
                 <div className='flex items-center gap-2 px-3 py-1 bg-muted/40 rounded-full text-xs font-medium'>
                   <LinkIcon className='h-3 w-3' />
-                  <a href={partnerData.website} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                  <a className="hover:underline" href={partnerData.website} rel="noopener noreferrer" target="_blank">
                     {partnerData.website}
                   </a>
                 </div>
@@ -96,21 +98,21 @@ export const PartnerCompactHeader: FC<PartnerCompactHeaderProps> = ({
               {isEditing ? (
                 <div className='flex items-center gap-2'>
                   <Button
-                    variant='outline'
-                    size='sm'
-                    onClick={() => onEditToggle(false)}
-                    disabled={isSaving}
                     className='text-sm'
+                    disabled={isSaving}
+                    size='sm'
+                    variant='outline'
+                    onClick={() => onEditToggle(false)}
                   >
                     <X className='h-4 w-4 mr-1' />
                     Annuler
                   </Button>
                   <Button
-                    variant='default'
-                    size='sm'
-                    onClick={onSave}
-                    disabled={isSaving}
                     className='text-sm'
+                    disabled={isSaving}
+                    size='sm'
+                    variant='default'
+                    onClick={onSave}
                   >
                     <Save className='h-4 w-4 mr-1' />
                     {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
@@ -118,10 +120,10 @@ export const PartnerCompactHeader: FC<PartnerCompactHeaderProps> = ({
                 </div>
               ) : (
                 <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => onEditToggle(true)}
                   className='text-sm'
+                  size='sm'
+                  variant='outline'
+                  onClick={() => onEditToggle(true)}
                 >
                   <Edit className='h-4 w-4 mr-1' />
                   Modifier

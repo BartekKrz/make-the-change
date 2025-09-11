@@ -13,7 +13,6 @@ import {
 import { FormField, type FormFieldProps } from '@/components/form/form-field';
 
 import type { FieldApi } from '@tanstack/react-form';
-
 import type { ForwardedRef } from 'react';
 
 type FormSelectProps = FormFieldProps & {
@@ -45,19 +44,19 @@ const FormSelectComponent = (
 
   return (
     <FormField
-      label={label}
-      description={description}
       className={className}
-      required={required}
+      description={description}
       error={field.state.meta.errors?.[0]}
-      isValidating={field.state.meta.isValidating}
       fieldId={fieldId}
+      isValidating={field.state.meta.isValidating}
+      label={label}
+      required={required}
     >
       <Select
-        value={field.state.value ?? ''}
-        onValueChange={(newValue) => field.handleChange(newValue)}
-        onOpenChange={(open) => !open && field.handleBlur()}
         disabled={disabled}
+        value={field.state.value ?? ''}
+        onOpenChange={(open) => !open && field.handleBlur()}
+        onValueChange={(newValue) => field.handleChange(newValue)}
       >
         <SelectTrigger
           ref={ref}
@@ -70,8 +69,8 @@ const FormSelectComponent = (
           {options.map((option) => (
             <SelectItem
               key={option.value}
-              value={option.value}
               disabled={option.disabled}
+              value={option.value}
             >
               {option.label}
             </SelectItem>

@@ -1,5 +1,7 @@
 import { forwardRef, useState, useId } from 'react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+
 import type { InputHTMLAttributes, ReactNode } from 'react';
 
 export type TextAreaVariant = 'default' | 'outlined' | 'filled';
@@ -34,7 +36,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     const [isFocused, setIsFocused] = useState(false);
     const [shakeAnimation, setShakeAnimation] = useState('');
     const TextAreaId = useId();
-    const ariaDescribedBy = error ? `${TextAreaId}-error` : helpText ? `${TextAreaId}-help` : undefined;
+    const ariaDescribedBy = error ? `${TextAreaId}-error` : (helpText ? `${TextAreaId}-help` : undefined);
 
     const handleErrorShake = () => {
       if (error) {
@@ -83,6 +85,9 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           )}
 
           <textarea
+            ref={ref}
+            aria-describedby={ariaDescribedBy}
+            aria-invalid={error ? 'true' : undefined}
             id={TextAreaId}
             className={cn(
               'flex w-full rounded-xl resize-y transition-all duration-300',
@@ -99,11 +104,8 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
                 : 'hover:border-border/80 hover:shadow-sm dark:hover:border-border',
               className
             )}
-            ref={ref}
-            aria-invalid={error ? 'true' : undefined}
-            aria-describedby={ariaDescribedBy}
-            onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            onFocus={() => setIsFocused(true)}
             onChange={(e) => {
               handleErrorShake();
               props.onChange?.(e);
@@ -116,8 +118,8 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 
         {(error ?? helpText) && (
           <p
-            id={ariaDescribedBy}
             className={cn('text-sm transition-colors', error ? 'text-destructive' : 'text-muted-foreground')}
+            id={ariaDescribedBy}
           >
             {error ?? helpText}
           </p>

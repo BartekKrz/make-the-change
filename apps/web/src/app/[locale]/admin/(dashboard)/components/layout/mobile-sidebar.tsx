@@ -1,13 +1,14 @@
 'use client'
 
-import { type FC } from 'react'
-import { useEffect, useState } from 'react'
 import { X, LayoutDashboard, Package, ShoppingCart, Users } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { type FC } from 'react'
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn'
 import { useMobile } from '@/app/[locale]/admin/(dashboard)/components/layout/mobile-context'
+import { Button } from '@/components/ui/button'
 
 export const MobileSidebar: FC = () => {
   const { isMobileMenuOpen, setIsMobileMenuOpen } = useMobile()
@@ -58,7 +59,7 @@ export const MobileSidebar: FC = () => {
             </div>
             <span className="font-semibold text-foreground">Make the CHANGE</span>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => setIsMobileMenuOpen(false)}>
+          <Button size="sm" variant="ghost" onClick={() => setIsMobileMenuOpen(false)}>
             <X className="w-5 h-5" />
           </Button>
         </div>

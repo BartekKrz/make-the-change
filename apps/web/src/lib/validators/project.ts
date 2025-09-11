@@ -13,7 +13,7 @@ export const projectFormSchema = z.object({
     .min(1, 'Le slug est requis')
     .max(80, 'Le slug ne peut pas dépasser 80 caractères')
     .regex(
-      /^[a-z0-9-]+$/,
+      /^[\da-z-]+$/,
       'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets'
     )
     .refine(
@@ -28,7 +28,7 @@ export const projectFormSchema = z.object({
   target_budget: z
     .number()
     .min(100, 'Le budget cible doit être d\'au moins 100€')
-    .max(100000, 'Le budget cible ne peut pas dépasser 100 000€'),
+    .max(100_000, 'Le budget cible ne peut pas dépasser 100 000€'),
 
   producer_id: z
     .string()
@@ -105,17 +105,17 @@ export const projectStatusLabels = {
 export const projectTypeRules = {
   beehive: {
     minBudget: 500,
-    maxBudget: 10000,
+    maxBudget: 10_000,
     suggestedProducers: ['habeebee'],
   },
   olive_tree: {
     minBudget: 800,
-    maxBudget: 15000,
+    maxBudget: 15_000,
     suggestedProducers: ['ilanga'],
   },
   vineyard: {
     minBudget: 1000,
-    maxBudget: 25000,
+    maxBudget: 25_000,
     suggestedProducers: ['promiel', 'multi'],
   },
 } as const

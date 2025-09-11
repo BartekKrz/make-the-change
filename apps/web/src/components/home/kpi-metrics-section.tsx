@@ -1,8 +1,10 @@
 'use client'
 
-import { Card, CardContent } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
 import { motion } from 'framer-motion'
 import { Users, Euro, Zap, ShoppingBag } from 'lucide-react'
+
+import { Card, CardContent } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
+
 import type { FC } from 'react'
 
 type MetricsProps = {
@@ -17,8 +19,8 @@ type MetricsProps = {
 export const KPIMetricsSection: FC<MetricsProps> = ({ metrics }) => {
   const defaultMetrics = {
     membersCount: 1247,
-    revenueEngaged: 89450,
-    pointsActive: 71560,
+    revenueEngaged: 89_450,
+    pointsActive: 71_560,
     ordersThisMonth: 156
   }
 
@@ -55,17 +57,17 @@ export const KPIMetricsSection: FC<MetricsProps> = ({ metrics }) => {
     <section className="container mx-auto px-4 py-16">
       <div className="text-center mb-12">
         <motion.h2 
+          animate={{ opacity: 1, y: 0 }}
           className="text-3xl md:text-4xl font-bold mb-4"
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           Notre Impact Ensemble
         </motion.h2>
         <motion.p 
+          animate={{ opacity: 1, y: 0 }}
           className="text-lg text-muted-foreground"
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           Découvrez l&apos;impact de notre communauté en temps réel
@@ -78,8 +80,8 @@ export const KPIMetricsSection: FC<MetricsProps> = ({ metrics }) => {
           return (
             <motion.div
               key={metric.label}
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ delay: index * 0.1 + 0.4 }}
             >
               <Card className="glass-card hover:shadow-xl transition-all duration-300 group border-border/50 bg-background/60 backdrop-blur-sm">

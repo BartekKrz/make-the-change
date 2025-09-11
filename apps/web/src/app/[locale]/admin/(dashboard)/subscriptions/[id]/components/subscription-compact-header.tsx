@@ -1,7 +1,8 @@
 'use client';
 
+import { CreditCard, Euro, Calendar as _Calendar, Edit, X, Save } from 'lucide-react';
 import { type FC } from 'react';
-import { CreditCard, Euro, Calendar, Edit, X, Save } from 'lucide-react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { Button } from '@/components/ui/button';
 
@@ -145,20 +146,20 @@ export const SubscriptionCompactHeader: FC<SubscriptionCompactHeaderProps> = ({
           {isEditing ? (
             <div className='flex items-center gap-2'>
               <Button
-                variant='outline'
-                size='sm'
-                onClick={() => onEditToggle?.(false)}
-                disabled={isSaving}
                 className='h-8 px-3'
+                disabled={isSaving}
+                size='sm'
+                variant='outline'
+                onClick={() => onEditToggle?.(false)}
               >
                 <X className='h-4 w-4 mr-1' />
                 Annuler
               </Button>
               <Button
+                className='h-8 px-3'
+                disabled={isSaving || !hasChanges}
                 size='sm'
                 onClick={onSave}
-                disabled={isSaving || !hasChanges}
-                className='h-8 px-3'
               >
                 {isSaving ? (
                   <div className='h-4 w-4 mr-1 animate-spin rounded-full border-2 border-current border-t-transparent' />
@@ -170,10 +171,10 @@ export const SubscriptionCompactHeader: FC<SubscriptionCompactHeaderProps> = ({
             </div>
           ) : (
             <Button
-              variant='outline'
-              size='sm'
-              onClick={() => onEditToggle?.(true)}
               className='h-8 px-3'
+              size='sm'
+              variant='outline'
+              onClick={() => onEditToggle?.(true)}
             >
               <Edit className='h-4 w-4 mr-1' />
               Modifier

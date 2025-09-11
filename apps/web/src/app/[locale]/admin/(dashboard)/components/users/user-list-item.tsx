@@ -1,8 +1,10 @@
 'use client'
 
 import { AdminListItem } from '@/app/[locale]/admin/(dashboard)/components/ui/admin-list-item'
+
 import { UserListHeader } from './user-list-header'
 import { UserListMetadata } from './user-list-metadata'
+
 import type { FC } from 'react'
 
 type User = {
@@ -21,10 +23,10 @@ type UserListItemProps = {
 export const UserListItem: FC<UserListItemProps> = ({ user, actions }) => {
   return (
     <AdminListItem
-      href={`/admin/users/${user.id}`}
-      header={<UserListHeader user={user} />}
-      metadata={<UserListMetadata user={user} />}
       actions={actions}
+      header={<UserListHeader user={user} />}
+      href={`/admin/users/${user.id}`}
+      metadata={<UserListMetadata user={user} />}
     />
   )
 }

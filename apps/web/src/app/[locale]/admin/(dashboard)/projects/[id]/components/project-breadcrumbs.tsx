@@ -1,8 +1,8 @@
 'use client';
 
+import { ChevronRight, Home, Target } from 'lucide-react';
 import Link from 'next/link';
 import { type FC } from 'react';
-import { ChevronRight, Home, Target } from 'lucide-react';
 
 type ProjectData = {
   id: string;
@@ -19,8 +19,8 @@ export const ProjectBreadcrumbs: FC<ProjectBreadcrumbsProps> = ({ projectData })
     <div className='max-w-7xl mx-auto px-4 md:px-8 pt-4 md:pt-6 pb-2'>
       <nav aria-label='Breadcrumb' className='flex items-center gap-2 text-sm text-muted-foreground'>
         <Link
-          href='/admin/dashboard'
           className='flex items-center gap-1 hover:text-foreground transition-colors'
+          href='/admin/dashboard'
         >
           <Home className='h-4 w-4' />
           <span>Tableau de bord</span>
@@ -29,8 +29,8 @@ export const ProjectBreadcrumbs: FC<ProjectBreadcrumbsProps> = ({ projectData })
         <ChevronRight className='h-4 w-4' />
 
         <Link
-          href='/admin/projects'
           className='flex items-center gap-1 hover:text-foreground transition-colors'
+          href='/admin/projects'
         >
           <Target className='h-4 w-4' />
           <span>Projets</span>

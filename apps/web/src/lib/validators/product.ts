@@ -20,7 +20,7 @@ export const productFormSchema = z.object({
     .min(1, 'Le slug est requis')
     .max(80, 'Le slug ne peut pas dépasser 80 caractères')
     .regex(
-      /^[a-z0-9-]+$/,
+      /^[\da-z-]+$/,
       'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets'
     ),
 
@@ -39,13 +39,13 @@ export const productFormSchema = z.object({
   price_points: z
     .number()
     .min(1, 'Le prix doit être d\'au moins 1 point')
-    .max(50000, 'Le prix ne peut pas dépasser 50 000 points')
+    .max(50_000, 'Le prix ne peut pas dépasser 50 000 points')
     .int('Le prix doit être un nombre entier'),
 
   stock_quantity: z
     .number()
     .min(0, 'Le stock ne peut pas être négatif')
-    .max(10000, 'Le stock ne peut pas dépasser 10 000')
+    .max(10_000, 'Le stock ne peut pas dépasser 10 000')
     .int('Le stock doit être un nombre entier')
     .default(0),
 
@@ -119,12 +119,7 @@ export const productFormSchema = z.object({
     .array(z.string().url('URL d\'image invalide'))
     .max(10, 'Maximum 10 images par produit')
     .default([]),
-  
-  blur_hashes: z.array(z.unknown()).default([]),
-  
 
-  // blur_hashes: DEPRECATED - Généré automatiquement par OptimizedImage
-  // Plus besoin de stocker les BlurHash manuellement
 }).refine((data) => {
   if (data.price_points > 1000 && !data.description) {
     return false
@@ -175,7 +170,6 @@ export const defaultProductValues: ProductFormData = {
   tags: [],
   allergens: [],
   certifications: [],
-  blur_hashes: []
 }
 
 export const tierLabels = {
@@ -199,7 +193,7 @@ export const tierPricingRules = {
     description: 'Produits premium accessibles'
   },
   ambassadeur: {
-    maxPrice: 10000,
+    maxPrice: 10_000,
     description: 'Tous les produits'
   },
 } as const

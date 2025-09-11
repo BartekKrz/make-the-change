@@ -1,21 +1,41 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    // === Build Configuration ===
     "outDir": "./dist",
     "rootDir": ".",
     "baseUrl": ".",
-    "lib": ["dom", "dom.iterable", "es6"],
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "ES2022"],
+    "types": ["vitest/globals"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    
+    // === Module & Import Configuration ===
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "verbatimModuleSyntax": false, // Compatible avec imports mixtes React
+    
+    // === Type Checking (Strict Mode 2025) ===
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": false, // Trop strict pour React props
+    "noPropertyAccessFromIndexSignature": false, // process.env compatibility
+    
+    // === Performance & Build ===
+    "skipLibCheck": true,
+    "noEmit": true,
     "incremental": true,
+    "tsBuildInfoFile": ".next/cache/tsconfig.tsbuildinfo",
+    
+    // === React & JSX ===
+    "jsx": "preserve",
     "plugins": [
       {
         "name": "next"

@@ -1,10 +1,11 @@
 'use client';
 
-import { type FC, useState, useEffect, type TouchEvent } from 'react';
 import { X } from 'lucide-react';
+import { type FC, useState, useEffect, type TouchEvent } from 'react';
+
+import { CheckboxWithLabel } from '@/app/[locale]/admin/(dashboard)/components/ui/checkbox';
 import { ViewToggle, type ViewMode } from '@/app/[locale]/admin/(dashboard)/components/ui/view-toggle';
 import { Button } from '@/components/ui/button';
-import { CheckboxWithLabel } from '@/app/[locale]/admin/(dashboard)/components/ui/checkbox';
 
 
 type Producer = {
@@ -80,9 +81,9 @@ export const ProductFilterModal: FC<FilterModalProps> = ({
           transform: `translateY(${dragY}px)`,
           transition: isDragging ? 'none' : 'transform 0.3s ease-out'
         }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
+        onTouchStart={handleTouchStart}
       >
         <div className="flex justify-center pt-2 pb-1">
           <div className="w-10 h-1 bg-gray-300 rounded-full" />
@@ -90,7 +91,7 @@ export const ProductFilterModal: FC<FilterModalProps> = ({
         
         <div className="flex items-center justify-between p-4 border-b border-border bg-white">
           <h3 className="text-lg font-semibold text-foreground">Filtres</h3>
-          <Button variant="ghost" size="sm" onClick={onClose}>
+          <Button size="sm" variant="ghost" onClick={onClose}>
             <X className="h-5 w-5" />
           </Button>
         </div>
@@ -99,25 +100,25 @@ export const ProductFilterModal: FC<FilterModalProps> = ({
           <div className="space-y-6">
             <div>
               <label className="text-sm font-medium mb-3 block">Mode d&apos;affichage</label>
-              <ViewToggle value={view} onChange={setView} availableViews={['grid', 'list']} />
+              <ViewToggle availableViews={['grid', 'list']} value={view} onChange={setView} />
             </div>
             
             <div>
               <label className="text-sm font-medium mb-3 block">Partenaire</label>
               <div className="space-y-2">
                 <Button
+                  className="w-full justify-start"
                   variant={selectedProducerId === undefined ? "default" : "outline"}
                   onClick={() => setSelectedProducerId(undefined)}
-                  className="w-full justify-start"
                 >
                   Tous les partenaires
                 </Button>
                 {producers?.map((producer) => (
                   <Button
                     key={producer.id}
+                    className="w-full justify-start"
                     variant={selectedProducerId === producer.id ? "default" : "outline"}
                     onClick={() => setSelectedProducerId(producer.id)}
-                    className="w-full justify-start"
                   >
                     {producer.name}
                   </Button>
@@ -129,8 +130,8 @@ export const ProductFilterModal: FC<FilterModalProps> = ({
               <label className="text-sm font-medium mb-3 block">Options</label>
               <CheckboxWithLabel
                 checked={activeOnly}
-                onCheckedChange={(v) => setActiveOnly(Boolean(v))}
                 label="Afficher uniquement les produits actifs"
+                onCheckedChange={(v) => setActiveOnly(Boolean(v))}
               />
             </div>
           </div>
@@ -139,16 +140,16 @@ export const ProductFilterModal: FC<FilterModalProps> = ({
         <div className="p-4 border-t border-border bg-white">
           <div className="flex gap-3">
             <Button 
-              variant="outline" 
+              className="flex-1" 
+              variant="outline"
               onClick={() => {
                 setSelectedProducerId(undefined);
                 setActiveOnly(false);
               }}
-              className="flex-1"
             >
               Réinitialiser
             </Button>
-            <Button onClick={onClose} className="flex-1">
+            <Button className="flex-1" onClick={onClose}>
               Appliquer
             </Button>
           </div>

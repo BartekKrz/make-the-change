@@ -1,13 +1,15 @@
 'use client';
+import { Package, Star, Zap, Box, User, Plus, Minus, Eye, EyeOff } from "lucide-react";
+import { useTranslations } from 'next-intl';
+import { type FC, useRef, startTransition } from "react";
+
+import { DataCard, DataListItem } from "@/app/[locale]/admin/(dashboard)/components/ui/data-list";
 import { ProductImage } from "@/components/images/product-image";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
-import { type FC, useRef, startTransition } from "react";
-import { Package, Star, Zap, Box, User, Plus, Minus, Eye, EyeOff } from "lucide-react";
-import { DataCard, DataListItem } from "@/app/[locale]/admin/(dashboard)/components/ui/data-list";
 import type { RouterOutputs, RouterInputs } from '@/lib/trpc';
 import { cn } from "@/lib/utils";
-import { useTranslations } from 'next-intl';
+
 
 type ProductUpdateInput = RouterInputs['admin']['products']['update']['patch'];
 type ProductItem = RouterOutputs['admin']['products']['list']['items'][number];
@@ -162,12 +164,12 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
         {/* Stock Control - Enhanced for dark theme */}
         <div className="inline-flex items-center bg-background dark:bg-card border border-border dark:border-border rounded-xl shadow-sm dark:shadow-black/10 overflow-hidden group">
           <Button 
-            size="sm" 
-            variant="ghost" 
-            className="h-10 px-3 rounded-none border-0 text-muted-foreground hover:text-primary hover:bg-primary/8 transition-all duration-200 active:scale-95"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFocusFromParent(e); adjustStock(1); }}
+            aria-label={t('stock.increase')} 
+            className="h-10 px-3 rounded-none border-0 text-muted-foreground hover:text-primary hover:bg-primary/8 transition-all duration-200 active:scale-95" 
+            size="sm"
             title={t('stock.increase')}
-            aria-label={t('stock.increase')}
+            variant="ghost"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFocusFromParent(e); adjustStock(1); }}
           >
             <Plus className="w-4 h-4" />
           </Button>
@@ -180,13 +182,13 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
           </div>
           
           <Button 
-            disabled={product.stock_quantity === 0}
-            size="sm" 
-            variant="ghost"
-            className="h-10 px-3 rounded-none border-0 text-muted-foreground hover:text-destructive hover:bg-destructive/8 disabled:hover:text-muted-foreground disabled:hover:bg-transparent transition-all duration-200 active:scale-95"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFocusFromParent(e); adjustStock(-1); }}
-            title={t('stock.decrease')}
             aria-label={t('stock.decrease')}
+            className="h-10 px-3 rounded-none border-0 text-muted-foreground hover:text-destructive hover:bg-destructive/8 disabled:hover:text-muted-foreground disabled:hover:bg-transparent transition-all duration-200 active:scale-95" 
+            disabled={product.stock_quantity === 0}
+            size="sm"
+            title={t('stock.decrease')}
+            variant="ghost"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFocusFromParent(e); adjustStock(-1); }}
           >
             <Minus className="w-4 h-4" />
           </Button>
@@ -196,6 +198,10 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
       {/* Visibility Toggle */}
       <div className="flex items-center gap-2">
         <div 
+          aria-checked={product.is_active ? "true" : "false"}
+          aria-label={product.is_active ? t('visibility.hide') : t('visibility.show')}
+          role="switch"
+          tabIndex={0}
           className={cn(
             "relative inline-flex h-6 w-11 cursor-pointer rounded-full border-2 transition-all duration-200 ease-in-out focus-within:ring-2 focus-within:ring-primary/20 dark:focus-within:ring-primary/30",
             product.is_active 
@@ -203,10 +209,6 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
               : "bg-muted dark:bg-muted border-border dark:border-border hover:bg-muted/80 dark:hover:bg-muted/60"
           )}
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFocusFromParent(e); toggleActive(); }}
-          role="switch"
-          aria-checked={product.is_active ? "true" : "false"}
-          aria-label={product.is_active ? t('visibility.hide') : t('visibility.show')}
-          tabIndex={0}
           onKeyDown={(e) => {
             if (!(e.key === 'Enter' || e.key === ' ')) return;
             e.preventDefault();
@@ -251,6 +253,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
           icon={Package} 
           image={product.images?.[0]} 
           imageAlt={product.name} 
+          imageBlurDataURL={(product as any).cover_blur_data_url || undefined}
           images={product.images || undefined}
         >
           <div className="flex items-center gap-3 flex-wrap">
@@ -281,6 +284,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
           {product.category && (
             <button 
               className="badge-subtle hover:bg-primary/15 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-primary hover:border-primary/30 dark:hover:border-primary/40 hover:shadow-sm dark:hover:shadow-primary/10 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
+              title={t('filters_tooltip.category', { name: product.category.name })}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -288,7 +292,6 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                   onFilterChange.setCategory(product.category.id);
                 }
               }}
-              title={t('filters_tooltip.category', { name: product.category.name })}
             >
               {product.category.name}
             </button>
@@ -296,6 +299,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
           {product.secondary_category && (
             <button 
               className="tag-subtle hover:bg-accent/20 dark:hover:bg-accent/25 hover:text-accent-dark dark:hover:text-accent hover:border-accent/40 dark:hover:border-accent/50 hover:shadow-sm dark:hover:shadow-accent/10 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
+              title={t('filters_tooltip.subcategory', { name: product.secondary_category.name })}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -303,13 +307,13 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                   onFilterChange.setCategory(product.secondary_category.id);
                 }
               }}
-              title={t('filters_tooltip.subcategory', { name: product.secondary_category.name })}
             >
               {product.secondary_category.name}
             </button>
           )}
           {product.producer && (
             <button 
+              title={t('filters_tooltip.producer', { name: product.producer.name })}
               className={cn(
                 getProductContextClass(product),
                 "hover:shadow-sm hover:scale-105 hover:brightness-110 transition-all duration-200 cursor-pointer active:scale-95"
@@ -321,7 +325,6 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                   onFilterChange.setProducer(product.producer.id);
                 }
               }}
-              title={t('filters_tooltip.producer', { name: product.producer.name })}
             >
               {product.producer.name}
             </button>
@@ -336,6 +339,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
             <button 
               key={tag} 
               className="inline-flex items-center px-2 py-1 text-xs bg-muted/50 dark:bg-muted/30 text-muted-foreground dark:text-muted-foreground border border-muted/60 dark:border-muted/40 rounded-md hover:bg-muted dark:hover:bg-muted/60 hover:text-foreground dark:hover:text-foreground hover:border-muted-foreground/80 dark:hover:border-muted-foreground/60 hover:shadow-sm dark:hover:shadow-black/20 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95"
+              title={t('filters_tooltip.tag', { tag })}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -343,7 +347,6 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                   onFilterChange.addTag(tag);
                 }
               }}
-              title={t('filters_tooltip.tag', { tag })}
             >
               {tag}
             </button>
@@ -360,10 +363,12 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
         <div className="flex items-center gap-2 md:gap-3">
               <div className="flex-shrink-0">
                 <ProductImage
-                  src={product.images?.[0]}
                   alt={product.name}
-                  size="xs"
+                  blurDataURL={(product as any).cover_blur_data_url || undefined}
+                  blurHash={(product as any).cover_blur_hash || undefined}
                   fallbackType="placeholder"
+                  size="xs"
+                  src={product.images?.[0]}
                 />
               </div>
               <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -377,15 +382,13 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                 {product.featured && (
                   <button
                     className="transition-all duration-200 hover:scale-110 hover:text-accent hover:drop-shadow-sm active:scale-95 cursor-pointer pointer-events-auto"
+                    title={t('filters_tooltip.featured')}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       removeFocusFromParent(e);
-                      if (onFilterChange) {
-                        console.log('Filter by featured products');
-                      }
+                      if (onFilterChange) {}
                     }}
-                    title={t('filters_tooltip.featured')}
                   >
                     <Star className="w-4 h-4 text-accent-subtle fill-current" />
                   </button>
@@ -417,6 +420,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
             {product.producer && (
               <button
                 className="flex items-center gap-2 text-muted-foreground dark:text-muted-foreground hover:shadow-sm dark:hover:shadow-black/20 hover:brightness-110 dark:hover:brightness-125 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
+                title={t('filters_tooltip.producer', { name: product.producer.name })}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -425,7 +429,6 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                     onFilterChange.setProducer(product.producer.id);
                   }
                 }}
-                title={t('filters_tooltip.producer', { name: product.producer.name })}
               >
                 <User className="w-4 h-4" />
                 <span className="text-sm font-medium truncate max-w-[120px] leading-relaxed">
@@ -440,6 +443,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
             {product.category && (
               <button 
                 className="badge-subtle hover:bg-primary/15 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-primary hover:border-primary/30 dark:hover:border-primary/40 hover:shadow-sm dark:hover:shadow-primary/10 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
+                title={t('filters_tooltip.category', { name: product.category.name })}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -448,7 +452,6 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                     onFilterChange.setCategory(product.category.id);
                   }
                 }}
-                title={t('filters_tooltip.category', { name: product.category.name })}
               >
                 {product.category.name}
               </button>
@@ -456,6 +459,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
             {product.secondary_category && (
               <button 
                 className="tag-subtle hover:bg-accent/20 dark:hover:bg-accent/25 hover:text-accent-dark dark:hover:text-accent hover:border-accent/40 dark:hover:border-accent/50 hover:shadow-sm dark:hover:shadow-accent/10 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto"
+                title={t('filters_tooltip.subcategory', { name: product.secondary_category.name })}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -464,7 +468,6 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                     onFilterChange.setCategory(product.secondary_category.id);
                   }
                 }}
-                title={t('filters_tooltip.subcategory', { name: product.secondary_category.name })}
               >
                 {product.secondary_category.name}
               </button>
@@ -479,6 +482,7 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
               <button 
                 key={tag} 
                 className="inline-flex items-center px-2.5 py-1 text-xs font-medium bg-muted/50 dark:bg-muted/30 text-muted-foreground dark:text-muted-foreground border border-muted/60 dark:border-muted/40 rounded-md hover:bg-muted dark:hover:bg-muted/60 hover:text-foreground dark:hover:text-foreground hover:border-muted-foreground/80 dark:hover:border-muted-foreground/60 hover:shadow-sm dark:hover:shadow-black/20 hover:scale-105 transition-all duration-200 cursor-pointer active:scale-95 pointer-events-auto tracking-wide leading-tight"
+                title={t('filters_tooltip.tag', { tag })}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -487,7 +491,6 @@ export const Product: FC<ProductProps> = ({ product, view, queryParams, onFilter
                     onFilterChange.addTag(tag);
                   }
                 }}
-                title={t('filters_tooltip.tag', { tag })}
               >
                 {tag}
               </button>

@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { ChevronDown, X } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 
-export interface TagsAutocompleteProps {
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+
+export type TagsAutocompleteProps = {
   value: string[];
   onChange: (tags: string[]) => void;
   suggestions?: string[];
@@ -66,23 +67,38 @@ export const TagsAutocomplete: React.FC<TagsAutocompleteProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowDown') {
+    switch (e.key) {
+    case 'ArrowDown': {
       e.preventDefault();
       setFocusedIndex(prev => Math.min(prev + 1, options.length - 1));
-    } else if (e.key === 'ArrowUp') {
+    
+    break;
+    }
+    case 'ArrowUp': {
       e.preventDefault();
       setFocusedIndex(prev => Math.max(prev - 1, -1));
-    } else if (e.key === 'Enter') {
+    
+    break;
+    }
+    case 'Enter': {
       e.preventDefault();
       if (focusedIndex >= 0 && options[focusedIndex]) {
         addTag(options[focusedIndex]);
       } else if (inputValue.trim()) {
         addTag(inputValue.trim());
       }
-    } else if (e.key === 'Escape') {
+    
+    break;
+    }
+    case 'Escape': {
       closeDropdown();
-    } else if (e.key === 'Backspace' && !inputValue && value.length > 0) {
-      removeTag(value[value.length - 1]);
+    
+    break;
+    }
+    default: { if (e.key === 'Backspace' && !inputValue && value.length > 0) {
+      removeTag(value.at(-1));
+    }
+    }
     }
   };
 
@@ -134,13 +150,13 @@ export const TagsAutocomplete: React.FC<TagsAutocompleteProps> = ({
           >
             <span>{tag}</span>
             <button
+              className="text-primary/60 hover:text-primary hover:bg-primary/20 rounded-sm w-3 h-3 flex items-center justify-center transition-colors"
+              disabled={disabled}
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 removeTag(tag);
               }}
-              className="text-primary/60 hover:text-primary hover:bg-primary/20 rounded-sm w-3 h-3 flex items-center justify-center transition-colors"
-              disabled={disabled}
             >
               <X size={10} />
             </button>
@@ -150,18 +166,18 @@ export const TagsAutocomplete: React.FC<TagsAutocompleteProps> = ({
         {/* Input */}
         <input
           ref={inputRef}
+          className="flex-1 min-w-0 bg-transparent outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed"
+          disabled={disabled || value.length >= maxTags}
+          placeholder={value.length === 0 ? placeholder : ''}
           type="text"
           value={inputValue}
+          onFocus={openDropdown}
+          onKeyDown={handleKeyDown}
           onChange={(e) => {
             setInputValue(e.target.value);
             openDropdown();
             setFocusedIndex(-1);
           }}
-          onFocus={openDropdown}
-          onKeyDown={handleKeyDown}
-          placeholder={value.length === 0 ? placeholder : ''}
-          disabled={disabled || value.length >= maxTags}
-          className="flex-1 min-w-0 bg-transparent outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed"
         />
 
         {/* Chevron indicateur */}

@@ -1,13 +1,14 @@
 "use client"
 
-import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon, XIcon } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import * as React from 'react'
+
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 // Types pour le composant
-export interface ModernDatePickerProps {
+export type ModernDatePickerProps = {
   value?: Date | null
   onChange?: (date: Date | null) => void
   placeholder?: string
@@ -30,23 +31,27 @@ const dateUtils = {
     const options: Intl.DateTimeFormatOptions = {}
 
     switch (format) {
-      case 'dd/MM/yyyy':
+      case 'dd/MM/yyyy': {
         options.day = '2-digit'
         options.month = '2-digit'
         options.year = 'numeric'
         break
-      case 'MM/dd/yyyy':
+      }
+      case 'MM/dd/yyyy': {
         options.month = '2-digit'
         options.day = '2-digit'
         options.year = 'numeric'
         break
-      case 'yyyy-MM-dd':
+      }
+      case 'yyyy-MM-dd': {
         options.year = 'numeric'
         options.month = '2-digit'
         options.day = '2-digit'
         break
-      default:
+      }
+      default: {
         return date.toLocaleDateString(locale)
+      }
     }
 
     return date.toLocaleDateString(locale, options)
@@ -70,19 +75,19 @@ const dateUtils = {
 
         if (regex === formats[0] || regex === formats[3]) {
           // dd/MM/yyyy or dd.MM.yyyy
-          day = parseInt(match[1])
-          month = parseInt(match[2]) - 1 // JavaScript months are 0-indexed
-          year = parseInt(match[3])
+          day = Number.parseInt(match[1])
+          month = Number.parseInt(match[2]) - 1 // JavaScript months are 0-indexed
+          year = Number.parseInt(match[3])
         } else if (regex === formats[1]) {
           // dd/MM/yy
-          day = parseInt(match[1])
-          month = parseInt(match[2]) - 1
-          year = 2000 + parseInt(match[3])
+          day = Number.parseInt(match[1])
+          month = Number.parseInt(match[2]) - 1
+          year = 2000 + Number.parseInt(match[3])
         } else {
           // yyyy-MM-dd
-          year = parseInt(match[1])
-          month = parseInt(match[2]) - 1
-          day = parseInt(match[3])
+          year = Number.parseInt(match[1])
+          month = Number.parseInt(match[2]) - 1
+          day = Number.parseInt(match[3])
         }
 
         const date = new Date(year, month, day)
@@ -216,8 +221,8 @@ const PopoverContent: React.FC<{
         className
       )}
       style={{
-        [side === 'bottom' ? 'top' : side === 'top' ? 'bottom' : 'left']: `calc(100% + ${sideOffset}px)`,
-        [align === 'start' ? 'left' : align === 'end' ? 'right' : 'left']: align === 'center' ? '50%' : '0',
+        [side === 'bottom' ? 'top' : (side === 'top' ? 'bottom' : 'left')]: `calc(100% + ${sideOffset}px)`,
+        [align === 'start' ? 'left' : (align === 'end' ? 'right' : 'left')]: align === 'center' ? '50%' : '0',
         transform: align === 'center' ? 'translateX(-50%)' : undefined
       }}
     >
@@ -250,14 +255,12 @@ const Input: React.FC<{
 }) => {
   return (
     <input
+      disabled={disabled}
+      placeholder={placeholder}
+      readOnly={readOnly}
+      required={required}
       type={type}
       value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      disabled={disabled}
-      required={required}
-      readOnly={readOnly}
-      onClick={onClick}
       className={cn(
         "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm",
         "ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium",
@@ -266,6 +269,8 @@ const Input: React.FC<{
         "disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
+      onChange={onChange}
+      onClick={onClick}
     />
   )
 }
@@ -387,12 +392,12 @@ export const ModernDatePicker = React.forwardRef<HTMLDivElement, ModernDatePicke
         <PopoverTrigger asChild>
           <div className="relative">
             <Input
+              readOnly
+              disabled={disabled}
+              placeholder={placeholder}
+              required={required}
               type="text"
               value={inputValue}
-              onChange={handleInputChange}
-              placeholder={placeholder}
-              disabled={disabled}
-              required={required}
               className={cn(
                 "pr-10 cursor-pointer transition-all duration-200",
                 sizeClasses[size],
@@ -401,17 +406,17 @@ export const ModernDatePicker = React.forwardRef<HTMLDivElement, ModernDatePicke
                 disabled && "cursor-not-allowed opacity-50",
                 !disabled && "hover:border-primary/50 focus:border-primary"
               )}
+              onChange={handleInputChange}
               onClick={() => !disabled && setOpen(true)}
-              readOnly
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1">
               {value && showClearButton && (
                 <button
+                  className="p-0.5 rounded-full hover:bg-muted transition-colors"
                   onClick={(e) => {
                     e.stopPropagation()
                     handleClear()
                   }}
-                  className="p-0.5 rounded-full hover:bg-muted transition-colors"
                 >
                   <XIcon className="h-3 w-3 text-muted-foreground" />
                 </button>
@@ -429,34 +434,34 @@ export const ModernDatePicker = React.forwardRef<HTMLDivElement, ModernDatePicke
         <AnimatePresence>
           {open && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: -10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -10 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
               className="fixed z-50"
+              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
             >
               <PopoverContent
-                className="w-auto p-0 bg-background/95 backdrop-blur-xl border-border/50 shadow-2xl"
                 align="start"
+                className="w-auto p-0 bg-background/95 backdrop-blur-xl border-border/50 shadow-2xl"
                 side="bottom"
                 sideOffset={8}
               >
                 {/* Header du calendrier */}
                 <div className="flex items-center justify-between p-4 border-b border-border/50 bg-gradient-to-r from-primary/5 to-accent/5">
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={goToPreviousMonth}
                     className="h-8 w-8 p-0 hover:bg-primary/10 transition-colors"
+                    size="sm"
+                    variant="ghost"
+                    onClick={goToPreviousMonth}
                   >
                     <ChevronLeftIcon className="h-4 w-4" />
                   </Button>
 
                   <motion.h2
                     key={currentMonth.toISOString()}
-                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-sm font-semibold text-foreground px-4"
+                    initial={{ opacity: 0, y: 10 }}
                   >
                     {currentMonth.toLocaleDateString('fr-FR', {
                       month: 'long',
@@ -465,10 +470,10 @@ export const ModernDatePicker = React.forwardRef<HTMLDivElement, ModernDatePicke
                   </motion.h2>
 
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={goToNextMonth}
                     className="h-8 w-8 p-0 hover:bg-primary/10 transition-colors"
+                    size="sm"
+                    variant="ghost"
+                    onClick={goToNextMonth}
                   >
                     <ChevronRightIcon className="h-4 w-4" />
                   </Button>
@@ -488,8 +493,8 @@ export const ModernDatePicker = React.forwardRef<HTMLDivElement, ModernDatePicke
 
                 {/* Grille des jours */}
                 <motion.div
-                  className="grid grid-cols-7 gap-1 p-4 pt-0"
                   layout
+                  className="grid grid-cols-7 gap-1 p-4 pt-0"
                 >
                   {monthDays.map((date: Date) => {
                     const isSelected = value && dateUtils.isSameDay(date, value)
@@ -501,12 +506,11 @@ export const ModernDatePicker = React.forwardRef<HTMLDivElement, ModernDatePicke
                       <motion.button
                         key={date.toISOString()}
                         layout
-                        initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
+                        disabled={!selectable}
+                        initial={{ opacity: 0, scale: 0.8 }}
                         whileHover={selectable ? { scale: 1.1, backgroundColor: 'var(--primary)' } : {}}
                         whileTap={selectable ? { scale: 0.9 } : {}}
-                        onClick={() => selectable && handleDateSelect(date)}
-                        disabled={!selectable}
                         className={cn(
                           "h-10 w-10 rounded-lg text-sm font-medium transition-all duration-200 relative",
                           "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
@@ -516,24 +520,25 @@ export const ModernDatePicker = React.forwardRef<HTMLDivElement, ModernDatePicke
                           !selectable && "text-muted-foreground cursor-not-allowed opacity-50",
                           !isCurrentMonth && "text-muted-foreground/30"
                         )}
+                        onClick={() => selectable && handleDateSelect(date)}
                       >
                         {date.getDate()}
 
                         {/* Indicateur pour aujourd'hui */}
                         {isTodayDate && !isSelected && (
                           <motion.div
-                            initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-primary rounded-full"
+                            initial={{ scale: 0 }}
                           />
                         )}
 
                         {/* Indicateur pour date sélectionnée */}
                         {isSelected && (
                           <motion.div
-                            initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             className="absolute inset-0 rounded-lg ring-2 ring-white/50"
+                            initial={{ scale: 0 }}
                           />
                         )}
                       </motion.button>
@@ -546,8 +551,9 @@ export const ModernDatePicker = React.forwardRef<HTMLDivElement, ModernDatePicke
                   <div className="flex space-x-2">
                     {showTodayButton && (
                       <Button
-                        variant="ghost"
+                        className="text-xs h-7 px-3 hover:bg-primary/10 hover:text-primary transition-colors"
                         size="sm"
+                        variant="ghost"
                         onClick={() => {
                           goToToday()
                           const today = new Date()
@@ -555,7 +561,6 @@ export const ModernDatePicker = React.forwardRef<HTMLDivElement, ModernDatePicke
                             handleDateSelect(today)
                           }
                         }}
-                        className="text-xs h-7 px-3 hover:bg-primary/10 hover:text-primary transition-colors"
                       >
                         Aujourd&apos;hui
                       </Button>
@@ -565,9 +570,9 @@ export const ModernDatePicker = React.forwardRef<HTMLDivElement, ModernDatePicke
                   {/* Affichage de la date sélectionnée */}
                   {value && (
                     <motion.div
-                      initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md"
+                      initial={{ opacity: 0 }}
                     >
                       {dateUtils.format(value, 'dd/MM/yyyy')}
                     </motion.div>
@@ -583,9 +588,9 @@ export const ModernDatePicker = React.forwardRef<HTMLDivElement, ModernDatePicke
       <AnimatePresence>
         {helperText && (
           <motion.p
-            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -10 }}
             className={cn(
               "text-xs mt-2 transition-colors",
               error ? "text-destructive" : "text-muted-foreground"

@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { type FC } from 'react';
-import { UserDetailLayout } from '@/app/[locale]/admin/(dashboard)/users/[id]/components/user-detail-layout';
-import { UserCompactHeader } from '@/app/[locale]/admin/(dashboard)/users/[id]/components/user-compact-header';
-import { UserDetailsEditor } from '@/app/[locale]/admin/(dashboard)/users/[id]/components/user-details-editor';
+
 import { UserBreadcrumbs } from '@/app/[locale]/admin/(dashboard)/users/[id]/components/user-breadcrumbs';
+import { UserCompactHeader } from '@/app/[locale]/admin/(dashboard)/users/[id]/components/user-compact-header';
+import { UserDetailLayout } from '@/app/[locale]/admin/(dashboard)/users/[id]/components/user-detail-layout';
+import { UserDetailsEditor } from '@/app/[locale]/admin/(dashboard)/users/[id]/components/user-details-editor';
 
 type UserData = {
   id: string;
@@ -68,24 +69,12 @@ export const UserDetailController: FC<UserDetailControllerProps> = ({
 
   return (
     <UserDetailLayout
-      header={
-        <>
-          <UserBreadcrumbs userData={userData} />
-          <UserCompactHeader
-            userData={displayData}
-            isEditing={isEditing}
-            onEditToggle={handleEditToggle}
-            onSave={handleSave}
-            isSaving={isSaving}
-          />
-        </>
-      }
       toolbar={<div />}
       content={
         <UserDetailsEditor
-          userData={displayData}
           isEditing={isEditing}
           isSaving={isSaving}
+          userData={displayData}
           onSave={async (data) => {
             const patch: Partial<UserData> = {};
             for (const key of ['name', 'email', 'role', 'is_active'] as const) {
@@ -100,6 +89,18 @@ export const UserDetailController: FC<UserDetailControllerProps> = ({
             setIsEditing(false);
           }}
         />
+      }
+      header={
+        <>
+          <UserBreadcrumbs userData={userData} />
+          <UserCompactHeader
+            isEditing={isEditing}
+            isSaving={isSaving}
+            userData={displayData}
+            onEditToggle={handleEditToggle}
+            onSave={handleSave}
+          />
+        </>
       }
     />
   );

@@ -1,21 +1,22 @@
 'use client';
-import { type FC } from 'react'
 
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { ArrowLeft, Building2, Save } from 'lucide-react';
-import { useFormWithToast } from '@/hooks/use-form-with-toast';
-import { trpc } from '@/lib/trpc';
 import {
   partnerFormSchema,
   defaultPartnerValues,
   partnerStatusLabels,
   type PartnerFormData
 } from '@make-the-change/api/validators/partner';
+import { ArrowLeft, Building2, Save } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { type FC } from 'react'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { FormInput, FormSelect, FormTextArea } from '@/components/form';
+import { Button } from '@/components/ui/button';
+import { useFormWithToast } from '@/hooks/use-form-with-toast';
 import { generateSlug } from '@/lib/form-utils';
+import { trpc } from '@/lib/trpc';
 
 const statusOptions = Object.entries(partnerStatusLabels).map(([value, label]) => ({ value, label }));
 
@@ -46,7 +47,7 @@ const NewPartnerPage: FC = () => {
   return (
     <div className="space-y-6 p-4 md:p-6">
       <div className="flex items-center gap-4">
-        <Link href="/admin/partners" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+        <Link className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors" href="/admin/partners">
           <ArrowLeft className="h-4 w-4" />
           Retour aux partenaires
         </Link>
@@ -58,12 +59,12 @@ const NewPartnerPage: FC = () => {
       </div>
 
       <form
+        className="space-y-6"
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className="space-y-6"
       >
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
@@ -79,10 +80,10 @@ const NewPartnerPage: FC = () => {
                     return value;
                   }}
                 >
-                  {(field) => <FormInput field={field} label="Nom du partenaire" placeholder="Ex: Les Ruchers du Vexin" required />}
+                  {(field) => <FormInput required field={field} label="Nom du partenaire" placeholder="Ex: Les Ruchers du Vexin" />}
                 </form.Field>
                 <form.Field name="slug">
-                  {(field) => <FormInput field={field} label="Slug" placeholder="ex-les-ruchers-du-vexin" required />}
+                  {(field) => <FormInput required field={field} label="Slug" placeholder="ex-les-ruchers-du-vexin" />}
                 </form.Field>
                 <form.Field name="description">
                   {(field) => <FormTextArea field={field} label="Description" placeholder="Description du partenaire..." rows={5} />}
@@ -96,10 +97,10 @@ const NewPartnerPage: FC = () => {
               <CardHeader><CardTitle>Contact & Statut</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <form.Field name="contact_email">
-                  {(field) => <FormInput field={field} label="Email de contact" type="email" placeholder="contact@partenaire.com" required />}
+                  {(field) => <FormInput required field={field} label="Email de contact" placeholder="contact@partenaire.com" type="email" />}
                 </form.Field>
                 <form.Field name="website">
-                  {(field) => <FormInput field={field} label="Site web" type="url" placeholder="https://partenaire.com" />}
+                  {(field) => <FormInput field={field} label="Site web" placeholder="https://partenaire.com" type="url" />}
                 </form.Field>
                 <form.Field name="status">
                   {(field) => <FormSelect field={field} label="Statut" options={statusOptions} />}
@@ -110,8 +111,8 @@ const NewPartnerPage: FC = () => {
         </div>
 
         <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline" onClick={() => router.back()} disabled={isSubmitting}>Annuler</Button>
-          <Button type="submit" disabled={isSubmitting} className="flex items-center gap-2">
+          <Button disabled={isSubmitting} type="button" variant="outline" onClick={() => router.back()}>Annuler</Button>
+          <Button className="flex items-center gap-2" disabled={isSubmitting} type="submit">
             {isSubmitting ? (
               <><div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />Création...</>
             ) : (

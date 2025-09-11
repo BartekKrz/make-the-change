@@ -1,31 +1,29 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { type FC } from 'react'
-import { trpc } from '@/lib/trpc'
-import { DataList, DataCard } from '@/app/[locale]/admin/(dashboard)/components/ui/data-list'
-import { ListContainer } from '@/app/[locale]/admin/(dashboard)/components/ui/list-container'
-import { OrderListItem } from '@/app/[locale]/admin/(dashboard)/components/orders/order-list-item'
-import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
 import { ShoppingCart, User, Calendar, DollarSign } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
-import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { type FC } from 'react'
+import { useState, useEffect } from 'react'
+
+import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
 import { AdminPageContainer } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-container'
 import { AdminPageHeader } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-header'
 import { AdminPagination } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-pagination'
-import { ViewToggle, type ViewMode } from '@/app/[locale]/admin/(dashboard)/components/ui/view-toggle'
+import { OrderListItem } from '@/app/[locale]/admin/(dashboard)/components/orders/order-list-item'
+import { DataList, DataCard } from '@/app/[locale]/admin/(dashboard)/components/ui/data-list'
+import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
+import { ListContainer } from '@/app/[locale]/admin/(dashboard)/components/ui/list-container'
 import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select'
+import { ViewToggle, type ViewMode } from '@/app/[locale]/admin/(dashboard)/components/ui/view-toggle'
+import { Button } from '@/components/ui/button'
+import { trpc } from '@/lib/trpc'
 
 const AdminOrdersPage: FC = () => {
-  const { toast } = useToast()
   const [search, setSearch] = useState('')
-  const [status, setStatus] = useState<'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded' | undefined>(undefined)
-  const utils = trpc.useUtils()
+  const [status, setStatus] = useState<'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded' | undefined>()
 
   const [view, setView] = useState<ViewMode>('grid')
-  const [cursor, setCursor] = useState<string | undefined>(undefined)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [cursor, setCursor] = useState<string | undefined>()
+  const [currentPage] = useState(1)
   const pageSize = 20
 
   const [orders, setOrders] = useState<any[]>([])
@@ -50,11 +48,16 @@ const AdminOrdersPage: FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'yellow'
-      case 'shipped': return 'blue'
-      case 'delivered': return 'green'
-      case 'cancelled': return 'red'
-      default: return 'gray'
+      case 'pending': { return 'yellow'
+      }
+      case 'shipped': { return 'blue'
+      }
+      case 'delivered': { return 'green'
+      }
+      case 'cancelled': { return 'red'
+      }
+      default: { return 'gray'
+      }
     }
   }
 
@@ -62,35 +65,35 @@ const AdminOrdersPage: FC = () => {
     <AdminPageContainer>
       <AdminPageHeader>
         <Input
+          className="max-w-xs"
           placeholder="Rechercher par client ou ID"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-xs"
         />
         <SimpleSelect
+          className="w-[180px]"
           placeholder="Filtrer par statut"
           value={status}
-          onValueChange={(value) => setStatus(value as 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded' | undefined)}
           options={[
             { value: 'pending', label: 'En attente' },
             { value: 'shipped', label: 'Expédiée' },
             { value: 'delivered', label: 'Livrée' },
             { value: 'cancelled', label: 'Annulée' },
           ]}
-          className="w-[180px]"
+          onValueChange={(value) => setStatus(value as 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded' | undefined)}
         />
-        {(isLoading || isFetching) && <span className="text-xs text-muted-foreground" aria-live="polite">Chargement…</span>}
+        {(isLoading || isFetching) && <span aria-live="polite" className="text-xs text-muted-foreground">Chargement…</span>}
 
         <ViewToggle
+          availableViews={['grid', 'list']}
           value={view}
           onChange={setView}
-          availableViews={['grid', 'list']}
         />
       </AdminPageHeader>
       {view === 'grid' ? (
         <DataList
-          items={orders}
           gridCols={3}
+          items={orders}
           emptyState={{
             title: 'Aucune commande',
             description: 'Aucun résultat pour ces filtres.',
@@ -106,7 +109,7 @@ const AdminOrdersPage: FC = () => {
                 <DataCard.Title>
                   <div className="flex items-center gap-2">
                     <ShoppingCart className="w-4 h-4 text-muted-foreground" />
-                    <span className="font-medium">Commande #{o.id.substring(0, 8)}</span>
+                    <span className="font-medium">Commande #{o.id.slice(0, 8)}</span>
                     <Badge color={getStatusColor(o.status)}>{o.status}</Badge>
                   </div>
                 </DataCard.Title>
@@ -153,8 +156,8 @@ const AdminOrdersPage: FC = () => {
 
       <AdminPagination
         pagination={orders.length > pageSize ? {
-          currentPage: currentPage,
-          pageSize: pageSize,
+          currentPage,
+          pageSize,
           totalItems: orders.length,
           totalPages: Math.ceil(orders.length / pageSize)
         } : undefined}

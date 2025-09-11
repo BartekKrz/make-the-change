@@ -1,8 +1,9 @@
 'use client';
 
-import { type FC, useState } from 'react';
-import Image from 'next/image';
 import { GripVertical, X, Eye, ArrowLeft, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import { type FC, useState } from 'react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { Button } from '@/components/ui/button';
 
@@ -90,10 +91,10 @@ export const ImageManager: FC<ImageManagerProps> = ({
             {/* Image */}
             <div className="relative w-full h-40">
               <Image
-                src={imageUrl}
-                alt={`Product image ${index + 1}`}
                 fill
+                alt={`Product image ${index + 1}`}
                 className="object-cover"
+                src={imageUrl}
                 unoptimized={imageUrl.includes('unsplash')}
               />
             </div>
@@ -104,20 +105,20 @@ export const ImageManager: FC<ImageManagerProps> = ({
               <div className="flex items-center justify-between">
                 <div className="flex gap-1">
                   <Button
+                    className="h-8 w-8 p-0"
+                    disabled={index === 0}
                     size="sm"
                     variant="outline"
                     onClick={() => moveImage(index, index - 1)}
-                    disabled={index === 0}
-                    className="h-8 w-8 p-0"
                   >
                     <ArrowLeft className="w-4 h-4" />
                   </Button>
                   <Button
+                    className="h-8 w-8 p-0"
+                    disabled={index === images.length - 1}
                     size="sm"
                     variant="outline"
                     onClick={() => moveImage(index, index + 1)}
-                    disabled={index === images.length - 1}
-                    className="h-8 w-8 p-0"
                   >
                     <ArrowRight className="w-4 h-4" />
                   </Button>
@@ -125,18 +126,18 @@ export const ImageManager: FC<ImageManagerProps> = ({
                 
                 <div className="flex gap-1">
                   <Button
+                    className="h-8 w-8 p-0"
                     size="sm"
                     variant="outline"
                     onClick={() => handlePreview(imageUrl)}
-                    className="h-8 w-8 p-0"
                   >
                     <Eye className="w-4 h-4" />
                   </Button>
                   <Button
+                    className="h-8 w-8 p-0"
                     size="sm"
                     variant="destructive"
                     onClick={() => onImageRemove(imageUrl)}
-                    className="h-8 w-8 p-0"
                   >
                     <X className="w-4 h-4" />
                   </Button>
@@ -162,16 +163,16 @@ export const ImageManager: FC<ImageManagerProps> = ({
         >
           <div className="relative max-w-4xl max-h-[90vh] w-full h-full">
             <Image
-              src={previewImage}
-              alt="Image preview"
               fill
+              alt="Image preview"
               className="object-contain"
+              src={previewImage}
               unoptimized={previewImage.includes('unsplash')}
             />
             <Button
-              variant="secondary"
-              size="sm"
               className="absolute top-4 right-4"
+              size="sm"
+              variant="secondary"
               onClick={() => setPreviewImage(null)}
             >
               <X className="w-4 h-4" />

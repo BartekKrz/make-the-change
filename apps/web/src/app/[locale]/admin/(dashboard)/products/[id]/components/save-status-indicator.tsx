@@ -1,10 +1,11 @@
 'use client';
 
-import { type FC, useEffect } from 'react';
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
-import { Button } from '@/components/ui/button';
-import type { SaveStatus } from '@/app/[locale]/admin/(dashboard)/products/[id]/types';
 import { CheckCircle, AlertCircle, Save, Dot, Upload } from 'lucide-react';
+import { type FC } from 'react';
+
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+import type { SaveStatus } from '@/app/[locale]/admin/(dashboard)/products/[id]/types';
+import { Button } from '@/components/ui/button';
 
 
 type SaveStatusIndicatorProps = {
@@ -93,7 +94,7 @@ export const SaveStatusIndicator: FC<SaveStatusIndicatorProps> = ({ saveStatus, 
         config.bgColor,
         config.color
       )}>
-        {Icon && <Icon size={12} className="shrink-0" />} 
+        {Icon && <Icon className="shrink-0" size={12} />} 
         <span className="hidden sm:inline truncate">
           {saveStatus.count && saveStatus.count > 0 
             ? `${saveStatus.count} modification${saveStatus.count > 1 ? 's' : ''}`
@@ -102,12 +103,12 @@ export const SaveStatusIndicator: FC<SaveStatusIndicatorProps> = ({ saveStatus, 
         </span>
         {saveStatus.count && saveStatus.count > 0 && onSaveAll && (
           <Button
+            className="ml-1 px-1.5 py-0.5 h-5 text-xs hover:bg-amber-100"
             size="sm"
             variant="ghost"
             onClick={onSaveAll}
-            className="ml-1 px-1.5 py-0.5 h-5 text-xs hover:bg-amber-100"
           >
-            <Save size={10} className="mr-0.5" />
+            <Save className="mr-0.5" size={10} />
             <span className="hidden md:inline">Sauvegarder</span>
           </Button>
         )}

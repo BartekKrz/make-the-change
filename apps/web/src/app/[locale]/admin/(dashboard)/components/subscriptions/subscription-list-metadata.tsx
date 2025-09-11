@@ -1,7 +1,7 @@
 'use client'
 import { User, Settings, Euro, Calendar } from 'lucide-react'
-import { formatCurrency } from '@/app/[locale]/admin/(dashboard)/components/ui/format-utils'
 import { type FC } from 'react'
+
 import type { Subscription } from '@/lib/types/subscription'
 
 type SubscriptionListMetadataProps = {

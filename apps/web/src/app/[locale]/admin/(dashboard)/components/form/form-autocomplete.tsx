@@ -1,8 +1,9 @@
 "use client"
 
-import { useFieldContext, useFieldErrors } from './form-context'
 import { SingleAutocomplete } from '@/app/[locale]/admin/(dashboard)/components/ui/single-autocomplete'
 import { TagsAutocomplete } from '@/app/[locale]/admin/(dashboard)/components/ui/tags-autocomplete'
+
+import { useFieldContext, useFieldErrors } from './form-context'
 
 export type FormAutocompleteProps = {
   mode?: 'single' | 'tags'
@@ -25,41 +26,41 @@ export const FormAutocomplete = ({
   allowCreate = true,
   maxTags = 10,
 }: FormAutocompleteProps) => {
+  // Always call hooks at the top level
+  const fieldSingle = useFieldContext<string | undefined>()
+  const fieldTags = useFieldContext<string[]>()
+  const errors = useFieldErrors()
+  const hasError = errors.length > 0
+
   if (mode === 'tags') {
-    const field = useFieldContext<string[]>()
-    const value = field.state.value ?? []
-    const errors = useFieldErrors()
-    const hasError = errors.length > 0
+    const value = fieldTags.state.value ?? []
     return (
       <div className="space-y-1">
         <TagsAutocomplete
-          value={value}
-          onChange={(tags) => field.handleChange(tags)}
-          suggestions={suggestions}
-          placeholder={placeholder}
-          maxTags={maxTags}
-          disabled={disabled}
           className={className}
+          disabled={disabled}
+          maxTags={maxTags}
+          placeholder={placeholder}
+          suggestions={suggestions}
+          value={value}
+          onChange={(tags) => fieldTags.handleChange(tags)}
         />
         {hasError && errors[0] && <p className="text-sm text-red-500">{errors[0]}</p>}
       </div>
     )
   }
 
-  const field = useFieldContext<string | undefined>()
-  const value = field.state.value ?? ''
-  const errors = useFieldErrors()
-  const hasError = errors.length > 0
+  const value = fieldSingle.state.value ?? ''
   return (
     <div className="space-y-1">
       <SingleAutocomplete
-        value={value}
-        onChange={(v) => field.handleChange(v)}
-        suggestions={suggestions}
-        placeholder={placeholder}
         allowCreate={allowCreate}
-        disabled={disabled}
         className={className}
+        disabled={disabled}
+        placeholder={placeholder}
+        suggestions={suggestions}
+        value={value}
+        onChange={(v) => fieldSingle.handleChange(v)}
       />
       {hasError && errors[0] && <p className="text-sm text-red-500">{errors[0]}</p>}
     </div>

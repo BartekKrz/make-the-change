@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { type FC } from 'react';
-import { PartnerDetailLayout } from '@/app/[locale]/admin/(dashboard)/partners/[id]/components/partner-detail-layout';
-import { PartnerCompactHeader } from '@/app/[locale]/admin/(dashboard)/partners/[id]/components/partner-compact-header';
-import { PartnerDetailsEditor } from '@/app/[locale]/admin/(dashboard)/partners/[id]/components/partner-details-editor';
+
 import { PartnerBreadcrumbs } from '@/app/[locale]/admin/(dashboard)/partners/[id]/components/partner-breadcrumbs';
-import { PartnerFormData } from '@make-the-change/api/validators/partner';
+import { PartnerCompactHeader } from '@/app/[locale]/admin/(dashboard)/partners/[id]/components/partner-compact-header';
+import { PartnerDetailLayout } from '@/app/[locale]/admin/(dashboard)/partners/[id]/components/partner-detail-layout';
+import { PartnerDetailsEditor } from '@/app/[locale]/admin/(dashboard)/partners/[id]/components/partner-details-editor';
+
+import type { PartnerFormData } from '@make-the-change/api/validators/partner';
 
 
 type PartnerDetailControllerProps = {
@@ -45,26 +47,26 @@ export const PartnerDetailController: FC<PartnerDetailControllerProps> = ({
 
   return (
     <PartnerDetailLayout
+      toolbar={<div />}
+      content={
+        <PartnerDetailsEditor
+          isEditing={isEditing}
+          isSaving={isSaving}
+          partnerData={partnerData}
+          onSave={handleSave}
+        />
+      }
       header={
         <>
           <PartnerBreadcrumbs partnerData={partnerData} />
           <PartnerCompactHeader
-            partnerData={partnerData}
             isEditing={isEditing}
-            onEditToggle={setIsEditing}
-            onSave={() => document.getElementById('partner-editor-form')?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))}
             isSaving={isSaving}
+            partnerData={partnerData}
+            onEditToggle={setIsEditing}
+            onSave={() => document.querySelector('#partner-editor-form')?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))}
           />
         </>
-      }
-      toolbar={<div />}
-      content={
-        <PartnerDetailsEditor
-          partnerData={partnerData}
-          isEditing={isEditing}
-          isSaving={isSaving}
-          onSave={handleSave}
-        />
       }
     />
   );

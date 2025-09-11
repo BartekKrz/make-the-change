@@ -1,9 +1,12 @@
-import type { FC } from 'react';
-import { useState } from 'react';
-import { ImageUploader } from './image-uploader';
-import { cn } from '@/lib/utils';
 import { X, Upload } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
+
+import { cn } from '@/lib/utils';
+
+import { ImageUploader } from './image-uploader';
+
+import type { FC } from 'react';
 
 type MultiImageUploaderProps =  {
   currentImages?: string[];
@@ -64,10 +67,10 @@ export const MultiImageUploader: FC<MultiImageUploaderProps> = ({
       {canUploadMore && (
         <div className="border-2 border-dashed border-muted-foreground/25 rounded-xl p-8 text-center hover:border-primary/50 transition-colors">
           <ImageUploader
-            onImageSelect={handleImageSelect}
-            width="w-full"
-            height="h-48"
             disabled={disabled || uploadingCount > 0}
+            height="h-48"
+            width="w-full"
+            onImageSelect={handleImageSelect}
           />
         </div>
       )}
@@ -79,19 +82,19 @@ export const MultiImageUploader: FC<MultiImageUploaderProps> = ({
             <div key={index} className="relative group">
               <div className="aspect-square rounded-lg overflow-hidden bg-muted">
                 <Image
-                  src={imageUrl}
                   alt={`Image ${index + 1}`}
-                  width={300}
-                  height={300}
                   className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                  height={300}
+                  src={imageUrl}
+                  width={300}
                 />
               </div>
               
               {!disabled && (
                 <button
+                  className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
                   type="button"
                   onClick={() => handleImageRemove(index)}
-                  className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
                 >
                   <X className="h-4 w-4" />
                 </button>

@@ -1,8 +1,9 @@
 'use client';
 
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+
 import type { FC } from 'react';
 
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 
 export type FieldErrorProps = {
   errors?: string[];

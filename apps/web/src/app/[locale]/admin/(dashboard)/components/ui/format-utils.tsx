@@ -39,5 +39,5 @@ export const formatName = (firstName?: string, lastName?: string) => {
 export const truncateText = (text: string, maxLength: number = 50) => {
   if (!text) return ''
   if (text.length <= maxLength) return text
-  return `${text.substring(0, maxLength)}...`
+  return `${text.slice(0, Math.max(0, maxLength))}...`
 }

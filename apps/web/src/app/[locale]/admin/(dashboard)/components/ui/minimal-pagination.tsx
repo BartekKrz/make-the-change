@@ -1,8 +1,8 @@
 'use client';
 
-import { type FC } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { type FC } from 'react';
 
 type PaginationData = {
   currentPage: number;
@@ -71,10 +71,10 @@ export const MinimalPagination: FC<MinimalPaginationProps> = ({ pagination, clas
       <div className='flex items-center gap-1'>
         {}
         <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className='group cursor-pointer flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:pointer-events-none transition-colors rounded-md hover:bg-muted/40'
           aria-label='Page précédente'
+          className='group cursor-pointer flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:pointer-events-none transition-colors rounded-md hover:bg-muted/40'
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
         >
           <ChevronLeft className='h-4 w-4' />
           <span className='hidden sm:inline'>Précédent</span>
@@ -90,14 +90,14 @@ export const MinimalPagination: FC<MinimalPaginationProps> = ({ pagination, clas
             ) : (
               <button
                 key={page}
-                onClick={() => handlePageChange(page)}
+                aria-current={currentPage === page ? 'page' : undefined}
+                aria-label={`Page ${page}`}
                 className={`h-8 cursor-pointer w-8 rounded-md text-sm font-medium transition-all duration-200 relative overflow-hidden ${
                   currentPage === page
                     ? 'bg-gradient-to-br from-primary via-primary/90 to-orange-500 text-white shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:scale-105'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
                 }`}
-                aria-label={`Page ${page}`}
-                aria-current={currentPage === page ? 'page' : undefined}
+                onClick={() => handlePageChange(page)}
               >
                 {}
                 {currentPage === page && (
@@ -116,10 +116,10 @@ export const MinimalPagination: FC<MinimalPaginationProps> = ({ pagination, clas
 
         {}
         <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className='group cursor-pointer flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:pointer-events-none transition-colors rounded-md hover:bg-muted/40'
           aria-label='Page suivante'
+          className='group cursor-pointer flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:pointer-events-none transition-colors rounded-md hover:bg-muted/40'
+          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
         >
           <span className='hidden sm:inline'>Suivant</span>
           <ChevronRight className='h-4 w-4' />

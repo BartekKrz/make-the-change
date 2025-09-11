@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, type FC } from 'react'
 import { useRouter } from 'next/navigation'
+import { useState, type FC } from 'react'
+
+import { AdminPageContainer } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-container'
+import { AdminPageHeader } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-header'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
 import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { AdminPageContainer } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-container'
-import { AdminPageHeader } from '@/app/[locale]/admin/(dashboard)/components/layout/admin-page-header'
 import { useToast } from '@/hooks/use-toast'
 import { trpc } from '@/lib/trpc'
 
@@ -51,7 +52,7 @@ const NewSubscriptionPage: FC = () => {
       ...prev,
       subscription_tier: tier,
       amount_eur: tier === 'ambassadeur_standard' ? (prev.billing_frequency === 'monthly' ? 18 : 180) : (prev.billing_frequency === 'monthly' ? 32 : 320),
-      points_total: tier === 'ambassadeur_standard' ? (prev.billing_frequency === 'monthly' ? 1800 : 18000) : (prev.billing_frequency === 'monthly' ? 3200 : 32000),
+      points_total: tier === 'ambassadeur_standard' ? (prev.billing_frequency === 'monthly' ? 1800 : 18_000) : (prev.billing_frequency === 'monthly' ? 3200 : 32_000),
       bonus_percentage: tier === 'ambassadeur_standard' ? 30 : 50
     }))
   }
@@ -61,18 +62,18 @@ const NewSubscriptionPage: FC = () => {
       ...prev,
       billing_frequency: frequency,
       amount_eur: prev.subscription_tier === 'ambassadeur_standard' ? (frequency === 'monthly' ? 18 : 180) : (frequency === 'monthly' ? 32 : 320),
-      points_total: prev.subscription_tier === 'ambassadeur_standard' ? (frequency === 'monthly' ? 1800 : 18000) : (frequency === 'monthly' ? 3200 : 32000)
+      points_total: prev.subscription_tier === 'ambassadeur_standard' ? (frequency === 'monthly' ? 1800 : 18_000) : (frequency === 'monthly' ? 3200 : 32_000)
     }))
   }
 
   return (
     <AdminPageContainer>
       <AdminPageHeader
-        title="Nouvel Abonnement"
         description="Créer un nouvel abonnement ambassadeur"
+        title="Nouvel Abonnement"
       />
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form className="space-y-6" onSubmit={handleSubmit}>
         <Card>
           <CardHeader>
             <CardTitle>Informations de l&apos;abonnement</CardTitle>
@@ -82,10 +83,10 @@ const NewSubscriptionPage: FC = () => {
             <div>
               <label className="text-sm font-medium">ID Utilisateur</label>
               <Input
+                required
+                placeholder="UUID de l'utilisateur"
                 value={formData.user_id}
                 onChange={(e) => setFormData(prev => ({ ...prev, user_id: e.target.value }))}
-                placeholder="UUID de l'utilisateur"
-                required
               />
             </div>
 
@@ -93,10 +94,10 @@ const NewSubscriptionPage: FC = () => {
               <div>
                 <label className="text-sm font-medium">Niveau d&apos;abonnement</label>
                 <select 
+                  required
+                  className="w-full px-3 py-2 border border-input bg-background rounded-md"
                   value={formData.subscription_tier}
                   onChange={(e) => handleTierChange(e.target.value as any)}
-                  className="w-full px-3 py-2 border border-input bg-background rounded-md"
-                  required
                 >
                   <option value="ambassadeur_standard">Standard</option>
                   <option value="ambassadeur_premium">Premium</option>
@@ -106,10 +107,10 @@ const NewSubscriptionPage: FC = () => {
               <div>
                 <label className="text-sm font-medium">Fréquence de facturation</label>
                 <select 
+                  required
+                  className="w-full px-3 py-2 border border-input bg-background rounded-md"
                   value={formData.billing_frequency}
                   onChange={(e) => handleFrequencyChange(e.target.value as any)}
-                  className="w-full px-3 py-2 border border-input bg-background rounded-md"
-                  required
                 >
                   <option value="monthly">Mensuelle</option>
                   <option value="annual">Annuelle</option>
@@ -121,32 +122,32 @@ const NewSubscriptionPage: FC = () => {
               <div>
                 <label className="text-sm font-medium">Montant (€)</label>
                 <Input
+                  required
                   type="number"
                   value={formData.amount_eur}
                   onChange={(e) => setFormData(prev => ({ ...prev, amount_eur: Number(e.target.value) }))}
-                  required
                 />
               </div>
 
               <div>
                 <label className="text-sm font-medium">Points total</label>
                 <Input
+                  required
                   type="number"
                   value={formData.points_total}
                   onChange={(e) => setFormData(prev => ({ ...prev, points_total: Number(e.target.value) }))}
-                  required
                 />
               </div>
 
               <div>
                 <label className="text-sm font-medium">Bonus (%)</label>
                 <Input
+                  required
+                  max="100"
+                  min="0"
                   type="number"
                   value={formData.bonus_percentage}
                   onChange={(e) => setFormData(prev => ({ ...prev, bonus_percentage: Number(e.target.value) }))}
-                  min="0"
-                  max="100"
-                  required
                 />
               </div>
             </div>
@@ -154,17 +155,17 @@ const NewSubscriptionPage: FC = () => {
             <div>
               <label className="text-sm font-medium">Date de début</label>
               <Input
+                required
                 type="date"
                 value={formData.start_date}
                 onChange={(e) => setFormData(prev => ({ ...prev, start_date: e.target.value }))}
-                required
               />
             </div>
           </CardContent>
         </Card>
 
         <div className="flex items-center gap-4">
-          <Button type="submit" disabled={createSubscription.isPending}>
+          <Button disabled={createSubscription.isPending} type="submit">
             {createSubscription.isPending ? 'Création...' : 'Créer l&apos;abonnement'}
           </Button>
           <Button type="button" variant="outline" onClick={() => router.push('/admin/subscriptions')}>

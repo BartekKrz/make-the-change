@@ -1,8 +1,9 @@
 'use client';
 
-import { type FC, useState } from 'react';
-import Image from 'next/image';
 import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Check, X } from 'lucide-react';
+import Image from 'next/image';
+import { type FC, useState } from 'react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 
 type MobileReorderModeProps = {
@@ -25,18 +26,22 @@ export const MobileReorderMode: FC<MobileReorderModeProps> = ({
     let newIndex = index;
 
     switch (direction) {
-      case 'up':
+      case 'up': {
         newIndex = Math.max(0, index - 1);
         break;
-      case 'down':
+      }
+      case 'down': {
         newIndex = Math.min(newImages.length - 1, index + 1);
         break;
-      case 'left':
+      }
+      case 'left': {
         newIndex = Math.max(0, index - 1);
         break;
-      case 'right':
+      }
+      case 'right': {
         newIndex = Math.min(newImages.length - 1, index + 1);
         break;
+      }
     }
 
     if (newIndex !== index) {
@@ -57,16 +62,16 @@ export const MobileReorderMode: FC<MobileReorderModeProps> = ({
         <h3 className="text-lg font-semibold">Réorganiser les images</h3>
         <div className="flex gap-2">
           <button
-            onClick={handleSave}
             className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
             title="Sauvegarder"
+            onClick={handleSave}
           >
             <Check className="w-4 h-4" />
           </button>
           <button
-            onClick={onCancel}
             className="p-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
             title="Annuler"
+            onClick={onCancel}
           >
             <X className="w-4 h-4" />
           </button>
@@ -83,10 +88,10 @@ export const MobileReorderMode: FC<MobileReorderModeProps> = ({
             {/* Image miniature */}
             <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border">
               <Image
-                src={imageUrl}
-                alt={`Image ${index + 1}`}
                 fill
+                alt={`Image ${index + 1}`}
                 className="object-cover"
+                src={imageUrl}
                 unoptimized={imageUrl.includes('unsplash')}
               />
             </div>
@@ -101,54 +106,54 @@ export const MobileReorderMode: FC<MobileReorderModeProps> = ({
               {/* Boutons flèches pour mobile */}
               <div className="grid grid-cols-2 gap-1">
                 <button
-                  onClick={() => moveImage(index, 'up')}
                   disabled={index === 0}
+                  title="Déplacer vers le haut"
                   className={cn(
                     "p-2 rounded border transition-colors",
                     index === 0
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : "bg-white hover:bg-blue-50 text-blue-600 border-blue-200"
                   )}
-                  title="Déplacer vers le haut"
+                  onClick={() => moveImage(index, 'up')}
                 >
                   <ArrowUp className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => moveImage(index, 'left')}
                   disabled={index === 0}
+                  title="Déplacer vers la gauche"
                   className={cn(
                     "p-2 rounded border transition-colors",
                     index === 0
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : "bg-white hover:bg-blue-50 text-blue-600 border-blue-200"
                   )}
-                  title="Déplacer vers la gauche"
+                  onClick={() => moveImage(index, 'left')}
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => moveImage(index, 'down')}
                   disabled={index === currentImages.length - 1}
+                  title="Déplacer vers le bas"
                   className={cn(
                     "p-2 rounded border transition-colors",
                     index === currentImages.length - 1
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : "bg-white hover:bg-blue-50 text-blue-600 border-blue-200"
                   )}
-                  title="Déplacer vers le bas"
+                  onClick={() => moveImage(index, 'down')}
                 >
                   <ArrowDown className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => moveImage(index, 'right')}
                   disabled={index === currentImages.length - 1}
+                  title="Déplacer vers la droite"
                   className={cn(
                     "p-2 rounded border transition-colors",
                     index === currentImages.length - 1
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : "bg-white hover:bg-blue-50 text-blue-600 border-blue-200"
                   )}
-                  title="Déplacer vers la droite"
+                  onClick={() => moveImage(index, 'right')}
                 >
                   <ArrowRight className="w-4 h-4" />
                 </button>

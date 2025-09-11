@@ -1,9 +1,10 @@
 
 'use server';
 
-import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
+
 import { createSupabaseServer } from '@/supabase/server';
 
 const projectSchema = z.object({
@@ -100,7 +101,7 @@ export async function updateProject(id: string, prevState: ProjectFormState, for
   return {
     success: true,
     message: "Projet mis à jour avec succès.",
-    id: id,
+    id,
   }
 }
 

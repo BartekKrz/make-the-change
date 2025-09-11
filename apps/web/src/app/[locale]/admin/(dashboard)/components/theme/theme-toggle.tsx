@@ -1,10 +1,12 @@
 'use client';
 
 import * as Switch from '@radix-ui/react-switch';
-import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+import { useTheme } from 'next-themes';
 import { useEffect, useState, type FC } from 'react';
+
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+
 
 export const ThemeToggle: FC = () => {
   const { theme, setTheme } = useTheme();
@@ -15,16 +17,16 @@ export const ThemeToggle: FC = () => {
 
     // Cleanup old theme keys with better error handling
     const oldThemeKeys = ['theme', 'next-themes-theme'];
-    oldThemeKeys.forEach((key) => {
+    for (const key of oldThemeKeys) {
       try {
         if (localStorage.getItem(key) && key !== 'sextant-theme') {
           localStorage.removeItem(key);
         }
-      } catch (error) {
+      } catch {
         // Silently handle localStorage errors (e.g., in incognito mode)
         console.warn(`Failed to remove old theme key: ${key}`);
       }
-    });
+    }
   }, []);
 
   if (!mounted) {
@@ -60,8 +62,8 @@ export const ThemeToggle: FC = () => {
 
       {/* Enhanced Switch with design system */}
       <Switch.Root
+        aria-label='Basculer entre le mode clair et sombre'
         checked={isDark}
-        onCheckedChange={toggleTheme}
         className={cn(
           'relative cursor-pointer inline-flex h-6 w-11 items-center',
           'rounded-full transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]',
@@ -86,7 +88,7 @@ export const ThemeToggle: FC = () => {
           'data-[state=checked]:hover:bg-primary/90 data-[state=checked]:hover:shadow-lg',
           'data-[state=unchecked]:hover:bg-muted/80 data-[state=unchecked]:hover:border-border/60'
         )}
-        aria-label='Basculer entre le mode clair et sombre'
+        onCheckedChange={toggleTheme}
       >
         <Switch.Thumb
           className={cn(

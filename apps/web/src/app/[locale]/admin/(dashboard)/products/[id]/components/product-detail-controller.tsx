@@ -2,12 +2,13 @@
 
 import { useReducer, useCallback, useMemo } from 'react';
 import { type FC } from 'react';
-import { ProductDetailLayout } from '@/app/[locale]/admin/(dashboard)/products/[id]/components/product-detail-layout';
-import { ProductCompactHeader } from '@/app/[locale]/admin/(dashboard)/products/[id]/components/product-compact-header';
-import { ProductDetailsEditor } from '@/app/[locale]/admin/(dashboard)/products/[id]/components/product-details-editor';
+
 import { ProductBreadcrumbs } from '@/app/[locale]/admin/(dashboard)/products/[id]/components/product-breadcrumbs';
-import type { ProductFormData } from '@/lib/validators/product';
+import { ProductCompactHeader } from '@/app/[locale]/admin/(dashboard)/products/[id]/components/product-compact-header';
+import { ProductDetailLayout } from '@/app/[locale]/admin/(dashboard)/products/[id]/components/product-detail-layout';
+import { ProductDetailsEditor } from '@/app/[locale]/admin/(dashboard)/products/[id]/components/product-details-editor';
 import type { SaveStatus } from '@/app/[locale]/admin/(dashboard)/products/[id]/types';
+import type { ProductFormData } from '@/lib/validators/product';
 
 type ProductDetailControllerProps = {
   productData: ProductFormData & { id: string };
@@ -30,7 +31,7 @@ type FormAction =
 
 const formReducer = (state: FormState, action: FormAction): FormState => {
   switch (action.type) {
-    case 'FIELD_CHANGE':
+    case 'FIELD_CHANGE': {
       return {
         ...state,
         pendingChanges: {
@@ -39,21 +40,23 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
         },
         saveError: null
       };
+    }
     
-    case 'SAVE_START':
+    case 'SAVE_START': {
       return {
         ...state,
         isSaving: true,
         saveError: null
       };
+    }
     
-    case 'SAVE_SUCCESS':
+    case 'SAVE_SUCCESS': {
       const updatedChanges = { ...state.pendingChanges };
-      action.savedFields.forEach(field => {
+      for (const field of action.savedFields) {
         if (field in updatedChanges) {
           delete updatedChanges[field as keyof Partial<ProductFormData>];
         }
-      });
+      }
       return {
         ...state,
         isSaving: false,
@@ -61,22 +64,26 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
         lastSaved: new Date(),
         saveError: null
       };
+    }
     
-    case 'SAVE_ERROR':
+    case 'SAVE_ERROR': {
       return {
         ...state,
         isSaving: false,
         saveError: action.error
       };
+    }
     
-    case 'CLEAR_ERROR':
+    case 'CLEAR_ERROR': {
       return {
         ...state,
         saveError: null
       };
+    }
     
-    default:
+    default: {
       return state;
+    }
   }
 };
 
@@ -211,6 +218,16 @@ export const ProductDetailController: FC<ProductDetailControllerProps> = ({
 
   return (
     <ProductDetailLayout
+      toolbar={<div />}
+      content={
+        <ProductDetailsEditor
+          pendingChanges={state.pendingChanges}
+          productData={currentData}
+          saveStatus={saveStatus}
+          onFieldChange={handleFieldChange}
+          onSaveAll={saveAllPending}
+        />
+      }
       header={
         <>
           <ProductBreadcrumbs productData={productData} />
@@ -221,16 +238,6 @@ export const ProductDetailController: FC<ProductDetailControllerProps> = ({
             onStatusChange={handleStatusChange}
           />
         </>
-      }
-      toolbar={<div />}
-      content={
-        <ProductDetailsEditor
-          productData={currentData}
-          onFieldChange={handleFieldChange}
-          saveStatus={saveStatus}
-          pendingChanges={state.pendingChanges}
-          onSaveAll={saveAllPending}
-        />
       }
     />
   );

@@ -1,7 +1,8 @@
 'use client';
 
-import { forwardRef, type ComponentPropsWithoutRef, type ElementRef, useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { forwardRef, type ComponentPropsWithoutRef, type ElementRef, useState } from 'react';
+
 import { cn } from '@/lib/utils';
 
 const Drawer = DialogPrimitive.Root;
@@ -84,9 +85,9 @@ const DrawerContent = forwardRef<
           transform: translateY > 0 ? `translateY(${translateY}px)` : undefined,
           transition: translateY > 0 ? 'none' : undefined,
         }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
+        onTouchStart={handleTouchStart}
         {...props}
       >
         {/* Handle visuel pour indiquer qu'on peut swiper */}

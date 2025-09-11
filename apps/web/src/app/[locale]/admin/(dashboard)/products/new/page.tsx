@@ -1,22 +1,24 @@
 "use client"
 
-import { type FC } from 'react'
+import { ArrowLeft, Package, Plus } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { trpc } from '@/lib/trpc'
+import { type FC } from 'react'
+
+import { Badge as _Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
+import { useAppForm, FormInput, FormTextArea, FormSelect, FormCheckbox } from '@/components/form'
+import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
+import { generateSlug as _generateSlug } from '@/lib/form-utils'
+import { trpc } from '@/lib/trpc'
 import {
   defaultProductValues,
   tierLabels,
   fulfillmentMethodLabels,
   type ProductFormData
 } from '@/lib/validators/product'
-import { generateSlug } from '@/lib/form-utils'
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
-import { useAppForm, FormInput, FormTextArea, FormSelect, FormCheckbox } from '@/components/form'
-import { ArrowLeft, Package, Plus } from 'lucide-react'
-import Link from 'next/link'
+
 
 const NewProductPage: FC = () => {
   const router = useRouter()
@@ -33,7 +35,7 @@ const NewProductPage: FC = () => {
       utils.admin.products.list.invalidate()
       router.push(`/admin/products/${data.id}`)
     },
-    onError: (error, vars, ctx) => {
+    onError: (_error, _vars, ctx) => {
       if (ctx?.prevData) {
         utils.admin.products.list.setData(undefined, ctx.prevData)
       }
@@ -70,8 +72,8 @@ const NewProductPage: FC = () => {
       {}
       <div className="flex items-center gap-4">
         <Link
-          href="/admin/products"
           className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          href="/admin/products"
         >
           <ArrowLeft className="h-4 w-4" />
           Retour aux produits
@@ -84,11 +86,11 @@ const NewProductPage: FC = () => {
       </div>
 
       {}
-      <form onSubmit={(e) => {
+      <form className="space-y-6" onSubmit={(e) => {
         e.preventDefault()
         e.stopPropagation()
         form.handleSubmit()
-      }} className="space-y-6">
+      }}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {}
           <Card>
@@ -102,9 +104,9 @@ const NewProductPage: FC = () => {
               <form.Field name="name">
                 {() => (
                   <FormInput
+                    required
                     label="Nom du produit"
                     placeholder="Miel de Lavande Bio"
-                    required
                   />
                 )}
               </form.Field>
@@ -112,10 +114,10 @@ const NewProductPage: FC = () => {
               <form.Field name="slug">
                 {() => (
                   <FormInput
-                    label="Slug (URL)"
-                    placeholder="miel-lavande-bio"
                     required
                     description="Utilisé dans l'URL du produit"
+                    label="Slug (URL)"
+                    placeholder="miel-lavande-bio"
                   />
                 )}
               </form.Field>
@@ -150,11 +152,11 @@ const NewProductPage: FC = () => {
               <form.Field name="price_points">
                 {() => (
                   <FormInput
+                    required
                     label="Prix en points"
-                    type="number"
                     min="1"
                     placeholder="450"
-                    required
+                    type="number"
                   />
                 )}
               </form.Field>
@@ -163,9 +165,9 @@ const NewProductPage: FC = () => {
                 {() => (
                   <FormInput
                     label="Stock initial"
-                    type="number"
                     min="0"
                     placeholder="25"
+                    type="number"
                   />
                 )}
               </form.Field>
@@ -219,10 +221,10 @@ const NewProductPage: FC = () => {
               <form.Field name="is_active">
                 {() => (
                   <FormCheckbox
-                    label="Produit actif"
                     description="Si coché, le produit sera visible et disponible à la vente."
-                    trueBadge="Actif"
                     falseBadge="Inactif"
+                    label="Produit actif"
+                    trueBadge="Actif"
                   />
                 )}
               </form.Field>
@@ -230,10 +232,10 @@ const NewProductPage: FC = () => {
               <form.Field name="featured">
                 {() => (
                   <FormCheckbox
-                    label="Produit vedette"
                     description="Les produits vedettes peuvent être mis en avant sur certaines pages."
-                    trueBadge="Vedette"
                     falseBadge="Standard"
+                    label="Produit vedette"
+                    trueBadge="Vedette"
                   />
                 )}
               </form.Field>
@@ -252,9 +254,9 @@ const NewProductPage: FC = () => {
           </Button>
 
           <Button
-            type="submit"
-            disabled={!form.state.canSubmit || form.state.isSubmitting}
             className="flex items-center gap-2"
+            disabled={!form.state.canSubmit || form.state.isSubmitting}
+            type="submit"
           >
             {form.state.isSubmitting ? (
               <>

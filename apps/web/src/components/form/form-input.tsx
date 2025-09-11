@@ -6,7 +6,6 @@ import { Input, type InputProps } from '@/app/[locale]/admin/(dashboard)/compone
 import { FormField, type FormFieldProps } from '@/components/form/form-field';
 
 import type { FieldApi } from '@tanstack/react-form';
-
 import type { ForwardedRef } from 'react';
 
 type FormInputProps = FormFieldProps &
@@ -27,21 +26,21 @@ const FormInputComponent = (
 
   return (
     <FormField
-      label={label}
-      description={description}
       className={className}
-      required={required}
+      description={description}
       error={field.state.meta.errors?.[0]}
-      isValidating={field.state.meta.isValidating}
       fieldId={fieldId}
+      isValidating={field.state.meta.isValidating}
+      label={label}
+      required={required}
     >
       <Input
         ref={ref}
         id={fieldId}
         name={fieldName}
         value={field.state.value ?? ''}
-        onChange={(e) => field.handleChange(e.target.value)}
         onBlur={field.handleBlur}
+        onChange={(e) => field.handleChange(e.target.value)}
         {...inputProps}
       />
     </FormField>

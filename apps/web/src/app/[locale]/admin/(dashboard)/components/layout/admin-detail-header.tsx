@@ -1,9 +1,12 @@
 'use client';
 
-import type { FC, ReactNode } from 'react';
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
-import Image from 'next/image';
 import { Package } from 'lucide-react';
+import Image from 'next/image';
+
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+
+import type { FC, ReactNode } from 'react';
+
 
 export type BreadcrumbItem = {
   href?: string;
@@ -40,14 +43,14 @@ export const AdminDetailHeader: FC<AdminDetailHeaderProps> = ({
           {breadcrumbs.map((item, index) => (
             <div key={index} className="flex items-center gap-2">
               {index > 0 && (
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
                 </svg>
               )}
               {item.href ? (
                 <a
-                  href={item.href}
                   className="flex items-center gap-1 hover:text-foreground transition-colors"
+                  href={item.href}
                 >
                   {item.icon && <item.icon className="h-4 w-4" />}
                   <span>{item.label}</span>
@@ -73,11 +76,11 @@ export const AdminDetailHeader: FC<AdminDetailHeaderProps> = ({
           {productImage ? (
             <div className="relative w-12 h-12 md:w-16 md:h-16 flex-shrink-0 rounded-xl overflow-hidden border border-primary/20 bg-gradient-to-br from-primary/10 to-orange-500/10">
               <Image
-                src={productImage}
-                alt={title || 'Product image'}
                 fill
+                alt={title || 'Product image'}
                 className="object-cover"
                 sizes="(max-width: 768px) 48px, 64px"
+                src={productImage}
               />
             </div>
           ) : title && (
@@ -192,8 +195,8 @@ export const AdminDetailActions: FC<AdminDetailActionsProps> = ({
           </span>
           {saveStatus.type === 'error' && saveStatus.retryable && onSaveAll && (
             <button
-              onClick={onSaveAll}
               className="ml-1 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 underline"
+              onClick={onSaveAll}
             >
               Réessayer
             </button>
@@ -211,8 +214,8 @@ export const AdminDetailActions: FC<AdminDetailActionsProps> = ({
       {/* Cancel Button */}
       {onCancel && (
         <button
-          onClick={onCancel}
           className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors text-sm font-medium"
+          onClick={onCancel}
         >
           Annuler
         </button>
@@ -221,8 +224,8 @@ export const AdminDetailActions: FC<AdminDetailActionsProps> = ({
       {/* Delete Button */}
       {onDelete && (
         <button
-          onClick={onDelete}
           className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors text-sm font-medium"
+          onClick={onDelete}
         >
           Supprimer
         </button>

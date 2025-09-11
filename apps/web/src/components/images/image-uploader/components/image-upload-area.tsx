@@ -1,6 +1,7 @@
 import {  Images, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { type FC } from 'react';
+
+import { cn } from '@/lib/utils';
 
 type ImageUploadAreaProps = {
   onClick: () => void;
@@ -25,10 +26,9 @@ export const ImageUploadArea: FC<ImageUploadAreaProps> = ({
       isDragOver && 'bg-muted/30 scale-[1.02]',
       disabled && 'cursor-not-allowed opacity-50'
     )}
-    onClick={!disabled ? () => {
-      console.log('🖱️ [ImageUploadArea] Zone cliquée, disabled:', disabled);
+    onClick={disabled ? undefined : () => {
       onClick();
-    } : undefined}
+    }}
   >
     <div className={cn(
       'p-4 rounded-lg transition-all duration-300 ease-out',
@@ -60,9 +60,9 @@ export const ImageUploadArea: FC<ImageUploadAreaProps> = ({
       )}>
         {isUploading 
           ? 'Upload de l\'image en cours...' 
-          : isDragOver 
+          : (isDragOver 
             ? 'Déposer ici' 
-            : 'Ajouter des images'
+            : 'Ajouter des images')
         }
       </p>
     </div>

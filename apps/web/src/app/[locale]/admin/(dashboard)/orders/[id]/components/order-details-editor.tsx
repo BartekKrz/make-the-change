@@ -1,11 +1,13 @@
 'use client';
 
+import { User, Truck, Package } from 'lucide-react';
 import { useCallback } from 'react';
-import type { FC, PropsWithChildren } from 'react';
-import { User, Truck, Hash, Package } from 'lucide-react';
-import { TextArea } from '@/app/[locale]/admin/(dashboard)/components/ui/textarea';
-import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card';
+import { SimpleSelect } from '@/app/[locale]/admin/(dashboard)/components/ui/select';
+import { TextArea } from '@/app/[locale]/admin/(dashboard)/components/ui/textarea';
+
+import type { FC, PropsWithChildren } from 'react';
 
 type OrderData = {
   id: string;
@@ -49,8 +51,8 @@ export const OrderDetailsEditor: FC<OrderDetailsEditorProps> = ({ orderData, isE
           <Card>
             <CardHeader><CardTitle className='flex items-center gap-3 text-lg'><Truck className='h-5 w-5 text-primary' />Livraison</CardTitle></CardHeader>
             <CardContent className='space-y-3'>
-              <div><label className='block text-sm font-medium mb-1'>Statut</label><SimpleSelect value={orderData.status} onValueChange={(v) => handleChange('status', v)} options={[{ value: 'pending', label: 'En attente' }, { value: 'shipped', label: 'Expédiée' }, { value: 'delivered', label: 'Livrée' }, { value: 'cancelled', label: 'Annulée' }]} disabled={!isEditing} /></div>
-              <div><label className='block text-sm font-medium mb-1'>Adresse</label><TextArea value={orderData.shippingAddress} onChange={(e) => handleChange('shippingAddress', e.target.value)} placeholder='Adresse de livraison' disabled={!isEditing} className={!isEditing ? 'bg-muted/30' : ''} /></div>
+              <div><label className='block text-sm font-medium mb-1'>Statut</label><SimpleSelect disabled={!isEditing} options={[{ value: 'pending', label: 'En attente' }, { value: 'shipped', label: 'Expédiée' }, { value: 'delivered', label: 'Livrée' }, { value: 'cancelled', label: 'Annulée' }]} value={orderData.status} onValueChange={(v) => handleChange('status', v)} /></div>
+              <div><label className='block text-sm font-medium mb-1'>Adresse</label><TextArea className={isEditing ? '' : 'bg-muted/30'} disabled={!isEditing} placeholder='Adresse de livraison' value={orderData.shippingAddress} onChange={(e) => handleChange('shippingAddress', e.target.value)} /></div>
             </CardContent>
           </Card>
         </div>

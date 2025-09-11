@@ -1,7 +1,8 @@
 'use client';
 
-import { type FC } from 'react';
 import { User, Mail, Shield, Edit, X, Save } from 'lucide-react';
+import { type FC } from 'react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { Button } from '@/components/ui/button';
 
@@ -97,21 +98,21 @@ export const UserCompactHeader: FC<UserCompactHeaderProps> = ({
               {isEditing ? (
                 <div className='flex items-center gap-2'>
                   <Button
-                    variant='outline'
-                    size='sm'
-                    onClick={() => onEditToggle(false)}
-                    disabled={isSaving}
                     className='text-sm'
+                    disabled={isSaving}
+                    size='sm'
+                    variant='outline'
+                    onClick={() => onEditToggle(false)}
                   >
                     <X className='h-4 w-4 mr-1' />
                     Annuler
                   </Button>
                   <Button
-                    variant='default'
-                    size='sm'
-                    onClick={onSave}
-                    disabled={isSaving}
                     className='text-sm'
+                    disabled={isSaving}
+                    size='sm'
+                    variant='default'
+                    onClick={onSave}
                   >
                     <Save className='h-4 w-4 mr-1' />
                     {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
@@ -119,10 +120,10 @@ export const UserCompactHeader: FC<UserCompactHeaderProps> = ({
                 </div>
               ) : (
                 <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => onEditToggle(true)}
                   className='text-sm'
+                  size='sm'
+                  variant='outline'
+                  onClick={() => onEditToggle(true)}
                 >
                   <Edit className='h-4 w-4 mr-1' />
                   Modifier

@@ -1,9 +1,25 @@
 "use client"
 
 import { forwardRef, type ForwardedRef } from 'react'
+
 import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
 import { cn } from '@/lib/utils'
+
 import { useFieldContext } from './form-context'
+
+// Helper function extracted to outer scope for better performance
+const toErrorMessage = (u: unknown): string => {
+  if (typeof u === 'string') return u
+  if (typeof u === 'object' && u && 'message' in u) {
+    const msg = (u as { message?: unknown }).message
+    if (typeof msg === 'string') return msg
+  }
+  try {
+    return JSON.stringify(u)
+  } catch {
+    return String(u)
+  }
+}
 
 export type FormDateFieldProps = {
   label?: string
@@ -20,19 +36,7 @@ const FormDateFieldComponent = (
 ) => {
   const field = useFieldContext<string | undefined>()
   const value = field.state.value ?? ''
-  const toErrorMessage = (u: unknown): string => {
-    if (typeof u === 'string') return u
-    if (typeof u === 'object' && u && 'message' in u) {
-      const msg = (u as { message?: unknown }).message
-      if (typeof msg === 'string') return msg
-    }
-    try {
-      return JSON.stringify(u)
-    } catch {
-      return String(u)
-    }
-  }
-  const errors = ((field.state.meta.errors as unknown[]) ?? []).map(toErrorMessage).filter(Boolean)
+  const errors = ((field.state.meta.errors as unknown[]) ?? []).map((error) => toErrorMessage(error)).filter(Boolean)
   const hasError = errors.length > 0
 
   const handleChange = (s: string) => {
@@ -43,17 +47,17 @@ const FormDateFieldComponent = (
     <div className="space-y-1">
       <Input
         ref={ref}
+        max={max}
+        min={min}
+        placeholder={placeholder}
         type="date"
         value={value}
-        onChange={(e) => handleChange(e.target.value)}
-        onBlur={field.handleBlur}
-        placeholder={placeholder}
-        min={min}
-        max={max}
         className={cn(
           hasError && 'border-red-500 focus:border-red-500',
           className
         )}
+        onBlur={field.handleBlur}
+        onChange={(e) => handleChange(e.target.value)}
         {...props}
       />
       {hasError && errors[0] && (

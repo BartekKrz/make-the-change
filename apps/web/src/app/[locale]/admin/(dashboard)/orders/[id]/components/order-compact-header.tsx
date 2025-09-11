@@ -1,7 +1,8 @@
 'use client';
 
-import { type FC } from 'react';
 import { ShoppingCart, User, Calendar, DollarSign, Edit, X, Save } from 'lucide-react';
+import { type FC } from 'react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { Button } from '@/components/ui/button';
 
@@ -23,7 +24,7 @@ export const OrderCompactHeader: FC<OrderCompactHeaderProps> = ({ orderData, isE
         <div className='flex items-start md:items-center gap-3 md:gap-4 flex-1 min-w-0'>
           <div className='p-2 md:p-3 bg-gradient-to-br from-primary/20 to-orange-500/20 rounded-xl border border-primary/20 backdrop-blur-sm flex-shrink-0'><ShoppingCart className='h-5 w-5 md:h-6 md:w-6 text-primary' /></div>
           <div className='flex-1 min-w-0'>
-            <h1 className='text-lg md:text-2xl font-bold text-foreground leading-tight truncate mb-2 md:mb-2'>Commande #{orderData.id.substring(0, 8)}</h1>
+            <h1 className='text-lg md:text-2xl font-bold text-foreground leading-tight truncate mb-2 md:mb-2'>Commande #{orderData.id.slice(0, 8)}</h1>
             <div className='hidden md:flex items-center gap-4 flex-wrap'>
               <div className={cn('flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border', `bg-gradient-to-r ${statusInfo.bgClass} ${statusInfo.borderClass}`)}><div className={cn('w-2 h-2 rounded-full', statusInfo.color)} />{statusInfo.label}</div>
               <div className='flex items-center gap-2 px-3 py-1 bg-muted/40 rounded-full text-xs font-medium'><User className='h-3 w-3' />{orderData.customerName}</div>
@@ -36,10 +37,10 @@ export const OrderCompactHeader: FC<OrderCompactHeaderProps> = ({ orderData, isE
           {onEditToggle && (
             <>{isEditing ? (
                 <div className='flex items-center gap-2'>
-                  <Button variant='outline' size='sm' onClick={() => onEditToggle(false)} disabled={isSaving} className='text-sm'><X className='h-4 w-4 mr-1' />Annuler</Button>
-                  <Button variant='default' size='sm' onClick={onSave} disabled={isSaving} className='text-sm'><Save className='h-4 w-4 mr-1' />{isSaving ? 'Sauvegarde...' : 'Sauvegarder'}</Button>
+                  <Button className='text-sm' disabled={isSaving} size='sm' variant='outline' onClick={() => onEditToggle(false)}><X className='h-4 w-4 mr-1' />Annuler</Button>
+                  <Button className='text-sm' disabled={isSaving} size='sm' variant='default' onClick={onSave}><Save className='h-4 w-4 mr-1' />{isSaving ? 'Sauvegarde...' : 'Sauvegarder'}</Button>
                 </div>
-              ) : (<Button variant='outline' size='sm' onClick={() => onEditToggle(true)} className='text-sm'><Edit className='h-4 w-4 mr-1' />Modifier</Button>)}
+              ) : (<Button className='text-sm' size='sm' variant='outline' onClick={() => onEditToggle(true)}><Edit className='h-4 w-4 mr-1' />Modifier</Button>)}
             </>
           )}
         </div>

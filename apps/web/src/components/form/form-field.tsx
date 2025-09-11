@@ -1,10 +1,10 @@
 'use client';
 
-import { type ReactNode } from 'react';
+import type { FC } from 'react';
+import { type ReactNode                                      } from 'react';
 
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 
-import type { FC } from 'react';
 
 export type FormFieldProps = {
   label?: string;
@@ -31,8 +31,8 @@ export const FormField: FC<FormFieldProps> = ({
     <div className={cn('space-y-2', className)}>
       {label && (
         <label
-          htmlFor={fieldId}
           className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+          htmlFor={fieldId}
         >
           {label}
           {required && <span className='text-destructive ml-1'>*</span>}

@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { type FC } from 'react';
-import { SubscriptionDetailLayout } from '@/app/[locale]/admin/(dashboard)/subscriptions/[id]/components/subscription-detail-layout';
-import { SubscriptionCompactHeader } from '@/app/[locale]/admin/(dashboard)/subscriptions/[id]/components/subscription-compact-header';
-import { SubscriptionDetailsEditor } from '@/app/[locale]/admin/(dashboard)/subscriptions/[id]/components/subscription-details-editor';
+
 import { SubscriptionBreadcrumbs } from '@/app/[locale]/admin/(dashboard)/subscriptions/[id]/components/subscription-breadcrumbs';
+import { SubscriptionCompactHeader } from '@/app/[locale]/admin/(dashboard)/subscriptions/[id]/components/subscription-compact-header';
+import { SubscriptionDetailLayout } from '@/app/[locale]/admin/(dashboard)/subscriptions/[id]/components/subscription-detail-layout';
+import { SubscriptionDetailsEditor } from '@/app/[locale]/admin/(dashboard)/subscriptions/[id]/components/subscription-details-editor';
 import type { Subscription } from '@/lib/types/subscription';
 
 type SubscriptionDetailControllerProps = {
@@ -62,21 +63,21 @@ export const SubscriptionDetailController: FC<SubscriptionDetailControllerProps>
   return (
     <SubscriptionDetailLayout
       breadcrumbs={<SubscriptionBreadcrumbs subscription={subscriptionData} />}
-      header={
-        <SubscriptionCompactHeader
-          subscription={displayData}
-          isEditing={isEditing}
-          isSaving={isSaving}
-          onEditToggle={handleEditToggle}
-          onSave={handleSave}
-          hasChanges={Object.keys(pendingData).length > 0}
-        />
-      }
       content={
         <SubscriptionDetailsEditor
-          subscription={displayData}
           isEditing={isEditing}
+          subscription={displayData}
           onChange={handleDataChange}
+        />
+      }
+      header={
+        <SubscriptionCompactHeader
+          hasChanges={Object.keys(pendingData).length > 0}
+          isEditing={isEditing}
+          isSaving={isSaving}
+          subscription={displayData}
+          onEditToggle={handleEditToggle}
+          onSave={handleSave}
         />
       }
     />

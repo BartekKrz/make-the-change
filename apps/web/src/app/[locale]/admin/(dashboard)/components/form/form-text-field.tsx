@@ -1,8 +1,10 @@
 "use client"
 
 import { forwardRef, type ForwardedRef } from 'react'
+
 import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
 import { cn } from '@/lib/utils'
+
 import { useFieldContext, useFieldErrors } from './form-context'
 
 export type FormTextFieldProps = {
@@ -34,14 +36,14 @@ const FormTextFieldComponent = (
       )}
       <Input
         ref={ref}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onBlur={onBlur}
         placeholder={placeholder}
+        value={value}
         className={cn(
           hasError && 'border-red-500 focus:border-red-500',
           className
         )}
+        onBlur={onBlur}
+        onChange={(e) => onChange(e.target.value)}
         {...props}
       />
       {hasError && errors[0] && (

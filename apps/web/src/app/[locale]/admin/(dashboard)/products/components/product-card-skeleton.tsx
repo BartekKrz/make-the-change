@@ -1,5 +1,7 @@
-import { FC } from "react";
 import { DataCard, DataListItem } from "../../components/ui/data-list";
+
+import type { FC } from "react";
+
 
 export const ProductCardSkeleton: FC = () => (
   <DataCard>

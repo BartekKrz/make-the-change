@@ -2,6 +2,7 @@
 
 import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
 import { getInitials } from '@/app/[locale]/admin/(dashboard)/components/ui/format-utils'
+
 import type { FC } from 'react'
 
 type User = {

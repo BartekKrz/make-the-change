@@ -1,10 +1,12 @@
 'use client'
 
-import { AdminListItem } from '@/app/[locale]/admin/(dashboard)/components/ui/admin-list-item'
-import { Building2, Mail } from 'lucide-react'
-import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
-import { getInitials } from '@/app/[locale]/admin/(dashboard)/components/ui/format-utils'
+import { Mail } from 'lucide-react'
 import { type FC, type ReactNode } from 'react'
+
+import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
+import { AdminListItem } from '@/app/[locale]/admin/(dashboard)/components/ui/admin-list-item'
+import { getInitials } from '@/app/[locale]/admin/(dashboard)/components/ui/format-utils'
+
 
 type Partner =  {
   id: string
@@ -30,7 +32,7 @@ export const PartnerListItem: FC<PartnerListItemProps> = ({ partner, actions }) 
         </h3>
         <Badge color={
           partner.status === 'active' ? 'green' :
-          partner.status === 'pending' ? 'yellow' : 'gray'
+          (partner.status === 'pending' ? 'yellow' : 'gray')
         }>
           {partner.status}
         </Badge>
@@ -49,10 +51,10 @@ export const PartnerListItem: FC<PartnerListItemProps> = ({ partner, actions }) 
 
   return (
     <AdminListItem
-      href={`/admin/partners/${partner.id}`}
-      header={header}
-      metadata={metadata}
       actions={actions}
+      header={header}
+      href={`/admin/partners/${partner.id}`}
+      metadata={metadata}
     />
   )
 }

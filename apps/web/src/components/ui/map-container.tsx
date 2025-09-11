@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useMemo } from 'react'
+import { Icon } from 'leaflet'
+import { useMemo } from 'react'
 import { MapContainer as LeafletMapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-import { Icon, LatLngBounds } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
 import { MapPin, Leaf, TreePine, Grape, Badge } from 'lucide-react'
@@ -72,12 +72,12 @@ export default function MapContainer({
   }, [projects, selectedType])
 
   const mapCenter = useMemo(() => {
-    if (filteredProjects.length === 0) return [46.603354, 1.888334]
+    if (filteredProjects.length === 0) return [46.603_354, 1.888_334]
 
     const lats = filteredProjects.map(p => p.coordinates[0]).filter(lat => lat !== 0)
     const lngs = filteredProjects.map(p => p.coordinates[1]).filter(lng => lng !== 0)
 
-    if (lats.length === 0 || lngs.length === 0) return [46.603354, 1.888334]
+    if (lats.length === 0 || lngs.length === 0) return [46.603_354, 1.888_334]
 
     const avgLat = lats.reduce((sum, lat) => sum + lat, 0) / lats.length
     const avgLng = lngs.reduce((sum, lng) => sum + lng, 0) / lngs.length
@@ -90,10 +90,10 @@ export default function MapContainer({
   return (
     <div className="relative w-full h-[600px] rounded-lg border overflow-hidden">
       <LeafletMapContainer
+        zoomControl
         center={mapCenter as [number, number]}
-        zoom={mapZoom}
         style={{ height: '100%', width: '100%' }}
-        zoomControl={true}
+        zoom={mapZoom}
       >
         <TileLayer
           attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -112,8 +112,8 @@ export default function MapContainer({
           return (
             <Marker
               key={project.id}
-              position={project.coordinates as [number, number]}
               icon={createProjectIcon(project.type)}
+              position={project.coordinates as [number, number]}
               eventHandlers={{
                 click: () => onProjectSelect(project)
               }}
@@ -123,7 +123,7 @@ export default function MapContainer({
                   <div className="flex items-center gap-2 mb-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                       project.type === 'beehive' ? 'bg-yellow-500' :
-                      project.type === 'olive_tree' ? 'bg-green-600' : 'bg-purple-600'
+                      (project.type === 'olive_tree' ? 'bg-green-600' : 'bg-purple-600')
                     }`}>
                       <Leaf className="w-4 h-4 text-white" />
                     </div>
@@ -177,8 +177,8 @@ export default function MapContainer({
                   <div className="mt-3 pt-3 border-t border-gray-200">
                     <Badge variant="secondary" className={
                       project.type === 'beehive' ? 'bg-yellow-100 text-yellow-800' :
-                      project.type === 'olive_tree' ? 'bg-green-100 text-green-800' :
-                      'bg-purple-100 text-purple-800'
+                      (project.type === 'olive_tree' ? 'bg-green-100 text-green-800' :
+                      'bg-purple-100 text-purple-800')
                     }>
                       {projectTypeLabels[project.type]}
                     </Badge>
@@ -195,15 +195,15 @@ export default function MapContainer({
         <h4 className="font-semibold text-sm mb-3">Légende</h4>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+            <div className="w-4 h-4 bg-yellow-500 rounded-full" />
             <span className="text-sm">Ruches</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-green-600 rounded-full"></div>
+            <div className="w-4 h-4 bg-green-600 rounded-full" />
             <span className="text-sm">Oliviers</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-purple-600 rounded-full"></div>
+            <div className="w-4 h-4 bg-purple-600 rounded-full" />
             <span className="text-sm">Vignes</span>
           </div>
         </div>

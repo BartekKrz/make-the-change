@@ -1,12 +1,15 @@
 'use client';
 
-import type { FC, PropsWithChildren } from 'react';
+import { partnerStatusLabels, type PartnerFormData } from '@make-the-change/api/validators/partner';
 import { Building2, Mail, Save } from 'lucide-react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card';
+import { FormInput, FormSelect, FormTextArea } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { useFormWithToast } from '@/hooks/use-form-with-toast';
-import { FormInput, FormSelect, FormTextArea } from '@/components/form';
-import { partnerFormSchema, partnerStatusLabels, type PartnerFormData } from '@make-the-change/api/validators/partner';
+
+import type { FC, PropsWithChildren } from 'react';
+
 type PartnerDetailsEditorProps = {
   partnerData: PartnerFormData & { id: string };
   isEditing: boolean;
@@ -60,11 +63,11 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
           <form.Field name="name">
             {(field) => (
               <FormInput
+                required
+                disabled={!isEditing}
                 field={field}
                 label="Nom du partenaire"
                 placeholder="Nom du partenaire"
-                disabled={!isEditing}
-                required
               />
             )}
           </form.Field>
@@ -72,11 +75,11 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
           <form.Field name="slug">
             {(field) => (
               <FormInput
+                required
+                disabled={!isEditing}
                 field={field}
                 label="Slug"
                 placeholder="slug-du-partenaire"
-                disabled={!isEditing}
-                required
               />
             )}
           </form.Field>
@@ -84,11 +87,11 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
           <form.Field name="description">
             {(field) => (
               <FormTextArea
+                disabled={!isEditing}
                 field={field}
                 label="Description"
                 placeholder="Description du partenaire..."
                 rows={6}
-                disabled={!isEditing}
               />
             )}
           </form.Field>
@@ -104,12 +107,12 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
           <form.Field name="contact_email">
             {(field) => (
               <FormInput
+                required
+                disabled={!isEditing}
                 field={field}
                 label="Email de contact"
-                type="email"
                 placeholder="contact@partenaire.com"
-                disabled={!isEditing}
-                required
+                type="email"
               />
             )}
           </form.Field>
@@ -117,11 +120,11 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
           <form.Field name="website">
             {(field) => (
               <FormInput
+                disabled={!isEditing}
                 field={field}
                 label="Site web"
-                type="url"
                 placeholder="https://partenaire.com"
-                disabled={!isEditing}
+                type="url"
               />
             )}
           </form.Field>
@@ -129,11 +132,11 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
           <form.Field name="status">
             {(field) => (
               <FormSelect
+                disabled={!isEditing}
                 field={field}
                 label="Statut"
-                placeholder="Sélectionner un statut"
                 options={statusOptions}
-                disabled={!isEditing}
+                placeholder="Sélectionner un statut"
               />
             )}
           </form.Field>
@@ -143,11 +146,11 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
   ];
 
   return (
-    <form onSubmit={(e) => {
+    <form className='space-y-6 md:space-y-8' onSubmit={(e) => {
       e.preventDefault();
       e.stopPropagation();
       form.handleSubmit();
-    }} className='space-y-6 md:space-y-8'>
+    }}>
       <PartnerCardsGrid>
         {contentSections.map((section) => (
           <Card key={section.id} className='transition-all duration-200 hover:shadow-lg'>
@@ -169,9 +172,9 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
       {isEditing && (
         <div className="flex justify-end">
           <Button
-            type="submit"
-            disabled={isSubmitting || isSaving}
             className="flex items-center gap-2"
+            disabled={isSubmitting || isSaving}
+            type="submit"
           >
             {(isSubmitting || isSaving) ? (
               <>

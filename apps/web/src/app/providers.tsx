@@ -1,9 +1,10 @@
 'use client'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import dynamic from 'next/dynamic'
 import { ThemeProvider } from 'next-themes'
 import { type FC, type PropsWithChildren, useState } from 'react'
-import dynamic from 'next/dynamic'
+
 import { trpc, trpcClient } from '@/lib/trpc'
 
 const ReactQueryDevtools =
@@ -30,10 +31,10 @@ export const Providers: FC<PropsWithChildren> = ({children}) => {
     <ThemeProvider
       attribute="class"
       defaultTheme="light"
-      enableSystem={false}
       disableTransitionOnChange={false}
-      themes={['light', 'dark']}
+      enableSystem={false}
       storageKey="make-the-change-theme"
+      themes={['light', 'dark']}
     >
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>

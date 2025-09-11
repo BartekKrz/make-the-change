@@ -1,10 +1,13 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import { trpc } from '@/lib/trpc'
 import { useMemo } from 'react'
-import type { FC } from 'react'
+
 import { UserDetailController } from '@/app/[locale]/admin/(dashboard)/users/[id]/components/user-detail-controller'
+import { trpc } from '@/lib/trpc'
+
+import type { FC } from 'react'
+
 
 const AdminUserEditPage: FC = () => {
   const params = useParams<{ id: string }>()
@@ -57,7 +60,7 @@ const AdminUserEditPage: FC = () => {
 
       return { prevDetail, prevList }
     },
-    onError: (error, vars, ctx) => {
+    onError: (error, _vars, ctx) => {
       if (ctx?.prevDetail) {
         utils.admin.users.detail.setData({ userId }, ctx.prevDetail)
       }
@@ -81,7 +84,7 @@ const AdminUserEditPage: FC = () => {
         userId,
         patch
       })
-      console.log('Utilisateur mis à jour:', { id: userId, patch })
+      console.warn('Updating user:', { id: userId, patch })
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error)
       alert('Erreur lors de la sauvegarde')

@@ -252,6 +252,7 @@ export type Database = {
       }
       image_blur_hashes: {
         Row: {
+          blur_data_url: string | null
           blur_hash: string
           entity_id: string
           entity_type: string
@@ -264,6 +265,7 @@ export type Database = {
           width: number | null
         }
         Insert: {
+          blur_data_url?: string | null
           blur_hash: string
           entity_id: string
           entity_type: string
@@ -276,6 +278,7 @@ export type Database = {
           width?: number | null
         }
         Update: {
+          blur_data_url?: string | null
           blur_hash?: string
           entity_id?: string
           entity_type?: string
@@ -359,7 +362,21 @@ export type Database = {
             foreignKeyName: "inventory_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "products_cover_blur"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products_missing_blur"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_with_blur_hashes"
             referencedColumns: ["id"]
           },
         ]
@@ -593,7 +610,21 @@ export type Database = {
             foreignKeyName: "order_items_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
+            referencedRelation: "products_cover_blur"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "products_missing_blur"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_with_blur_hashes"
             referencedColumns: ["id"]
           },
         ]
@@ -2036,6 +2067,17 @@ export type Database = {
           },
         ]
       }
+      products_cover_blur: {
+        Row: {
+          cover_blur_data_url: string | null
+          cover_blur_hash: string | null
+          cover_image: string | null
+          id: string | null
+          name: string | null
+          slug: string | null
+        }
+        Relationships: []
+      }
       products_missing_blur: {
         Row: {
           existing_blur_count: number | null
@@ -2048,6 +2090,31 @@ export type Database = {
           total_images: number | null
         }
         Relationships: []
+      }
+      products_with_blur_hashes: {
+        Row: {
+          blur_count: number | null
+          blur_coverage_percent: number | null
+          category_id: string | null
+          computed_blur_hashes: Json | null
+          created_at: string | null
+          featured: boolean | null
+          id: string | null
+          images: string[] | null
+          is_active: boolean | null
+          name: string | null
+          slug: string | null
+          total_images: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       table_size_analysis: {
         Row: {

@@ -1,13 +1,15 @@
 'use client';
 
-import type { FC, PropsWithChildren, ReactNode, KeyboardEvent, MouseEvent } from 'react';
-import type { LucideIcon } from 'lucide-react';
-import { useCallback } from 'react';
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
+
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 import { ProductImage } from '@/components/images/product-image';
+
+import type { LucideIcon } from 'lucide-react';
+import type { FC, PropsWithChildren, ReactNode, KeyboardEvent, MouseEvent } from 'react';
 
 export type DataListProps<T> = {
   variant?: 'grid' | 'list';
@@ -216,10 +218,10 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
       {image && imageAlt && (
         <div className='absolute top-0 right-0 w-20 h-20 overflow-hidden [border-radius:var(--radius-surface)_var(--radius-surface)_0_0] opacity-10 md:group-hover:opacity-20 transition-opacity duration-300'>
           <Image
-            src={image}
-            alt={imageAlt}
             fill
+            alt={imageAlt}
             className='object-cover scale-110'
+            src={image}
             unoptimized={image.includes('unsplash') || image.includes('supabase')}
           />
         </div>
@@ -234,17 +236,17 @@ const DataCardComponent: FC<PropsWithChildren<DataCardProps>> = ({
  
   return (
     <div
+      data-testid={testId}
+      role={href || onClick ? 'button' : undefined}
+      tabIndex={href || onClick ? 0 : undefined}
       className={cn(
         baseClasses,
         className,
        
         (href || onClick) && 'cursor-pointer'
       )}
-      data-testid={testId}
       onClick={href || onClick ? handleCardClick : undefined}
       onKeyDown={href || onClick ? handleKeyDown : undefined}
-      role={href || onClick ? 'button' : undefined}
-      tabIndex={href || onClick ? 0 : undefined}
     >
       <CardContent />
     </div>
@@ -264,6 +266,7 @@ type DataCardTitleProps = {
   image?: string;
   imageAlt?: string;
   images?: string[];
+  imageBlurDataURL?: string;
   onImageClick?: () => void;
   className?: string;
 };
@@ -274,6 +277,7 @@ const DataCardTitle: FC<PropsWithChildren<DataCardTitleProps>> = ({
   image, 
   imageAlt, 
   images,
+  imageBlurDataURL,
   onImageClick,
   className 
 }) => {
@@ -284,17 +288,18 @@ const DataCardTitle: FC<PropsWithChildren<DataCardTitleProps>> = ({
     <div className='flex w-full items-center gap-3 relative'>
       {shouldShowImage && (
         <ProductImage
-          src={image}
           alt={imageAlt}
-          size="md"
-          images={images}
-          onImageClick={onImageClick}
+          blurDataURL={imageBlurDataURL}
           className="flex-shrink-0"
+          images={images}
+          size="md"
+          src={image}
+          onImageClick={onImageClick}
         />
       )}
       {shouldShowIcon && (
         <div className='w-21 h-21 [border-radius:var(--radius-surface)] bg-gradient-to-br from-primary/10 dark:from-primary/15 to-orange-500/10 dark:to-orange-500/15 flex items-center justify-center border border-primary/20 dark:border-primary/30 flex-shrink-0'>
-          <Icon size={32} className='text-muted-foreground' />
+          <Icon className='text-muted-foreground' size={32} />
         </div>
       )}
       <div className='flex-1 min-w-0'>
@@ -425,17 +430,17 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
     <div
       className={baseClasses}
       data-testid={testId}
-      onClick={handleCardClick}
-      onKeyDown={handleKeyDown}
       role={onClick || href ? 'button' : undefined}
       tabIndex={onClick || href ? 0 : undefined}
+      onClick={handleCardClick}
+      onKeyDown={handleKeyDown}
     >
       {/* Invisible navigation overlay with improved accessibility */}
       {href && (
         <Link
-          href={href}
-          className="absolute inset-0 z-10 block rounded-[var(--radius-surface)]"
           aria-label="Accéder aux détails de cet élément"
+          className="absolute inset-0 z-10 block rounded-[var(--radius-surface)]"
+          href={href}
           tabIndex={-1}
         />
       )}
@@ -455,20 +460,20 @@ const DataListItemComponent: FC<PropsWithChildren<DataListItemProps>> = ({
               
               {/* Enhanced chevron with micro-interaction */}
               <svg
-                width="20"
+                className="relative z-10 drop-shadow-sm transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]"
+                fill="none"
                 height="20"
                 viewBox="0 0 24 24"
-                fill="none"
+                width="20"
                 xmlns="http://www.w3.org/2000/svg"
-                className="relative z-10 drop-shadow-sm transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]"
               >
                 <path
+                  className="text-primary opacity-50 md:group-hover:opacity-100 md:group-hover:stroke-[3] group-active:opacity-80 transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]"
                   d="m9 18 6-6-6-6"
                   stroke="currentColor"
-                  strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="text-primary opacity-50 md:group-hover:opacity-100 md:group-hover:stroke-[3] group-active:opacity-80 transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]"
+                  strokeWidth="2.5"
                 />
               </svg>
             </div>

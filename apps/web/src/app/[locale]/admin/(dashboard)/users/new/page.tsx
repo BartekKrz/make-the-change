@@ -1,6 +1,14 @@
 "use client"
 
+import { ArrowLeft, User, Plus, Mail, Shield } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+
+import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
+import { FormInput, FormSelect } from '@/components/form'
+import { Button } from '@/components/ui/button'
+import { useFormWithToast } from '@/hooks/use-form-with-toast'
 import { trpc } from '@/lib/trpc'
 import {
   defaultUserValues,
@@ -10,13 +18,6 @@ import {
   countryOptions,
   type UserFormData
 } from '@/lib/validators/user'
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
-import { useFormWithToast } from '@/hooks/use-form-with-toast'
-import { FormInput, FormSelect } from '@/components/form'
-import { ArrowLeft, User, Plus, Mail, Shield } from 'lucide-react'
-import Link from 'next/link'
 
 const userLevelOptions = [
   { value: 'explorateur', label: 'Explorateur' },
@@ -49,7 +50,7 @@ const NewUserPage: FC = () => {
       utils.admin.users.list.invalidate()
       router.push(`/admin/users/${data.id}`)
     },
-    onError: (error, vars, ctx) => {
+    onError: (error, _vars, ctx) => {
       if (ctx?.prevData) {
         utils.admin.users.list.setData(undefined, ctx.prevData)
       }
@@ -77,7 +78,7 @@ const NewUserPage: FC = () => {
         is_active: value.is_active
       }
 
-      console.log('Création utilisateur:', userData)
+      console.warn('Creating user:', userData)
 
       return { success: true }
     },
@@ -96,19 +97,27 @@ const NewUserPage: FC = () => {
 
   const getUserLevelColor = (level: string) => {
     switch (level) {
-      case 'ambassadeur': return 'blue'
-      case 'protecteur': return 'green'
-      case 'explorateur': return 'gray'
-      default: return 'gray'
+      case 'ambassadeur': { return 'blue'
+      }
+      case 'protecteur': { return 'green'
+      }
+      case 'explorateur': { return 'gray'
+      }
+      default: { return 'gray'
+      }
     }
   }
 
   const getKycStatusColor = (status: string) => {
     switch (status) {
-      case 'verified': return 'green'
-      case 'rejected': return 'red'
-      case 'pending': return 'yellow'
-      default: return 'gray'
+      case 'verified': { return 'green'
+      }
+      case 'rejected': { return 'red'
+      }
+      case 'pending': { return 'yellow'
+      }
+      default: { return 'gray'
+      }
     }
   }
 
@@ -117,8 +126,8 @@ const NewUserPage: FC = () => {
       {}
       <div className="flex items-center gap-4">
         <Link
-          href="/admin/users"
           className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          href="/admin/users"
         >
           <ArrowLeft className="h-4 w-4" />
           Retour aux utilisateurs
@@ -131,11 +140,11 @@ const NewUserPage: FC = () => {
       </div>
 
       {}
-      <form onSubmit={(e) => {
+      <form className="space-y-6" onSubmit={(e) => {
         e.preventDefault()
         e.stopPropagation()
         form.handleSubmit()
-      }} className="space-y-6">
+      }}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {}
           <Card>
@@ -149,10 +158,10 @@ const NewUserPage: FC = () => {
               <form.Field name="email">
                 {() => (
                   <FormInput
-                    label="Email"
-                    type="email"
-                    placeholder="utilisateur@example.com"
                     required
+                    label="Email"
+                    placeholder="utilisateur@example.com"
+                    type="email"
                   />
                 )}
               </form.Field>
@@ -160,10 +169,10 @@ const NewUserPage: FC = () => {
               <form.Field name="password">
                 {() => (
                   <FormInput
-                    label="Mot de passe"
-                    type="password"
-                    placeholder="Mot de passe sécurisé"
                     required
+                    label="Mot de passe"
+                    placeholder="Mot de passe sécurisé"
+                    type="password"
                   />
                 )}
               </form.Field>
@@ -171,10 +180,10 @@ const NewUserPage: FC = () => {
               <form.Field name="confirmPassword">
                 {() => (
                   <FormInput
-                    label="Confirmer le mot de passe"
-                    type="password"
-                    placeholder="Répéter le mot de passe"
                     required
+                    label="Confirmer le mot de passe"
+                    placeholder="Répéter le mot de passe"
+                    type="password"
                   />
                 )}
               </form.Field>
@@ -212,8 +221,8 @@ const NewUserPage: FC = () => {
                 {() => (
                   <FormSelect
                     label="Pays"
-                    placeholder="Sélectionner un pays"
                     options={formattedCountryOptions}
+                    placeholder="Sélectionner un pays"
                   />
                 )}
               </form.Field>
@@ -221,12 +230,12 @@ const NewUserPage: FC = () => {
               <form.Field name="points_balance">
                 {() => (
                   <FormInput
-                    label="Points initiaux"
-                    type="number"
-                    min="0"
-                    max="10000"
-                    placeholder="100"
                     description="Points de bienvenue (0-10000)"
+                    label="Points initiaux"
+                    max="10000"
+                    min="0"
+                    placeholder="100"
+                    type="number"
                   />
                 )}
               </form.Field>
@@ -246,8 +255,8 @@ const NewUserPage: FC = () => {
                   <div>
                     <FormSelect
                       label="Niveau utilisateur"
-                      placeholder="Sélectionner un niveau"
                       options={userLevelOptions}
+                      placeholder="Sélectionner un niveau"
                     />
                     <div className="mt-2">
                       <Badge color={getUserLevelColor(field.state.value)}>
@@ -263,8 +272,8 @@ const NewUserPage: FC = () => {
                   <div>
                     <FormSelect
                       label="Statut KYC"
-                      placeholder="Sélectionner un statut"
                       options={kycStatusOptions}
+                      placeholder="Sélectionner un statut"
                     />
                     <div className="mt-2">
                       <Badge color={getKycStatusColor(field.state.value)}>
@@ -281,10 +290,10 @@ const NewUserPage: FC = () => {
                 {(field) => (
                   <label className="flex items-center gap-2">
                     <input
-                      type="checkbox"
                       checked={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.checked)}
+                      type="checkbox"
                       onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.checked)}
                     />
                     <span className="text-sm">Compte actif</span>
                     <Badge color={field.state.value ? "green" : "red"}>
@@ -298,10 +307,10 @@ const NewUserPage: FC = () => {
                 {(field) => (
                   <label className="flex items-center gap-2">
                     <input
-                      type="checkbox"
                       checked={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.checked)}
+                      type="checkbox"
                       onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.checked)}
                     />
                     <span className="text-sm">Envoyer l&apos;email de bienvenue</span>
                     <Mail className="h-4 w-4 text-muted-foreground" />
@@ -315,17 +324,17 @@ const NewUserPage: FC = () => {
         {}
         <div className="flex justify-end gap-3">
           <Button
+            disabled={isSubmitting}
             type="button"
             variant="outline"
             onClick={() => router.back()}
-            disabled={isSubmitting}
           >
             Annuler
           </Button>
           <Button
-            type="submit"
-            disabled={isSubmitting || !canSubmit}
             className="flex items-center gap-2"
+            disabled={isSubmitting || !canSubmit}
+            type="submit"
           >
             {isSubmitting ? (
               <>

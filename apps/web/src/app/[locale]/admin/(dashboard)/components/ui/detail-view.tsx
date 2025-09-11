@@ -1,9 +1,11 @@
 'use client';
 
-import type { FC, PropsWithChildren, ReactNode } from 'react';
-import type { LucideIcon } from 'lucide-react';
 import { memo } from 'react';
+
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+
+import type { LucideIcon } from 'lucide-react';
+import type { FC, PropsWithChildren } from 'react';
 
 export type DetailViewProps = {
   variant?: 'cards' | 'sections' | 'sidebar';
@@ -13,17 +15,6 @@ export type DetailViewProps = {
   testId?: string;
 };
 
-const getGridClasses = (cols: number, variant: string) => {
-  if (variant !== 'cards') return '';
-  
-  const gridMap = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-1 lg:grid-cols-2',
-    3: 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-3',
-    4: 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'
-  };
-  return gridMap[cols as keyof typeof gridMap];
-};
 
 const getSpacingClasses = (spacing: 'sm' | 'md' | 'lg') => {
   const spacingMap = {
@@ -98,13 +89,13 @@ const DetailSectionComponent: FC<PropsWithChildren<DetailSectionProps>> = memo((
 
   return (
     <div
+      data-testid={testId}
       className={cn(
         // ✅ Styles EXACTS de Card de l'ancienne version
         'rounded-2xl border border-border bg-background/50 backdrop-blur-md text-card-foreground shadow-sm transition-all duration-300',
         spanClasses,
         className
       )}
-      data-testid={testId}
     >
       {/* Header EXACT identique à CardHeader */}
       <div className="flex flex-col space-y-2 p-8 border-b border-border/50 bg-gradient-to-r from-primary/5 to-secondary/5">
@@ -130,6 +121,8 @@ const DetailSectionComponent: FC<PropsWithChildren<DetailSectionProps>> = memo((
     </div>
   );
 });
+
+DetailSectionComponent.displayName = 'DetailSectionComponent';
 
 export type DetailFieldProps = {
   label: string;
@@ -181,6 +174,8 @@ const DetailFieldComponent: FC<PropsWithChildren<DetailFieldProps>> = memo(({
   );
 });
 
+DetailFieldComponent.displayName = 'DetailFieldComponent';
+
 export type DetailFieldGroupProps = {
   layout?: 'row' | 'column' | 'grid-2' | 'grid-3';
   label?: string;
@@ -223,6 +218,8 @@ const DetailFieldGroupComponent: FC<PropsWithChildren<DetailFieldGroupProps>> = 
     </div>
   );
 });
+
+DetailFieldGroupComponent.displayName = 'DetailFieldGroupComponent';
 
 export const DetailView = Object.assign(DetailViewComponent, {
   Section: DetailSectionComponent,

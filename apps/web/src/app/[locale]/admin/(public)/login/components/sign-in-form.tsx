@@ -1,12 +1,14 @@
 "use client";
-import type { FC } from 'react';
-import { useActionState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { Mail, LogIn } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { useActionState } from 'react';
+
 import { Input, PasswordInput } from '@/app/[locale]/admin/(dashboard)/components/ui/input';
 import { SubmitButton } from '@/app/[locale]/admin/(dashboard)/components/ui/submit-button';
 import { FormError } from '@/app/[locale]/admin/(public)/login/components/form-error';
 import { signInAction } from '@/app/[locale]/admin/login/actions';
+
+import type { FC } from 'react';
 
 const initialState: any = { success: false, message: '', errors: undefined };
 
@@ -25,8 +27,8 @@ export const SignInForm: FC = () => {
 
   return (
     <form action={formAction} aria-labelledby="sign-in-form-title" className="space-y-8">
-      <input type="hidden" name="redirect" value={redirectTarget} />
-      <h3 id="sign-in-form-title" className="sr-only">
+      <input name="redirect" type="hidden" value={redirectTarget} />
+      <h3 className="sr-only" id="sign-in-form-title">
         Formulaire de connexion
       </h3>
 
@@ -35,15 +37,15 @@ export const SignInForm: FC = () => {
 
         <div className="space-y-2">
           <Input
-            id="email"
-            name="email"
-            type="email"
-            label="Adresse email"
-            placeholder="admin@makethechange.com"
-            autoComplete="email"
             required
-            leadingIcon={<Mail size={18} className="text-muted-foreground" aria-hidden="true" />}
+            autoComplete="email"
             error={emailError}
+            id="email"
+            label="Adresse email"
+            leadingIcon={<Mail aria-hidden="true" className="text-muted-foreground" size={18} />}
+            name="email"
+            placeholder="admin@makethechange.com"
+            type="email"
             className={`
               h-14 pl-12 pr-5 text-lg
               bg-background/60 backdrop-blur-sm
@@ -56,13 +58,13 @@ export const SignInForm: FC = () => {
 
         <div className="space-y-2">
           <PasswordInput
-            id="password"
-            name="password"
-            label="Mot de passe"
-            placeholder="••••••••"
-            autoComplete="current-password"
             required
+            autoComplete="current-password"
             error={passwordError}
+            id="password"
+            label="Mot de passe"
+            name="password"
+            placeholder="••••••••"
             className={`
               h-14 px-5 text-lg
               bg-background/60 backdrop-blur-sm
@@ -76,20 +78,20 @@ export const SignInForm: FC = () => {
 
       <div className="pt-4">
         <SubmitButton
-          size="full"
-          icon={<LogIn size={20} aria-hidden="true" />}
-          pendingText="Connexion en cours..."
-          successText="Connexion réussie!"
-          variant="accent"
-          className="font-semibold text-lg h-14 rounded-2xl shadow-lg hover:shadow-xl transition-all"
-          forceSuccess={state?.success}
-          autoSuccess={state?.success}
           showLoadingIndicator
           showSuccessIndicator
-          disabled={isPending}
-          loading={isPending}
           aria-live="polite"
+          autoSuccess={state?.success}
+          className="font-semibold text-lg h-14 rounded-2xl shadow-lg hover:shadow-xl transition-all"
+          disabled={isPending}
+          forceSuccess={state?.success}
+          icon={<LogIn aria-hidden="true" size={20} />}
+          loading={isPending}
+          pendingText="Connexion en cours..."
+          size="full"
+          successText="Connexion réussie!"
           type="submit"
+          variant="accent"
         >
           Se connecter
         </SubmitButton>

@@ -1,9 +1,11 @@
 'use client'
 
-import { AdminListItem } from '@/app/[locale]/admin/(dashboard)/components/ui/admin-list-item'
 import {  User, Calendar, DollarSign } from 'lucide-react'
+
 import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
+import { AdminListItem } from '@/app/[locale]/admin/(dashboard)/components/ui/admin-list-item'
 import { formatDate, formatCurrency } from '@/app/[locale]/admin/(dashboard)/components/ui/format-utils'
+
 import type { FC, ReactNode } from 'react'
 
 type Order =  {
@@ -21,11 +23,16 @@ type OrderListItemProps =  {
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'pending': return 'yellow'
-    case 'shipped': return 'blue'
-    case 'delivered': return 'green'
-    case 'cancelled': return 'red'
-    default: return 'gray'
+    case 'pending': { return 'yellow'
+    }
+    case 'shipped': { return 'blue'
+    }
+    case 'delivered': { return 'green'
+    }
+    case 'cancelled': { return 'red'
+    }
+    default: { return 'gray'
+    }
   }
 }
 
@@ -37,7 +44,7 @@ export const OrderListItem: FC<OrderListItemProps> = ({ order, actions }) => {
       </div>
       <div className="flex items-center gap-2 flex-1 min-w-0">
         <h3 className="text-base font-medium text-foreground truncate">
-          Commande #{order.id.substring(0, 8)}
+          Commande #{order.id.slice(0, 8)}
         </h3>
         <Badge color={getStatusColor(order.status)}>
           {order.status}
@@ -67,10 +74,10 @@ export const OrderListItem: FC<OrderListItemProps> = ({ order, actions }) => {
 
   return (
     <AdminListItem
-      href={`/admin/orders/${order.id}`}
-      header={header}
-      metadata={metadata}
       actions={actions}
+      header={header}
+      href={`/admin/orders/${order.id}`}
+      metadata={metadata}
     />
   )
 }

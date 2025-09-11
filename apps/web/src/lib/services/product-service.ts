@@ -3,13 +3,13 @@ import { trpc } from '@/lib/trpc'
 /**
  * Service pour récupérer les données des produits depuis la base de données
  */
-export class ProductService {
+export const ProductService = {
   /**
    * Récupère tous les champs d'un produit par son ID
    * @param productId - L'identifiant unique du produit
    * @returns Toutes les données du produit
    */
-  static async getProductById(productId: string) {
+  async getProductById(productId: string) {
     try {
       const product = await trpc.admin.products.detail.query({
         productId
@@ -26,14 +26,14 @@ export class ProductService {
         error: error instanceof Error ? error.message : 'Erreur inconnue'
       }
     }
-  }
+  },
 
   /**
    * Récupère tous les champs d'un produit avec les relations (catégorie, producteur)
    * @param productId - L'identifiant unique du produit
    * @returns Toutes les données du produit avec les relations
    */
-  static async getProductWithRelations(productId: string) {
+  async getProductWithRelations(productId: string) {
     try {
       // Pour récupérer avec les relations, on utilise la liste filtrée par ID
       const result = await trpc.admin.products.list.query({
@@ -61,62 +61,12 @@ export class ProductService {
         error: error instanceof Error ? error.message : 'Erreur inconnue'
       }
     }
-  }
+  },
 
-  /**
-   * Affiche tous les champs d'un produit dans la console
-   * @param productId - L'identifiant unique du produit
-   */
-  static async logAllProductFields(productId: string) {
-    const result = await this.getProductById(productId)
-
-    if (result.success && result.data) {
-      console.group('📦 Détails complets du produit')
-      console.log('ID:', result.data.id)
-      console.log('Nom:', result.data.name)
-      console.log('Slug:', result.data.slug)
-      console.log('Description courte:', result.data.short_description)
-      console.log('Description complète:', result.data.description)
-      console.log('Prix (points):', result.data.price_points)
-      console.log('Prix équivalent (€):', result.data.price_eur_equivalent)
-      console.log('Quantité en stock:', result.data.stock_quantity)
-      console.log('Méthode de livraison:', result.data.fulfillment_method)
-      console.log('Niveau minimum requis:', result.data.min_tier)
-      console.log('Produit vedette:', result.data.featured)
-      console.log('Produit actif:', result.data.is_active)
-      console.log('Produit héros:', result.data.is_hero_product)
-      console.log('Poids (grammes):', result.data.weight_grams)
-      console.log('Dimensions:', result.data.dimensions)
-      console.log('Images:', result.data.images)
-      console.log('Tags:', result.data.tags)
-      console.log('Variantes:', result.data.variants)
-      console.log('Informations nutritionnelles:', result.data.nutrition_facts)
-      console.log('Allergènes:', result.data.allergens)
-      console.log('Certifications:', result.data.certifications)
-      console.log('Pays d\'origine:', result.data.origin_country)
-      console.log('Disponibilité saisonnière:', result.data.seasonal_availability)
-      console.log('Titre SEO:', result.data.seo_title)
-      console.log('Description SEO:', result.data.seo_description)
-      console.log('Métadonnées:', result.data.metadata)
-      console.log('Date de création:', result.data.created_at)
-      console.log('Date de mise à jour:', result.data.updated_at)
-      console.log('ID catégorie:', result.data.category_id)
-      console.log('ID producteur:', result.data.producer_id)
-      console.log('Date de lancement:', result.data.launch_date)
-      console.log('Date d\'arrêt:', result.data.discontinue_date)
-      console.log('Gestion du stock:', result.data.stock_management)
-      console.groupEnd()
-
-      return result.data
-    } else {
-      console.error('❌ Erreur:', result.error)
-      return null
-    }
-  }
-}
+};
 
 // Types pour les données du produit
-export interface ProductData {
+export type ProductData = {
   id: string
   name: string
   slug: string
@@ -151,5 +101,9 @@ export interface ProductData {
   discontinue_date?: string
   stock_management: boolean
 }
+
+
+
+
 
 

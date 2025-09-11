@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl';
+
 import { LanguageSwitcher } from '@/components/language-switcher';
 
 export default function TestPage() {

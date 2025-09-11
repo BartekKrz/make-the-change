@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useCallback, useRef, type FC } from 'react'
 import { Upload, X, Loader2 } from 'lucide-react'
+import { useState, useCallback, useRef, type FC } from 'react'
 
 import { useImageUpload } from '@/lib/upload'
 import type { UploadOptions } from '@/lib/upload'
@@ -114,7 +114,7 @@ export const ImageUpload: FC<ImageUploadProps> = ({
     try {
       // Extraire le path de l'URL Supabase
       const urlParts = imageUrl.split('/')
-      const fileName = urlParts[urlParts.length - 1]
+      const fileName = urlParts.at(-1)
       const filePath = folder ? `${entityId}/${folder}/${fileName}` : `${entityId}/${fileName}`
       
       await deleteImage(bucket, filePath)
@@ -130,7 +130,7 @@ export const ImageUpload: FC<ImageUploadProps> = ({
     e.preventDefault()
     setDragActive(false)
     
-    const files = Array.from(e.dataTransfer.files)
+    const files = [...e.dataTransfer.files]
     handleFileSelect(files)
   }, [handleFileSelect])
 
@@ -152,9 +152,6 @@ export const ImageUpload: FC<ImageUploadProps> = ({
     <div className={`space-y-4 ${className}`}>
       {/* Zone de drop */}
       <div
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
         className={`
           border-2 border-dashed rounded-lg p-8 text-center transition-colors
           ${dragActive 
@@ -163,6 +160,9 @@ export const ImageUpload: FC<ImageUploadProps> = ({
           }
           ${currentImages.length >= maxFiles ? 'opacity-50 pointer-events-none' : ''}
         `}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
       >
         <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
         
@@ -170,9 +170,9 @@ export const ImageUpload: FC<ImageUploadProps> = ({
           <p className="text-sm font-medium">
             Glissez vos images ici ou{' '}
             <button
+              className="text-primary hover:underline"
               type="button"
               onClick={openFileDialog}
-              className="text-primary hover:underline"
             >
               parcourez
             </button>
@@ -187,13 +187,13 @@ export const ImageUpload: FC<ImageUploadProps> = ({
 
         <input
           ref={fileInputRef}
-          type="file"
-          multiple={multiple}
           accept={acceptedTypes.join(',')}
           className="hidden"
+          multiple={multiple}
+          type="file"
           onChange={(e) => {
             if (e.target.files) {
-              handleFileSelect(Array.from(e.target.files))
+              handleFileSelect([...e.target.files])
               e.target.value = '' // Reset input
             }
           }}
@@ -207,16 +207,16 @@ export const ImageUpload: FC<ImageUploadProps> = ({
             <div key={index} className="relative group">
               <div className="aspect-square rounded-lg overflow-hidden bg-muted">
                 <img
-                  src={imageUrl}
                   alt={`Image ${index + 1}`}
                   className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                  src={imageUrl}
                 />
               </div>
               
               <button
+                className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                 type="button"
                 onClick={() => removeImage(imageUrl, index)}
-                className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -234,9 +234,9 @@ export const ImageUpload: FC<ImageUploadProps> = ({
               <div key={index} className="relative">
                 <div className="aspect-square rounded-lg overflow-hidden bg-muted">
                   <img
-                    src={uploading.preview}
                     alt="Preview"
                     className="w-full h-full object-cover opacity-60"
+                    src={uploading.preview}
                   />
                 </div>
                 

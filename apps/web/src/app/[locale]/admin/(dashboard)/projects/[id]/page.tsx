@@ -1,11 +1,12 @@
 "use client"
 
 import { useParams } from 'next/navigation'
-import { trpc } from '@/lib/trpc'
 import { useMemo } from 'react'
 import { type FC } from 'react'
-import { supabase } from '@/supabase/client'
+
 import { ProjectDetailController } from '@/app/[locale]/admin/(dashboard)/projects/[id]/components/project-detail-controller'
+import { trpc } from '@/lib/trpc'
+import { supabase } from '@/supabase/client'
 
 const AdminProjectEditPage: FC = () => {
   const params = useParams<{ id: string }>()
@@ -41,7 +42,7 @@ const AdminProjectEditPage: FC = () => {
 
       return { prevDetail, prevList }
     },
-    onError: (error, vars, ctx) => {
+    onError: (error, _vars, ctx) => {
       if (ctx?.prevDetail) {
         utils.admin.projects.byId.setData({ id: projectId! }, ctx.prevDetail)
       }
@@ -69,7 +70,7 @@ const AdminProjectEditPage: FC = () => {
     if (project) {
       update.mutate({ id: projectId, patch })
     } else {
-      console.log('Mode mock - sauvegarde simulée:', patch)
+      console.warn('Mode mock - sauvegarde simulée:', patch)
       alert('Sauvegarde simulée (mode développement)')
     }
   }
@@ -79,7 +80,7 @@ const AdminProjectEditPage: FC = () => {
     const path = `${projectId}/${Date.now()}-${file.name}`
     const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true })
     if (error) {
-      alert('Upload échoué: ' + error.message)
+      alert(`Upload échoué: ${  error.message}`)
       throw error
     }
     const { data } = supabase.storage.from(bucket).getPublicUrl(path)
@@ -98,9 +99,9 @@ const AdminProjectEditPage: FC = () => {
   return (
     <ProjectDetailController
       projectData={projectData}
-      onSave={handleSave}
-      onImageUpload={handleImageUpload}
       onImageRemove={handleImageRemove}
+      onImageUpload={handleImageUpload}
+      onSave={handleSave}
     />
   )
 }

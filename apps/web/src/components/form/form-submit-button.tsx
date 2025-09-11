@@ -1,14 +1,13 @@
 'use client';
 
-import { type ReactNode } from 'react';
-
 import { Plus } from 'lucide-react';
+import { type ReactNode                                     , FC } from 'react';
 
-import { Button } from '@/components/ui/button';
 
 import { useFormContext } from '@/components/form/form-context';
+import { Button } from '@/components/ui/button';
 
-import type { FC } from 'react';
+
 
 export type FormSubmitButtonProps = {
   children?: ReactNode;
@@ -33,11 +32,11 @@ export const FormSubmitButton: FC<FormSubmitButtonProps> = ({
     <form.Subscribe selector={(state) => [state.isSubmitting, state.canSubmit]}>
       {([isSubmitting, canSubmit]) => (
         <Button
-          type="submit"
-          variant={variant}
-          size={size}
           className={className}
           disabled={!canSubmit || isSubmitting}
+          size={size}
+          type="submit"
+          variant={variant}
           onClick={form.handleSubmit}
         >
           {isSubmitting ? (

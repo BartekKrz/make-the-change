@@ -1,8 +1,10 @@
-import type { FC } from 'react'
 import { SignInForm } from '@/app/[locale]/admin/(public)/login/components/sign-in-form'
+
+import type { FC } from 'react'
 
 export const SignInSection: FC = () => (
   <section
+    aria-labelledby='sign-in-heading'
     className={`
       flex-1 flex flex-col justify-center
       px-8 sm:px-16 md:px-12 lg:px-24
@@ -13,7 +15,6 @@ export const SignInSection: FC = () => (
       shadow-2xl shadow-black/10 dark:shadow-black/25
       md:shadow-[-20px_0_50px_-12px_rgba(0,0,0,0.15)] dark:md:shadow-[-20px_0_50px_-12px_rgba(0,0,0,0.4)]
     `}
-    aria-labelledby='sign-in-heading'
   >
     <div className='w-full'>
       <header className='flex flex-col gap-6 mb-12'>

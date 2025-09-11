@@ -1,9 +1,13 @@
 
-import createIntlMiddleware from 'next-intl/middleware'
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { NextResponse } from 'next/server'
+import createIntlMiddleware from 'next-intl/middleware'
+
 import { routing } from './i18n/routing'
+
+import type { NextRequest } from 'next/server'
+
+
 
 // Créer le middleware next-intl
 const intlMiddleware = createIntlMiddleware(routing)
@@ -21,8 +25,8 @@ export async function middleware(request: NextRequest) {
   }
 
   // Gérer l'authentification pour les routes admin  
-  if (pathname.startsWith('/admin') || pathname.match(/^\/[a-z]{2}\/admin/)) {
-    if (pathname === '/admin/login' || pathname.match(/^\/[a-z]{2}\/admin\/login$/)) {
+  if (pathname.startsWith('/admin') || /^\/[a-z]{2}\/admin/.test(pathname)) {
+    if (pathname === '/admin/login' || /^\/[a-z]{2}\/admin\/login$/.test(pathname)) {
       return NextResponse.next()
     }
 
@@ -35,7 +39,7 @@ export async function middleware(request: NextRequest) {
           cookies: {
             getAll: () => request.cookies.getAll(),
             setAll: (cookies) => {
-              cookies.forEach(({ name, value, options }) => response.cookies.set(name, value, options))
+              for (const { name, value, options } of cookies) response.cookies.set(name, value, options)
             },
           },
         }
@@ -56,7 +60,7 @@ export async function middleware(request: NextRequest) {
         .split(',')
         .map((s) => s.trim().toLowerCase())
         .filter(Boolean)
-      if (allow.length) {
+      if (allow.length > 0) {
         const email = (user.email || '').toLowerCase()
         if (!allow.includes(email)) {
           // Extraire la locale du pathname  
