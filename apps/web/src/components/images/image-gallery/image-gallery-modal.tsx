@@ -1,6 +1,6 @@
 'use client';
 
-import { type FC, useEffect, useState, useCallback } from 'react';
+import { type FC, useEffect, useState, useMemo, useOptimistic, useActionState, useCallback } from 'react';
 import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight, Eye, Edit3, Trash2 } from 'lucide-react';
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
@@ -25,27 +25,37 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
   onImageDelete
 }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [optimisticIndex, setOptimisticIndex] = useOptimistic(
+    currentIndex,
+    (state, newIndex: number) => newIndex
+  );
 
   // Réinitialiser l'index quand la modal s'ouvre
   useEffect(() => {
     if (isOpen) {
       setCurrentIndex(initialIndex);
+      setOptimisticIndex(initialIndex);
     }
-  }, [isOpen, initialIndex]);
+  }, [isOpen, initialIndex, setOptimisticIndex]);
 
-  // Ajuster l'index si les images changent (après suppression)
+  // Index valide dérivé
+  const validIndex = useMemo(() => {
+    if (images.length === 0) return -1;
+    return Math.min(optimisticIndex, images.length - 1);
+  }, [optimisticIndex, images.length]);
+
+  // Effet simplifié pour fermeture
   useEffect(() => {
     if (images.length === 0) {
-      // Fermer le modal si plus d'images
       onClose();
       return;
     }
     
-    // Ajuster l'index si il est invalide
-    if (currentIndex >= images.length) {
-      setCurrentIndex(Math.max(0, images.length - 1));
+    // Synchroniser l'index réel avec l'index valide
+    if (currentIndex !== validIndex && validIndex >= 0) {
+      setCurrentIndex(validIndex);
     }
-  }, [images, currentIndex, onClose]);
+  }, [images.length, onClose, currentIndex, validIndex]);
 
   // Navigation avec les flèches du clavier
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
@@ -57,14 +67,18 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
         break;
       case 'ArrowLeft':
         event.preventDefault();
-        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+        const prevIndex = optimisticIndex === 0 ? images.length - 1 : optimisticIndex - 1;
+        setOptimisticIndex(prevIndex);
+        setCurrentIndex(prevIndex);
         break;
       case 'ArrowRight':
         event.preventDefault();
-        setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+        const nextIndex = optimisticIndex === images.length - 1 ? 0 : optimisticIndex + 1;
+        setOptimisticIndex(nextIndex);
+        setCurrentIndex(nextIndex);
         break;
     }
-  }, [isOpen, images.length, onClose]);
+  }, [isOpen, images.length, optimisticIndex, setOptimisticIndex, onClose]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -73,11 +87,7 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
 
   // Empêcher le scroll du body quand la modal est ouverte
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    document.body.style.overflow = isOpen ? 'hidden' : 'unset';
     
     return () => {
       document.body.style.overflow = 'unset';
@@ -85,28 +95,47 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
   }, [isOpen]);
 
   const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    const newIndex = optimisticIndex === 0 ? images.length - 1 : optimisticIndex - 1;
+    setOptimisticIndex(newIndex);
+    setCurrentIndex(newIndex);
   };
 
   const goToNext = () => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    const newIndex = optimisticIndex === images.length - 1 ? 0 : optimisticIndex + 1;
+    setOptimisticIndex(newIndex);
+    setCurrentIndex(newIndex);
   };
 
-  // Gestion du remplacement d'image
-  const handleReplace = () => {
-    if (currentIndex >= 0 && currentIndex < images.length) {
-      const currentImageUrl = images[currentIndex];
-      onImageReplace?.(currentImageUrl, currentIndex);
-    }
-  };
+  // Actions avec useActionState
+  const [replaceState, replaceAction] = useActionState(
+    async (_: { success: boolean; error: string | null }) => {
+      try {
+        if (validIndex >= 0 && validIndex < images.length) {
+          const currentImageUrl = images[validIndex];
+          onImageReplace?.(currentImageUrl, validIndex);
+        }
+        return { success: true, error: null };
+      } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Erreur inconnue' };
+      }
+    },
+    { success: false, error: null }
+  );
 
-  // Gestion de la suppression d'image
-  const handleDelete = () => {
-    if (currentIndex >= 0 && currentIndex < images.length) {
-      const currentImageUrl = images[currentIndex];
-      onImageDelete?.(currentImageUrl, currentIndex);
-    }
-  };
+  const [deleteState, deleteAction] = useActionState(
+    async (_: { success: boolean; error: string | null }) => {
+      try {
+        if (validIndex >= 0 && validIndex < images.length) {
+          const currentImageUrl = images[validIndex];
+          onImageDelete?.(currentImageUrl, validIndex);
+        }
+        return { success: true, error: null };
+      } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Erreur inconnue' };
+      }
+    },
+    { success: false, error: null }
+  );
 
   if (!isOpen || !images.length) return null;
 
@@ -132,22 +161,28 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
         {showActions && (
           <div className="absolute top-4 right-16 z-20 flex gap-2">
             {/* Bouton remplacer */}
-            <button
-              onClick={handleReplace}
-              className="p-2 rounded-full bg-blue-500/80 text-white hover:bg-blue-500 transition-colors"
-              title="Remplacer cette image"
-            >
-              <Edit3 className="w-5 h-5" />
-            </button>
+            <form action={replaceAction}>
+              <button
+                type="submit"
+                disabled={replaceState.success === false && replaceState.error !== null}
+                className="p-2 rounded-full bg-blue-500/80 text-white hover:bg-blue-500 transition-colors disabled:opacity-50"
+                title="Remplacer cette image"
+              >
+                <Edit3 className="w-5 h-5" />
+              </button>
+            </form>
             
             {/* Bouton supprimer */}
-            <button
-              onClick={handleDelete}
-              className="p-2 rounded-full bg-red-500/80 text-white hover:bg-red-500 transition-colors"
-              title="Supprimer cette image"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
+            <form action={deleteAction}>
+              <button
+                type="submit"
+                disabled={deleteState.success === false && deleteState.error !== null}
+                className="p-2 rounded-full bg-red-500/80 text-white hover:bg-red-500 transition-colors disabled:opacity-50"
+                title="Supprimer cette image"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </form>
           </div>
         )}
 
@@ -164,13 +199,13 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
         {/* Image principale */}
         <div className="relative max-w-6xl max-h-[90vh] w-full h-full flex items-center justify-center">
           <div className="relative w-full h-full flex items-center justify-center">
-            {currentIndex >= 0 && currentIndex < images.length && (
+            {validIndex >= 0 && validIndex < images.length && (
               <Image
-                src={images[currentIndex]}
-                alt={`Image ${currentIndex + 1} sur ${images.length}`}
+                src={images[validIndex]}
+                alt={`Image ${validIndex + 1} sur ${images.length}`}
                 fill
                 className="object-contain"
-                unoptimized={images[currentIndex].includes('unsplash')}
+                unoptimized={images[validIndex].includes('unsplash')}
                 priority
               />
             )}
@@ -191,7 +226,7 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
         {images.length > 1 && (
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20">
             <div className="bg-black/50 rounded-full px-4 py-2 text-white text-sm">
-              {currentIndex + 1} / {images.length}
+              {validIndex + 1} / {images.length}
             </div>
           </div>
         )}
@@ -203,10 +238,13 @@ export const ImageGalleryModal: FC<ImageGalleryModalProps> = ({
               {images.map((image, index) => (
                 <button
                   key={index}
-                  onClick={() => setCurrentIndex(index)}
+                  onClick={() => {
+                    setOptimisticIndex(index);
+                    setCurrentIndex(index);
+                  }}
                   className={cn(
                     "relative w-12 h-12 rounded overflow-hidden border-2 transition-all",
-                    index === currentIndex 
+                    index === validIndex 
                       ? "border-white scale-110" 
                       : "border-transparent hover:border-white/50"
                   )}
