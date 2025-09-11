@@ -140,17 +140,15 @@ const getSortSelectionItems = (t: (key: string) => string) => getSortOptions(t).
   const totalProducts = productsData?.total || 0;
   const totalPages = Math.ceil(totalProducts / pageSize);
 
-  // Calculer si des filtres sont actifs
-  const isFilterActive = useMemo(() => {
-    return !!(
-      deferredSearch ||
-      activeOnly ||
-      (selectedProducerId && selectedProducerId !== 'all') ||
-      (selectedCategoryId && selectedCategoryId !== 'all') ||
-      (selectedTags && selectedTags.length > 0) ||
-      (sortBy && sortBy !== 'created_at_desc')
-    );
-  }, [deferredSearch, activeOnly, selectedProducerId, selectedCategoryId, selectedTags, sortBy]);
+  
+  const isFilterActive = useMemo(() => !!(
+    deferredSearch ||
+    activeOnly ||
+    (selectedProducerId && selectedProducerId !== 'all') ||
+    (selectedCategoryId && selectedCategoryId !== 'all') ||
+    (selectedTags && selectedTags.length > 0) ||
+    (sortBy && sortBy !== 'created_at_desc')
+  ), [deferredSearch, activeOnly, selectedProducerId, selectedCategoryId, selectedTags, sortBy]);
 
 
   const producerOptions = useMemo((): SelectOption[] => 

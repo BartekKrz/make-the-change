@@ -1,0 +1,54 @@
+"use client"
+
+import { forwardRef, type ForwardedRef } from 'react'
+import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
+import { cn } from '@/lib/utils'
+import { useFieldContext, useFieldErrors } from './form-context'
+
+export type FormTextFieldProps = {
+  label?: string
+  placeholder?: string
+  required?: boolean
+  className?: string
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'onBlur' | 'size'>
+
+const FormTextFieldComponent = (
+  { label, placeholder, required, className, ...props }: FormTextFieldProps,
+  ref: ForwardedRef<HTMLInputElement>
+) => {
+  const field = useFieldContext<string>()
+  const value = field.state.value ?? ''
+  const onChange = (v: string) => field.handleChange(v)
+  const onBlur = field.handleBlur
+  const errors = useFieldErrors()
+
+  const hasError = errors.length > 0
+
+  return (
+    <div className="space-y-1">
+      {label && (
+        <label className="text-sm font-medium">
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+      )}
+      <Input
+        ref={ref}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
+        placeholder={placeholder}
+        className={cn(
+          hasError && 'border-red-500 focus:border-red-500',
+          className
+        )}
+        {...props}
+      />
+      {hasError && errors[0] && (
+        <p className="text-sm text-red-500">{errors[0]}</p>
+      )}
+    </div>
+  )
+}
+
+export const FormTextField = forwardRef(FormTextFieldComponent)

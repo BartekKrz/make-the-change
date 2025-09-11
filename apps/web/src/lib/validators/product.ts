@@ -170,8 +170,12 @@ export const defaultProductValues: ProductFormData = {
   fulfillment_method: 'stock',
   is_active: true,
   featured: false,
+  is_hero_product: false,
   images: [],
-  // blur_hashes: DEPRECATED - Plus besoin avec OptimizedImage
+  tags: [],
+  allergens: [],
+  certifications: [],
+  blur_hashes: []
 }
 
 export const tierLabels = {

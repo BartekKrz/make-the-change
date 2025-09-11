@@ -204,16 +204,7 @@ export const AdminDetailActions: FC<AdminDetailActionsProps> = ({
       {/* Secondary Actions */}
       {secondaryActions}
 
-      {/* Save All Button */}
-      {saveStatus?.type === 'modified' && onSaveAll && (
-        <button
-          onClick={onSaveAll}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
-        >
-          Sauvegarder tout
-        </button>
-      )}
-
+      
       {/* Primary Actions */}
       {primaryActions}
 

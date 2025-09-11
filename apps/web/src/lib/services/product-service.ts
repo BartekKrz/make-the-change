@@ -152,3 +152,4 @@ export interface ProductData {
   stock_management: boolean
 }
 
+
