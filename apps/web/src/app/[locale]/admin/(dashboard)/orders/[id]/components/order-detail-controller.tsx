@@ -47,10 +47,11 @@ export const OrderDetailController: FC<OrderDetailControllerProps> = ({
     setIsSaving(true);
     try {
       const patch: Partial<OrderData> = {};
-      for (const key of [
-        'status', 'shippingAddress'
-      ] as const) {
-        if (key in pendingData && (orderData as any)[key] !== (pendingData as any)[key]) {
+      for (const key of ['status', 'shippingAddress'] as const) {
+        if (
+          key in pendingData &&
+          (orderData as any)[key] !== (pendingData as any)[key]
+        ) {
           (patch as any)[key] = (pendingData as any)[key];
         }
       }

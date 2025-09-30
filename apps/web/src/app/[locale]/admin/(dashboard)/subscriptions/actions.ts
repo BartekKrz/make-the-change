@@ -7,18 +7,27 @@ import { z } from 'zod';
 import { createSupabaseServer } from '@/supabase/server';
 
 const subscriptionSchema = z.object({
-  user_id: z.string().uuid("Un utilisateur valide est requis."),
+  user_id: z.string().uuid('Un utilisateur valide est requis.'),
   subscription_tier: z.enum(['ambassadeur_standard', 'ambassadeur_premium'], {
-    errorMap: () => ({ message: "Le niveau d'abonnement est invalide." })
+    errorMap: () => ({ message: "Le niveau d'abonnement est invalide." }),
   }),
   billing_frequency: z.enum(['monthly', 'annual'], {
-    errorMap: () => ({ message: "La fréquence de facturation est invalide." })
+    errorMap: () => ({ message: 'La fréquence de facturation est invalide.' }),
   }),
-  amount_eur: z.coerce.number().positive("Le montant doit être un nombre positif."),
-  points_total: z.coerce.number().positive("Le total de points doit être un nombre positif."),
-  bonus_percentage: z.coerce.number().min(0).max(100, "Le pourcentage bonus doit être entre 0 et 100."),
-  start_date: z.string().min(1, "La date de début est requise."),
-  status: z.enum(['active', 'expired', 'cancelled', 'paused']).default('active'),
+  amount_eur: z.coerce
+    .number()
+    .positive('Le montant doit être un nombre positif.'),
+  points_total: z.coerce
+    .number()
+    .positive('Le total de points doit être un nombre positif.'),
+  bonus_percentage: z.coerce
+    .number()
+    .min(0)
+    .max(100, 'Le pourcentage bonus doit être entre 0 et 100.'),
+  start_date: z.string().min(1, 'La date de début est requise.'),
+  status: z
+    .enum(['active', 'expired', 'cancelled', 'paused'])
+    .default('active'),
 });
 
 export type SubscriptionFormState = {
@@ -26,9 +35,12 @@ export type SubscriptionFormState = {
   message: string;
   errors?: Record<string, string[]> | null;
   id?: string;
-}
+};
 
-export async function createSubscription(prevState: SubscriptionFormState, formData: FormData): Promise<SubscriptionFormState> {
+export async function createSubscription(
+  prevState: SubscriptionFormState,
+  formData: FormData
+): Promise<SubscriptionFormState> {
   const validatedFields = subscriptionSchema.safeParse(
     Object.fromEntries(formData.entries())
   );
@@ -36,7 +48,7 @@ export async function createSubscription(prevState: SubscriptionFormState, formD
   if (!validatedFields.success) {
     return {
       success: false,
-      message: "Erreurs de validation. Veuillez vérifier les champs.",
+      message: 'Erreurs de validation. Veuillez vérifier les champs.',
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
@@ -66,10 +78,10 @@ export async function createSubscription(prevState: SubscriptionFormState, formD
         allocations: [],
         lastModified: null,
         totalAllocated: 0,
-        maxProjects: 10
+        maxProjects: 10,
       },
       payment_status: 'pending',
-      auto_renew: true
+      auto_renew: true,
     })
     .select()
     .single();
@@ -83,16 +95,16 @@ export async function createSubscription(prevState: SubscriptionFormState, formD
   }
 
   revalidatePath('/admin/subscriptions');
-  
+
   return {
     success: true,
-    message: "Abonnement créé avec succès!",
+    message: 'Abonnement créé avec succès!',
     id: data.id,
   };
 }
 
 export async function updateSubscription(
-  id: string, 
+  id: string,
   patch: Partial<z.infer<typeof subscriptionSchema>>
 ): Promise<SubscriptionFormState> {
   const supabase = await createSupabaseServer();
@@ -101,7 +113,7 @@ export async function updateSubscription(
     .from('subscriptions')
     .update({
       ...patch,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .eq('id', id)
     .select()
@@ -117,10 +129,10 @@ export async function updateSubscription(
 
   revalidatePath('/admin/subscriptions');
   revalidatePath(`/admin/subscriptions/${id}`);
-  
+
   return {
     success: true,
-    message: "Abonnement mis à jour avec succès!",
+    message: 'Abonnement mis à jour avec succès!',
     id: data.id,
   };
 }

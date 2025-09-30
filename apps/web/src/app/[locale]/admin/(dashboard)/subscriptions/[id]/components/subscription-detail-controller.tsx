@@ -14,10 +14,9 @@ type SubscriptionDetailControllerProps = {
   onSave: (patch: Partial<Subscription>) => Promise<void>;
 };
 
-export const SubscriptionDetailController: FC<SubscriptionDetailControllerProps> = ({
-  subscriptionData,
-  onSave,
-}) => {
+export const SubscriptionDetailController: FC<
+  SubscriptionDetailControllerProps
+> = ({ subscriptionData, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [pendingData, setPendingData] = useState<Partial<Subscription>>({});
@@ -39,9 +38,17 @@ export const SubscriptionDetailController: FC<SubscriptionDetailControllerProps>
     try {
       const patch: Partial<Subscription> = {};
       for (const key of [
-        'subscription_tier', 'billing_frequency', 'amount_eur', 'status', 'points_total', 'bonus_percentage'
+        'subscription_tier',
+        'billing_frequency',
+        'amount_eur',
+        'status',
+        'points_total',
+        'bonus_percentage',
       ] as const) {
-        if (key in pendingData && (subscriptionData as any)[key] !== (pendingData as any)[key]) {
+        if (
+          key in pendingData &&
+          (subscriptionData as any)[key] !== (pendingData as any)[key]
+        ) {
           (patch as any)[key] = (pendingData as any)[key];
         }
       }

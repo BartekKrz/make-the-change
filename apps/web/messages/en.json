@@ -15,7 +15,52 @@
     "filter": "Filter",
     "retry": "Retry",
     "preview": "Preview",
-    "select_placeholder": "Select...",
+    "select_placeholder": "Select..."
+  },
+  "errors": {
+    "notFound": {
+      "title": "{entity} not found",
+      "description": "This {entity} does not exist or has been deleted"
+    },
+    "accessDenied": {
+      "title": "Access denied",
+      "description": "You don't have permission to access this {entity}"
+    },
+    "serverError": {
+      "title": "Server error",
+      "description": "A technical problem occurred, please try again"
+    },
+    "loadingError": {
+      "title": "Loading error",
+      "description": "Unable to load this {entity}"
+    },
+    "entities": {
+      "product": {
+        "singular": "product",
+        "article": "this"
+      },
+      "user": {
+        "singular": "user",
+        "article": "this"
+      },
+      "project": {
+        "singular": "project",
+        "article": "this"
+      },
+      "partner": {
+        "singular": "partner",
+        "article": "this"
+      },
+      "subscription": {
+        "singular": "subscription",
+        "article": "this"
+      },
+      "order": {
+        "singular": "order",
+        "article": "this"
+      }
+    }
+  },
     "breadcrumbs": {
       "dashboard": "Dashboard",
       "products": "Products"
@@ -202,7 +247,7 @@
           "fulfillment_method": "Select a method"
         },
         "blur_system": {
-          "title": "🚀 Scalable DB Blur System",
+          "title": "ðŸš€ Scalable DB Blur System",
           "images": "Images",
           "with_blur": "With blur",
           "missing": "Missing",
@@ -271,7 +316,82 @@
       "name": "Project Name",
       "location": "Location",
       "status": "Status",
-      "investment_goal": "Investment Goal"
+      "investment_goal": "Investment Goal",
+      "search_placeholder": "Search projects...",
+      "labels": {
+        "status": "Status"
+      },
+      "sort": {
+        "newest": "Newest first",
+        "oldest": "Oldest first",
+        "name_asc": "Name (A-Z)",
+        "name_desc": "Name (Z-A)",
+        "budget_desc": "Budget high to low",
+        "budget_asc": "Budget low to high",
+        "featured": "Featured first"
+      },
+      "filters": {
+        "all_statuses": "All statuses",
+        "all_types": "All types",
+        "all_partners": "All partners",
+        "all_countries": "All countries",
+        "sort_by": "Sort by",
+        "impact_types": "Impact types",
+        "active_only": "Active only",
+        "clear_filters": "Clear filters",
+        "clear_all_filters": "Clear all filters",
+        "reset": "Reset filters"
+      },
+      "filter_modal": {
+        "partner": "Partner",
+        "type": "Project type",
+        "country": "Country",
+        "impact_types": "Impact types",
+        "active_only_description": "Show only active projects"
+      },
+      "type": {
+        "beehive": "Beehive",
+        "olive_tree": "Olive tree",
+        "vineyard": "Vineyard",
+        "forest": "Forest",
+        "solar": "Solar"
+      },
+      "statuses": {
+        "active": "Active",
+        "funded": "Funded",
+        "closed": "Closed",
+        "suspended": "Suspended",
+        "inactive": "Inactive"
+      },
+      "statusActions": {
+        "activate": "Activate",
+        "suspend": "Suspend"
+      },
+      "funding": {
+        "increase": "Increase target",
+        "decrease": "Decrease target"
+      },
+      "featured": {
+        "add": "Mark as featured",
+        "remove": "Remove featured tag"
+      },
+      "filters_tooltip": {
+        "type": "Filter by type: {type}",
+        "partner": "Filter by partner: {name}",
+        "country": "Filter by country: {country}",
+        "impact_type": "Filter by impact type: {type}",
+        "featured": "Filter by featured projects"
+      },
+      "other_impact_types": "and {count} more",
+      "empty_state": {
+        "title": "No projects",
+        "description": "No results match these filters."
+      },
+      "error": {
+        "loading_title": "Loading error",
+        "loading_description": "Unable to load projects.",
+        "retry": "Try again"
+      }
     },
     "partners": {
       "title": "Partner Management",
@@ -317,3 +437,7 @@
     "description": "Invest in ecological projects and discover sustainable products"
   }
 }
+
+
+
+

@@ -49,7 +49,9 @@ export const createTRPCContext = async (opts: { req: Request }): Promise<TRPCCon
         // Parse cookies to find Supabase auth tokens
         const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
           const [name, value] = cookie.trim().split('=')
-          acc[name] = decodeURIComponent(value || '')
+          if (name) {
+            acc[name] = decodeURIComponent(value || '')
+          }
           return acc
         }, {} as Record<string, string>)
 
@@ -57,19 +59,30 @@ export const createTRPCContext = async (opts: { req: Request }): Promise<TRPCCon
         const accessTokenCookie = cookies[`sb-ebmjxinsyyjwshnynwwu-auth-token`]
         if (accessTokenCookie) {
           try {
-            const authData = JSON.parse(accessTokenCookie)
+            let authData: any;
+
+            // Check if cookie is base64 encoded
+            if (accessTokenCookie.startsWith('base64-')) {
+              const base64Data = accessTokenCookie.replace('base64-', '')
+              const decodedData = Buffer.from(base64Data, 'base64').toString('utf-8')
+              authData = JSON.parse(decodedData)
+            } else {
+              // Try direct JSON parse for backwards compatibility
+              authData = JSON.parse(accessTokenCookie)
+            }
+
             if (authData?.access_token) {
               const {
                 data: { user: cookieUser },
                 error: cookieError,
               } = await supabase.auth.getUser(authData.access_token)
-              
+
               if (!cookieError && cookieUser) {
                 user = cookieUser
               }
             }
           } catch (parseError) {
-            // Cookie might not be JSON, try alternative approach
+            // Cookie might not be valid JSON or base64, skip parsing
             console.warn('Could not parse auth cookie:', parseError)
           }
         }

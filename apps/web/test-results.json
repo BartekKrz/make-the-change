@@ -1,0 +1,259 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\playwright.config.ts",
+    "rootDir": "C:/Users/kryns/OneDrive/Bureau/make-the-change/apps/web/test/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/kryns/OneDrive/Bureau/make-the-change/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/kryns/OneDrive/Bureau/make-the-change/apps/web/test/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.0",
+    "workers": 2,
+    "webServer": {
+      "command": "pnpm dev",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true,
+      "timeout": 120000,
+      "stderr": "pipe"
+    }
+  },
+  "suites": [
+    {
+      "title": "debug-form.spec.ts",
+      "file": "debug-form.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Debug TanStack Form Auto-save",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 20765,
+                  "error": {
+                    "message": "TimeoutError: page.waitForSelector: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input, textarea, select') to be visible\u001b[22m\n\u001b[2m    14 × locator resolved to 7 elements. Proceeding with the first one: <input type=\"hidden\" name=\"$ACTION_REF_1\"/>\u001b[22m\n",
+                    "stack": "TimeoutError: page.waitForSelector: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input, textarea, select') to be visible\u001b[22m\n\u001b[2m    14 × locator resolved to 7 elements. Proceeding with the first one: <input type=\"hidden\" name=\"$ACTION_REF_1\"/>\u001b[22m\n\n    at C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test\\e2e\\debug-form.spec.ts:59:16",
+                    "location": {
+                      "file": "C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test\\e2e\\debug-form.spec.ts",
+                      "column": 16,
+                      "line": 59
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 57 |\u001b[39m\n \u001b[90m 58 |\u001b[39m     \u001b[90m// Essayer d'autres sélecteurs\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 59 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'input, textarea, select'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 60 |\u001b[39m   }\n \u001b[90m 61 |\u001b[39m\n \u001b[90m 62 |\u001b[39m   \u001b[90m// Attendre un peu plus pour que le formulaire se charge complètement\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test\\e2e\\debug-form.spec.ts",
+                        "column": 16,
+                        "line": 59
+                      },
+                      "message": "TimeoutError: page.waitForSelector: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input, textarea, select') to be visible\u001b[22m\n\u001b[2m    14 × locator resolved to 7 elements. Proceeding with the first one: <input type=\"hidden\" name=\"$ACTION_REF_1\"/>\u001b[22m\n\n\n  57 |\n  58 |     // Essayer d'autres sélecteurs\n> 59 |     await page.waitForSelector('input, textarea, select', { timeout: 5000 });\n     |                ^\n  60 |   }\n  61 |\n  62 |   // Attendre un peu plus pour que le formulaire se charge complètement\n    at C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test\\e2e\\debug-form.spec.ts:59:16"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "🚀 Starting TanStack Form debug session...\n"
+                    },
+                    {
+                      "text": "📍 Navigating to login page...\n"
+                    },
+                    {
+                      "text": "🔍 Current URL: http://localhost:3001/fr/admin/login\n"
+                    },
+                    {
+                      "text": "🔐 Login form detected, logging in...\n"
+                    },
+                    {
+                      "text": "✅ Logged in successfully\n"
+                    },
+                    {
+                      "text": "📍 Navigating to product page...\n"
+                    },
+                    {
+                      "text": "⏳ Waiting for page to load...\n"
+                    },
+                    {
+                      "text": "🔍 No text inputs found, checking for other form elements...\n"
+                    },
+                    {
+                      "text": "📄 Page contains: ((e, i, s, u, m, a, l, h)=>{\n    let d = document.documentElement, w = [\n        \"light\",\n        \"dark\"\n    ];\n    function p(n) {\n        (Array.isArray(e) ? e : [\n            e\n        ]).forEach((...\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-09-28T12:39:31.479Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test-results\\debug-form-Debug-TanStack-Form-Auto-save-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test-results\\debug-form-Debug-TanStack-Form-Auto-save-chromium\\video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test-results\\debug-form-Debug-TanStack-Form-Auto-save-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test\\e2e\\debug-form.spec.ts",
+                    "column": 16,
+                    "line": 59
+                  }
+                },
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 45227,
+                  "error": {
+                    "message": "TimeoutError: page.goto: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3001/fr/admin/products/953f55f8-5b9b-4d56-a61d-51df85930fb9\", waiting until \"load\"\u001b[22m\n",
+                    "stack": "TimeoutError: page.goto: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3001/fr/admin/products/953f55f8-5b9b-4d56-a61d-51df85930fb9\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test\\e2e\\debug-form.spec.ts:46:14",
+                    "location": {
+                      "file": "C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test\\e2e\\debug-form.spec.ts",
+                      "column": 14,
+                      "line": 46
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 44 |\u001b[39m   \u001b[90m// Maintenant naviguer vers la page produit\u001b[39m\n \u001b[90m 45 |\u001b[39m   console\u001b[33m.\u001b[39mlog(\u001b[32m'📍 Navigating to product page...'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 46 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3001/fr/admin/products/953f55f8-5b9b-4d56-a61d-51df85930fb9'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 47 |\u001b[39m\n \u001b[90m 48 |\u001b[39m   \u001b[90m// Attendre que la page se charge - essayer plusieurs sélecteurs\u001b[39m\n \u001b[90m 49 |\u001b[39m   console\u001b[33m.\u001b[39mlog(\u001b[32m'⏳ Waiting for page to load...'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test\\e2e\\debug-form.spec.ts",
+                        "column": 14,
+                        "line": 46
+                      },
+                      "message": "TimeoutError: page.goto: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3001/fr/admin/products/953f55f8-5b9b-4d56-a61d-51df85930fb9\", waiting until \"load\"\u001b[22m\n\n\n  44 |   // Maintenant naviguer vers la page produit\n  45 |   console.log('📍 Navigating to product page...');\n> 46 |   await page.goto('http://localhost:3001/fr/admin/products/953f55f8-5b9b-4d56-a61d-51df85930fb9');\n     |              ^\n  47 |\n  48 |   // Attendre que la page se charge - essayer plusieurs sélecteurs\n  49 |   console.log('⏳ Waiting for page to load...');\n    at C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test\\e2e\\debug-form.spec.ts:46:14"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "🚀 Starting TanStack Form debug session...\n"
+                    },
+                    {
+                      "text": "📍 Navigating to login page...\n"
+                    },
+                    {
+                      "text": "🔍 Current URL: http://localhost:3001/fr/admin/login\n"
+                    },
+                    {
+                      "text": "🔐 Login form detected, logging in...\n"
+                    },
+                    {
+                      "text": "✅ Logged in successfully\n"
+                    },
+                    {
+                      "text": "📍 Navigating to product page...\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 1,
+                  "startTime": "2025-09-28T12:39:55.257Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test-results\\debug-form-Debug-TanStack-Form-Auto-save-chromium-retry1\\video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test-results\\debug-form-Debug-TanStack-Form-Auto-save-chromium-retry1\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\kryns\\OneDrive\\Bureau\\make-the-change\\apps\\web\\test\\e2e\\debug-form.spec.ts",
+                    "column": 14,
+                    "line": 46
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "84fb9b6ebcba9da83339-3b3458d0f04beafad043",
+          "file": "debug-form.spec.ts",
+          "line": 3,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-09-28T12:39:27.121Z",
+    "duration": 78057.484,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -1,34 +1,43 @@
-'use client'
+'use client';
 
-import { ResponsiveBar, type BarDatum } from '@nivo/bar'
-import { ResponsiveCalendar, type CalendarDatum } from '@nivo/calendar'
-import { ResponsiveLine, type Serie } from '@nivo/line'
-import { ResponsivePie, type PieDatum } from '@nivo/pie'
+import { ResponsiveBar, type BarDatum } from '@nivo/bar';
+import { ResponsiveCalendar, type CalendarDatum } from '@nivo/calendar';
+import { ResponsiveLine, type Serie } from '@nivo/line';
+import { ResponsivePie, type PieDatum } from '@nivo/pie';
 
-import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn'
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
+import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/app/[locale]/admin/(dashboard)/components/ui/card';
 
-import type { FC } from 'react'
+import type { FC } from 'react';
 type ChartContainerProps = {
-  title?: string
-  description?: string
-  className?: string
-  height?: number
-  children: React.ReactNode
-}
+  title?: string;
+  description?: string;
+  className?: string;
+  height?: number;
+  children: React.ReactNode;
+};
 
 const ChartContainer: FC<ChartContainerProps> = ({
   title,
   description,
   className,
   height = 400,
-  children
+  children,
 }) => (
-  <Card className={cn('transition-all duration-200 hover:shadow-lg', className)}>
+  <Card
+    className={cn('transition-all duration-200 hover:shadow-lg', className)}
+  >
     {title && (
       <CardHeader>
         <CardTitle className="text-lg font-semibold">{title}</CardTitle>
-        {description && <p className="text-sm text-muted-foreground">{description}</p>}
+        {description && (
+          <p className="text-muted-foreground text-sm">{description}</p>
+        )}
       </CardHeader>
     )}
     <CardContent>
@@ -37,28 +46,28 @@ const ChartContainer: FC<ChartContainerProps> = ({
       </div>
     </CardContent>
   </Card>
-)
+);
 type ChartBarProps = {
-  data: BarDatum[]
-  keys: string[]
-  indexBy: string
-  colors?: string[]
-  height?: number
-  margin?: { top: number; right: number; bottom: number; left: number }
-  enableGridX?: boolean
-  enableGridY?: boolean
-  enableLabel?: boolean
+  data: BarDatum[];
+  keys: string[];
+  indexBy: string;
+  colors?: string[];
+  height?: number;
+  margin?: { top: number; right: number; bottom: number; left: number };
+  enableGridX?: boolean;
+  enableGridY?: boolean;
+  enableLabel?: boolean;
   axisBottom?: {
-    tickSize?: number
-    tickPadding?: number
-    tickRotation?: number
-  }
+    tickSize?: number;
+    tickPadding?: number;
+    tickRotation?: number;
+  };
   axisLeft?: {
-    tickSize?: number
-    tickPadding?: number
-    format?: string
-  }
-}
+    tickSize?: number;
+    tickPadding?: number;
+    format?: string;
+  };
+};
 
 const ChartBar: FC<ChartBarProps> = ({
   data,
@@ -78,7 +87,7 @@ const ChartBar: FC<ChartBarProps> = ({
   axisLeft = {
     tickSize: 5,
     tickPadding: 5,
-  }
+  },
 }) => (
   <div style={{ height: `${height}px` }}>
     <ResponsiveBar
@@ -120,11 +129,11 @@ const ChartBar: FC<ChartBarProps> = ({
             {
               on: 'hover',
               style: {
-                itemOpacity: 1
-              }
-            }
-          ]
-        }
+                itemOpacity: 1,
+              },
+            },
+          ],
+        },
       ]}
       theme={{
         background: 'transparent',
@@ -134,55 +143,55 @@ const ChartBar: FC<ChartBarProps> = ({
           domain: {
             line: {
               stroke: 'hsl(var(--border))',
-              strokeWidth: 1
-            }
+              strokeWidth: 1,
+            },
           },
           legend: {
             text: {
               fontSize: 12,
-              fill: 'hsl(var(--foreground))'
-            }
+              fill: 'hsl(var(--foreground))',
+            },
           },
           ticks: {
             line: {
               stroke: 'hsl(var(--border))',
-              strokeWidth: 1
+              strokeWidth: 1,
             },
             text: {
               fontSize: 11,
-              fill: 'hsl(var(--muted-foreground))'
-            }
-          }
+              fill: 'hsl(var(--muted-foreground))',
+            },
+          },
         },
         grid: {
           line: {
             stroke: 'hsl(var(--border))',
             strokeWidth: 1,
-            strokeOpacity: 0.5
-          }
-        }
+            strokeOpacity: 0.5,
+          },
+        },
       }}
     />
   </div>
-)
+);
 type ChartLineProps = {
-  data: Serie[]
-  colors?: string[]
-  height?: number
-  margin?: { top: number; right: number; bottom: number; left: number }
-  enableGridX?: boolean
-  enableGridY?: boolean
-  enablePoints?: boolean
-  pointSize?: number
-  enableArea?: boolean
+  data: Serie[];
+  colors?: string[];
+  height?: number;
+  margin?: { top: number; right: number; bottom: number; left: number };
+  enableGridX?: boolean;
+  enableGridY?: boolean;
+  enablePoints?: boolean;
+  pointSize?: number;
+  enableArea?: boolean;
   axisBottom?: {
-    format?: string
-    tickRotation?: number
-  }
+    format?: string;
+    tickRotation?: number;
+  };
   axisLeft?: {
-    format?: string
-  }
-}
+    format?: string;
+  };
+};
 
 const ChartLine: FC<ChartLineProps> = ({
   data,
@@ -195,7 +204,7 @@ const ChartLine: FC<ChartLineProps> = ({
   pointSize = 6,
   enableArea = false,
   axisBottom = {},
-  axisLeft = {}
+  axisLeft = {},
 }) => (
   <div style={{ height: `${height}px` }}>
     <ResponsiveLine
@@ -242,11 +251,11 @@ const ChartLine: FC<ChartLineProps> = ({
               on: 'hover',
               style: {
                 itemBackground: 'rgba(0, 0, 0, .03)',
-                itemOpacity: 1
-              }
-            }
-          ]
-        }
+                itemOpacity: 1,
+              },
+            },
+          ],
+        },
       ]}
       theme={{
         background: 'transparent',
@@ -256,54 +265,54 @@ const ChartLine: FC<ChartLineProps> = ({
           domain: {
             line: {
               stroke: 'hsl(var(--border))',
-              strokeWidth: 1
-            }
+              strokeWidth: 1,
+            },
           },
           legend: {
             text: {
               fontSize: 12,
-              fill: 'hsl(var(--foreground))'
-            }
+              fill: 'hsl(var(--foreground))',
+            },
           },
           ticks: {
             line: {
               stroke: 'hsl(var(--border))',
-              strokeWidth: 1
+              strokeWidth: 1,
             },
             text: {
               fontSize: 11,
-              fill: 'hsl(var(--muted-foreground))'
-            }
-          }
+              fill: 'hsl(var(--muted-foreground))',
+            },
+          },
         },
         grid: {
           line: {
             stroke: 'hsl(var(--border))',
             strokeWidth: 1,
-            strokeOpacity: 0.5
-          }
-        }
+            strokeOpacity: 0.5,
+          },
+        },
       }}
       yScale={{
         type: 'linear',
         min: 'auto',
         max: 'auto',
         stacked: false,
-        reverse: false
+        reverse: false,
       }}
     />
   </div>
-)
+);
 type ChartPieProps = {
-  data: PieDatum[]
-  colors?: string[]
-  height?: number
-  margin?: { top: number; right: number; bottom: number; left: number }
-  innerRadius?: number
-  padAngle?: number
-  enableArcLinkLabels?: boolean
-  enableArcLabels?: boolean
-}
+  data: PieDatum[];
+  colors?: string[];
+  height?: number;
+  margin?: { top: number; right: number; bottom: number; left: number };
+  innerRadius?: number;
+  padAngle?: number;
+  enableArcLinkLabels?: boolean;
+  enableArcLabels?: boolean;
+};
 
 const ChartPie: FC<ChartPieProps> = ({
   data,
@@ -313,7 +322,7 @@ const ChartPie: FC<ChartPieProps> = ({
   innerRadius = 0.5,
   padAngle = 0.7,
   enableArcLinkLabels = true,
-  enableArcLabels = false
+  enableArcLabels = false,
 }) => (
   <div style={{ height: `${height}px` }}>
     <ResponsivePie
@@ -336,21 +345,11 @@ const ChartPie: FC<ChartPieProps> = ({
       padAngle={padAngle}
       arcLabelsTextColor={{
         from: 'color',
-        modifiers: [
-          [
-            'darker',
-            2
-          ]
-        ]
+        modifiers: [['darker', 2]],
       }}
       borderColor={{
         from: 'color',
-        modifiers: [
-          [
-            'darker',
-            0.2
-          ]
-        ]
+        modifiers: [['darker', 0.2]],
       }}
       legends={[
         {
@@ -371,11 +370,11 @@ const ChartPie: FC<ChartPieProps> = ({
             {
               on: 'hover',
               style: {
-                itemTextColor: 'hsl(var(--foreground))'
-              }
-            }
-          ]
-        }
+                itemTextColor: 'hsl(var(--foreground))',
+              },
+            },
+          ],
+        },
       ]}
       theme={{
         background: 'transparent',
@@ -384,18 +383,18 @@ const ChartPie: FC<ChartPieProps> = ({
       }}
     />
   </div>
-)
+);
 type ChartCalendarProps = {
-  data: CalendarDatum[]
-  from: string
-  to: string
-  colors?: string[]
-  height?: number
-  margin?: { top: number; right: number; bottom: number; left: number }
-  monthBorderColor?: string
-  dayBorderColor?: string
-  emptyColor?: string
-}
+  data: CalendarDatum[];
+  from: string;
+  to: string;
+  colors?: string[];
+  height?: number;
+  margin?: { top: number; right: number; bottom: number; left: number };
+  monthBorderColor?: string;
+  dayBorderColor?: string;
+  emptyColor?: string;
+};
 
 const ChartCalendar: FC<ChartCalendarProps> = ({
   data,
@@ -406,7 +405,7 @@ const ChartCalendar: FC<ChartCalendarProps> = ({
   margin = { top: 40, right: 40, bottom: 40, left: 40 },
   monthBorderColor = 'hsl(var(--border))',
   dayBorderColor = 'hsl(var(--background))',
-  emptyColor = 'hsl(var(--muted))'
+  emptyColor = 'hsl(var(--muted))',
 }) => (
   <div style={{ height: `${height}px` }}>
     <ResponsiveCalendar
@@ -429,8 +428,8 @@ const ChartCalendar: FC<ChartCalendarProps> = ({
           itemWidth: 42,
           itemHeight: 36,
           itemsSpacing: 14,
-          itemDirection: 'right-to-left'
-        }
+          itemDirection: 'right-to-left',
+        },
       ]}
       theme={{
         background: 'transparent',
@@ -439,13 +438,13 @@ const ChartCalendar: FC<ChartCalendarProps> = ({
       }}
     />
   </div>
-)
+);
 export const Chart = Object.assign(ChartContainer, {
   Container: ChartContainer,
   Bar: ChartBar,
   Line: ChartLine,
   Pie: ChartPie,
-  Calendar: ChartCalendar
-})
+  Calendar: ChartCalendar,
+});
 
-export { ChartContainer, ChartBar, ChartLine, ChartPie, ChartCalendar }
+export { ChartContainer, ChartBar, ChartLine, ChartPie, ChartCalendar };

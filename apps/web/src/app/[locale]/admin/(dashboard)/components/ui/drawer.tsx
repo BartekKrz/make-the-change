@@ -1,7 +1,12 @@
 'use client';
 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { forwardRef, type ComponentPropsWithoutRef, type ElementRef, useState } from 'react';
+import {
+  forwardRef,
+  type ComponentPropsWithoutRef,
+  type ElementRef,
+  useState,
+} from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -20,7 +25,7 @@ const DrawerOverlay = forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 backdrop-blur-sm',
       className
     )}
     {...props}
@@ -45,10 +50,10 @@ const DrawerContent = forwardRef<
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (startY === null) return;
-    
+
     const currentTouchY = e.touches[0].clientY;
     setCurrentY(currentTouchY);
-    
+
     const diff = currentTouchY - startY;
     // Seulement permettre le swipe vers le bas
     if (diff > 0) {
@@ -58,14 +63,14 @@ const DrawerContent = forwardRef<
 
   const handleTouchEnd = () => {
     if (startY === null || currentY === null) return;
-    
+
     const diff = currentY - startY;
-    
+
     // Si swipe vers le bas > 100px, fermer le drawer
     if (diff > 100) {
       onSwipeClose?.();
     }
-    
+
     // Reset des valeurs
     setStartY(null);
     setCurrentY(null);
@@ -78,7 +83,7 @@ const DrawerContent = forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          'overlay-sheet fixed bottom-0 left-0 right-0 z-50 max-h-[85vh] flex flex-col data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300',
+          'overlay-sheet data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom fixed right-0 bottom-0 left-0 z-50 flex max-h-[85vh] flex-col duration-300',
           className
         )}
         style={{
@@ -92,7 +97,7 @@ const DrawerContent = forwardRef<
       >
         {/* Handle visuel pour indiquer qu'on peut swiper */}
         <div className="flex justify-center p-2">
-          <div className="w-10 h-1 bg-gray-300 rounded-full" />
+          <div className="h-1 w-10 rounded-full bg-gray-300" />
         </div>
         {children}
       </DialogPrimitive.Content>
@@ -107,7 +112,7 @@ const DrawerHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'flex items-center justify-between p-4 border-b border-border',
+      'border-border flex items-center justify-between border-b p-4',
       className
     )}
     {...props}
@@ -119,13 +124,7 @@ const DrawerBody = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      'flex-1 overflow-y-auto p-4',
-      className
-    )}
-    {...props}
-  />
+  <div className={cn('flex-1 overflow-y-auto p-4', className)} {...props} />
 );
 DrawerBody.displayName = 'DrawerBody';
 

@@ -44,10 +44,11 @@ export const UserDetailController: FC<UserDetailControllerProps> = ({
     setIsSaving(true);
     try {
       const patch: Partial<UserData> = {};
-      for (const key of [
-        'name', 'email', 'role', 'is_active'
-      ] as const) {
-        if (key in pendingData && (userData as any)[key] !== (pendingData as any)[key]) {
+      for (const key of ['name', 'email', 'role', 'is_active'] as const) {
+        if (
+          key in pendingData &&
+          (userData as any)[key] !== (pendingData as any)[key]
+        ) {
           (patch as any)[key] = (pendingData as any)[key];
         }
       }
@@ -75,10 +76,13 @@ export const UserDetailController: FC<UserDetailControllerProps> = ({
           isEditing={isEditing}
           isSaving={isSaving}
           userData={displayData}
-          onSave={async (data) => {
+          onSave={async data => {
             const patch: Partial<UserData> = {};
             for (const key of ['name', 'email', 'role', 'is_active'] as const) {
-              if ((data as any)[key] !== undefined && (userData as any)[key] !== (data as any)[key]) {
+              if (
+                (data as any)[key] !== undefined &&
+                (userData as any)[key] !== (data as any)[key]
+              ) {
                 (patch as any)[key] = (data as any)[key];
               }
             }

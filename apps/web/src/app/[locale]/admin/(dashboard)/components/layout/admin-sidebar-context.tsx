@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, useContext, useState, type FC, type PropsWithChildren } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  type FC,
+  type PropsWithChildren,
+} from 'react';
 
 type AdminSidebarContextType = {
   isMobileOpen: boolean;
@@ -8,7 +14,9 @@ type AdminSidebarContextType = {
   toggleMobileSidebar: () => void;
 };
 
-const AdminSidebarContext = createContext<AdminSidebarContextType | undefined>(undefined);
+const AdminSidebarContext = createContext<AdminSidebarContextType | undefined>(
+  undefined
+);
 
 export const AdminSidebarProvider: FC<PropsWithChildren> = ({ children }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -22,7 +30,7 @@ export const AdminSidebarProvider: FC<PropsWithChildren> = ({ children }) => {
       value={{
         isMobileOpen,
         setIsMobileOpen,
-        toggleMobileSidebar
+        toggleMobileSidebar,
       }}
     >
       {children}
@@ -33,7 +41,9 @@ export const AdminSidebarProvider: FC<PropsWithChildren> = ({ children }) => {
 export const useAdminSidebar = () => {
   const context = useContext(AdminSidebarContext);
   if (context === undefined) {
-    throw new Error('useAdminSidebar must be used within an AdminSidebarProvider');
+    throw new Error(
+      'useAdminSidebar must be used within an AdminSidebarProvider'
+    );
   }
   return context;
 };

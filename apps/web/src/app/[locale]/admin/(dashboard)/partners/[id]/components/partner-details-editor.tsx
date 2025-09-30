@@ -1,9 +1,17 @@
 'use client';
 
-import { partnerStatusLabels, type PartnerFormData } from '@make-the-change/api/validators/partner';
+import {
+  partnerStatusLabels,
+  type PartnerFormData,
+} from '@make-the-change/api/validators/partner';
 import { Building2, Mail, Save } from 'lucide-react';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/app/[locale]/admin/(dashboard)/components/ui/card';
 import { FormInput, FormSelect, FormTextArea } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { useFormWithToast } from '@/hooks/use-form-with-toast';
@@ -18,13 +26,17 @@ type PartnerDetailsEditorProps = {
 };
 
 const PartnerCardsGrid: FC<PropsWithChildren> = ({ children }) => (
-  <div className='grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 [&>*]:h-full'>{children}</div>
+  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8 [&>*]:h-full">
+    {children}
+  </div>
 );
 
-const statusOptions = Object.entries(partnerStatusLabels).map(([value, label]) => ({
-  value,
-  label
-}));
+const statusOptions = Object.entries(partnerStatusLabels).map(
+  ([value, label]) => ({
+    value,
+    label,
+  })
+);
 
 export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
   partnerData,
@@ -44,13 +56,13 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
     toasts: {
       success: {
         title: 'Partenaire mis à jour',
-        description: 'Les modifications ont été enregistrées avec succès'
+        description: 'Les modifications ont été enregistrées avec succès',
       },
       error: {
         title: 'Erreur',
-        description: 'Impossible de mettre à jour le partenaire'
-      }
-    }
+        description: 'Impossible de mettre à jour le partenaire',
+      },
+    },
   });
 
   const contentSections = [
@@ -59,9 +71,9 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
       title: 'Informations générales',
       icon: Building2,
       content: (
-        <div className='space-y-4'>
+        <div className="space-y-4">
           <form.Field name="name">
-            {(field) => (
+            {field => (
               <FormInput
                 required
                 disabled={!isEditing}
@@ -73,7 +85,7 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
           </form.Field>
 
           <form.Field name="slug">
-            {(field) => (
+            {field => (
               <FormInput
                 required
                 disabled={!isEditing}
@@ -85,7 +97,7 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
           </form.Field>
 
           <form.Field name="description">
-            {(field) => (
+            {field => (
               <FormTextArea
                 disabled={!isEditing}
                 field={field}
@@ -96,16 +108,16 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
             )}
           </form.Field>
         </div>
-      )
+      ),
     },
     {
       id: 'contact',
       title: 'Contact & Statut',
       icon: Mail,
       content: (
-        <div className='space-y-4'>
+        <div className="space-y-4">
           <form.Field name="contact_email">
-            {(field) => (
+            {field => (
               <FormInput
                 required
                 disabled={!isEditing}
@@ -118,7 +130,7 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
           </form.Field>
 
           <form.Field name="website">
-            {(field) => (
+            {field => (
               <FormInput
                 disabled={!isEditing}
                 field={field}
@@ -130,7 +142,7 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
           </form.Field>
 
           <form.Field name="status">
-            {(field) => (
+            {field => (
               <FormSelect
                 disabled={!isEditing}
                 field={field}
@@ -141,30 +153,34 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
             )}
           </form.Field>
         </div>
-      )
+      ),
     },
   ];
 
   return (
-    <form className='space-y-6 md:space-y-8' onSubmit={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      form.handleSubmit();
-    }}>
+    <form
+      className="space-y-6 md:space-y-8"
+      onSubmit={e => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
       <PartnerCardsGrid>
-        {contentSections.map((section) => (
-          <Card key={section.id} className='transition-all duration-200 hover:shadow-lg'>
-            <CardHeader className='pb-4'>
-              <CardTitle className='flex items-center gap-3 text-lg'>
-                <div className='p-2 bg-gradient-to-br from-primary/20 to-orange-500/20 rounded-lg border border-primary/20'>
-                  <section.icon className='h-5 w-5 text-primary' />
+        {contentSections.map(section => (
+          <Card
+            key={section.id}
+            className="transition-all duration-200 hover:shadow-lg"
+          >
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-3 text-lg">
+                <div className="from-primary/20 border-primary/20 rounded-lg border bg-gradient-to-br to-orange-500/20 p-2">
+                  <section.icon className="text-primary h-5 w-5" />
                 </div>
                 {section.title}
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              {section.content}
-            </CardContent>
+            <CardContent>{section.content}</CardContent>
           </Card>
         ))}
       </PartnerCardsGrid>
@@ -176,9 +192,9 @@ export const PartnerDetailsEditor: FC<PartnerDetailsEditorProps> = ({
             disabled={isSubmitting || isSaving}
             type="submit"
           >
-            {(isSubmitting || isSaving) ? (
+            {isSubmitting || isSaving ? (
               <>
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                <div className="border-primary-foreground h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
                 Sauvegarde...
               </>
             ) : (

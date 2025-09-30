@@ -29,7 +29,7 @@ export type Subscription = {
       phone?: string | null;
     };
   };
-}
+};
 
 export type SubscriptionFilters = {
   page?: number;
@@ -38,7 +38,7 @@ export type SubscriptionFilters = {
   status?: Subscription['status'];
   subscriptionTier?: Subscription['subscription_tier'];
   billingFrequency?: Subscription['billing_frequency'];
-}
+};
 
 export type SubscriptionFormData = {
   subscription_tier: Subscription['subscription_tier'];

@@ -1,46 +1,61 @@
-"use client"
+'use client';
 
-import { forwardRef, type ForwardedRef } from 'react'
+import { forwardRef, type ForwardedRef } from 'react';
 
-import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input'
-import { cn } from '@/lib/utils'
-
-import { useFieldContext, useFieldErrors } from './form-context'
+import { Input } from '@/app/[locale]/admin/(dashboard)/components/ui/input';
+import {
+  useFieldContext,
+  useFieldErrors,
+} from '@/app/[locale]/admin/(dashboard)/components/form/form-context';
+import { cn } from '@/lib/utils';
 
 export type FormNumberFieldProps = {
-  label?: string
-  placeholder?: string
-  required?: boolean
-  className?: string
-  kind?: 'int' | 'float'
-  emptyValue?: number | null | undefined
-  step?: number | string
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'onBlur' | 'size' | 'type' | 'step'>
+  label?: string;
+  placeholder?: string;
+  required?: boolean;
+  className?: string;
+  kind?: 'int' | 'float';
+  emptyValue?: number | null | undefined;
+  step?: number | string;
+} & Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'value' | 'onChange' | 'onBlur' | 'size' | 'type' | 'step'
+>;
 
 const FormNumberFieldComponent = (
-  { label, placeholder, required, className, kind = 'int', emptyValue, step, ...props }: FormNumberFieldProps,
+  {
+    label,
+    placeholder,
+    required,
+    className,
+    kind = 'int',
+    emptyValue,
+    step,
+    ...props
+  }: FormNumberFieldProps,
   ref: ForwardedRef<HTMLInputElement>
 ) => {
-  const field = useFieldContext<number | null | undefined>()
+  const field = useFieldContext<number | null | undefined>();
 
-  const rawValue = field.state.value
-  const value = rawValue === null || rawValue === undefined ? '' : String(rawValue)
-  const errors = useFieldErrors()
-  const hasError = errors.length > 0
+  const rawValue = field.state.value;
+  const value =
+    rawValue === null || rawValue === undefined ? '' : String(rawValue);
+  const errors = useFieldErrors();
+  const hasError = errors.length > 0;
 
   const handleChange = (s: string) => {
     if (s === '') {
-      field.handleChange(emptyValue)
-      return
+      field.handleChange(emptyValue);
+      return;
     }
     if (kind === 'float') {
-      const n = Number.parseFloat(s)
-      field.handleChange(Number.isNaN(n) ? emptyValue : n)
+      const n = Number.parseFloat(s);
+      field.handleChange(Number.isNaN(n) ? emptyValue : n);
     } else {
-      const n = Number.parseInt(s, 10)
-      field.handleChange(Number.isNaN(n) ? emptyValue : n)
+      const n = Number.parseInt(s, 10);
+      field.handleChange(Number.isNaN(n) ? emptyValue : n);
     }
-  }
+  };
 
   return (
     <div className="space-y-1">
@@ -56,14 +71,14 @@ const FormNumberFieldComponent = (
           className
         )}
         onBlur={field.handleBlur}
-        onChange={(e) => handleChange(e.target.value)}
+        onChange={e => handleChange(e.target.value)}
         {...props}
       />
       {hasError && errors[0] && (
         <p className="text-sm text-red-500">{errors[0]}</p>
       )}
     </div>
-  )
-}
+  );
+};
 
-export const FormNumberField = forwardRef(FormNumberFieldComponent)
+export const FormNumberField = forwardRef(FormNumberFieldComponent);

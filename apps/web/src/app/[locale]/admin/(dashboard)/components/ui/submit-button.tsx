@@ -1,6 +1,6 @@
 'use client';
 import { CheckCircle2, SendIcon } from 'lucide-react';
-import { type FC , type ComponentProps, useState, useEffect } from 'react';
+import { type FC, type ComponentProps, useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
@@ -58,13 +58,23 @@ export const SubmitButton: FC<Props> = ({
 
   return (
     <Button
-      className={cn('transition-all duration-200', pending && 'cursor-wait', className)}
       disabled={pending || showSuccess}
-      icon={showSuccess ? <CheckCircle2 className='h-4 w-4' /> : (icon ?? <SendIcon className='h-4 w-4' />)}
       loading={pending}
       loadingText={pendingText}
-      type='submit'
+      type="submit"
       variant={showSuccess ? 'success' : variant}
+      className={cn(
+        'transition-all duration-200',
+        pending && 'cursor-wait',
+        className
+      )}
+      icon={
+        showSuccess ? (
+          <CheckCircle2 className="h-4 w-4" />
+        ) : (
+          (icon ?? <SendIcon className="h-4 w-4" />)
+        )
+      }
       {...props}
     >
       {showSuccess && showSuccessIndicator ? successText : children}

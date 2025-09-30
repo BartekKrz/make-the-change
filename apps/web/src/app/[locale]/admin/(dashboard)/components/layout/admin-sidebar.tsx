@@ -9,7 +9,7 @@ import {
   ChevronRight,
   Target,
   Building2,
-  CreditCard
+  CreditCard,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -40,7 +40,7 @@ const useNavigationSections = () => {
       icon: LayoutDashboard,
       isStandalone: true,
       href: '/admin/dashboard',
-      description: tSidebar('dashboard.description')
+      description: tSidebar('dashboard.description'),
     },
     {
       key: 'management',
@@ -51,57 +51,57 @@ const useNavigationSections = () => {
           href: '/admin/products',
           icon: Package,
           label: tProducts('title'),
-          description: tProducts('title')
+          description: tProducts('title'),
         },
         {
           href: '/admin/projects',
           icon: Target,
           label: tProjects('title'),
-          description: tProjects('title')
+          description: tProjects('title'),
         },
         {
           href: '/admin/orders',
           icon: ShoppingCart,
           label: tOrders('title'),
-          description: tOrders('description')
+          description: tOrders('description'),
         },
         {
           href: '/admin/partners',
           icon: Building2,
           label: tPartners('title'),
-          description: tPartners('description')
+          description: tPartners('description'),
         },
         {
           href: '/admin/users',
           icon: Users,
           label: tUsers('users'),
-          description: tUsers('users')
+          description: tUsers('users'),
         },
         {
           href: '/admin/subscriptions',
           icon: CreditCard,
           label: tSubscriptions('title'),
-          description: tSubscriptions('title')
-        }
-      ]
-    }
+          description: tSubscriptions('title'),
+        },
+      ],
+    },
   ];
 };
 
 export const AdminSidebar: FC = () => {
   const tSidebar = useTranslations('admin.sidebar');
-  
+
   return (
     <aside
       aria-label={tSidebar('main_navigation')}
-      role='navigation'
+      role="navigation"
       className={cn(
-        'hidden md:block md:relative h-full z-10',
+        'z-10 hidden h-full md:relative md:block',
         'w-64 lg:w-72 xl:w-80',
-        'bg-gradient-to-b from-background/95 via-background/90 to-background/95',
+        'from-background/95 via-background/90 to-background/95 bg-gradient-to-b',
         'dark:from-background/90 dark:via-background/85 dark:to-background/90',
         'backdrop-blur-xl',
-        'border-r border-border dark:border-border/20',
+        'border-border dark:border-border/20 border-r',
         'shadow-[0_24px_48px_-12px_rgba(0,0,0,0.08),0_0_0_1px_rgba(255,255,255,0.05)]',
         'dark:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.25),0_0_0_1px_rgba(255,255,255,0.02)]'
       )}
@@ -113,29 +113,32 @@ export const AdminSidebar: FC = () => {
 
 export const AdminMobileSidebar: FC = () => {
   const { isMobileOpen, setIsMobileOpen } = useAdminSidebar();
-  const closeMobileMenu = useCallback(() => setIsMobileOpen(false), [setIsMobileOpen]);
+  const closeMobileMenu = useCallback(
+    () => setIsMobileOpen(false),
+    [setIsMobileOpen]
+  );
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [_isClosing, setIsClosing] = useState(false);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    management: false
+    management: false,
   });
   const pathname = usePathname();
   const navigationSections = useNavigationSections();
   const tSidebar = useTranslations('admin.sidebar');
 
   const toggleSection = (sectionKey: string) => {
-    setOpenSections((prev) => ({
+    setOpenSections(prev => ({
       ...prev,
-      [sectionKey]: !prev[sectionKey]
+      [sectionKey]: !prev[sectionKey],
     }));
   };
 
   useEffect(() => {
-    const activeSection = navigationSections.find((section) => {
+    const activeSection = navigationSections.find(section => {
       if (section.isStandalone) {
         return pathname === section.href || pathname?.startsWith(section.href);
       }
-      return section.items?.some((item) => {
+      return section.items?.some(item => {
         if (item.href === '/admin') {
           return pathname === item.href;
         }
@@ -143,10 +146,14 @@ export const AdminMobileSidebar: FC = () => {
       });
     });
 
-    if (activeSection && !activeSection.isStandalone && !openSections[activeSection.key]) {
-      setOpenSections((prev) => ({
+    if (
+      activeSection &&
+      !activeSection.isStandalone &&
+      !openSections[activeSection.key]
+    ) {
+      setOpenSections(prev => ({
         ...prev,
-        [activeSection.key]: true
+        [activeSection.key]: true,
       }));
     }
   }, [pathname, openSections]);
@@ -208,11 +215,11 @@ export const AdminMobileSidebar: FC = () => {
   return (
     <AnimatePresence>
       {isMobileOpen && (
-        <div className='fixed inset-0 z-[9999] md:hidden'>
+        <div className="fixed inset-0 z-[9999] md:hidden">
           {}
           <motion.div
             animate={{ opacity: 1 }}
-            className='absolute inset-0 bg-black/30 backdrop-blur-xl'
+            className="absolute inset-0 bg-black/30 backdrop-blur-xl"
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -224,18 +231,18 @@ export const AdminMobileSidebar: FC = () => {
             ref={sidebarRef}
             animate={{ x: 0, opacity: 1 }}
             aria-label={tSidebar('mobile_navigation_menu')}
-            aria-modal='true'
+            aria-modal="true"
             exit={{ x: '-100%', opacity: 0 }}
             initial={{ x: '-100%', opacity: 0 }}
-            role='dialog'
+            role="dialog"
             tabIndex={-1}
             className={cn(
-              'absolute left-0 top-0 h-full w-[92vw] max-w-[440px]',
+              'absolute top-0 left-0 h-full w-[92vw] max-w-[440px]',
               'flex flex-col',
-              'bg-gradient-to-br from-background/96 via-background/92 to-background/96',
+              'from-background/96 via-background/92 to-background/96 bg-gradient-to-br',
               'dark:from-background/92 dark:via-background/88 dark:to-background/92',
               'backdrop-blur-3xl',
-              'border-r border-border/25 dark:border-border/15',
+              'border-border/25 dark:border-border/15 border-r',
               'shadow-[0_40px_80px_-12px_rgba(0,0,0,0.18),0_0_0_1px_rgba(255,255,255,0.08)]',
               'dark:shadow-[0_40px_80px_-12px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.03)]'
             )}
@@ -243,44 +250,53 @@ export const AdminMobileSidebar: FC = () => {
               type: 'spring',
               damping: 25,
               stiffness: 200,
-              duration: 0.5
+              duration: 0.5,
             }}
           >
             {}
             <motion.header
               animate={{ y: 0, opacity: 1 }}
               initial={{ y: -30, opacity: 0 }}
-              transition={{ delay: 0.1, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
               className={cn(
-                'flex items-center justify-between p-7 pb-5 flex-shrink-0',
-                'border-b border-border/15 bg-gradient-to-r from-muted/20 to-muted/10'
+                'flex flex-shrink-0 items-center justify-between p-7 pb-5',
+                'border-border/15 from-muted/20 to-muted/10 border-b bg-gradient-to-r'
               )}
+              transition={{
+                delay: 0.1,
+                duration: 0.5,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              }}
             >
               {}
-              <div className='flex items-center gap-4'>
-                <motion.div className='relative group' whileTap={{ scale: 0.95 }}>
+              <div className="flex items-center gap-4">
+                <motion.div
+                  className="group relative"
+                  whileTap={{ scale: 0.95 }}
+                >
                   <div
                     className={cn(
-                      'w-12 h-12 rounded-3xl flex items-center justify-center relative overflow-hidden',
-                      'bg-gradient-to-br from-primary via-primary to-accent',
-                      'shadow-xl shadow-primary/30'
+                      'relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-3xl',
+                      'from-primary via-primary to-accent bg-gradient-to-br',
+                      'shadow-primary/30 shadow-xl'
                     )}
                   >
-                    <span className='text-white font-bold text-lg tracking-tight'>M</span>
+                    <span className="text-lg font-bold tracking-tight text-white">
+                      M
+                    </span>
 
                     {}
-                    <div className='absolute inset-0 bg-gradient-to-tr from-white/25 via-transparent to-transparent' />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/25 via-transparent to-transparent" />
                   </div>
 
                   {}
-                  <div className='absolute inset-0 bg-gradient-to-br from-primary/50 to-accent/40 rounded-3xl blur-xl opacity-60 animate-pulse group-hover:opacity-80 transition-opacity' />
+                  <div className="from-primary/50 to-accent/40 absolute inset-0 animate-pulse rounded-3xl bg-gradient-to-br opacity-60 blur-xl transition-opacity group-hover:opacity-80" />
                 </motion.div>
 
                 <div>
                   <h1
                     className={cn(
-                      'text-2xl font-bold text-foreground tracking-tight',
-                      'bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text'
+                      'text-foreground text-2xl font-bold tracking-tight',
+                      'from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text'
                     )}
                   >
                     Make the CHANGE
@@ -293,37 +309,37 @@ export const AdminMobileSidebar: FC = () => {
                 aria-label={tSidebar('close_menu')}
                 whileTap={{ scale: 0.9, rotate: 90 }}
                 className={cn(
-                  'p-3.5 rounded-3xl transition-all duration-300',
-                  'bg-gradient-to-br from-muted/60 to-muted/40',
-                  'border border-border/25 backdrop-blur-sm',
-                  'text-muted-foreground active:bg-gradient-to-br active:from-muted/80 active:to-muted/60',
+                  'rounded-3xl p-3.5 transition-all duration-300',
+                  'from-muted/60 to-muted/40 bg-gradient-to-br',
+                  'border-border/25 border backdrop-blur-sm',
+                  'text-muted-foreground active:from-muted/80 active:to-muted/60 active:bg-gradient-to-br',
                   'active:text-foreground shadow-lg active:shadow-xl',
-                  'focus:outline-none focus:ring-2 focus:ring-primary/25'
+                  'focus:ring-primary/25 focus:ring-2 focus:outline-none'
                 )}
                 onClick={handleOverlayClick}
               >
-                <X className='h-5 w-5' />
+                <X className="h-5 w-5" />
               </motion.button>
             </motion.header>
 
             {}
-            <div className='flex-1 overflow-hidden min-h-0'>
-              <nav className='h-full overflow-y-auto overflow-x-hidden py-6 space-y-4 sidebar-scroll-area'>
+            <div className="min-h-0 flex-1 overflow-hidden">
+              <nav className="sidebar-scroll-area h-full space-y-4 overflow-x-hidden overflow-y-auto py-6">
                 {}
                 <motion.div
                   animate={{ y: 0, opacity: 1 }}
-                  className='px-4'
+                  className="px-4"
                   initial={{ y: 20, opacity: 0 }}
                   transition={{
                     delay: 0.2,
                     duration: 0.4,
-                    ease: [0.25, 0.46, 0.45, 0.94]
+                    ease: [0.25, 0.46, 0.45, 0.94],
                   }}
                 >
                   <AdminMobileSidebarLink
                     isPrimary
                     description={tSidebar('dashboard.description')}
-                    href='/admin/dashboard'
+                    href="/admin/dashboard"
                     icon={LayoutDashboard}
                     label={tSidebar('dashboard.label')}
                     onClick={closeMobileMenu}
@@ -333,24 +349,24 @@ export const AdminMobileSidebar: FC = () => {
                 {}
                 <motion.div
                   animate={{ opacity: 1, scaleX: 1 }}
-                  className='mx-4'
+                  className="mx-4"
                   initial={{ opacity: 0, scaleX: 0 }}
                   transition={{
                     delay: 0.35,
                     duration: 0.3,
-                    ease: [0.25, 0.46, 0.45, 0.94]
+                    ease: [0.25, 0.46, 0.45, 0.94],
                   }}
                 >
-                  <div className='h-px bg-gradient-to-r from-transparent via-border/30 to-transparent' />
+                  <div className="via-border/30 h-px bg-gradient-to-r from-transparent to-transparent" />
                 </motion.div>
 
                 {}
                 {navigationSections
-                  .filter((section) => !section.isStandalone)
+                  .filter(section => !section.isStandalone)
                   .map((section, sectionIndex) => {
                     const isOpen = openSections[section.key];
                     const hasActiveItem =
-                      section.items?.some((item) => {
+                      section.items?.some(item => {
                         if (item.href === '/admin') {
                           return pathname === item.href;
                         }
@@ -361,41 +377,43 @@ export const AdminMobileSidebar: FC = () => {
                       <motion.div
                         key={section.key}
                         animate={{ y: 0, opacity: 1 }}
-                        className='space-y-2'
+                        className="space-y-2"
                         initial={{ y: 20, opacity: 0 }}
                         transition={{
                           delay: 0.4 + sectionIndex * 0.1,
                           duration: 0.4,
-                          ease: [0.25, 0.46, 0.45, 0.94]
+                          ease: [0.25, 0.46, 0.45, 0.94],
                         }}
                       >
                         {}
-                        <div className='px-4'>
+                        <div className="px-4">
                           <motion.button
                             whileTap={{ scale: 0.98 }}
                             className={cn(
-                              'w-full flex items-center justify-between p-3 rounded-xl transition-all duration-300',
+                              'flex w-full items-center justify-between rounded-xl p-3 transition-all duration-300',
                               'active:bg-muted/50 focus:bg-muted/30',
-                              'focus:outline-none focus:ring-2 focus:ring-primary/20',
+                              'focus:ring-primary/20 focus:ring-2 focus:outline-none',
                               hasActiveItem
-                                ? 'bg-gradient-to-r from-primary/10 to-accent/5 border border-primary/20'
-                                : 'bg-muted/10 border border-border/10'
+                                ? 'from-primary/10 to-accent/5 border-primary/20 border bg-gradient-to-r'
+                                : 'bg-muted/10 border-border/10 border'
                             )}
                             onClick={() => toggleSection(section.key)}
                           >
-                            <div className='flex items-center gap-3'>
+                            <div className="flex items-center gap-3">
                               <div
                                 className={cn(
-                                  'w-1 h-4 rounded-full transition-all duration-300',
+                                  'h-4 w-1 rounded-full transition-all duration-300',
                                   hasActiveItem
-                                    ? 'bg-gradient-to-b from-primary to-accent'
+                                    ? 'from-primary to-accent bg-gradient-to-b'
                                     : 'bg-muted-foreground/30'
                                 )}
                               />
                               <span
                                 className={cn(
-                                  'text-xs font-semibold uppercase tracking-wider transition-colors duration-300',
-                                  hasActiveItem ? 'text-primary' : 'text-muted-foreground'
+                                  'text-xs font-semibold tracking-wider uppercase transition-colors duration-300',
+                                  hasActiveItem
+                                    ? 'text-primary'
+                                    : 'text-muted-foreground'
                                 )}
                               >
                                 {section.label}
@@ -405,12 +423,17 @@ export const AdminMobileSidebar: FC = () => {
                             {}
                             <motion.div
                               animate={{ rotate: isOpen ? 90 : 0 }}
-                              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                              transition={{
+                                duration: 0.3,
+                                ease: [0.4, 0, 0.2, 1],
+                              }}
                             >
                               <ChevronRight
                                 className={cn(
                                   'h-4 w-4 transition-colors duration-300',
-                                  hasActiveItem ? 'text-primary' : 'text-muted-foreground'
+                                  hasActiveItem
+                                    ? 'text-primary'
+                                    : 'text-muted-foreground'
                                 )}
                               />
                             </motion.div>
@@ -422,26 +445,26 @@ export const AdminMobileSidebar: FC = () => {
                           {isOpen && (
                             <motion.div
                               animate={{ height: 'auto', opacity: 1 }}
-                              className='overflow-hidden space-y-1'
+                              className="space-y-1 overflow-hidden"
                               exit={{ height: 0, opacity: 0 }}
                               initial={{ height: 0, opacity: 0 }}
                               transition={{
                                 duration: 0.4,
                                 ease: [0.4, 0, 0.2, 1],
-                                opacity: { duration: 0.3 }
+                                opacity: { duration: 0.3 },
                               }}
                             >
                               {section.items?.map((item, itemIndex) => (
                                 <motion.div
                                   key={item.href}
                                   animate={{ x: 0, opacity: 1 }}
-                                  className='px-4'
+                                  className="px-4"
                                   exit={{ x: -20, opacity: 0 }}
                                   initial={{ x: -20, opacity: 0 }}
                                   transition={{
                                     delay: itemIndex * 0.05,
                                     duration: 0.3,
-                                    ease: [0.25, 0.46, 0.45, 0.94]
+                                    ease: [0.25, 0.46, 0.45, 0.94],
                                   }}
                                 >
                                   <AdminMobileSidebarLink
@@ -465,14 +488,18 @@ export const AdminMobileSidebar: FC = () => {
             {}
             <motion.footer
               animate={{ y: 0, opacity: 1 }}
-              className='p-6 pt-4 border-t border-border/10 space-y-4 flex-shrink-0 sidebar-footer-shadow'
+              className="border-border/10 sidebar-footer-shadow flex-shrink-0 space-y-4 border-t p-6 pt-4"
               initial={{ y: 30, opacity: 0 }}
-              transition={{ delay: 0.6, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+              transition={{
+                delay: 0.6,
+                duration: 0.5,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              }}
             >
               {}
-              <div className='flex flex-col items-stretch gap-3 py-2'>
+              <div className="flex flex-col items-stretch gap-3 py-2">
                 <LocaleSwitcher />
-                <div className='flex justify-center'>
+                <div className="flex justify-center">
                   <ThemeToggle />
                 </div>
               </div>
@@ -495,57 +522,62 @@ export const AdminMobileSidebar: FC = () => {
   );
 };
 
-const AdminSidebarContent: FC<{ onLinkClick?: () => void }> = ({ onLinkClick }) => {
+const AdminSidebarContent: FC<{ onLinkClick?: () => void }> = ({
+  onLinkClick,
+}) => {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const pathname = usePathname();
   const navigationSections = useNavigationSections();
   const tSidebar = useTranslations('admin.sidebar');
 
   const handleSectionToggle = (key: string) => {
-    setOpenSections((prev) => ({
+    setOpenSections(prev => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }));
   };
 
-  const isActive = (href: string) => (href === '/admin' ? pathname === href : pathname?.startsWith(href));
+  const isActive = (href: string) =>
+    href === '/admin' ? pathname === href : pathname?.startsWith(href);
 
   return (
-    <div className='flex flex-col h-full min-h-0 text-foreground'>
+    <div className="text-foreground flex h-full min-h-0 flex-col">
       {}
       <header
         className={cn(
-          'relative p-8 pb-6 flex-shrink-0',
-          'bg-gradient-to-br from-muted/30 via-muted/10 to-transparent',
-          'border-b border-border/20'
+          'relative flex-shrink-0 p-8 pb-6',
+          'from-muted/30 via-muted/10 bg-gradient-to-br to-transparent',
+          'border-border/20 border-b'
         )}
       >
         {}
-        <div className='flex items-center gap-4'>
-          <div className='relative'>
+        <div className="flex items-center gap-4">
+          <div className="relative">
             {}
             <div
               className={cn(
-                'w-12 h-12 rounded-2xl flex items-center justify-center relative overflow-hidden',
-                'bg-gradient-to-br from-primary via-primary to-accent',
-                'shadow-lg shadow-primary/25'
+                'relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl',
+                'from-primary via-primary to-accent bg-gradient-to-br',
+                'shadow-primary/25 shadow-lg'
               )}
             >
-              <span className='text-white font-bold text-lg tracking-tight'>M</span>
+              <span className="text-lg font-bold tracking-tight text-white">
+                M
+              </span>
 
               {}
-              <div className='absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-transparent' />
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-transparent" />
             </div>
 
             {}
-            <div className='absolute inset-0 bg-gradient-to-br from-primary/40 to-accent/30 rounded-2xl blur-xl opacity-60 animate-pulse' />
+            <div className="from-primary/40 to-accent/30 absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-br opacity-60 blur-xl" />
           </div>
 
-          <div className='flex-1'>
+          <div className="flex-1">
             <h1
               className={cn(
-                'text-2xl font-bold text-foreground tracking-tight',
-                'bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text'
+                'text-foreground text-2xl font-bold tracking-tight',
+                'from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text'
               )}
             >
               Make the CHANGE
@@ -555,59 +587,69 @@ const AdminSidebarContent: FC<{ onLinkClick?: () => void }> = ({ onLinkClick }) 
       </header>
 
       {}
-      <div className='flex-1 min-h-0 overflow-hidden'>
-        <nav className='h-full overflow-y-auto overflow-x-hidden py-6 space-y-4 sidebar-scroll-area'>
+      <div className="min-h-0 flex-1 overflow-hidden">
+        <nav className="sidebar-scroll-area h-full space-y-4 overflow-x-hidden overflow-y-auto py-6">
           {}
-          <div className='px-6'>
-            <AdminSidebarLink href='/admin/dashboard' icon={LayoutDashboard} label={tSidebar('dashboard.label')} onClick={onLinkClick} />
+          <div className="px-6">
+            <AdminSidebarLink
+              href="/admin/dashboard"
+              icon={LayoutDashboard}
+              label={tSidebar('dashboard.label')}
+              onClick={onLinkClick}
+            />
           </div>
 
           {}
-          <div className='px-6'>
-            <div className='relative h-px bg-gradient-to-r from-transparent via-border/40 to-transparent'>
-              <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-border/60 rounded-full' />
+          <div className="px-6">
+            <div className="via-border/40 relative h-px bg-gradient-to-r from-transparent to-transparent">
+              <div className="bg-border/60 absolute top-1/2 left-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full" />
             </div>
           </div>
 
           {}
           {navigationSections
-            .filter((section) => !section.isStandalone)
+            .filter(section => !section.isStandalone)
             .map((section, _sectionIndex) => {
-              const sectionActive = section.items?.some((item) => isActive(item.href)) ?? false;
+              const sectionActive =
+                section.items?.some(item => isActive(item.href)) ?? false;
               const isOpen = openSections[section.key] ?? sectionActive;
 
               return (
-                <section key={section.key} className='space-y-2'>
+                <section key={section.key} className="space-y-2">
                   {}
-                  <div className='px-6'>
+                  <div className="px-6">
                     <button
                       aria-expanded={isOpen}
-                      role='button'
+                      role="button"
                       tabIndex={0}
-                      type='button'
+                      type="button"
                       className={cn(
-                        'w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300',
+                        'flex w-full items-center justify-between rounded-xl p-4 transition-all duration-300',
                         'hover:bg-muted/30 active:bg-muted/50',
-                        'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2',
+                        'focus:ring-primary/20 focus:ring-2 focus:ring-offset-2 focus:outline-none',
                         sectionActive
-                          ? 'bg-gradient-to-r from-primary/8 to-accent/5 border border-primary/15'
-                          : 'bg-muted/10 border border-border/10 hover:border-border/20'
+                          ? 'from-primary/8 to-accent/5 border-primary/15 border bg-gradient-to-r'
+                          : 'bg-muted/10 border-border/10 hover:border-border/20 border'
                       )}
                       onClick={() => handleSectionToggle(section.key)}
                     >
-                      <div className='flex items-center gap-3'>
+                      <div className="flex items-center gap-3">
                         <div
                           className={cn(
-                            'w-1.5 h-5 rounded-full transition-all duration-300',
-                            sectionActive ? 'bg-gradient-to-b from-primary to-accent' : 'bg-muted-foreground/30'
+                            'h-5 w-1.5 rounded-full transition-all duration-300',
+                            sectionActive
+                              ? 'from-primary to-accent bg-gradient-to-b'
+                              : 'bg-muted-foreground/30'
                           )}
                         />
 
-                        <div className='text-left'>
+                        <div className="text-left">
                           <span
                             className={cn(
                               'text-sm font-semibold transition-colors duration-300',
-                              sectionActive ? 'text-primary' : 'text-foreground/80'
+                              sectionActive
+                                ? 'text-primary'
+                                : 'text-foreground/80'
                             )}
                           >
                             {section.label}
@@ -622,7 +664,9 @@ const AdminSidebarContent: FC<{ onLinkClick?: () => void }> = ({ onLinkClick }) 
                         <ChevronRight
                           className={cn(
                             'h-5 w-5 transition-colors duration-300',
-                            sectionActive ? 'text-primary' : 'text-muted-foreground/60'
+                            sectionActive
+                              ? 'text-primary'
+                              : 'text-muted-foreground/60'
                           )}
                         />
                       </motion.div>
@@ -634,29 +678,34 @@ const AdminSidebarContent: FC<{ onLinkClick?: () => void }> = ({ onLinkClick }) 
                     {isOpen && (
                       <motion.div
                         animate={{ height: 'auto', opacity: 1 }}
-                        className='overflow-hidden space-y-1'
+                        className="space-y-1 overflow-hidden"
                         exit={{ height: 0, opacity: 0 }}
                         initial={{ height: 0, opacity: 0 }}
                         transition={{
                           duration: 0.4,
                           ease: [0.4, 0, 0.2, 1],
-                          opacity: { duration: 0.3 }
+                          opacity: { duration: 0.3 },
                         }}
                       >
                         {section.items?.map((item, itemIndex) => (
                           <motion.div
                             key={item.href}
                             animate={{ x: 0, opacity: 1 }}
-                            className='px-6'
+                            className="px-6"
                             exit={{ x: -20, opacity: 0 }}
                             initial={{ x: -20, opacity: 0 }}
                             transition={{
                               delay: itemIndex * 0.05,
                               duration: 0.3,
-                              ease: [0.25, 0.46, 0.45, 0.94]
+                              ease: [0.25, 0.46, 0.45, 0.94],
                             }}
                           >
-                            <AdminSidebarLink href={item.href} icon={item.icon} label={item.label} onClick={onLinkClick} />
+                            <AdminSidebarLink
+                              href={item.href}
+                              icon={item.icon}
+                              label={item.label}
+                              onClick={onLinkClick}
+                            />
                           </motion.div>
                         ))}
                       </motion.div>
@@ -668,11 +717,11 @@ const AdminSidebarContent: FC<{ onLinkClick?: () => void }> = ({ onLinkClick }) 
         </nav>
       </div>
       {}
-      <footer className='p-6 border-t border-border/20 space-y-4 flex-shrink-0 sidebar-footer-shadow'>
+      <footer className="border-border/20 sidebar-footer-shadow flex-shrink-0 space-y-4 border-t p-6">
         {}
-        <div className='flex flex-col items-stretch gap-3 py-2'>
+        <div className="flex flex-col items-stretch gap-3 py-2">
           <LocaleSwitcher />
-          <div className='flex justify-center'>
+          <div className="flex justify-center">
             <ThemeToggle />
           </div>
         </div>
@@ -709,10 +758,11 @@ const AdminSidebarLink: FC<AdminSidebarLinkProps> = ({
   onClick,
   isHighlighted,
   isCompact,
-  isPrimary
+  isPrimary,
 }) => {
   const pathname = usePathname();
-  const isActive = href === '/admin' ? pathname === href : pathname?.startsWith(href);
+  const isActive =
+    href === '/admin' ? pathname === href : pathname?.startsWith(href);
   const testId = href.replace('/admin', '').replace('/', '') || 'dashboard';
 
   return (
@@ -727,40 +777,40 @@ const AdminSidebarLink: FC<AdminSidebarLinkProps> = ({
         href={href}
         className={cn(
           'group relative flex items-center gap-4 rounded-2xl transition-all duration-300',
-          'overflow-hidden cursor-pointer',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-2',
-          isCompact ? 'py-3 px-4' : 'py-4 px-5',
+          'cursor-pointer overflow-hidden',
+          'focus-visible:ring-primary/20 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+          isCompact ? 'px-4 py-3' : 'px-5 py-4',
 
           isPrimary && [
-            'bg-gradient-to-r from-primary/10 via-primary/5 to-accent/5',
-            'border border-primary/20 hover:border-primary/30',
-            'shadow-lg shadow-primary/10 hover:shadow-primary/15',
-            'font-bold text-foreground'
+            'from-primary/10 via-primary/5 to-accent/5 bg-gradient-to-r',
+            'border-primary/20 hover:border-primary/30 border',
+            'shadow-primary/10 hover:shadow-primary/15 shadow-lg',
+            'text-foreground font-bold',
           ],
 
           isActive &&
             !isPrimary && [
-              'bg-gradient-to-r from-primary/12 to-accent/8 text-foreground font-semibold',
-              'border border-primary/25 shadow-lg shadow-primary/10',
-              'before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2',
-              'before:h-8 before:w-1.5 before:bg-gradient-to-b before:from-primary before:to-accent before:rounded-r-full'
+              'from-primary/12 to-accent/8 text-foreground bg-gradient-to-r font-semibold',
+              'border-primary/25 shadow-primary/10 border shadow-lg',
+              'before:absolute before:top-1/2 before:left-0 before:-translate-y-1/2',
+              'before:from-primary before:to-accent before:h-8 before:w-1.5 before:rounded-r-full before:bg-gradient-to-b',
             ],
 
           isHighlighted &&
             !isActive &&
             !isPrimary && [
-              'bg-gradient-to-r from-primary/6 to-accent/4 hover:from-primary/10 hover:to-accent/6',
-              'border border-primary/15 hover:border-primary/25',
-              'font-semibold text-foreground/90 hover:text-foreground',
-              'shadow-md hover:shadow-lg hover:shadow-primary/5'
+              'from-primary/6 to-accent/4 hover:from-primary/10 hover:to-accent/6 bg-gradient-to-r',
+              'border-primary/15 hover:border-primary/25 border',
+              'text-foreground/90 hover:text-foreground font-semibold',
+              'hover:shadow-primary/5 shadow-md hover:shadow-lg',
             ],
 
           !isActive &&
             !isHighlighted &&
             !isPrimary && [
               'text-muted-foreground/80 hover:text-foreground',
-              'border border-transparent hover:border-border/30',
-              'hover:bg-muted/30 hover:shadow-sm'
+              'hover:border-border/30 border border-transparent',
+              'hover:bg-muted/30 hover:shadow-sm',
             ],
 
           isActive && 'hover:scale-100 hover:shadow-none'
@@ -770,29 +820,32 @@ const AdminSidebarLink: FC<AdminSidebarLinkProps> = ({
         {}
         <div
           className={cn(
-            'relative rounded-xl transition-all duration-300 flex items-center justify-center',
-            isCompact ? 'w-9 h-9' : 'w-11 h-11',
+            'relative flex items-center justify-center rounded-xl transition-all duration-300',
+            isCompact ? 'h-9 w-9' : 'h-11 w-11',
 
             isPrimary && [
-              'bg-gradient-to-br from-primary/20 to-accent/15',
-              'text-primary shadow-lg shadow-primary/20'
+              'from-primary/20 to-accent/15 bg-gradient-to-br',
+              'text-primary shadow-primary/20 shadow-lg',
             ],
 
             isActive &&
               !isPrimary && [
-                'bg-gradient-to-br from-primary/20 to-accent/15 text-primary',
-                'shadow-lg shadow-primary/20'
+                'from-primary/20 to-accent/15 text-primary bg-gradient-to-br',
+                'shadow-primary/20 shadow-lg',
               ],
 
             isHighlighted &&
               !isActive &&
-              !isPrimary && ['bg-primary/12 text-primary', 'group-hover:bg-primary/18 group-hover:shadow-md'],
+              !isPrimary && [
+                'bg-primary/12 text-primary',
+                'group-hover:bg-primary/18 group-hover:shadow-md',
+              ],
 
             !isActive &&
               !isHighlighted &&
               !isPrimary && [
                 'bg-muted/30 text-muted-foreground/70',
-                'group-hover:bg-muted/50 group-hover:text-muted-foreground group-hover:shadow-sm'
+                'group-hover:bg-muted/50 group-hover:text-muted-foreground group-hover:shadow-sm',
               ]
           )}
         >
@@ -805,17 +858,17 @@ const AdminSidebarLink: FC<AdminSidebarLinkProps> = ({
 
           {}
           {(isPrimary || isActive || isHighlighted) && (
-            <div className='absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent rounded-xl' />
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-white/10 via-transparent to-transparent" />
           )}
         </div>
 
         {}
-        <div className='flex-1 min-w-0'>
+        <div className="min-w-0 flex-1">
           <span
             className={cn(
-              'block font-medium transition-all duration-300 truncate',
+              'block truncate font-medium transition-all duration-300',
               isCompact ? 'text-sm' : 'text-base',
-              isPrimary && 'font-bold text-lg',
+              isPrimary && 'text-lg font-bold',
               isHighlighted && 'font-semibold'
             )}
           >
@@ -824,15 +877,15 @@ const AdminSidebarLink: FC<AdminSidebarLinkProps> = ({
         </div>
 
         {}
-        <div className='flex items-center gap-2'>
+        <div className="flex items-center gap-2">
           {isActive && (
             <motion.div
               animate={{ scale: 1, rotate: 0 }}
               initial={{ scale: 0, rotate: -180 }}
               transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               className={cn(
-                'bg-gradient-to-r from-primary to-accent rounded-full',
-                isCompact ? 'w-2 h-2' : 'w-2.5 h-2.5'
+                'from-primary to-accent rounded-full bg-gradient-to-r',
+                isCompact ? 'h-2 w-2' : 'h-2.5 w-2.5'
               )}
             />
           )}
@@ -840,15 +893,18 @@ const AdminSidebarLink: FC<AdminSidebarLinkProps> = ({
           {isHighlighted && !isActive && (
             <motion.div
               animate={{ scale: 1 }}
-              className={cn('bg-primary/60 rounded-full', isCompact ? 'w-1.5 h-1.5' : 'w-2 h-2')}
               initial={{ scale: 0 }}
+              className={cn(
+                'bg-primary/60 rounded-full',
+                isCompact ? 'h-1.5 w-1.5' : 'h-2 w-2'
+              )}
             />
           )}
         </div>
 
         {}
         {!isActive && (
-          <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl overflow-hidden' />
+          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         )}
       </Link>
     </motion.div>
@@ -874,10 +930,11 @@ const AdminMobileSidebarLink: FC<AdminMobileSidebarProps> = ({
   onClick,
   isHighlighted,
   isCompact,
-  isPrimary
+  isPrimary,
 }) => {
   const pathname = usePathname();
-  const isActive = href === '/admin' ? pathname === href : pathname?.startsWith(href);
+  const isActive =
+    href === '/admin' ? pathname === href : pathname?.startsWith(href);
 
   return (
     <motion.div whileTap={{ scale: 0.98 }}>
@@ -885,39 +942,39 @@ const AdminMobileSidebarLink: FC<AdminMobileSidebarProps> = ({
         aria-current={isActive ? 'page' : undefined}
         href={href}
         className={cn(
-          'group relative flex items-center gap-4 rounded-3xl transition-all duration-300 overflow-hidden',
-          'active:shadow-lg active:shadow-primary/10',
+          'group relative flex items-center gap-4 overflow-hidden rounded-3xl transition-all duration-300',
+          'active:shadow-primary/10 active:shadow-lg',
           isCompact ? 'p-4' : 'p-5',
 
           isPrimary && [
-            'bg-gradient-to-r from-primary/12 via-primary/8 to-accent/6',
-            'border border-primary/25 shadow-xl shadow-primary/15',
-            'text-foreground font-bold'
+            'from-primary/12 via-primary/8 to-accent/6 bg-gradient-to-r',
+            'border-primary/25 shadow-primary/15 border shadow-xl',
+            'text-foreground font-bold',
           ],
 
           isActive &&
             !isPrimary && [
-              'bg-gradient-to-r from-primary/15 via-primary/10 to-accent/10',
-              'border border-primary/25 shadow-xl shadow-primary/15',
-              'text-foreground font-semibold'
+              'from-primary/15 via-primary/10 to-accent/10 bg-gradient-to-r',
+              'border-primary/25 shadow-primary/15 border shadow-xl',
+              'text-foreground font-semibold',
             ],
 
           !isActive &&
             !isPrimary && [
-              'bg-gradient-to-r from-muted/15 to-muted/10 active:from-muted/25 active:to-muted/15',
-              'border border-border/10 active:border-border/20',
-              'text-muted-foreground/70 active:text-foreground/90'
+              'from-muted/15 to-muted/10 active:from-muted/25 active:to-muted/15 bg-gradient-to-r',
+              'border-border/10 active:border-border/20 border',
+              'text-muted-foreground/70 active:text-foreground/90',
             ],
 
           isHighlighted &&
             !isActive &&
             !isPrimary && [
-              'bg-gradient-to-r from-primary/10 to-accent/8 active:from-primary/15 active:to-accent/10',
-              'border border-primary/25 active:border-primary/35',
-              'text-foreground font-semibold shadow-md active:shadow-lg'
+              'from-primary/10 to-accent/8 active:from-primary/15 active:to-accent/10 bg-gradient-to-r',
+              'border-primary/25 active:border-primary/35 border',
+              'text-foreground font-semibold shadow-md active:shadow-lg',
             ],
 
-          isActive && 'active:shadow-current active:translate-y-0'
+          isActive && 'active:translate-y-0 active:shadow-current'
         )}
         onClick={onClick}
       >
@@ -925,29 +982,32 @@ const AdminMobileSidebarLink: FC<AdminMobileSidebarProps> = ({
         <motion.div
           whileTap={isActive ? {} : { scale: 0.95 }}
           className={cn(
-            'relative rounded-2xl transition-all duration-300 flex items-center justify-center',
-            isCompact ? 'w-10 h-10' : 'w-12 h-12',
+            'relative flex items-center justify-center rounded-2xl transition-all duration-300',
+            isCompact ? 'h-10 w-10' : 'h-12 w-12',
 
             isPrimary && [
-              'bg-gradient-to-br from-primary/25 to-accent/20',
-              'text-primary shadow-xl shadow-primary/25'
+              'from-primary/25 to-accent/20 bg-gradient-to-br',
+              'text-primary shadow-primary/25 shadow-xl',
             ],
 
             isActive &&
               !isPrimary && [
-                'bg-gradient-to-br from-primary/25 to-accent/20 text-primary',
-                'shadow-xl shadow-primary/25'
+                'from-primary/25 to-accent/20 text-primary bg-gradient-to-br',
+                'shadow-primary/25 shadow-xl',
               ],
 
             isHighlighted &&
               !isActive &&
-              !isPrimary && ['bg-primary/15 text-primary', 'group-active:bg-primary/20 group-active:shadow-lg'],
+              !isPrimary && [
+                'bg-primary/15 text-primary',
+                'group-active:bg-primary/20 group-active:shadow-lg',
+              ],
 
             !isActive &&
               !isHighlighted &&
               !isPrimary && [
                 'bg-muted/30 text-muted-foreground/60',
-                'group-active:bg-muted/50 group-active:text-muted-foreground/80'
+                'group-active:bg-muted/50 group-active:text-muted-foreground/80',
               ]
           )}
         >
@@ -960,20 +1020,20 @@ const AdminMobileSidebarLink: FC<AdminMobileSidebarProps> = ({
 
           {}
           {(isPrimary || isActive || isHighlighted) && (
-            <div className='absolute inset-0 bg-gradient-to-tr from-white/15 via-transparent to-transparent rounded-2xl' />
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/15 via-transparent to-transparent" />
           )}
         </motion.div>
 
         {}
-        <div className='flex-1 min-w-0'>
-          <div className='flex items-center justify-between'>
-            <div className='min-w-0 flex-1'>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between">
+            <div className="min-w-0 flex-1">
               <h3
                 className={cn(
-                  'font-semibold truncate transition-colors duration-300',
+                  'truncate font-semibold transition-colors duration-300',
                   isCompact ? 'text-sm' : 'text-base',
-                  isPrimary && 'font-bold text-lg text-foreground',
-                  isHighlighted && 'font-bold text-foreground'
+                  isPrimary && 'text-foreground text-lg font-bold',
+                  isHighlighted && 'text-foreground font-bold'
                 )}
               >
                 {label}
@@ -992,21 +1052,31 @@ const AdminMobileSidebarLink: FC<AdminMobileSidebarProps> = ({
             </div>
 
             {}
-            <motion.div animate={{ x: isActive ? 0 : -10 }} className='flex items-center gap-2' initial={false}>
+            <motion.div
+              animate={{ x: isActive ? 0 : -10 }}
+              className="flex items-center gap-2"
+              initial={false}
+            >
               {isActive ? (
                 <motion.div
                   animate={{ scale: 1 }}
-                  className={cn('bg-primary rounded-full', isCompact ? 'w-1.5 h-1.5' : 'w-2 h-2')}
                   initial={{ scale: 0 }}
+                  className={cn(
+                    'bg-primary rounded-full',
+                    isCompact ? 'h-1.5 w-1.5' : 'h-2 w-2'
+                  )}
                 />
               ) : (isHighlighted ? (
                 <motion.div
                   animate={{ scale: 1 }}
-                  className={cn('bg-primary/60 rounded-full', isCompact ? 'w-1 h-1' : 'w-1.5 h-1.5')}
                   initial={{ scale: 0 }}
+                  className={cn(
+                    'bg-primary/60 rounded-full',
+                    isCompact ? 'h-1 w-1' : 'h-1.5 w-1.5'
+                  )}
                 />
               ) : (
-                <ChevronRight className='h-4 w-4 opacity-40 group-active:opacity-80 transition-opacity' />
+                <ChevronRight className="h-4 w-4 opacity-40 transition-opacity group-active:opacity-80" />
               ))}
             </motion.div>
           </div>
@@ -1016,7 +1086,7 @@ const AdminMobileSidebarLink: FC<AdminMobileSidebarProps> = ({
         {!isActive && (
           <div
             className={cn(
-              'absolute inset-0 bg-gradient-to-r from-transparent via-white/3 to-transparent opacity-0 group-active:opacity-100 transition-opacity duration-200 pointer-events-none rounded-3xl'
+              'pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/3 to-transparent opacity-0 transition-opacity duration-200 group-active:opacity-100'
             )}
           />
         )}

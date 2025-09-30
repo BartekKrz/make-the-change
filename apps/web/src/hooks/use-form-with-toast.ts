@@ -1,136 +1,70 @@
-
 'use client';
 
-import { useForm, type BaseFormOptions } from '@tanstack/react-form';
+import { useForm } from '@tanstack/react-form';
+import { zodValidator } from '@tanstack/zod-form-adapter';
 import { useRouter } from 'next/navigation';
 
+import { useToast } from './use-toast';
 
-import { useToast } from '@/hooks/use-toast';
-import type { FormToastConfig, FormMutationResult } from '@/lib/form-utils';
-
-export type UseFormWithToastOptions<TFormData, TFormValidator = any> =
-  Omit<BaseFormOptions<TFormData>, 'onSubmit'> & {
-
-  toasts?: FormToastConfig
-
-  onSubmit: (values: TFormData) => Promise<FormMutationResult> | FormMutationResult
-
-  redirectOnSuccess?: string
-
-  onSuccess?: (result: FormMutationResult) => void
-
-  onError?: (error: string | Record<string, string[]>) => void
+type UseFormWithToastOptions<T> = {
+  defaultValues: T;
+  onSubmit: (values: T) => Promise<{ success: boolean }>;
+  toasts: {
+    success: {
+      title: string;
+      description: string;
+    };
+    error: {
+      title: string;
+      description: string;
+    };
+  };
+  redirectOnSuccess?: string;
 }
 
-export const useFormWithToast = <TFormData, TFormValidator = any>({
-  toasts,
+export function useFormWithToast<T>({
+  defaultValues,
   onSubmit,
+  toasts,
   redirectOnSuccess,
-  onSuccess,
-  onError,
-  ...formOptions
-}: UseFormWithToastOptions<TFormData, TFormValidator>) => {
+}: UseFormWithToastOptions<T>) {
   const { toast } = useToast();
   const router = useRouter();
 
   const form = useForm({
-    ...formOptions,
-    onSubmit: async ({ value, formApi }) => {
+    defaultValues,
+    validatorAdapter: zodValidator,
+    onSubmit: async ({ value }) => {
       try {
-        const result = await onSubmit(value as TFormData);
+        const result = await onSubmit(value);
 
         if (result.success) {
-          if (toasts?.success) {
-            toast({
-              variant: 'success',
-              title: toasts.success.title,
-              description: toasts.success.description,
-            });
-          }
+          toast({
+            title: toasts.success.title,
+            description: toasts.success.description,
+          });
 
           if (redirectOnSuccess) {
             router.push(redirectOnSuccess);
           }
-
-          onSuccess?.(result);
-
-        } else {
-          if (result.errors) {
-            for (const [fieldName, messages] of Object.entries(result.errors)) {
-              if (messages.length > 0) {
-                formApi.setFieldMeta(fieldName, (prev) => ({
-                  ...prev,
-                  errors: messages,
-                }));
-              }
-            }
-          }
-
-          const errorMessage = result.error || 'Une erreur est survenue';
-          toast({
-            variant: 'destructive',
-            title: toasts?.error?.title || 'Erreur',
-            description: toasts?.error?.description || errorMessage,
-          });
-
-          onError?.(result.errors || errorMessage);
         }
 
-      } catch (error: any) {
-        const errorMessage = error?.message || 'Erreur inattendue';
-
+        return result;
+      } catch (error) {
+        console.error('Form submission error:', error);
         toast({
+          title: toasts.error.title,
+          description: toasts.error.description,
           variant: 'destructive',
-          title: toasts?.error?.title || 'Erreur',
-          description: toasts?.error?.description || errorMessage,
         });
-
-        onError?.(errorMessage);
+        throw error;
       }
-    }
+    },
   });
 
   return {
     form,
     isSubmitting: form.state.isSubmitting,
     canSubmit: form.state.canSubmit,
-    isDirty: form.state.isDirty,
-    reset: () => form.reset(),
-    clearErrors: () => {
-      for (const fieldName of Object.keys(form.state.values as object)) {
-        form.setFieldMeta(fieldName, (prev: any) => ({
-          ...prev,
-          errors: [],
-        }));
-      }
-    }
   };
-};
-
-export const useSimpleForm = <TFormData>(
-  defaultValues: TFormData,
-  onSubmit: (values: TFormData) => Promise<void> | void
-) => useFormWithToast({
-  defaultValues,
-  onSubmit: async (values) => {
-    try {
-      await onSubmit(values as TFormData);
-      return { success: true };
-    } catch (error: any) {
-      return {
-        success: false,
-        error: error.message || 'Erreur lors de la soumission'
-      };
-    }
-  },
-  toasts: {
-    success: {
-      title: 'Succès',
-      description: 'Opération réalisée avec succès'
-    },
-    error: {
-      title: 'Erreur',
-      description: 'Une erreur est survenue'
-    }
-  }
-});
+}

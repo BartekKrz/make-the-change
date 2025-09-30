@@ -15,7 +15,10 @@ export const useAuth = () => {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const { data: { user }, error } = await supabase.auth.getUser();
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
         if (error) {
           console.warn('Auth getUser error:', error.message);
           setUser(null);
@@ -32,17 +35,19 @@ export const useAuth = () => {
 
     getUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (session) {
-          const { data: { user } } = await supabase.auth.getUser();
-          setUser(user);
-        } else {
-          setUser(null);
-        }
-        setLoading(false);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        setUser(user);
+      } else {
+        setUser(null);
       }
-    );
+      setLoading(false);
+    });
 
     return () => subscription.unsubscribe();
   }, []);

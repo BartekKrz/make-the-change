@@ -14,6 +14,50 @@
     "search": "Zoeken",
     "filter": "Filteren"
   },
+  "errors": {
+    "notFound": {
+      "title": "{entity} niet gevonden",
+      "description": "Deze {entity} bestaat niet of is verwijderd"
+    },
+    "accessDenied": {
+      "title": "Toegang geweigerd",
+      "description": "U heeft geen toestemming om deze {entity} te bekijken"
+    },
+    "serverError": {
+      "title": "Server fout",
+      "description": "Er is een technisch probleem opgetreden, probeer het opnieuw"
+    },
+    "loadingError": {
+      "title": "Laadmissie",
+      "description": "Kan deze {entity} niet laden"
+    },
+    "entities": {
+      "product": {
+        "singular": "product",
+        "article": "dit"
+      },
+      "user": {
+        "singular": "gebruiker",
+        "article": "deze"
+      },
+      "project": {
+        "singular": "project",
+        "article": "dit"
+      },
+      "partner": {
+        "singular": "partner",
+        "article": "deze"
+      },
+      "subscription": {
+        "singular": "abonnement",
+        "article": "dit"
+      },
+      "order": {
+        "singular": "bestelling",
+        "article": "deze"
+      }
+    }
+  },
   "navigation": {
     "home": "Home",
     "admin": "Beheer",
@@ -50,7 +94,7 @@
       "search_placeholder": "Producten zoeken...",
       "filters": {
         "all_partners": "Alle partners",
-        "all_categories": "Alle categorieën",
+        "all_categories": "Alle categorieÃ«n",
         "sort_by": "Sorteren op",
         "tags_placeholder": "Tags...",
         "active_only": "Alleen actieve",
@@ -157,7 +201,7 @@
           "fulfillment_method": "Selecteer een methode"
         },
         "blur_system": {
-          "title": "🚀 Schaalbaar DB Blur Systeem",
+          "title": "ðŸš€ Schaalbaar DB Blur Systeem",
           "images": "Afbeeldingen",
           "with_blur": "Met blur",
           "missing": "Ontbreekt",
@@ -171,13 +215,88 @@
     },
     "projects": {
       "title": "Projectbeheer",
-      "new_project": "Nieuw Project",
+      "new_project": "Nieuw project",
       "project_list": "Projectlijst",
       "map_view": "Kaartweergave",
       "name": "Projectnaam",
       "location": "Locatie",
       "status": "Status",
-      "investment_goal": "Investeringsdoel"
+      "investment_goal": "Investeringsdoel",
+      "search_placeholder": "Projecten zoeken...",
+      "labels": {
+        "status": "Status"
+      },
+      "sort": {
+        "newest": "Nieuwste eerst",
+        "oldest": "Oudste eerst",
+        "name_asc": "Naam (A-Z)",
+        "name_desc": "Naam (Z-A)",
+        "budget_desc": "Hoogste budget eerst",
+        "budget_asc": "Laagste budget eerst",
+        "featured": "Eerst uitgelicht"
+      },
+      "filters": {
+        "all_statuses": "Alle statussen",
+        "all_types": "Alle types",
+        "all_partners": "Alle partners",
+        "all_countries": "Alle landen",
+        "sort_by": "Sorteren op",
+        "impact_types": "Impacttypes",
+        "active_only": "Alleen actieve",
+        "clear_filters": "Filters wissen",
+        "clear_all_filters": "Alle filters resetten",
+        "reset": "Resetten"
+      },
+      "filter_modal": {
+        "partner": "Partner",
+        "type": "Projecttype",
+        "country": "Land",
+        "impact_types": "Impacttypes",
+        "active_only_description": "Toon alleen actieve projecten"
+      },
+      "type": {
+        "beehive": "Bijenkorf",
+        "olive_tree": "Olijfboom",
+        "vineyard": "Wijngaard",
+        "forest": "Bos",
+        "solar": "Zonne-energie"
+      },
+      "statuses": {
+        "active": "Actief",
+        "funded": "Gefinancierd",
+        "closed": "Afgerond",
+        "suspended": "Opgeschort",
+        "inactive": "Inactief"
+      },
+      "statusActions": {
+        "activate": "Activeren",
+        "suspend": "Opschorten"
+      },
+      "funding": {
+        "increase": "Doel verhogen",
+        "decrease": "Doel verlagen"
+      },
+      "featured": {
+        "add": "Markeer als uitgelicht",
+        "remove": "Uitgelicht verwijderen"
+      },
+      "filters_tooltip": {
+        "type": "Filter op type: {type}",
+        "partner": "Filter op partner: {name}",
+        "country": "Filter op land: {country}",
+        "impact_type": "Filter op impacttype: {type}",
+        "featured": "Filter op uitgelichte projecten"
+      },
+      "other_impact_types": "en nog {count}",
+      "empty_state": {
+        "title": "Geen projecten",
+        "description": "Geen resultaten voor deze filters."
+      },
+      "error": {
+        "loading_title": "Laadfout",
+        "loading_description": "Kan projecten niet laden.",
+        "retry": "Opnieuw proberen"
+      }
     },
     "partners": {
       "title": "Partnerbeheer",
@@ -223,3 +342,5 @@
     "description": "Investeer in ecologische projecten en ontdek duurzame producten"
   }
 }
+
+

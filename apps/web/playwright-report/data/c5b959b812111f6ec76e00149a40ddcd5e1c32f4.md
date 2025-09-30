@@ -1,0 +1,46 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e3]:
+    - main [ref=e4]:
+      - region "Accès Administrateur" [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - heading "Accès Administrateur" [level=2] [ref=e8]
+            - paragraph [ref=e9]: Veuillez entrer vos identifiants administrateur.
+          - form "Formulaire de connexion" [ref=e10]:
+            - heading "Formulaire de connexion" [level=3] [ref=e11]
+            - group "Informations de connexion" [ref=e12]:
+              - generic [ref=e13]: Informations de connexion
+              - generic [ref=e15]:
+                - generic [ref=e16]: Adresse email
+                - generic [ref=e17]:
+                  - generic:
+                    - img
+                  - textbox "admin@makethechange.com" [ref=e18]
+              - generic [ref=e20]:
+                - generic [ref=e21]: Mot de passe
+                - generic [ref=e22]:
+                  - textbox "••••••••" [ref=e23]
+                  - button [ref=e25] [cursor=pointer]:
+                    - img [ref=e26] [cursor=pointer]
+            - button "Se connecter" [ref=e30] [cursor=pointer]:
+              - generic [ref=e32] [cursor=pointer]:
+                - generic [ref=e33] [cursor=pointer]:
+                  - img
+                - generic [ref=e34] [cursor=pointer]: Se connecter
+            - paragraph [ref=e36]:
+              - text: Pas encore de compte ?
+              - link "Créer un compte administrateur" [ref=e37] [cursor=pointer]:
+                - /url: /fr/admin/register
+      - link "← Retour au site" [ref=e39] [cursor=pointer]:
+        - /url: /
+  - button "Open Next.js Dev Tools" [ref=e45] [cursor=pointer]:
+    - img [ref=e46] [cursor=pointer]
+  - alert [ref=e49]
+  - generic [ref=e50]:
+    - img [ref=e52]
+    - button "Open Tanstack query devtools" [ref=e100] [cursor=pointer]:
+      - img [ref=e101] [cursor=pointer]
+```

@@ -4,17 +4,29 @@ import { User, Shield, Mail, Save } from 'lucide-react';
 import { useCallback } from 'react';
 import { z } from 'zod';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/app/[locale]/admin/(dashboard)/components/ui/card';
 import { FormInput, FormSelect } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { useFormWithToast } from '@/hooks/use-form-with-toast';
 
 import type { FC, PropsWithChildren } from 'react';
 
-
 const userEditSchema = z.object({
-  name: z.string().min(1, 'Le nom est requis').max(100, 'Le nom ne peut pas dépasser 100 caractères').trim(),
-  email: z.string().min(1, 'L\'email est requis').email('Format d\'email invalide').max(100, 'L\'email ne peut pas dépasser 100 caractères'),
+  name: z
+    .string()
+    .min(1, 'Le nom est requis')
+    .max(100, 'Le nom ne peut pas dépasser 100 caractères')
+    .trim(),
+  email: z
+    .string()
+    .min(1, "L'email est requis")
+    .email("Format d'email invalide")
+    .max(100, "L'email ne peut pas dépasser 100 caractères"),
   role: z.enum(['admin', 'user']).default('user'),
   is_active: z.boolean().default(true),
 });
@@ -29,7 +41,9 @@ type UserDetailsEditorProps = {
 };
 
 const UserCardsGrid: FC<PropsWithChildren> = ({ children }) => (
-  <div className='grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 [&>*]:h-full'>{children}</div>
+  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8 [&>*]:h-full">
+    {children}
+  </div>
 );
 
 const roleOptions = [
@@ -60,13 +74,13 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
     toasts: {
       success: {
         title: 'Utilisateur mis à jour',
-        description: 'Les modifications ont été enregistrées avec succès'
+        description: 'Les modifications ont été enregistrées avec succès',
       },
       error: {
         title: 'Erreur',
-        description: 'Impossible de mettre à jour l\'utilisateur'
-      }
-    }
+        description: "Impossible de mettre à jour l'utilisateur",
+      },
+    },
   });
 
   const contentSections = [
@@ -75,9 +89,9 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
       title: 'Informations du compte',
       icon: User,
       content: (
-        <div className='space-y-4'>
+        <div className="space-y-4">
           <form.Field name="name">
-            {(field) => (
+            {field => (
               <FormInput
                 required
                 disabled={!isEditing}
@@ -89,7 +103,7 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
           </form.Field>
 
           <form.Field name="email">
-            {(field) => (
+            {field => (
               <FormInput
                 required
                 disabled={!isEditing}
@@ -101,16 +115,16 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
             )}
           </form.Field>
         </div>
-      )
+      ),
     },
     {
       id: 'permissions',
       title: 'Permissions et Statut',
       icon: Shield,
       content: (
-        <div className='space-y-4'>
+        <div className="space-y-4">
           <form.Field name="role">
-            {(field) => (
+            {field => (
               <FormSelect
                 disabled={!isEditing}
                 field={field}
@@ -123,48 +137,52 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
 
           <form.Field name="is_active">
             {(field: any) => (
-              <div className='pt-2'>
+              <div className="pt-2">
                 <label className="flex items-center gap-2">
                   <input
                     checked={field.state.value}
                     disabled={!isEditing}
                     type="checkbox"
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.checked)}
+                    onChange={e => field.handleChange(e.target.checked)}
                   />
                   <span className="text-sm font-medium">Compte actif</span>
                   {field.state.value && (
-                    <div className="h-2 w-2 bg-green-500 rounded-full" />
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
                   )}
                 </label>
               </div>
             )}
           </form.Field>
         </div>
-      )
+      ),
     },
   ];
 
   return (
-    <form className='space-y-6 md:space-y-8' onSubmit={(e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      form.handleSubmit()
-    }}>
+    <form
+      className="space-y-6 md:space-y-8"
+      onSubmit={e => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
       <UserCardsGrid>
-        {contentSections.map((section) => (
-          <Card key={section.id} className='transition-all duration-200 hover:shadow-lg'>
-            <CardHeader className='pb-4'>
-              <CardTitle className='flex items-center gap-3 text-lg'>
-                <div className='p-2 bg-gradient-to-br from-primary/20 to-orange-500/20 rounded-lg border border-primary/20'>
-                  <section.icon className='h-5 w-5 text-primary' />
+        {contentSections.map(section => (
+          <Card
+            key={section.id}
+            className="transition-all duration-200 hover:shadow-lg"
+          >
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-3 text-lg">
+                <div className="from-primary/20 border-primary/20 rounded-lg border bg-gradient-to-br to-orange-500/20 p-2">
+                  <section.icon className="text-primary h-5 w-5" />
                 </div>
                 {section.title}
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              {section.content}
-            </CardContent>
+            <CardContent>{section.content}</CardContent>
           </Card>
         ))}
       </UserCardsGrid>
@@ -177,9 +195,9 @@ export const UserDetailsEditor: FC<UserDetailsEditorProps> = ({
             disabled={isSubmitting || isSaving}
             type="submit"
           >
-            {(isSubmitting || isSaving) ? (
+            {isSubmitting || isSaving ? (
               <>
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                <div className="border-primary-foreground h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
                 Sauvegarde...
               </>
             ) : (

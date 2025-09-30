@@ -7,7 +7,6 @@ import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 
 import type { FC, ReactNode } from 'react';
 
-
 export type BreadcrumbItem = {
   href?: string;
   label: string;
@@ -33,33 +32,53 @@ export const AdminDetailHeader: FC<AdminDetailHeaderProps> = ({
   statusIndicator,
   productImage,
   className,
-  testId = 'admin-detail-header'
+  testId = 'admin-detail-header',
 }) => {
   return (
-    <div className={cn('max-w-7xl mx-auto px-4 md:px-8', className)} data-testid={testId}>
+    <div
+      className={cn('mx-auto max-w-7xl px-4 md:px-8', className)}
+      data-testid={testId}
+    >
       {/* Breadcrumbs */}
       {breadcrumbs.length > 0 && (
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-muted-foreground pt-3 pb-1">
+        <nav
+          aria-label="Breadcrumb"
+          className="text-muted-foreground flex items-center gap-2 pt-3 pb-1 text-sm"
+        >
           {breadcrumbs.map((item, index) => (
             <div key={index} className="flex items-center gap-2">
               {index > 0 && (
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M9 5l7 7-7 7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                  />
                 </svg>
               )}
               {item.href ? (
                 <a
-                  className="flex items-center gap-1 hover:text-foreground transition-colors"
+                  className="hover:text-foreground flex items-center gap-1 transition-colors"
                   href={item.href}
                 >
                   {item.icon && <item.icon className="h-4 w-4" />}
                   <span>{item.label}</span>
                 </a>
               ) : (
-                <span className={cn(
-                  'flex items-center gap-1',
-                  index === breadcrumbs.length - 1 ? 'text-foreground font-medium truncate max-w-[200px] md:max-w-none' : ''
-                )}>
+                <span
+                  className={cn(
+                    'flex items-center gap-1',
+                    index === breadcrumbs.length - 1
+                      ? 'text-foreground max-w-[200px] truncate font-medium md:max-w-none'
+                      : ''
+                  )}
+                >
                   {item.icon && <item.icon className="h-4 w-4" />}
                   <span>{item.label}</span>
                 </span>
@@ -71,10 +90,10 @@ export const AdminDetailHeader: FC<AdminDetailHeaderProps> = ({
 
       {/* Main Header */}
       <div className="flex items-start justify-between py-3 pb-4">
-        <div className="flex items-start gap-3 md:gap-4 flex-1 min-w-0">
+        <div className="flex min-w-0 flex-1 items-start gap-3 md:gap-4">
           {/* Image du produit */}
           {productImage ? (
-            <div className="relative w-12 h-12 md:w-16 md:h-16 flex-shrink-0 rounded-xl overflow-hidden border border-primary/20 bg-gradient-to-br from-primary/10 to-orange-500/10">
+            <div className="border-primary/20 from-primary/10 relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl border bg-gradient-to-br to-orange-500/10 md:h-16 md:w-16">
               <Image
                 fill
                 alt={title || 'Product image'}
@@ -83,45 +102,46 @@ export const AdminDetailHeader: FC<AdminDetailHeaderProps> = ({
                 src={productImage}
               />
             </div>
-          ) : title && (
-            <div className="p-2 md:p-3 bg-gradient-to-br from-primary/20 to-orange-500/20 rounded-xl border border-primary/20 backdrop-blur-sm flex-shrink-0">
-              <Package className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-            </div>
+          ) : (
+            title && (
+              <div className="from-primary/20 border-primary/20 flex-shrink-0 rounded-xl border bg-gradient-to-br to-orange-500/20 p-2 backdrop-blur-sm md:p-3">
+                <Package className="text-primary h-5 w-5 md:h-6 md:w-6" />
+              </div>
+            )
           )}
-          
-          <div className="flex-1 min-w-0">
+
+          <div className="min-w-0 flex-1">
             {title && (
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">
+              <div className="mb-2 flex items-center gap-3">
+                <h1 className="text-foreground truncate text-xl font-bold md:text-2xl">
                   {title}
                 </h1>
                 {statusIndicator && (
-                  <div className="flex-shrink-0">
-                    {statusIndicator}
-                  </div>
+                  <div className="flex-shrink-0">{statusIndicator}</div>
                 )}
               </div>
             )}
-            
+
             {subtitle && (
-              <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed md:text-base">
                 {subtitle}
               </p>
             )}
           </div>
         </div>
 
-        {actions && (
-          <div className="flex-shrink-0 ml-4">
-            {actions}
-          </div>
-        )}
+        {actions && <div className="ml-4 flex-shrink-0">{actions}</div>}
       </div>
     </div>
   );
 };
 
-export type SaveStatusType = 'saving' | 'saved' | 'error' | 'modified' | 'pristine';
+export type SaveStatusType =
+  | 'saving'
+  | 'saved'
+  | 'error'
+  | 'modified'
+  | 'pristine';
 
 export type SaveStatus = {
   type: SaveStatusType;
@@ -151,7 +171,7 @@ export const AdminDetailActions: FC<AdminDetailActionsProps> = ({
   primaryActions,
   secondaryActions,
   className,
-  testId = 'admin-detail-actions'
+  testId = 'admin-detail-actions',
 }) => {
   const getStatusColor = (type: SaveStatusType) => {
     const colors = {
@@ -159,7 +179,7 @@ export const AdminDetailActions: FC<AdminDetailActionsProps> = ({
       saved: 'text-green-600 dark:text-green-400',
       error: 'text-red-600 dark:text-red-400',
       modified: 'text-yellow-600 dark:text-yellow-400',
-      pristine: 'text-muted-foreground'
+      pristine: 'text-muted-foreground',
     };
     return colors[type];
   };
@@ -167,26 +187,35 @@ export const AdminDetailActions: FC<AdminDetailActionsProps> = ({
   const getStatusIcon = (type: SaveStatusType) => {
     const icons = {
       saving: '⏳',
-      saved: '✅', 
+      saved: '✅',
       error: '❌',
       modified: '📝',
-      pristine: '💾'
+      pristine: '💾',
     };
     return icons[type];
   };
 
   return (
-    <div className={cn('flex items-center gap-3', className)} data-testid={testId}>
+    <div
+      className={cn('flex items-center gap-3', className)}
+      data-testid={testId}
+    >
       {/* Status Indicator */}
       {saveStatus && (
-        <div className={cn(
-          'flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors',
-          saveStatus.type === 'saving' && 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800',
-          saveStatus.type === 'saved' && 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800',
-          saveStatus.type === 'error' && 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800',
-          saveStatus.type === 'modified' && 'bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800',
-          saveStatus.type === 'pristine' && 'bg-muted/50 border-border'
-        )}>
+        <div
+          className={cn(
+            'flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors',
+            saveStatus.type === 'saving' &&
+              'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950',
+            saveStatus.type === 'saved' &&
+              'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950',
+            saveStatus.type === 'error' &&
+              'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950',
+            saveStatus.type === 'modified' &&
+              'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950',
+            saveStatus.type === 'pristine' && 'bg-muted/50 border-border'
+          )}
+        >
           <span className={getStatusColor(saveStatus.type)}>
             {getStatusIcon(saveStatus.type)}
           </span>
@@ -195,7 +224,7 @@ export const AdminDetailActions: FC<AdminDetailActionsProps> = ({
           </span>
           {saveStatus.type === 'error' && saveStatus.retryable && onSaveAll && (
             <button
-              className="ml-1 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 underline"
+              className="ml-1 text-red-600 underline hover:text-red-800 dark:text-red-400 dark:hover:text-red-200"
               onClick={onSaveAll}
             >
               Réessayer
@@ -207,14 +236,13 @@ export const AdminDetailActions: FC<AdminDetailActionsProps> = ({
       {/* Secondary Actions */}
       {secondaryActions}
 
-      
       {/* Primary Actions */}
       {primaryActions}
 
       {/* Cancel Button */}
       {onCancel && (
         <button
-          className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors text-sm font-medium"
+          className="border-border hover:bg-muted rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
           onClick={onCancel}
         >
           Annuler
@@ -224,7 +252,7 @@ export const AdminDetailActions: FC<AdminDetailActionsProps> = ({
       {/* Delete Button */}
       {onDelete && (
         <button
-          className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors text-sm font-medium"
+          className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
           onClick={onDelete}
         >
           Supprimer

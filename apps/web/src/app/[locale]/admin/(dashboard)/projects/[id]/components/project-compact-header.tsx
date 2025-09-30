@@ -1,6 +1,18 @@
 'use client';
 
-import { Target, Star, Euro, Calendar as _Calendar, Edit, X, Save, Info, ChevronDown, ChevronUp, TrendingUp as _TrendingUp } from 'lucide-react';
+import {
+  Target,
+  Star,
+  Euro,
+  Calendar as _Calendar,
+  Edit,
+  X,
+  Save,
+  Info,
+  ChevronDown,
+  ChevronUp,
+  TrendingUp as _TrendingUp,
+} from 'lucide-react';
 import { useState } from 'react';
 import { type FC } from 'react';
 
@@ -35,7 +47,7 @@ export const ProjectCompactHeader: FC<ProjectCompactHeaderProps> = ({
   isEditing = false,
   onEditToggle,
   onSave,
-  isSaving = false
+  isSaving = false,
 }) => {
   const [showMobileDetails, setShowMobileDetails] = useState(false);
 
@@ -47,7 +59,7 @@ export const ProjectCompactHeader: FC<ProjectCompactHeaderProps> = ({
     const labels = {
       beehive: 'Ruche',
       olive_tree: 'Olivier',
-      vineyard: 'Vigne'
+      vineyard: 'Vigne',
     };
     return labels[type as keyof typeof labels] || type;
   };
@@ -59,26 +71,26 @@ export const ProjectCompactHeader: FC<ProjectCompactHeaderProps> = ({
       label: 'Actif',
       color: 'bg-green-500',
       bgClass: 'from-green-500/10 to-green-600/5',
-      borderClass: 'border-green-500/20'
+      borderClass: 'border-green-500/20',
     },
     funded: {
       label: 'Financé',
       color: 'bg-blue-500',
       bgClass: 'from-blue-500/10 to-blue-600/5',
-      borderClass: 'border-blue-500/20'
+      borderClass: 'border-blue-500/20',
     },
     closed: {
       label: 'Fermé',
       color: 'bg-gray-500',
       bgClass: 'from-gray-500/10 to-gray-600/5',
-      borderClass: 'border-gray-500/20'
+      borderClass: 'border-gray-500/20',
     },
     suspended: {
       label: 'Suspendu',
       color: 'bg-orange-500',
       bgClass: 'from-orange-500/10 to-orange-600/5',
-      borderClass: 'border-orange-500/20'
-    }
+      borderClass: 'border-orange-500/20',
+    },
   };
 
   const statusInfo = statusConfig[status];
@@ -95,68 +107,68 @@ export const ProjectCompactHeader: FC<ProjectCompactHeaderProps> = ({
   };
 
   return (
-    <div className='max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-6 pb-3 md:pb-4'>
-      <div className='flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6'>
+    <div className="mx-auto max-w-7xl px-4 py-4 pb-3 md:px-8 md:py-6 md:pb-4">
+      <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center md:gap-6">
         {}
-        <div className='flex items-start md:items-center gap-3 md:gap-4 flex-1 min-w-0'>
-          <div className='p-2 md:p-3 bg-gradient-to-br from-primary/20 to-orange-500/20 rounded-xl border border-primary/20 backdrop-blur-sm flex-shrink-0'>
-            <Target className='h-5 w-5 md:h-6 md:w-6 text-primary' />
+        <div className="flex min-w-0 flex-1 items-start gap-3 md:items-center md:gap-4">
+          <div className="from-primary/20 border-primary/20 flex-shrink-0 rounded-xl border bg-gradient-to-br to-orange-500/20 p-2 backdrop-blur-sm md:p-3">
+            <Target className="text-primary h-5 w-5 md:h-6 md:w-6" />
           </div>
 
-          <div className='flex-1 min-w-0'>
+          <div className="min-w-0 flex-1">
             {}
-            <h1 className='text-lg md:text-2xl font-bold text-foreground leading-tight truncate mb-2 md:mb-2'>
+            <h1 className="text-foreground mb-2 truncate text-lg leading-tight font-bold md:mb-2 md:text-2xl">
               {projectData.name}
             </h1>
 
             {}
-            <div className='flex md:hidden items-center gap-2 flex-wrap'>
+            <div className="flex flex-wrap items-center gap-2 md:hidden">
               <div
                 className={cn(
-                  'flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium border',
+                  'flex items-center gap-2 rounded-full border px-2 py-1 text-xs font-medium',
                   `bg-gradient-to-r ${statusInfo.bgClass} ${statusInfo.borderClass}`
                 )}
               >
-                <div className={cn('w-2 h-2 rounded-full', statusInfo.color)} />
+                <div className={cn('h-2 w-2 rounded-full', statusInfo.color)} />
                 {statusInfo.label}
               </div>
 
-              <div className='flex items-center gap-1 px-2 py-1 bg-muted/40 rounded-full text-xs font-medium text-muted-foreground'>
-                <Euro className='h-3 w-3' />
+              <div className="bg-muted/40 text-muted-foreground flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium">
+                <Euro className="h-3 w-3" />
                 <span>{formatBudget()}</span>
               </div>
             </div>
 
             {}
-            <div className='hidden md:flex items-center gap-4 flex-wrap'>
+            <div className="hidden flex-wrap items-center gap-4 md:flex">
               <div
                 className={cn(
-                  'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border',
+                  'flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium',
                   `bg-gradient-to-r ${statusInfo.bgClass} ${statusInfo.borderClass}`
                 )}
               >
-                <div className={cn('w-2 h-2 rounded-full', statusInfo.color)} />
+                <div className={cn('h-2 w-2 rounded-full', statusInfo.color)} />
                 {statusInfo.label}
               </div>
 
-              <div className='flex items-center gap-2 px-3 py-1 bg-muted/40 rounded-full text-xs font-medium'>
-                <Target className='h-3 w-3' />
+              <div className="bg-muted/40 flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium">
+                <Target className="h-3 w-3" />
                 {getProjectTypeLabel(projectData.type)}
               </div>
 
-              <div className='flex items-center gap-2 px-3 py-1 bg-muted/40 rounded-full text-xs font-medium'>
-                <Euro className='h-3 w-3' />
+              <div className="bg-muted/40 flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium">
+                <Euro className="h-3 w-3" />
                 {formatFunding()}
               </div>
 
               {projectData.featured && (
-                <div className='flex items-center gap-2 px-3 py-1 bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 rounded-full text-xs font-medium'>
-                  <Star className='h-3 w-3' />
+                <div className="flex items-center gap-2 rounded-full border border-yellow-500/20 bg-yellow-500/10 px-3 py-1 text-xs font-medium text-yellow-600">
+                  <Star className="h-3 w-3" />
                   En vedette
                 </div>
               )}
 
-              <div className='px-3 py-1 bg-gradient-to-r from-primary/10 to-orange-500/10 text-primary border border-primary/20 rounded-full text-xs font-medium'>
+              <div className="from-primary/10 text-primary border-primary/20 rounded-full border bg-gradient-to-r to-orange-500/10 px-3 py-1 text-xs font-medium">
                 #{projectData.id}
               </div>
             </div>
@@ -164,19 +176,23 @@ export const ProjectCompactHeader: FC<ProjectCompactHeaderProps> = ({
         </div>
 
         {}
-        <div className='flex items-center gap-2 flex-shrink-0 self-start md:self-auto'>
+        <div className="flex flex-shrink-0 items-center gap-2 self-start md:self-auto">
           {}
           {!isEditing && (
             <button
-              aria-label={showMobileDetails ? 'Masquer les détails' : 'Afficher les détails'}
-              className='flex md:hidden items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-md border border-border/40 hover:border-border/60'
+              className="text-muted-foreground hover:text-foreground focus:ring-primary/20 border-border/40 hover:border-border/60 flex items-center gap-1 rounded-md border px-2 py-1.5 text-xs transition-colors duration-200 focus:ring-2 focus:outline-none md:hidden"
+              aria-label={
+                showMobileDetails
+                  ? 'Masquer les détails'
+                  : 'Afficher les détails'
+              }
               onClick={() => setShowMobileDetails(!showMobileDetails)}
             >
-              <Info className='h-3 w-3' />
+              <Info className="h-3 w-3" />
               {showMobileDetails ? (
-                <ChevronUp className='h-3 w-3 transition-transform duration-200' />
+                <ChevronUp className="h-3 w-3 transition-transform duration-200" />
               ) : (
-                <ChevronDown className='h-3 w-3 transition-transform duration-200' />
+                <ChevronDown className="h-3 w-3 transition-transform duration-200" />
               )}
             </button>
           )}
@@ -186,49 +202,49 @@ export const ProjectCompactHeader: FC<ProjectCompactHeaderProps> = ({
               {isEditing ? (
                 <>
                   {}
-                  <div className='flex md:hidden items-center gap-2'>
+                  <div className="flex items-center gap-2 md:hidden">
                     <Button
-                      className='text-sm font-medium px-4 py-2 min-h-[40px] min-w-[80px]'
+                      className="min-h-[40px] min-w-[80px] px-4 py-2 text-sm font-medium"
                       disabled={isSaving}
-                      size='default'
-                      variant='outline'
+                      size="default"
+                      variant="outline"
                       onClick={() => onEditToggle(false)}
                     >
-                      <X className='h-4 w-4 mr-1' />
+                      <X className="mr-1 h-4 w-4" />
                       Annuler
                     </Button>
                     <Button
-                      className='text-sm font-medium px-4 py-2 min-h-[40px] min-w-[100px] bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80'
+                      className="from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 min-h-[40px] min-w-[100px] bg-gradient-to-r px-4 py-2 text-sm font-medium"
                       disabled={isSaving}
-                      size='default'
-                      variant='default'
+                      size="default"
+                      variant="default"
                       onClick={onSave}
                     >
-                      <Save className='h-4 w-4 mr-1' />
+                      <Save className="mr-1 h-4 w-4" />
                       {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
                     </Button>
                   </div>
 
                   {}
-                  <div className='hidden md:flex items-center gap-2'>
+                  <div className="hidden items-center gap-2 md:flex">
                     <Button
-                      className='text-sm'
+                      className="text-sm"
                       disabled={isSaving}
-                      size='sm'
-                      variant='outline'
+                      size="sm"
+                      variant="outline"
                       onClick={() => onEditToggle(false)}
                     >
-                      <X className='h-4 w-4 mr-1' />
+                      <X className="mr-1 h-4 w-4" />
                       Annuler
                     </Button>
                     <Button
-                      className='text-sm'
+                      className="text-sm"
                       disabled={isSaving}
-                      size='sm'
-                      variant='default'
+                      size="sm"
+                      variant="default"
                       onClick={onSave}
                     >
-                      <Save className='h-4 w-4 mr-1' />
+                      <Save className="mr-1 h-4 w-4" />
                       Sauvegarder
                     </Button>
                   </div>
@@ -237,23 +253,23 @@ export const ProjectCompactHeader: FC<ProjectCompactHeaderProps> = ({
                 <>
                   {}
                   <Button
-                    className='flex md:hidden text-sm font-medium px-4 py-2 min-h-[40px] min-w-[80px] border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50'
-                    size='default'
-                    variant='outline'
+                    className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 flex min-h-[40px] min-w-[80px] px-4 py-2 text-sm font-medium md:hidden"
+                    size="default"
+                    variant="outline"
                     onClick={() => onEditToggle(true)}
                   >
-                    <Edit className='h-4 w-4 mr-1' />
+                    <Edit className="mr-1 h-4 w-4" />
                     Éditer
                   </Button>
 
                   {}
                   <Button
-                    className='hidden md:flex text-sm'
-                    size='sm'
-                    variant='outline'
+                    className="hidden text-sm md:flex"
+                    size="sm"
+                    variant="outline"
                     onClick={() => onEditToggle(true)}
                   >
-                    <Edit className='h-4 w-4 mr-1' />
+                    <Edit className="mr-1 h-4 w-4" />
                     Modifier
                   </Button>
                 </>
@@ -265,23 +281,23 @@ export const ProjectCompactHeader: FC<ProjectCompactHeaderProps> = ({
 
       {}
       {showMobileDetails && (
-        <div className='flex md:hidden mt-3 pt-3 border-t border-border/30 animate-in slide-in-from-top-2 duration-200 ease-out'>
-          <div className='flex items-center gap-2 text-xs text-muted-foreground flex-wrap'>
-            <div className='flex items-center gap-1 px-2 py-1 bg-muted/30 rounded-full'>
-              <Target className='h-3 w-3' />
+        <div className="border-border/30 animate-in slide-in-from-top-2 mt-3 flex border-t pt-3 duration-200 ease-out md:hidden">
+          <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
+            <div className="bg-muted/30 flex items-center gap-1 rounded-full px-2 py-1">
+              <Target className="h-3 w-3" />
               <span>{getProjectTypeLabel(projectData.type)}</span>
             </div>
-            <div className='flex items-center gap-1 px-2 py-1 bg-muted/30 rounded-full'>
-              <Euro className='h-3 w-3' />
+            <div className="bg-muted/30 flex items-center gap-1 rounded-full px-2 py-1">
+              <Euro className="h-3 w-3" />
               <span>{formatFunding()}</span>
             </div>
             {projectData.featured && (
-              <div className='flex items-center gap-1 px-2 py-1 bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 rounded-full'>
-                <Star className='h-3 w-3' />
+              <div className="flex items-center gap-1 rounded-full border border-yellow-500/20 bg-yellow-500/10 px-2 py-1 text-yellow-600">
+                <Star className="h-3 w-3" />
                 <span>Vedette</span>
               </div>
             )}
-            <div className='px-2 py-1 bg-gradient-to-r from-primary/10 to-orange-500/10 text-primary border border-primary/20 rounded-full text-xs font-medium'>
+            <div className="from-primary/10 text-primary border-primary/20 rounded-full border bg-gradient-to-r to-orange-500/10 px-2 py-1 text-xs font-medium">
               #{projectData.id}
             </div>
           </div>

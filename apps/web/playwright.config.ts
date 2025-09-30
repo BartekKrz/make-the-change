@@ -3,7 +3,7 @@
  * Tests E2E selon la stratégie TDD pour les parcours critiques
  */
 
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './test/e2e',
@@ -36,12 +36,12 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
         // Mode headless pour performance
         launchOptions: {
-          args: ['--no-sandbox', '--disable-dev-shm-usage']
-        }
+          args: ['--no-sandbox', '--disable-dev-shm-usage'],
+        },
       },
     },
     // Désactiver temporairement firefox/webkit pour accélérer les tests
@@ -67,4 +67,4 @@ export default defineConfig({
     timeout: 120000, // 2 minutes pour démarrer le serveur (était 60s)
     stderr: 'pipe', // Capture les erreurs du serveur
   },
-})
+});

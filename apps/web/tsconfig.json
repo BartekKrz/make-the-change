@@ -10,7 +10,7 @@
     "types": ["vitest/globals"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    
+
     // === Module & Import Configuration ===
     "allowJs": true,
     "resolveJsonModule": true,
@@ -18,7 +18,7 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": false, // Compatible avec imports mixtes React
-    
+
     // === Type Checking (Strict Mode 2025) ===
     "strict": true,
     "noUncheckedIndexedAccess": true,
@@ -27,13 +27,13 @@
     "noImplicitOverride": true,
     "exactOptionalPropertyTypes": false, // Trop strict pour React props
     "noPropertyAccessFromIndexSignature": false, // process.env compatibility
-    
+
     // === Performance & Build ===
     "skipLibCheck": true,
     "noEmit": true,
     "incremental": true,
     "tsBuildInfoFile": ".next/cache/tsconfig.tsbuildinfo",
-    
+
     // === React & JSX ===
     "jsx": "preserve",
     "plugins": [

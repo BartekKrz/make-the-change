@@ -10,7 +10,6 @@ import { PartnerDetailsEditor } from '@/app/[locale]/admin/(dashboard)/partners/
 
 import type { PartnerFormData } from '@make-the-change/api/validators/partner';
 
-
 type PartnerDetailControllerProps = {
   partnerData: PartnerFormData & { id: string };
   onSave: (patch: Partial<PartnerFormData>) => Promise<void>;
@@ -64,7 +63,13 @@ export const PartnerDetailController: FC<PartnerDetailControllerProps> = ({
             isSaving={isSaving}
             partnerData={partnerData}
             onEditToggle={setIsEditing}
-            onSave={() => document.querySelector('#partner-editor-form')?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))}
+            onSave={() =>
+              document
+                .querySelector('#partner-editor-form')
+                ?.dispatchEvent(
+                  new Event('submit', { cancelable: true, bubbles: true })
+                )
+            }
           />
         </>
       }

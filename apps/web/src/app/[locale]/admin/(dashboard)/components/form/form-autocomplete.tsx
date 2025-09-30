@@ -1,21 +1,23 @@
-"use client"
+'use client';
 
-import { SingleAutocomplete } from '@/app/[locale]/admin/(dashboard)/components/ui/single-autocomplete'
-import { TagsAutocomplete } from '@/app/[locale]/admin/(dashboard)/components/ui/tags-autocomplete'
-
-import { useFieldContext, useFieldErrors } from './form-context'
+import { SingleAutocomplete } from '@/app/[locale]/admin/(dashboard)/components/ui/single-autocomplete';
+import { TagsAutocomplete } from '@/app/[locale]/admin/(dashboard)/components/ui/tags-autocomplete';
+import {
+  useFieldContext,
+  useFieldErrors,
+} from '@/app/[locale]/admin/(dashboard)/components/form/form-context';
 
 export type FormAutocompleteProps = {
-  mode?: 'single' | 'tags'
-  suggestions?: string[]
-  placeholder?: string
-  className?: string
-  disabled?: boolean
+  mode?: 'single' | 'tags';
+  suggestions?: string[];
+  placeholder?: string;
+  className?: string;
+  disabled?: boolean;
   // Single-specific
-  allowCreate?: boolean
+  allowCreate?: boolean;
   // Tags-specific
-  maxTags?: number
-}
+  maxTags?: number;
+};
 
 export const FormAutocomplete = ({
   mode = 'single',
@@ -27,13 +29,13 @@ export const FormAutocomplete = ({
   maxTags = 10,
 }: FormAutocompleteProps) => {
   // Always call hooks at the top level
-  const fieldSingle = useFieldContext<string | undefined>()
-  const fieldTags = useFieldContext<string[]>()
-  const errors = useFieldErrors()
-  const hasError = errors.length > 0
+  const fieldSingle = useFieldContext<string | undefined>();
+  const fieldTags = useFieldContext<string[]>();
+  const errors = useFieldErrors();
+  const hasError = errors.length > 0;
 
   if (mode === 'tags') {
-    const value = fieldTags.state.value ?? []
+    const value = fieldTags.state.value ?? [];
     return (
       <div className="space-y-1">
         <TagsAutocomplete
@@ -43,14 +45,16 @@ export const FormAutocomplete = ({
           placeholder={placeholder}
           suggestions={suggestions}
           value={value}
-          onChange={(tags) => fieldTags.handleChange(tags)}
+          onChange={tags => fieldTags.handleChange(tags)}
         />
-        {hasError && errors[0] && <p className="text-sm text-red-500">{errors[0]}</p>}
+        {hasError && errors[0] && (
+          <p className="text-sm text-red-500">{errors[0]}</p>
+        )}
       </div>
-    )
+    );
   }
 
-  const value = fieldSingle.state.value ?? ''
+  const value = fieldSingle.state.value ?? '';
   return (
     <div className="space-y-1">
       <SingleAutocomplete
@@ -60,9 +64,11 @@ export const FormAutocomplete = ({
         placeholder={placeholder}
         suggestions={suggestions}
         value={value}
-        onChange={(v) => fieldSingle.handleChange(v)}
+        onChange={v => fieldSingle.handleChange(v)}
       />
-      {hasError && errors[0] && <p className="text-sm text-red-500">{errors[0]}</p>}
+      {hasError && errors[0] && (
+        <p className="text-sm text-red-500">{errors[0]}</p>
+      )}
     </div>
-  )
-}
+  );
+};

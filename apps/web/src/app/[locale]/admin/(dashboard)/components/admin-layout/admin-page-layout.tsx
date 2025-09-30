@@ -7,9 +7,7 @@ import { AdminPageFooter } from './footer';
 import { AdminPageHeader } from './header';
 
 export const AdminPageLayout = ({ children }: PropsWithChildren) => (
-  <div className="min-h-screen flex flex-col h-screen">
-    {children}
-  </div>
+  <div className="flex h-screen min-h-screen flex-col">{children}</div>
 );
 
 AdminPageLayout.Header = AdminPageHeader;

@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { type FC } from "react";
+import { type FC } from 'react';
 
 type AdminErrorProps = {
   error: Error & {
@@ -9,12 +9,19 @@ type AdminErrorProps = {
   reset: () => void;
 };
 
- const AdminError: FC< AdminErrorProps> = ({ error, reset }) => (
+const AdminError: FC<AdminErrorProps> = ({ error, reset }) => (
   <div className="p-8">
-    <h1 className="text-xl font-semibold mb-2">Une erreur est survenue</h1>
-    <p className="text-sm text-gray-600 mb-4">{error.message || 'Erreur inconnue'}</p>
-    <button className="px-3 py-1 rounded border hover:bg-gray-50 text-sm" onClick={reset}>Réessayer</button>
+    <h1 className="mb-2 text-xl font-semibold">Une erreur est survenue</h1>
+    <p className="mb-4 text-sm text-gray-600">
+      {error.message || 'Erreur inconnue'}
+    </p>
+    <button
+      className="rounded border px-3 py-1 text-sm hover:bg-gray-50"
+      onClick={reset}
+    >
+      Réessayer
+    </button>
   </div>
 );
 
-export default AdminError
+export default AdminError;

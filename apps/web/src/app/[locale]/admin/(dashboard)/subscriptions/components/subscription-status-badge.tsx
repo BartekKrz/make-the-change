@@ -5,9 +5,11 @@ import type { FC } from 'react';
 
 type SubscriptionStatusBadgeProps = {
   status: Subscription['status'];
-}
+};
 
-export const SubscriptionStatusBadge: FC<SubscriptionStatusBadgeProps> = ({ status }) => {
+export const SubscriptionStatusBadge: FC<SubscriptionStatusBadgeProps> = ({
+  status,
+}) => {
   const variants = {
     active: { color: 'green' as const, label: 'Actif' },
     suspended: { color: 'yellow' as const, label: 'Suspendu' },
@@ -17,9 +19,5 @@ export const SubscriptionStatusBadge: FC<SubscriptionStatusBadgeProps> = ({ stat
 
   const config = variants[status];
 
-  return (
-    <Badge color={config.color}>
-      {config.label}
-    </Badge>
-  );
-}
+  return <Badge color={config.color}>{config.label}</Badge>;
+};

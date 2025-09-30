@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-import path from 'path'
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
@@ -10,7 +10,12 @@ export default defineConfig({
     setupFiles: ['./test/setup.ts'],
     globals: true,
     css: true,
-    exclude: ['**/node_modules/**', '**/test/e2e/**', '**/*.e2e.*', '**/*.playwright.*'],
+    exclude: [
+      '**/node_modules/**',
+      '**/test/e2e/**',
+      '**/*.e2e.*',
+      '**/*.playwright.*',
+    ],
     include: ['**/test/unit/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     coverage: {
       provider: 'v8',
@@ -45,4 +50,4 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-})
+});

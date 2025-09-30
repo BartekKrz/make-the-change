@@ -27,9 +27,8 @@ export const UserCompactHeader: FC<UserCompactHeaderProps> = ({
   isEditing = false,
   onEditToggle,
   onSave,
-  isSaving = false
+  isSaving = false,
 }) => {
-
   const status = userData.is_active ? 'active' : 'inactive';
 
   const statusConfig = {
@@ -37,54 +36,54 @@ export const UserCompactHeader: FC<UserCompactHeaderProps> = ({
       label: 'Actif',
       color: 'bg-green-500',
       bgClass: 'from-green-500/10 to-green-600/5',
-      borderClass: 'border-green-500/20'
+      borderClass: 'border-green-500/20',
     },
     inactive: {
       label: 'Inactif',
       color: 'bg-gray-500',
       bgClass: 'from-gray-500/10 to-gray-600/5',
-      borderClass: 'border-gray-500/20'
-    }
+      borderClass: 'border-gray-500/20',
+    },
   };
 
   const statusInfo = statusConfig[status];
 
   return (
-    <div className='max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-6 pb-3 md:pb-4'>
-      <div className='flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6'>
+    <div className="mx-auto max-w-7xl px-4 py-4 pb-3 md:px-8 md:py-6 md:pb-4">
+      <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center md:gap-6">
         {}
-        <div className='flex items-start md:items-center gap-3 md:gap-4 flex-1 min-w-0'>
-          <div className='p-2 md:p-3 bg-gradient-to-br from-primary/20 to-orange-500/20 rounded-xl border border-primary/20 backdrop-blur-sm flex-shrink-0'>
-            <User className='h-5 w-5 md:h-6 md:w-6 text-primary' />
+        <div className="flex min-w-0 flex-1 items-start gap-3 md:items-center md:gap-4">
+          <div className="from-primary/20 border-primary/20 flex-shrink-0 rounded-xl border bg-gradient-to-br to-orange-500/20 p-2 backdrop-blur-sm md:p-3">
+            <User className="text-primary h-5 w-5 md:h-6 md:w-6" />
           </div>
 
-          <div className='flex-1 min-w-0'>
-            <h1 className='text-lg md:text-2xl font-bold text-foreground leading-tight truncate mb-2 md:mb-2'>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-foreground mb-2 truncate text-lg leading-tight font-bold md:mb-2 md:text-2xl">
               {userData.name}
             </h1>
 
-            <div className='flex items-center gap-4 flex-wrap'>
+            <div className="flex flex-wrap items-center gap-4">
               <div
                 className={cn(
-                  'flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border',
+                  'flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium',
                   `bg-gradient-to-r ${statusInfo.bgClass} ${statusInfo.borderClass}`
                 )}
               >
-                <div className={cn('w-2 h-2 rounded-full', statusInfo.color)} />
+                <div className={cn('h-2 w-2 rounded-full', statusInfo.color)} />
                 {statusInfo.label}
               </div>
 
-              <div className='flex items-center gap-2 px-3 py-1 bg-muted/40 rounded-full text-xs font-medium'>
-                <Mail className='h-3 w-3' />
+              <div className="bg-muted/40 flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium">
+                <Mail className="h-3 w-3" />
                 {userData.email}
               </div>
 
-              <div className='flex items-center gap-2 px-3 py-1 bg-muted/40 rounded-full text-xs font-medium'>
-                <Shield className='h-3 w-3' />
+              <div className="bg-muted/40 flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium">
+                <Shield className="h-3 w-3" />
                 {userData.role}
               </div>
 
-              <div className='px-3 py-1 bg-gradient-to-r from-primary/10 to-orange-500/10 text-primary border border-primary/20 rounded-full text-xs font-medium'>
+              <div className="from-primary/10 text-primary border-primary/20 rounded-full border bg-gradient-to-r to-orange-500/10 px-3 py-1 text-xs font-medium">
                 #{userData.id}
               </div>
             </div>
@@ -92,40 +91,40 @@ export const UserCompactHeader: FC<UserCompactHeaderProps> = ({
         </div>
 
         {}
-        <div className='flex items-center gap-2 flex-shrink-0 self-start md:self-auto'>
+        <div className="flex flex-shrink-0 items-center gap-2 self-start md:self-auto">
           {onEditToggle && (
             <>
               {isEditing ? (
-                <div className='flex items-center gap-2'>
+                <div className="flex items-center gap-2">
                   <Button
-                    className='text-sm'
+                    className="text-sm"
                     disabled={isSaving}
-                    size='sm'
-                    variant='outline'
+                    size="sm"
+                    variant="outline"
                     onClick={() => onEditToggle(false)}
                   >
-                    <X className='h-4 w-4 mr-1' />
+                    <X className="mr-1 h-4 w-4" />
                     Annuler
                   </Button>
                   <Button
-                    className='text-sm'
+                    className="text-sm"
                     disabled={isSaving}
-                    size='sm'
-                    variant='default'
+                    size="sm"
+                    variant="default"
                     onClick={onSave}
                   >
-                    <Save className='h-4 w-4 mr-1' />
+                    <Save className="mr-1 h-4 w-4" />
                     {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
                   </Button>
                 </div>
               ) : (
                 <Button
-                  className='text-sm'
-                  size='sm'
-                  variant='outline'
+                  className="text-sm"
+                  size="sm"
+                  variant="outline"
                   onClick={() => onEditToggle(true)}
                 >
-                  <Edit className='h-4 w-4 mr-1' />
+                  <Edit className="mr-1 h-4 w-4" />
                   Modifier
                 </Button>
               )}

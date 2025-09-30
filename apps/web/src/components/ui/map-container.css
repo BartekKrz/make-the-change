@@ -1,0 +1,125 @@
+/* Custom styles for improved map appearance */
+
+/* Custom popup styling */
+.leaflet-popup-content-wrapper {
+  @apply rounded-xl shadow-2xl border-0 overflow-hidden;
+  padding: 0 !important;
+  background: white;
+}
+
+.leaflet-popup-tip {
+  @apply shadow-lg;
+  background: white;
+}
+
+.leaflet-popup-close-button {
+  display: none !important;
+}
+
+/* Custom marker animations */
+.leaflet-marker-icon {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.leaflet-marker-icon:hover {
+  transform: scale(1.1) !important;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2)) !important;
+}
+
+/* Map container styling */
+.leaflet-container {
+  font-family: inherit !important;
+  background: #f8fafc !important;
+}
+
+/* Attribution styling */
+.leaflet-control-attribution {
+  @apply bg-white/80 backdrop-blur-sm text-xs text-gray-600 rounded-lg;
+  padding: 4px 8px !important;
+  margin: 8px !important;
+}
+
+.leaflet-control-attribution a {
+  @apply text-gray-700 hover:text-gray-900;
+}
+
+/* Zoom control hiding (we use custom ones) */
+.leaflet-control-zoom {
+  display: none !important;
+}
+
+/* Smooth transitions for popup content */
+.custom-popup .leaflet-popup-content {
+  margin: 0 !important;
+  width: auto !important;
+}
+
+/* Progress bar animations */
+@keyframes fillProgress {
+  from {
+    width: 0%;
+  }
+}
+
+.progress-bar {
+  animation: fillProgress 1s ease-out;
+}
+
+/* Hover effects for legend items */
+.legend-item {
+  @apply transition-all duration-200 hover:bg-gray-50 rounded-lg p-2 cursor-pointer;
+}
+
+/* Custom scrollbar for popup content if needed */
+.popup-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.popup-content::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.popup-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Enhanced glassmorphism effect */
+.glass-effect {
+  backdrop-filter: blur(12px) saturate(180%);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Pulse animation for selected markers */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.marker-selected {
+  animation: pulse 2s infinite;
+}
+
+/* Floating animation for UI elements */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+.floating {
+  animation: float 3s ease-in-out infinite;
+}

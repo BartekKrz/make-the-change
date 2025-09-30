@@ -1,53 +1,60 @@
-'use client'
+'use client';
 
-import { Mail } from 'lucide-react'
-import { type FC, type ReactNode } from 'react'
+import { Mail } from 'lucide-react';
+import { type FC, type ReactNode } from 'react';
 
-import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
-import { AdminListItem } from '@/app/[locale]/admin/(dashboard)/components/ui/admin-list-item'
-import { getInitials } from '@/app/[locale]/admin/(dashboard)/components/ui/format-utils'
+import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge';
+import { AdminListItem } from '@/app/[locale]/admin/(dashboard)/components/ui/admin-list-item';
+import { getInitials } from '@/app/[locale]/admin/(dashboard)/components/ui/format-utils';
 
+type Partner = {
+  id: string;
+  name: string;
+  status: string;
+  contact_email: string;
+};
 
-type Partner =  {
-  id: string
-  name: string
-  status: string
-  contact_email: string
-}
+type PartnerListItemProps = {
+  partner: Partner;
+  actions?: ReactNode;
+};
 
-type PartnerListItemProps =  {
-  partner: Partner
-  actions?: ReactNode
-}
-
-export const PartnerListItem: FC<PartnerListItemProps> = ({ partner, actions }) => {
+export const PartnerListItem: FC<PartnerListItemProps> = ({
+  partner,
+  actions,
+}) => {
   const header = (
     <div className="flex items-center gap-2 md:gap-3">
-      <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
+      <div className="bg-primary/10 text-primary flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium md:h-8 md:w-8">
         {getInitials(partner.name)}
       </div>
-      <div className="flex items-center gap-2 flex-1 min-w-0">
-        <h3 className="text-base font-medium text-foreground truncate">
+      <div className="flex min-w-0 flex-1 items-center gap-2">
+        <h3 className="text-foreground truncate text-base font-medium">
           {partner.name}
         </h3>
-        <Badge color={
-          partner.status === 'active' ? 'green' :
-          (partner.status === 'pending' ? 'yellow' : 'gray')
-        }>
+        <Badge
+          color={
+            partner.status === 'active'
+              ? 'green'
+              : (partner.status === 'pending'
+                ? 'yellow'
+                : 'gray')
+          }
+        >
           {partner.status}
         </Badge>
       </div>
     </div>
-  )
+  );
 
   const metadata = (
     <div className="space-y-2">
-      <div className="flex items-center gap-2 transition-colors duration-200 md:group-hover:text-foreground group-active:text-foreground">
-        <Mail className="w-4 h-4 text-primary/70 md:group-hover:text-primary group-active:text-primary transition-colors duration-200" />
+      <div className="md:group-hover:text-foreground group-active:text-foreground flex items-center gap-2 transition-colors duration-200">
+        <Mail className="text-primary/70 md:group-hover:text-primary group-active:text-primary h-4 w-4 transition-colors duration-200" />
         <span className="font-mono text-sm">{partner.contact_email}</span>
       </div>
     </div>
-  )
+  );
 
   return (
     <AdminListItem
@@ -56,5 +63,5 @@ export const PartnerListItem: FC<PartnerListItemProps> = ({ partner, actions }) 
       href={`/admin/partners/${partner.id}`}
       metadata={metadata}
     />
-  )
-}
+  );
+};

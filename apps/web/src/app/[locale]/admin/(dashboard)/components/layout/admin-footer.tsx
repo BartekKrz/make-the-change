@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { type FC } from 'react'
+import { type FC } from 'react';
 
 export const AdminFooter: FC = () => (
-  <footer className="hidden md:flex h-12 border-t border-border bg-card/50 backdrop-blur-sm items-center justify-between px-6 text-sm text-muted-foreground shrink-0">
+  <footer className="border-border bg-card/50 text-muted-foreground hidden h-12 shrink-0 items-center justify-between border-t px-6 text-sm backdrop-blur-sm md:flex">
     <div className="flex items-center gap-4">
       <span>© 2025 Make the CHANGE</span>
       <span>•</span>
@@ -14,4 +14,4 @@ export const AdminFooter: FC = () => (
       <span className="text-xs">v1.0.0</span>
     </div>
   </footer>
-)
+);

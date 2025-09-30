@@ -1,4 +1,3 @@
-
 import { httpBatchLink, loggerLink } from '@trpc/client';
 import { createTRPCReact } from '@trpc/react-query';
 
@@ -13,7 +12,7 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
 export const trpcClient = trpc.createClient({
   links: [
     loggerLink({
-      enabled: (opts) =>
+      enabled: opts =>
         process.env.NODE_ENV === 'development' ||
         (opts.direction === 'down' && opts.result instanceof Error),
     }),
@@ -24,7 +23,9 @@ export const trpcClient = trpc.createClient({
 
         if (typeof window !== 'undefined') {
           try {
-            const supabaseAuth = localStorage.getItem('sb-ebmjxinsyyjwshnynwwu-auth-token');
+            const supabaseAuth = localStorage.getItem(
+              'sb-ebmjxinsyyjwshnynwwu-auth-token'
+            );
             if (supabaseAuth) {
               const authData = JSON.parse(supabaseAuth);
               if (authData?.access_token) {

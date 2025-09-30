@@ -4,7 +4,7 @@ import { type FC, type ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 
-import { 
+import {
   Drawer,
   DrawerContent,
   DrawerHeader,
@@ -21,8 +21,8 @@ type FilterButtonProps = {
 const FilterButton: FC<FilterButtonProps> = ({ onClick, isActive = false }) => (
   <Button
     size="sm"
-    variant={isActive ? "default" : "outline"}
-    className={`h-9 w-9 p-0 relative focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 ${
+    variant={isActive ? 'default' : 'outline'}
+    className={`focus-visible:ring-primary relative h-9 w-9 p-0 focus-visible:ring-2 focus-visible:ring-offset-1 ${
       isActive ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''
     }`}
     onClick={onClick}
@@ -31,7 +31,6 @@ const FilterButton: FC<FilterButtonProps> = ({ onClick, isActive = false }) => (
   </Button>
 );
 
-
 type FilterModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -39,23 +38,17 @@ type FilterModalProps = {
 };
 
 const FilterModal: FC<FilterModalProps> = ({ isOpen, onClose, children }) => (
-  <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
+  <Drawer open={isOpen} onOpenChange={open => !open && onClose()}>
     <DrawerContent className="bg-white" onSwipeClose={onClose}>
       <DrawerHeader>
         <DrawerTitle>Filtres</DrawerTitle>
         <DrawerClose asChild>
-          <Button
-            className="h-8 w-8 p-0"
-            size="sm"
-            variant="ghost"
-          >
+          <Button className="h-8 w-8 p-0" size="sm" variant="ghost">
             <X className="h-4 w-4" />
           </Button>
         </DrawerClose>
       </DrawerHeader>
-      <DrawerBody>
-        {children}
-      </DrawerBody>
+      <DrawerBody>{children}</DrawerBody>
     </DrawerContent>
   </Drawer>
 );

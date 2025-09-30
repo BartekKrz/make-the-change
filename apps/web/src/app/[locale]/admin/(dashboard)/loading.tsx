@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import type { FC } from "react";
+import type { FC } from 'react';
 
- const AdminLoading: FC = () => (
-  <div className="p-8 animate-pulse">
-    <div className="h-6 w-44 bg-gray-200 rounded mb-6" />
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="h-64 bg-gray-100 rounded" />
-      <div className="h-64 bg-gray-100 rounded" />
+const AdminLoading: FC = () => (
+  <div className="animate-pulse p-8">
+    <div className="mb-6 h-6 w-44 rounded bg-gray-200" />
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="h-64 rounded bg-gray-100" />
+      <div className="h-64 rounded bg-gray-100" />
     </div>
   </div>
 );
 
-export default AdminLoading
+export default AdminLoading;

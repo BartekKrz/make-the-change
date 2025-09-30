@@ -13,7 +13,7 @@ export type TagsAutocompleteProps = {
   maxTags?: number;
   disabled?: boolean;
   className?: string;
-}
+};
 
 export const TagsAutocomplete: React.FC<TagsAutocompleteProps> = ({
   value = [],
@@ -22,25 +22,29 @@ export const TagsAutocomplete: React.FC<TagsAutocompleteProps> = ({
   placeholder = 'Rechercher des tags...',
   maxTags = 10,
   disabled = false,
-  className
+  className,
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
   // Filtrer les suggestions qui ne sont pas déjà sélectionnées
   const availableSuggestions = suggestions.filter(
-    suggestion => !value.includes(suggestion) && 
-    suggestion.toLowerCase().includes(inputValue.toLowerCase())
+    suggestion =>
+      !value.includes(suggestion) &&
+      suggestion.toLowerCase().includes(inputValue.toLowerCase())
   );
 
   // Ajouter l'option "Créer" si l'input ne correspond à aucune suggestion
   const options = [...availableSuggestions];
-  if (inputValue.trim() && !suggestions.some(s => s.toLowerCase() === inputValue.toLowerCase())) {
+  if (
+    inputValue.trim() &&
+    !suggestions.some(s => s.toLowerCase() === inputValue.toLowerCase())
+  ) {
     options.push(`Créer "${inputValue.trim()}"`);
   }
 
@@ -68,92 +72,95 @@ export const TagsAutocomplete: React.FC<TagsAutocompleteProps> = ({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     switch (e.key) {
-    case 'ArrowDown': {
-      e.preventDefault();
-      setFocusedIndex(prev => Math.min(prev + 1, options.length - 1));
-    
-    break;
-    }
-    case 'ArrowUp': {
-      e.preventDefault();
-      setFocusedIndex(prev => Math.max(prev - 1, -1));
-    
-    break;
-    }
-    case 'Enter': {
-      e.preventDefault();
-      if (focusedIndex >= 0 && options[focusedIndex]) {
-        addTag(options[focusedIndex]);
-      } else if (inputValue.trim()) {
-        addTag(inputValue.trim());
+      case 'ArrowDown': {
+        e.preventDefault();
+        setFocusedIndex(prev => Math.min(prev + 1, options.length - 1));
+
+        break;
       }
-    
-    break;
-    }
-    case 'Escape': {
-      closeDropdown();
-    
-    break;
-    }
-    default: { if (e.key === 'Backspace' && !inputValue && value.length > 0) {
-      removeTag(value.at(-1));
-    }
-    }
+      case 'ArrowUp': {
+        e.preventDefault();
+        setFocusedIndex(prev => Math.max(prev - 1, -1));
+
+        break;
+      }
+      case 'Enter': {
+        e.preventDefault();
+        if (focusedIndex >= 0 && options[focusedIndex]) {
+          addTag(options[focusedIndex]);
+        } else if (inputValue.trim()) {
+          addTag(inputValue.trim());
+        }
+
+        break;
+      }
+      case 'Escape': {
+        closeDropdown();
+
+        break;
+      }
+      default: {
+        if (e.key === 'Backspace' && !inputValue && value.length > 0) {
+          removeTag(value.at(-1));
+        }
+      }
     }
   };
 
   // Click outside to close
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         closeDropdown();
       }
     };
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      return () =>
+        document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen]);
 
   useEffect(() => {
     if (focusedIndex >= 0 && listRef.current) {
-      const focusedElement = listRef.current.children[focusedIndex] as HTMLElement;
+      const focusedElement = listRef.current.children[
+        focusedIndex
+      ] as HTMLElement;
       if (focusedElement) {
         focusedElement.scrollIntoView({ block: 'nearest' });
       }
     }
   }, [focusedIndex]);
 
-
   return (
-    <div 
-      ref={containerRef}
-      className={cn('relative', className)}
-    >
+    <div ref={containerRef} className={cn('relative', className)}>
       {/* Tags sélectionnés + Input */}
       <div
         className={cn(
-          'min-h-[44px] w-full rounded-lg border border-border bg-background px-3 py-2 text-sm',
-          'focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary',
-          'flex flex-wrap gap-1.5 items-center',
-          disabled && 'opacity-50 cursor-not-allowed',
+          'border-border bg-background min-h-[44px] w-full rounded-lg border px-3 py-2 text-sm',
+          'focus-within:ring-primary/20 focus-within:border-primary focus-within:ring-2',
+          'flex flex-wrap items-center gap-1.5',
+          disabled && 'cursor-not-allowed opacity-50',
           className
         )}
         onClick={() => inputRef.current?.focus()}
       >
         {/* Tags existants */}
-        {value.map((tag) => (
+        {value.map(tag => (
           <span
             key={tag}
-            className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-md border border-primary/20"
+            className="bg-primary/10 text-primary border-primary/20 inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs"
           >
             <span>{tag}</span>
             <button
-              className="text-primary/60 hover:text-primary hover:bg-primary/20 rounded-sm w-3 h-3 flex items-center justify-center transition-colors"
+              className="text-primary/60 hover:text-primary hover:bg-primary/20 flex h-3 w-3 items-center justify-center rounded-sm transition-colors"
               disabled={disabled}
               type="button"
-              onClick={(e) => {
+              onClick={e => {
                 e.stopPropagation();
                 removeTag(tag);
               }}
@@ -166,14 +173,14 @@ export const TagsAutocomplete: React.FC<TagsAutocompleteProps> = ({
         {/* Input */}
         <input
           ref={inputRef}
-          className="flex-1 min-w-0 bg-transparent outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed"
+          className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent outline-none disabled:cursor-not-allowed"
           disabled={disabled || value.length >= maxTags}
           placeholder={value.length === 0 ? placeholder : ''}
           type="text"
           value={inputValue}
           onFocus={openDropdown}
           onKeyDown={handleKeyDown}
-          onChange={(e) => {
+          onChange={e => {
             setInputValue(e.target.value);
             openDropdown();
             setFocusedIndex(-1);
@@ -191,7 +198,7 @@ export const TagsAutocomplete: React.FC<TagsAutocompleteProps> = ({
       </div>
 
       {/* Counter */}
-      <div className="flex justify-between text-xs text-muted-foreground mt-1">
+      <div className="text-muted-foreground mt-1 flex justify-between text-xs">
         <span>Tapez pour rechercher ou créer</span>
         <span className={value.length >= maxTags ? 'text-orange-500' : ''}>
           {value.length}/{maxTags}
@@ -200,17 +207,17 @@ export const TagsAutocomplete: React.FC<TagsAutocompleteProps> = ({
 
       {/* Dropdown suggestions simple */}
       {isOpen && options.length > 0 && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 max-h-60 overflow-auto rounded-lg border border-border bg-background shadow-lg shadow-black/10">
+        <div className="border-border bg-background absolute top-full right-0 left-0 z-50 mt-1 max-h-60 overflow-auto rounded-lg border shadow-lg shadow-black/10">
           <ul ref={listRef} className="p-1">
             {options.map((option, index) => (
               <li
                 key={option}
                 className={cn(
-                  'px-3 py-2 text-sm cursor-pointer rounded-md transition-colors',
+                  'cursor-pointer rounded-md px-3 py-2 text-sm transition-colors',
                   index === focusedIndex
                     ? 'bg-primary text-primary-foreground'
                     : 'hover:bg-muted',
-                  option.startsWith('Créer "') && 'italic text-muted-foreground'
+                  option.startsWith('Créer "') && 'text-muted-foreground italic'
                 )}
                 onMouseDown={() => addTag(option)}
                 onMouseEnter={() => setFocusedIndex(index)}

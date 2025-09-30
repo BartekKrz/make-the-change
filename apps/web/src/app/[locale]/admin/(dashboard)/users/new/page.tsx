@@ -1,64 +1,71 @@
-"use client"
+'use client';
 
-import { ArrowLeft, User, Plus, Mail, Shield } from 'lucide-react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { ArrowLeft, User, Plus, Mail, Shield } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card'
-import { FormInput, FormSelect } from '@/components/form'
-import { Button } from '@/components/ui/button'
-import { useFormWithToast } from '@/hooks/use-form-with-toast'
-import { trpc } from '@/lib/trpc'
+import { Badge } from '@/app/[locale]/admin/(dashboard)/components/badge';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/app/[locale]/admin/(dashboard)/components/ui/card';
+import { FormInput, FormSelect } from '@/components/form';
+import { Button } from '@/components/ui/button';
+import { useFormWithToast } from '@/hooks/use-form-with-toast';
+import { trpc } from '@/lib/trpc';
 import {
   defaultUserValues,
   userFormSchema,
   userLevelLabels,
   kycStatusLabels,
   countryOptions,
-  type UserFormData
-} from '@/lib/validators/user'
+  type UserFormData,
+} from '@/lib/validators/user';
+
+import type { FC } from 'react';
 
 const userLevelOptions = [
   { value: 'explorateur', label: 'Explorateur' },
   { value: 'protecteur', label: 'Protecteur' },
-  { value: 'ambassadeur', label: 'Ambassadeur' }
-]
+  { value: 'ambassadeur', label: 'Ambassadeur' },
+];
 
 const kycStatusOptions = [
   { value: 'pending', label: 'En attente' },
   { value: 'verified', label: 'Vérifié' },
-  { value: 'rejected', label: 'Rejeté' }
-]
+  { value: 'rejected', label: 'Rejeté' },
+];
 
 const formattedCountryOptions = countryOptions.map(country => ({
   value: country,
-  label: country
-}))
+  label: country,
+}));
 
 const NewUserPage: FC = () => {
-  const router = useRouter()
-  const utils = trpc.useUtils()
+  const router = useRouter();
+  const utils = trpc.useUtils();
 
   const createUser = trpc.admin.users.create.useMutation({
     onMutate: async () => {
-      await utils.admin.users.list.cancel()
-      const prevData = utils.admin.users.list.getData()
-      return { prevData }
+      await utils.admin.users.list.cancel();
+      const prevData = utils.admin.users.list.getData();
+      return { prevData };
     },
-    onSuccess: (data) => {
-      utils.admin.users.list.invalidate()
-      router.push(`/admin/users/${data.id}`)
+    onSuccess: data => {
+      utils.admin.users.list.invalidate();
+      router.push(`/admin/users/${data.id}`);
     },
     onError: (error, _vars, ctx) => {
       if (ctx?.prevData) {
-        utils.admin.users.list.setData(undefined, ctx.prevData)
+        utils.admin.users.list.setData(undefined, ctx.prevData);
       }
     },
     onSettled: () => {
-      utils.admin.users.list.invalidate()
-    }
-  })
+      utils.admin.users.list.invalidate();
+    },
+  });
 
   const { form, isSubmitting, canSubmit } = useFormWithToast({
     defaultValues: defaultUserValues,
@@ -72,61 +79,68 @@ const NewUserPage: FC = () => {
         raw_user_meta_data: {
           firstName: value.first_name?.trim(),
           lastName: value.last_name?.trim(),
-          country: value.country
+          country: value.country,
         },
         send_welcome_email: value.send_welcome_email,
-        is_active: value.is_active
-      }
+        is_active: value.is_active,
+      };
 
-      console.warn('Creating user:', userData)
-
-      return { success: true }
+      await createUser.mutateAsync(userData);
+      return { success: true };
     },
     toasts: {
       success: {
         title: 'Utilisateur créé',
-        description: 'L\'utilisateur a été créé avec succès'
+        description: "L'utilisateur a été créé avec succès",
       },
       error: {
         title: 'Erreur',
-        description: 'Impossible de créer l\'utilisateur'
-      }
+        description: "Impossible de créer l'utilisateur",
+      },
     },
-    redirectOnSuccess: '/admin/users'
-  })
+    redirectOnSuccess: '/admin/users',
+  });
 
   const getUserLevelColor = (level: string) => {
     switch (level) {
-      case 'ambassadeur': { return 'blue'
+      case 'ambassadeur': {
+        return 'blue';
       }
-      case 'protecteur': { return 'green'
+      case 'protecteur': {
+        return 'green';
       }
-      case 'explorateur': { return 'gray'
+      case 'explorateur': {
+        return 'gray';
       }
-      default: { return 'gray'
+      default: {
+        return 'gray';
       }
     }
-  }
+  };
 
   const getKycStatusColor = (status: string) => {
     switch (status) {
-      case 'verified': { return 'green'
+      case 'verified': {
+        return 'green';
       }
-      case 'rejected': { return 'red'
+      case 'rejected': {
+        return 'red';
       }
-      case 'pending': { return 'yellow'
+      case 'pending': {
+        return 'yellow';
       }
-      default: { return 'gray'
+      default: {
+        return 'gray';
       }
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
       {}
       <div className="flex items-center gap-4">
         <Link
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
           href="/admin/users"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -135,17 +149,20 @@ const NewUserPage: FC = () => {
       </div>
 
       <div className="flex items-center gap-3">
-        <User className="h-6 w-6 text-primary" />
+        <User className="text-primary h-6 w-6" />
         <h1 className="text-2xl font-bold">Nouvel utilisateur</h1>
       </div>
 
       {}
-      <form className="space-y-6" onSubmit={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        form.handleSubmit()
-      }}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <form
+        className="space-y-6"
+        onSubmit={e => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {}
           <Card>
             <CardHeader>
@@ -200,21 +217,11 @@ const NewUserPage: FC = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <form.Field name="first_name">
-                {() => (
-                  <FormInput
-                    label="Prénom"
-                    placeholder="Jean"
-                  />
-                )}
+                {() => <FormInput label="Prénom" placeholder="Jean" />}
               </form.Field>
 
               <form.Field name="last_name">
-                {() => (
-                  <FormInput
-                    label="Nom"
-                    placeholder="Dupont"
-                  />
-                )}
+                {() => <FormInput label="Nom" placeholder="Dupont" />}
               </form.Field>
 
               <form.Field name="country">
@@ -249,9 +256,9 @@ const NewUserPage: FC = () => {
             <CardTitle>Configuration du compte</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <form.Field name="user_level">
-                {(field) => (
+                {field => (
                   <div>
                     <FormSelect
                       label="Niveau utilisateur"
@@ -260,7 +267,11 @@ const NewUserPage: FC = () => {
                     />
                     <div className="mt-2">
                       <Badge color={getUserLevelColor(field.state.value)}>
-                        {userLevelLabels[field.state.value as keyof typeof userLevelLabels]}
+                        {
+                          userLevelLabels[
+                            field.state.value as keyof typeof userLevelLabels
+                          ]
+                        }
                       </Badge>
                     </div>
                   </div>
@@ -268,7 +279,7 @@ const NewUserPage: FC = () => {
               </form.Field>
 
               <form.Field name="kyc_status">
-                {(field) => (
+                {field => (
                   <div>
                     <FormSelect
                       label="Statut KYC"
@@ -277,7 +288,11 @@ const NewUserPage: FC = () => {
                     />
                     <div className="mt-2">
                       <Badge color={getKycStatusColor(field.state.value)}>
-                        {kycStatusLabels[field.state.value as keyof typeof kycStatusLabels]}
+                        {
+                          kycStatusLabels[
+                            field.state.value as keyof typeof kycStatusLabels
+                          ]
+                        }
                       </Badge>
                     </div>
                   </div>
@@ -287,16 +302,16 @@ const NewUserPage: FC = () => {
 
             <div className="flex flex-wrap gap-6">
               <form.Field name="is_active">
-                {(field) => (
+                {field => (
                   <label className="flex items-center gap-2">
                     <input
                       checked={field.state.value}
                       type="checkbox"
                       onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.checked)}
+                      onChange={e => field.handleChange(e.target.checked)}
                     />
                     <span className="text-sm">Compte actif</span>
-                    <Badge color={field.state.value ? "green" : "red"}>
+                    <Badge color={field.state.value ? 'green' : 'red'}>
                       {field.state.value ? 'Actif' : 'Inactif'}
                     </Badge>
                   </label>
@@ -304,16 +319,18 @@ const NewUserPage: FC = () => {
               </form.Field>
 
               <form.Field name="send_welcome_email">
-                {(field) => (
+                {field => (
                   <label className="flex items-center gap-2">
                     <input
                       checked={field.state.value}
                       type="checkbox"
                       onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.checked)}
+                      onChange={e => field.handleChange(e.target.checked)}
                     />
-                    <span className="text-sm">Envoyer l&apos;email de bienvenue</span>
-                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">
+                      Envoyer l&apos;email de bienvenue
+                    </span>
+                    <Mail className="text-muted-foreground h-4 w-4" />
                   </label>
                 )}
               </form.Field>
@@ -338,7 +355,7 @@ const NewUserPage: FC = () => {
           >
             {isSubmitting ? (
               <>
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                <div className="border-primary-foreground h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
                 Création...
               </>
             ) : (
@@ -351,6 +368,6 @@ const NewUserPage: FC = () => {
         </div>
       </form>
     </div>
-  )
-}
-export default NewUserPage
+  );
+};
+export default NewUserPage;

@@ -1,16 +1,15 @@
-"use client"
+'use client';
 
-import { ImageUploaderField } from '@/components/images/image-uploader'
-
-import { useFieldContext } from './form-context'
+import { useFieldContext } from '@/app/[locale]/admin/(dashboard)/components/form/form-context';
+import { ImageUploaderField } from '@/app/[locale]/admin/(dashboard)/components/images/image-uploader';
 
 export type FormImagesUploaderProps = {
-  productId?: string
-  multiple?: boolean
-  disabled?: boolean
-  width?: string
-  height?: string
-}
+  productId?: string;
+  multiple?: boolean;
+  disabled?: boolean;
+  width?: string;
+  height?: string;
+};
 
 export const FormImagesUploader = ({
   productId,
@@ -19,8 +18,8 @@ export const FormImagesUploader = ({
   width = 'w-full',
   height = 'h-48',
 }: FormImagesUploaderProps) => {
-  const field = useFieldContext<string[]>()
-  const value = field.state.value || []
+  const field = useFieldContext<string[]>();
+  const value = field.state.value || [];
 
   return (
     <ImageUploaderField
@@ -31,12 +30,12 @@ export const FormImagesUploader = ({
       width={width}
       field={{
         state: { value },
-        handleChange: (updater) => {
-          const next = typeof updater === 'function' ? updater(value) : updater
-          field.handleChange(next)
+        handleChange: updater => {
+          const next = typeof updater === 'function' ? updater(value) : updater;
+          field.handleChange(next);
         },
       }}
-      onImagesChange={(images) => field.handleChange(images)}
+      onImagesChange={images => field.handleChange(images)}
     />
-  )
-}
+  );
+};

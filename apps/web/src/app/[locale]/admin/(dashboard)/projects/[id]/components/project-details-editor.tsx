@@ -2,11 +2,20 @@
 
 import { Save, ImageIcon, Info, DollarSign } from 'lucide-react';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/[locale]/admin/(dashboard)/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/app/[locale]/admin/(dashboard)/components/ui/card';
 import { FormInput, FormSelect, FormTextArea } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { useFormWithToast } from '@/hooks/use-form-with-toast';
-import {  projectTypeLabels, projectStatusLabels, type ProjectFormData } from '@/lib/validators/project';
+import {
+  projectTypeLabels,
+  projectStatusLabels,
+  type ProjectFormData,
+} from '@/lib/validators/project';
 
 import type { FC, PropsWithChildren } from 'react';
 
@@ -20,18 +29,22 @@ type ProjectDetailsEditorProps = {
 };
 
 const ProjectCardsGrid: FC<PropsWithChildren> = ({ children }) => (
-  <div className='grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 [&>*]:h-full'>{children}</div>
+  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8 [&>*]:h-full">
+    {children}
+  </div>
 );
 
 const typeOptions = Object.entries(projectTypeLabels).map(([value, label]) => ({
   value,
-  label
+  label,
 }));
 
-const statusOptions = Object.entries(projectStatusLabels).map(([value, label]) => ({
-  value,
-  label
-}));
+const statusOptions = Object.entries(projectStatusLabels).map(
+  ([value, label]) => ({
+    value,
+    label,
+  })
+);
 
 const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
   projectData,
@@ -39,7 +52,7 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
   isSaving = false,
   onSave,
   onImageUpload,
-  onImageRemove
+  onImageRemove,
 }) => {
   const { form, isSubmitting } = useFormWithToast({
     defaultValues: projectData,
@@ -53,13 +66,13 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
     toasts: {
       success: {
         title: 'Projet mis à jour',
-        description: 'Les modifications ont été enregistrées avec succès'
+        description: 'Les modifications ont été enregistrées avec succès',
       },
       error: {
         title: 'Erreur',
-        description: 'Impossible de mettre à jour le projet'
-      }
-    }
+        description: 'Impossible de mettre à jour le projet',
+      },
+    },
   });
 
   const contentSections = [
@@ -68,9 +81,9 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
       title: 'Informations générales',
       icon: Info,
       content: (
-        <div className='space-y-4'>
+        <div className="space-y-4">
           <form.Field name="name">
-            {(field) => (
+            {field => (
               <FormInput
                 required
                 disabled={!isEditing}
@@ -82,7 +95,7 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           </form.Field>
 
           <form.Field name="slug">
-            {(field) => (
+            {field => (
               <FormInput
                 required
                 disabled={!isEditing}
@@ -94,7 +107,7 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           </form.Field>
 
           <form.Field name="type">
-            {(field) => (
+            {field => (
               <FormSelect
                 required
                 disabled={!isEditing}
@@ -107,7 +120,7 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           </form.Field>
 
           <form.Field name="description">
-            {(field) => (
+            {field => (
               <FormTextArea
                 disabled={!isEditing}
                 field={field}
@@ -119,7 +132,7 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           </form.Field>
 
           <form.Field name="long_description">
-            {(field) => (
+            {field => (
               <FormTextArea
                 disabled={!isEditing}
                 field={field}
@@ -130,16 +143,16 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
             )}
           </form.Field>
         </div>
-      )
+      ),
     },
     {
       id: 'funding',
       title: 'Financement & Configuration',
       icon: DollarSign,
       content: (
-        <div className='space-y-4'>
+        <div className="space-y-4">
           <form.Field name="target_budget">
-            {(field) => (
+            {field => (
               <FormInput
                 required
                 disabled={!isEditing}
@@ -152,7 +165,7 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           </form.Field>
 
           <form.Field name="producer_id">
-            {(field) => (
+            {field => (
               <FormInput
                 required
                 disabled={!isEditing}
@@ -164,7 +177,7 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
           </form.Field>
 
           <form.Field name="status">
-            {(field) => (
+            {field => (
               <FormSelect
                 disabled={!isEditing}
                 field={field}
@@ -175,30 +188,32 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
             )}
           </form.Field>
         </div>
-      )
+      ),
     },
     {
       id: 'images',
       title: 'Images',
       icon: ImageIcon,
       content: (
-        <div className='space-y-4'>
+        <div className="space-y-4">
           {isEditing && onImageUpload && (
             <div>
-              <label className='block text-sm font-medium mb-2'>Ajouter des images</label>
+              <label className="mb-2 block text-sm font-medium">
+                Ajouter des images
+              </label>
               <input
                 multiple
-                accept='image/*'
-                className='block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100'
-                type='file'
-                onChange={(e) => {
-                  const files = [...e.target.files || []]
-                  for (const file of files) onImageUpload(file)
+                accept="image/*"
+                className="block w-full text-sm text-gray-500 file:mr-4 file:rounded-full file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+                type="file"
+                onChange={e => {
+                  const files = [...(e.target.files || [])];
+                  for (const file of files) onImageUpload(file);
                 }}
               />
             </div>
           )}
-          <p className='text-sm text-muted-foreground'>
+          <p className="text-muted-foreground text-sm">
             Gestionnaire d&apos;images du projet
           </p>
         </div>
@@ -207,25 +222,29 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
   ];
 
   return (
-    <form className='space-y-6 md:space-y-8' onSubmit={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      form.handleSubmit();
-    }}>
+    <form
+      className="space-y-6 md:space-y-8"
+      onSubmit={e => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
       <ProjectCardsGrid>
-        {contentSections.map((section) => (
-          <Card key={section.id} className='transition-all duration-200 hover:shadow-lg'>
+        {contentSections.map(section => (
+          <Card
+            key={section.id}
+            className="transition-all duration-200 hover:shadow-lg"
+          >
             <CardHeader>
-              <CardTitle className='flex items-center gap-3 text-lg'>
-                <div className='p-2 bg-gradient-to-br from-primary/20 to-orange-500/20 rounded-lg border border-primary/20'>
-                  <section.icon className='h-5 w-5 text-primary' />
+              <CardTitle className="flex items-center gap-3 text-lg">
+                <div className="from-primary/20 border-primary/20 rounded-lg border bg-gradient-to-br to-orange-500/20 p-2">
+                  <section.icon className="text-primary h-5 w-5" />
                 </div>
                 {section.title}
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              {section.content}
-            </CardContent>
+            <CardContent>{section.content}</CardContent>
           </Card>
         ))}
       </ProjectCardsGrid>
@@ -237,9 +256,9 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
             disabled={isSubmitting || isSaving}
             type="submit"
           >
-            {(isSubmitting || isSaving) ? (
+            {isSubmitting || isSaving ? (
               <>
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                <div className="border-primary-foreground h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
                 Sauvegarde...
               </>
             ) : (
@@ -255,5 +274,5 @@ const ProjectDetailsEditor: React.FC<ProjectDetailsEditorProps> = ({
   );
 };
 
-export { ProjectDetailsEditor }
-export type { ProjectDetailsEditorProps }
+export { ProjectDetailsEditor };
+export type { ProjectDetailsEditorProps };

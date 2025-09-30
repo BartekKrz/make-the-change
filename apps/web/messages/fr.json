@@ -2,7 +2,7 @@
   "common": {
     "loading": "Chargement...",
     "error": "Une erreur s'est produite",
-    "success": "Succès",
+    "success": "SuccÃ¨s",
     "save": "Enregistrer",
     "cancel": "Annuler",
     "delete": "Supprimer",
@@ -10,9 +10,53 @@
     "add": "Ajouter",
     "back": "Retour",
     "next": "Suivant",
-    "previous": "Précédent",
+    "previous": "PrÃ©cÃ©dent",
     "search": "Rechercher",
     "filter": "Filtrer"
+  },
+  "errors": {
+    "notFound": {
+      "title": "{entity} introuvable",
+      "description": "{article} {entity} n'existe pas ou a Ã©tÃ© supprimÃ©(e)"
+    },
+    "accessDenied": {
+      "title": "AccÃ¨s refusÃ©",
+      "description": "Vous n'avez pas l'autorisation d'accÃ©der Ã  {article} {entity}"
+    },
+    "serverError": {
+      "title": "Erreur serveur",
+      "description": "Un problÃ¨me technique est survenu, veuillez rÃ©essayer"
+    },
+    "loadingError": {
+      "title": "Erreur de chargement",
+      "description": "Impossible de charger {article} {entity}"
+    },
+    "entities": {
+      "product": {
+        "singular": "produit",
+        "article": "ce"
+      },
+      "user": {
+        "singular": "utilisateur",
+        "article": "cet"
+      },
+      "project": {
+        "singular": "projet",
+        "article": "ce"
+      },
+      "partner": {
+        "singular": "partenaire",
+        "article": "ce"
+      },
+      "subscription": {
+        "singular": "abonnement",
+        "article": "cet"
+      },
+      "order": {
+        "singular": "commande",
+        "article": "cette"
+      }
+    }
   },
   "navigation": {
     "home": "Accueil",
@@ -22,22 +66,22 @@
     "projects": "Projets",
     "subscriptions": "Abonnements",
     "users": "Utilisateurs",
-    "settings": "Paramètres",
-    "logout": "Se déconnecter"
+    "settings": "ParamÃ¨tres",
+    "logout": "Se dÃ©connecter"
   },
   "auth": {
     "login": "Se connecter",
     "email": "Email",
     "password": "Mot de passe",
     "login_button": "Se connecter",
-    "forgot_password": "Mot de passe oublié ?",
+    "forgot_password": "Mot de passe oubliÃ© ?",
     "invalid_credentials": "Identifiants invalides"
   },
   "admin": {
     "common": {
-      "retry": "Réessayer",
-      "preview": "Aperçu",
-      "select_placeholder": "Sélectionner...",
+      "retry": "RÃ©essayer",
+      "preview": "AperÃ§u",
+      "select_placeholder": "SÃ©lectionner...",
       "breadcrumbs": {
         "dashboard": "Tableau de bord",
         "products": "Produits"
@@ -59,21 +103,21 @@
       "search_placeholder": "Rechercher des produits...",
       "filters": {
         "all_partners": "Tous les partenaires",
-        "all_categories": "Toutes les catégories",
+        "all_categories": "Toutes les catÃ©gories",
         "sort_by": "Trier par",
         "tags_placeholder": "Tags...",
         "active_only": "Actifs uniquement",
         "clear_filters": "Effacer filtres",
         "clear_all_filters": "Effacer tous les filtres",
-        "reset": "Réinitialiser"
+        "reset": "RÃ©initialiser"
       },
       "sort": {
-        "newest": "Plus récents",
+        "newest": "Plus rÃ©cents",
         "oldest": "Plus anciens",
         "name_asc": "Nom (A-Z)",
         "name_desc": "Nom (Z-A)",
         "price_asc": "Prix croissant",
-        "price_desc": "Prix décroissant",
+        "price_desc": "Prix dÃ©croissant",
         "featured": "Mis en avant"
       },
       "stock": {
@@ -86,11 +130,11 @@
         "hide": "Masquer le produit",
         "show": "Afficher le produit",
         "visible": "Visible",
-        "hidden": "Masqué"
+        "hidden": "MasquÃ©"
       },
       "filters_tooltip": {
-        "category": "Filtrer par catégorie: {name}",
-        "subcategory": "Filtrer par sous-catégorie: {name}",
+        "category": "Filtrer par catÃ©gorie: {name}",
+        "subcategory": "Filtrer par sous-catÃ©gorie: {name}",
         "producer": "Filtrer par producteur: {name}",
         "tag": "Filtrer par tag: {tag}",
         "featured": "Filtrer par produits mis en avant"
@@ -98,31 +142,31 @@
       "other_tags": "{count} autres",
       "filter_modal": {
         "partner": "Partenaire",
-        "category": "Catégorie",
+        "category": "CatÃ©gorie",
         "tags": "Tags",
-        "active_only_description": "Afficher uniquement les éléments actifs"
+        "active_only_description": "Afficher uniquement les Ã©lÃ©ments actifs"
       },
       "empty_state": {
         "title": "Aucun produit",
-        "description": "Aucun résultat pour ces filtres."
+        "description": "Aucun rÃ©sultat pour ces filtres."
       },
       "error": {
         "loading_title": "Erreur de chargement",
         "loading_description": "Impossible de charger les produits",
-        "retry": "Réessayer"
+        "retry": "RÃ©essayer"
       },
       "status": {
         "active": "Actif",
         "inactive": "Inactif",
         "changing": "Changement...",
         "activate": "Activer",
-        "deactivate": "Désactiver",
+        "deactivate": "DÃ©sactiver",
         "toggle_tooltip": "Cliquer pour {action} le produit",
         "modal": {
           "title": "{action} le produit",
           "description": {
-            "activate": "Le produit sera visible dans la boutique et disponible à la vente.",
-            "deactivate": "Le produit sera retiré de la boutique et ne sera plus disponible à la vente."
+            "activate": "Le produit sera visible dans la boutique et disponible Ã  la vente.",
+            "deactivate": "Le produit sera retirÃ© de la boutique et ne sera plus disponible Ã  la vente."
           },
           "cancel": "Annuler"
         }
@@ -138,22 +182,22 @@
         "full": "En vedette"
       },
       "details": {
-        "show": "Afficher les détails",
-        "hide": "Masquer les détails"
+        "show": "Afficher les dÃ©tails",
+        "hide": "Masquer les dÃ©tails"
       },
       "edit": {
         "sections": {
-          "general": "Informations générales",
+          "general": "Informations gÃ©nÃ©rales",
           "pricing": "Prix & Configuration",
           "images": "Images",
-          "advanced_settings": "Paramètres avancés",
-          "status_visibility": "Statut et visibilité",
+          "advanced_settings": "ParamÃ¨tres avancÃ©s",
+          "status_visibility": "Statut et visibilitÃ©",
           "commercial": "Informations commerciales",
-          "logistics": "Logistique & Expédition",
-          "categorization": "Catégorisation & Tags",
+          "logistics": "Logistique & ExpÃ©dition",
+          "categorization": "CatÃ©gorisation & Tags",
           "lifecycle": "Cycle de vie",
-          "seo": "SEO & Référencement",
-          "product_details": "Détails produit"
+          "seo": "SEO & RÃ©fÃ©rencement",
+          "product_details": "DÃ©tails produit"
         },
         "fields": {
           "name": "Nom du produit",
@@ -161,51 +205,51 @@
           "short_description": "Description courte",
           "description": "Description",
           "price_points": "Prix en points",
-          "stock_quantity": "Quantité en stock",
+          "stock_quantity": "QuantitÃ© en stock",
           "min_tier": "Niveau minimum",
-          "fulfillment_method": "Méthode de livraison",
+          "fulfillment_method": "MÃ©thode de livraison",
           "is_active": "Produit actif",
           "featured": "Produit en vedette",
-          "is_hero_product": "Produit héros",
-          "price_eur_equivalent": "Prix équivalent EUR",
+          "is_hero_product": "Produit hÃ©ros",
+          "price_eur_equivalent": "Prix Ã©quivalent EUR",
           "weight_grams": "Poids (grammes)",
           "origin_country": "Pays d'origine",
           "partner_source": "Source partenaire",
-          "category_id": "Catégorie principale",
-          "secondary_category_id": "Catégorie secondaire",
+          "category_id": "CatÃ©gorie principale",
+          "secondary_category_id": "CatÃ©gorie secondaire",
           "tags": "Tags",
-          "tags_description": "Séparés par des virgules",
+          "tags_description": "SÃ©parÃ©s par des virgules",
           "launch_date": "Date de lancement",
-          "discontinue_date": "Date d'arrêt",
+          "discontinue_date": "Date d'arrÃªt",
           "seo_title": "Titre SEO",
-          "seo_title_description": "Maximum 60 caractères",
+          "seo_title_description": "Maximum 60 caractÃ¨res",
           "seo_description": "Description SEO",
-          "seo_description_description": "Maximum 160 caractères",
-          "allergens": "Allergènes",
-          "allergens_description": "Séparés par des virgules",
+          "seo_description_description": "Maximum 160 caractÃ¨res",
+          "allergens": "AllergÃ¨nes",
+          "allergens_description": "SÃ©parÃ©s par des virgules",
           "certifications": "Certifications",
-          "certifications_description": "Bio, équitable, etc. Séparées par des virgules"
+          "certifications_description": "Bio, Ã©quitable, etc. SÃ©parÃ©es par des virgules"
         },
         "placeholders": {
           "name": "Nom du produit",
           "slug": "slug-du-produit",
           "short_description": "Description courte du produit...",
-          "description": "Description détaillée du produit...",
-          "min_tier": "Sélectionner un niveau",
-          "fulfillment_method": "Sélectionner une méthode",
+          "description": "Description dÃ©taillÃ©e du produit...",
+          "min_tier": "SÃ©lectionner un niveau",
+          "fulfillment_method": "SÃ©lectionner une mÃ©thode",
           "origin_country": "France, Belgique...",
           "partner_source": "Habeebee, Ilanga...",
-          "category": "Sélectionner une catégorie",
-          "secondary_category": "Catégorie secondaire (optionnel)",
+          "category": "SÃ©lectionner une catÃ©gorie",
+          "secondary_category": "CatÃ©gorie secondaire (optionnel)",
           "tags": "bio, local, artisanal...",
-          "seo_title": "Titre optimisé pour les moteurs de recherche",
+          "seo_title": "Titre optimisÃ© pour les moteurs de recherche",
           "seo_description": "Description SEO courte et accrocheuse",
           "allergens": "gluten, noix, lait...",
-          "certifications": "bio, équitable, AOC..."
+          "certifications": "bio, Ã©quitable, AOC..."
         },
         "fulfillment": {
           "dropship": "Dropshipping",
-          "stock": "En stock", 
+          "stock": "En stock",
           "ondemand": "Sur commande"
         },
         "tiers": {
@@ -219,8 +263,8 @@
           "active_description": "Le produit est visible pour les utilisateurs",
           "featured": "En vedette",
           "featured_description": "Affichage prioritaire dans les listes",
-          "hero": "Produit héros",
-          "hero_description": "Mise en avant spéciale sur la page d'accueil"
+          "hero": "Produit hÃ©ros",
+          "hero_description": "Mise en avant spÃ©ciale sur la page d'accueil"
         },
         "toast": {
           "error": {
@@ -228,8 +272,8 @@
             "description": "Une erreur inconnue est survenue lors de la sauvegarde."
           },
           "success": {
-            "title": "Produit mis à jour",
-            "description": "Les modifications ont été sauvegardées avec succès."
+            "title": "Produit mis Ã  jour",
+            "description": "Les modifications ont Ã©tÃ© sauvegardÃ©es avec succÃ¨s."
           }
         },
         "errors": {
@@ -238,8 +282,8 @@
             "description": "L'identifiant du produit n'est pas valide ou manquant dans l'URL."
           },
           "not_found": {
-            "title": "Produit non trouvé",
-            "description": "Le produit demandé n'existe pas ou a été supprimé."
+            "title": "Produit non trouvÃ©",
+            "description": "Le produit demandÃ© n'existe pas ou a Ã©tÃ© supprimÃ©."
           },
           "loading": {
             "title": "Erreur de chargement",
@@ -248,12 +292,12 @@
         },
         "loading": {
           "title": "Chargement du produit",
-          "description": "Veuillez patienter pendant le chargement des données..."
+          "description": "Veuillez patienter pendant le chargement des donnÃ©es..."
         },
         "subtitle": "Produit",
         "no_slug": "Sans slug",
         "blur_system": {
-          "title": "🚀 Système DB Blur Scalable",
+          "title": "ðŸš€ SystÃ¨me DB Blur Scalable",
           "images": "Images",
           "with_blur": "Avec blur",
           "missing": "Manquants",
@@ -267,13 +311,88 @@
     },
     "projects": {
       "title": "Gestion des projets",
-      "new_project": "Nouveau projet", 
+      "new_project": "Nouveau projet",
       "project_list": "Liste des projets",
       "map_view": "Vue carte",
       "name": "Nom du projet",
       "location": "Localisation",
       "status": "Statut",
-      "investment_goal": "Objectif d'investissement"
+      "investment_goal": "Objectif de financement",
+      "search_placeholder": "Rechercher des projets...",
+      "labels": {
+        "status": "Statut"
+      },
+      "sort": {
+        "newest": "Plus récents",
+        "oldest": "Plus anciens",
+        "name_asc": "Nom (A-Z)",
+        "name_desc": "Nom (Z-A)",
+        "budget_desc": "Budget décroissant",
+        "budget_asc": "Budget croissant",
+        "featured": "Projets mis en avant"
+      },
+      "filters": {
+        "all_statuses": "Tous les statuts",
+        "all_types": "Tous les types",
+        "all_partners": "Tous les partenaires",
+        "all_countries": "Tous les pays",
+        "sort_by": "Trier par",
+        "impact_types": "Types d'impact",
+        "active_only": "Actifs uniquement",
+        "clear_filters": "Effacer les filtres",
+        "clear_all_filters": "Réinitialiser les filtres",
+        "reset": "Réinitialiser"
+      },
+      "filter_modal": {
+        "partner": "Partenaire",
+        "type": "Type de projet",
+        "country": "Pays",
+        "impact_types": "Types d'impact",
+        "active_only_description": "Afficher uniquement les projets actifs"
+      },
+      "type": {
+        "beehive": "Ruche",
+        "olive_tree": "Olivier",
+        "vineyard": "Vignoble",
+        "forest": "Forêt",
+        "solar": "Solaire"
+      },
+      "statuses": {
+        "active": "Actif",
+        "funded": "Financé",
+        "closed": "Terminé",
+        "suspended": "Suspendu",
+        "inactive": "Inactif"
+      },
+      "statusActions": {
+        "activate": "Activer",
+        "suspend": "Suspendre"
+      },
+      "funding": {
+        "increase": "Augmenter l'objectif",
+        "decrease": "Réduire l'objectif"
+      },
+      "featured": {
+        "add": "Mettre en avant",
+        "remove": "Retirer de la mise en avant"
+      },
+      "filters_tooltip": {
+        "type": "Filtrer par type : {type}",
+        "partner": "Filtrer par partenaire : {name}",
+        "country": "Filtrer par pays : {country}",
+        "impact_type": "Filtrer par type d'impact : {type}",
+        "featured": "Filtrer les projets mis en avant"
+      },
+      "other_impact_types": "et {count} autres",
+      "empty_state": {
+        "title": "Aucun projet",
+        "description": "Aucun résultat ne correspond à ces filtres."
+      },
+      "error": {
+        "loading_title": "Erreur de chargement",
+        "loading_description": "Impossible de charger les projets.",
+        "retry": "Réessayer"
+      }
     },
     "partners": {
       "title": "Gestion des partenaires",
@@ -291,7 +410,7 @@
       "management": {
         "label": "Gestion"
       },
-      "logout": "Déconnexion",
+      "logout": "DÃ©connexion",
       "close_menu": "Fermer le menu de navigation",
       "main_navigation": "Navigation principale",
       "mobile_navigation_menu": "Menu de navigation mobile"
@@ -303,7 +422,7 @@
       "user": "Utilisateur",
       "plan": "Plan",
       "status": "Statut",
-      "start_date": "Date de début",
+      "start_date": "Date de dÃ©but",
       "end_date": "Date de fin"
     }
   },
@@ -315,7 +434,9 @@
     }
   },
   "metadata": {
-    "title": "Make the CHANGE - Plateforme Écologique",
-    "description": "Investissez dans des projets écologiques et découvrez des produits durables"
+    "title": "Make the CHANGE - Plateforme Ã‰cologique",
+    "description": "Investissez dans des projets Ã©cologiques et dÃ©couvrez des produits durables"
   }
 }
+
+

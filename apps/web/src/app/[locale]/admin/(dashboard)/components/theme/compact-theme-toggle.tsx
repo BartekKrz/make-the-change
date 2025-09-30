@@ -7,7 +7,6 @@ import { useEffect, useState, type FC } from 'react';
 
 import { cn } from '@/app/[locale]/admin/(dashboard)/components/cn';
 
-
 export const CompactThemeToggle: FC = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -18,8 +17,8 @@ export const CompactThemeToggle: FC = () => {
 
   if (!mounted) {
     return (
-      <div className='relative inline-flex h-5 w-9 items-center rounded-full bg-gray-300'>
-        <div className='pointer-events-none block h-3 w-3 rounded-full bg-white shadow-sm ring-0 translate-x-1' />
+      <div className="relative inline-flex h-5 w-9 items-center rounded-full bg-gray-300">
+        <div className="pointer-events-none block h-3 w-3 translate-x-1 rounded-full bg-white shadow-sm ring-0" />
       </div>
     );
   }
@@ -32,15 +31,20 @@ export const CompactThemeToggle: FC = () => {
   };
 
   return (
-    <div className='flex items-center gap-1.5'>
-      <Sun className={cn('h-3.5 w-3.5 transition-all duration-300', isDark ? 'text-gray-400' : 'text-yellow-500')} />
+    <div className="flex items-center gap-1.5">
+      <Sun
+        className={cn(
+          'h-3.5 w-3.5 transition-all duration-300',
+          isDark ? 'text-gray-400' : 'text-yellow-500'
+        )}
+      />
 
       <Switch.Root
-        aria-label='Basculer entre le mode clair et sombre'
+        aria-label="Basculer entre le mode clair et sombre"
         checked={isDark}
         className={cn(
-          'relative cursor-pointer inline-flex h-5 w-9 items-center rounded-full transition-colors',
-          'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1',
+          'relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-colors',
+          'focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none',
           'data-[state=checked]:bg-blue-600 data-[state=unchecked]:bg-gray-300',
           'dark:data-[state=unchecked]:bg-gray-600'
         )}
@@ -54,7 +58,12 @@ export const CompactThemeToggle: FC = () => {
         />
       </Switch.Root>
 
-      <Moon className={cn('h-3.5 w-3.5 transition-all duration-300', isDark ? 'text-blue-400' : 'text-gray-400')} />
+      <Moon
+        className={cn(
+          'h-3.5 w-3.5 transition-all duration-300',
+          isDark ? 'text-blue-400' : 'text-gray-400'
+        )}
+      />
     </div>
   );
 };

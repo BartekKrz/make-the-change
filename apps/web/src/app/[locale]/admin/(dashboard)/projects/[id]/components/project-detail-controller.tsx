@@ -20,7 +20,7 @@ export const ProjectDetailController: FC<ProjectDetailControllerProps> = ({
   projectData,
   onSave,
   onImageUpload,
-  onImageRemove
+  onImageRemove,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -43,9 +43,21 @@ export const ProjectDetailController: FC<ProjectDetailControllerProps> = ({
     try {
       const patch: Partial<ProjectFormData> = {};
       for (const key of [
-        'name','slug','type','target_budget','status','featured','producer_id','description','long_description','images'
+        'name',
+        'slug',
+        'type',
+        'target_budget',
+        'status',
+        'featured',
+        'producer_id',
+        'description',
+        'long_description',
+        'images',
       ] as const) {
-        if (key in pendingData && (projectData as any)[key] !== (pendingData as any)[key]) {
+        if (
+          key in pendingData &&
+          (projectData as any)[key] !== (pendingData as any)[key]
+        ) {
           (patch as any)[key] = (pendingData as any)[key];
         }
       }
@@ -99,12 +111,24 @@ export const ProjectDetailController: FC<ProjectDetailControllerProps> = ({
           projectData={displayData}
           onImageRemove={handleImageRemove}
           onImageUpload={handleImageUpload}
-          onSave={async (data) => {
+          onSave={async data => {
             const patch: Partial<ProjectFormData> = {};
             for (const key of [
-              'name','slug','type','target_budget','status','featured','producer_id','description','long_description','images'
+              'name',
+              'slug',
+              'type',
+              'target_budget',
+              'status',
+              'featured',
+              'producer_id',
+              'description',
+              'long_description',
+              'images',
             ] as const) {
-              if ((data as any)[key] !== undefined && (projectData as any)[key] !== (data as any)[key]) {
+              if (
+                (data as any)[key] !== undefined &&
+                (projectData as any)[key] !== (data as any)[key]
+              ) {
                 (patch as any)[key] = (data as any)[key];
               }
             }

@@ -12,13 +12,10 @@ type LocaleLayoutProps = PropsWithChildren<{
 }>;
 
 export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
+  return routing.locales.map(locale => ({ locale }));
 }
 
-const LocaleLayout: FC<LocaleLayoutProps> = async ({
-  children,
-  params,
-}) => {
+const LocaleLayout: FC<LocaleLayoutProps> = async ({ children, params }) => {
   const { locale } = await params;
 
   // Vérifier que la locale est supportée
@@ -32,7 +29,7 @@ const LocaleLayout: FC<LocaleLayoutProps> = async ({
   return (
     <NextIntlClientProvider messages={messages}>
       <Providers>
-        <div className="min-h-screen bg-background text-text">
+        <div className="bg-background text-text min-h-screen">
           <main>{children}</main>
         </div>
       </Providers>

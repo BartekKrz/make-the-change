@@ -22,30 +22,30 @@ const SelectTrigger = forwardRef<
     ref={ref}
     className={cn(
       // Base layout with design system tokens
-      'flex h-[var(--density-button-height)] w-full items-center justify-between cursor-pointer',
-      'rounded-[var(--radius-control)] bg-background border border-border',
+      'flex h-[var(--density-button-height)] w-full cursor-pointer items-center justify-between',
+      'bg-background border-border rounded-[var(--radius-control)] border',
       'px-[var(--density-spacing-md)] py-[var(--density-spacing-sm)]',
-      'text-sm font-medium text-foreground leading-relaxed',
-      
+      'text-foreground text-sm leading-relaxed font-medium',
+
       // Modern transitions 2025
       'transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]',
       'will-change-transform',
-      
+
       // Enhanced hover states
-      'hover:bg-gradient-to-r hover:from-primary/4 hover:to-accent/2',
+      'hover:from-primary/4 hover:to-accent/2 hover:bg-gradient-to-r',
       'hover:border-primary/40 hover:shadow-[var(--shadow-surface)]',
-      'hover:scale-[1.01] hover:-translate-y-px',
-      
+      'hover:-translate-y-px hover:scale-[1.01]',
+
       // Modern focus states
-      'focus:outline-none focus:ring-2 focus:ring-primary/60',
-      'focus:ring-offset-2 focus:ring-offset-background',
+      'focus:ring-primary/60 focus:ring-2 focus:outline-none',
+      'focus:ring-offset-background focus:ring-offset-2',
       'focus:border-primary/70 focus:bg-primary/5',
-      
+
       // States
-      'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 disabled:hover:translate-y-0',
+      'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100',
       'data-[state=open]:bg-primary/8 data-[state=open]:border-primary/50',
       'data-[state=open]:shadow-[var(--shadow-card)]',
-      
+
       // Typography
       'placeholder:text-muted-foreground/60 placeholder:font-normal',
       '[&>span]:line-clamp-1 [&>span]:tracking-wide',
@@ -55,7 +55,7 @@ const SelectTrigger = forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className='h-4 w-4 text-muted-foreground transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)] data-[state=open]:rotate-180 data-[state=open]:text-primary' />
+      <ChevronDown className="text-muted-foreground data-[state=open]:text-primary h-4 w-4 transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)] data-[state=open]:rotate-180" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -75,7 +75,7 @@ const SelectScrollUpButton = forwardRef<
     )}
     {...props}
   >
-    <ChevronUp className='h-4 w-4' />
+    <ChevronUp className="h-4 w-4" />
   </SelectPrimitive.ScrollUpButton>
 ));
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
@@ -94,10 +94,11 @@ const SelectScrollDownButton = forwardRef<
     )}
     {...props}
   >
-    <ChevronDown className='h-4 w-4' />
+    <ChevronDown className="h-4 w-4" />
   </SelectPrimitive.ScrollDownButton>
 ));
-SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
+SelectScrollDownButton.displayName =
+  SelectPrimitive.ScrollDownButton.displayName;
 
 const SelectContent = forwardRef<
   ElementRef<typeof SelectPrimitive.Content>,
@@ -110,22 +111,22 @@ const SelectContent = forwardRef<
       className={cn(
         // Enhanced dropdown design 2025
         'relative z-[var(--z-overlay)] max-h-96 min-w-[12rem] overflow-hidden',
-        'rounded-[var(--radius-overlay)] border border-border/40',
-        'bg-background/98 backdrop-blur-xl text-foreground',
-        'shadow-[var(--shadow-dialog)] shadow-primary/8',
-        
+        'border-border/40 rounded-[var(--radius-overlay)] border',
+        'bg-background/98 text-foreground backdrop-blur-xl',
+        'shadow-primary/8 shadow-[var(--shadow-dialog)]',
+
         // Advanced animations with spring curves
         'data-[state=open]:animate-in data-[state=closed]:animate-out',
         'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-        'data-[state=open]:duration-300 data-[state=closed]:duration-200',
-        
+        'data-[state=closed]:duration-200 data-[state=open]:duration-300',
+
         // Directional slide animations
         position === 'popper' && [
           'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2',
-          'data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2'
+          'data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
         ],
-        
+
         className
       )}
       {...props}
@@ -153,9 +154,9 @@ const SelectLabel = forwardRef<
   <SelectPrimitive.Label
     ref={ref}
     className={cn(
-      'py-[var(--density-spacing-sm)] pl-10 pr-[var(--density-spacing-sm)]',
-      'text-xs font-semibold text-muted-foreground/80',
-      'uppercase tracking-wider leading-tight',
+      'py-[var(--density-spacing-sm)] pr-[var(--density-spacing-sm)] pl-10',
+      'text-muted-foreground/80 text-xs font-semibold',
+      'leading-tight tracking-wider uppercase',
       className
     )}
     {...props}
@@ -171,39 +172,41 @@ const SelectItem = forwardRef<
     ref={ref}
     className={cn(
       // Base layout with improved spacing
-      'relative flex w-full cursor-pointer select-none items-center',
-      'rounded-[var(--radius-control)] py-[var(--density-spacing-sm)] pl-10 pr-[var(--density-spacing-sm)]',
-      'text-sm font-medium text-foreground leading-relaxed tracking-wide',
-      'outline-none will-change-transform',
-      
+      'relative flex w-full cursor-pointer items-center select-none',
+      'rounded-[var(--radius-control)] py-[var(--density-spacing-sm)] pr-[var(--density-spacing-sm)] pl-10',
+      'text-foreground text-sm leading-relaxed font-medium tracking-wide',
+      'will-change-transform outline-none',
+
       // Modern transitions and micro-interactions 2025
       'transition-all duration-[var(--transition-normal)] ease-[cubic-bezier(0.4,0,0.2,1)]',
-      
+
       // Enhanced hover/focus states
-      'hover:bg-gradient-to-r hover:from-primary/8 hover:to-accent/4',
+      'hover:from-primary/8 hover:to-accent/4 hover:bg-gradient-to-r',
       'hover:text-foreground hover:scale-[1.02] hover:shadow-sm',
       'focus:bg-primary/10 focus:text-foreground focus:scale-[1.02]',
-      'focus:shadow-[var(--shadow-surface)] focus:shadow-primary/10',
-      
+      'focus:shadow-primary/10 focus:shadow-[var(--shadow-surface)]',
+
       // Selected state
       'data-[state=checked]:bg-primary/15 data-[state=checked]:text-primary',
       'data-[state=checked]:font-semibold data-[state=checked]:shadow-sm',
-      
+
       // Disabled state
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-40',
       'data-[disabled]:hover:scale-100 data-[disabled]:hover:bg-transparent',
-      
+
       className
     )}
     {...props}
   >
-    <span className='absolute left-3 flex h-4 w-4 items-center justify-center'>
+    <span className="absolute left-3 flex h-4 w-4 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className='h-3.5 w-3.5 text-primary font-bold animate-in zoom-in-75 duration-200' />
+        <Check className="text-primary animate-in zoom-in-75 h-3.5 w-3.5 font-bold duration-200" />
       </SelectPrimitive.ItemIndicator>
     </span>
 
-    <SelectPrimitive.ItemText className='flex-1 truncate'>{children}</SelectPrimitive.ItemText>
+    <SelectPrimitive.ItemText className="flex-1 truncate">
+      {children}
+    </SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;
@@ -212,14 +215,14 @@ const SelectSeparator = forwardRef<
   ElementRef<typeof SelectPrimitive.Separator>,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
 >(({ className, ...props }, ref) => (
-  <SelectPrimitive.Separator 
-    ref={ref} 
+  <SelectPrimitive.Separator
+    ref={ref}
     className={cn(
       '-mx-[var(--density-spacing-sm)] my-[var(--density-spacing-sm)]',
-      'h-px bg-gradient-to-r from-transparent via-border/60 to-transparent',
+      'via-border/60 h-px bg-gradient-to-r from-transparent to-transparent',
       className
-    )} 
-    {...props} 
+    )}
+    {...props}
   />
 ));
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
@@ -234,7 +237,7 @@ export {
   SelectItem,
   SelectSeparator,
   SelectScrollUpButton,
-  SelectScrollDownButton
+  SelectScrollDownButton,
 };
 
 export type SimpleSelectProps = {
@@ -252,17 +255,20 @@ export const SimpleSelect: FC<SimpleSelectProps> = ({
   onValueChange,
   options,
   className,
-  disabled
+  disabled,
 }) => {
-  
   return (
-    <Select  disabled={disabled} value={value} onValueChange={onValueChange}>
+    <Select disabled={disabled} value={value} onValueChange={onValueChange}>
       <SelectTrigger className={className}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {options.map((option) => (
-          <SelectItem key={option.value} disabled={option.disabled} value={option.value}>
+        {options.map(option => (
+          <SelectItem
+            key={option.value}
+            disabled={option.disabled}
+            value={option.value}
+          >
             {option.label}
           </SelectItem>
         ))}

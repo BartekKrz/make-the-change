@@ -5,6 +5,7 @@ Application web Next.js 15.4 avec authentification Supabase et TanStack Query.
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 20+
 - pnpm (installé au niveau du monorepo)
 - Compte Supabase configuré
@@ -12,11 +13,13 @@ Application web Next.js 15.4 avec authentification Supabase et TanStack Query.
 ### Environment Variables
 
 1. Copiez le fichier d'exemple :
+
 ```bash
 cp .env.example .env.local
 ```
 
 2. Configurez vos variables Supabase :
+
 ```bash
 # Get these from https://supabase.com/dashboard/project/YOUR_PROJECT_ID/settings/api
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
@@ -38,6 +41,7 @@ L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
 ## 🧪 Testing Authentication
 
 Visitez [http://localhost:3000/test](http://localhost:3000/test) pour tester :
+
 - Création de compte avec vérification email
 - Connexion/déconnexion
 - Gestion des erreurs
@@ -45,6 +49,7 @@ Visitez [http://localhost:3000/test](http://localhost:3000/test) pour tester :
 ## 🏗️ Architecture
 
 ### Tech Stack
+
 - **Framework**: Next.js 15.4 (App Router)
 - **Language**: TypeScript 5.9+ (strict mode)
 - **Styling**: Tailwind CSS v4
@@ -53,6 +58,7 @@ Visitez [http://localhost:3000/test](http://localhost:3000/test) pour tester :
 - **Database**: Supabase PostgreSQL
 
 ### Structure
+
 ```
 src/
 ├── app/                 # Next.js App Router
@@ -68,6 +74,7 @@ src/
 ```
 
 ### Features
+
 - ✅ Supabase Authentication
 - ✅ Real-time auth state management
 - ✅ Error handling and user feedback
@@ -80,12 +87,15 @@ src/
 L'application est déployée sur Vercel : [make-the-change.vercel.app](https://make-the-change.vercel.app)
 
 ### Build
+
 ```bash
 pnpm build
 ```
 
 ### Environment Variables (Vercel)
+
 Configurez les variables d'environnement dans Vercel Dashboard :
+
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
@@ -102,5 +112,3 @@ Configurez les variables d'environnement dans Vercel Dashboard :
 - **Supabase Dashboard**: https://supabase.com/dashboard/project/ebmjxinsyyjwshnynwwu
 - **Vercel Dashboard**: https://vercel.com/dashboard
 - **Documentation**: ../../docs/
-
-

@@ -8,14 +8,17 @@ import type { HTMLAttributes, ForwardedRef } from 'react';
 
 type CardProps = HTMLAttributes<HTMLDivElement> & {
   interactive?: boolean;
-}
+};
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className, interactive = false, ...props }, ref: ForwardedRef<HTMLDivElement>) => (
+  (
+    { className, interactive = false, ...props },
+    ref: ForwardedRef<HTMLDivElement>
+  ) => (
     <div
       ref={ref}
       className={cn(
-        'rounded-2xl border border-border bg-background/50 backdrop-blur-md text-card-foreground shadow-sm transition-all duration-300',
+        'border-border bg-background/50 text-card-foreground rounded-2xl border shadow-sm backdrop-blur-md transition-all duration-300',
         interactive && '',
         className
       )}
@@ -30,7 +33,7 @@ const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        'flex flex-col space-y-2 p-8 border-b border-border/50 bg-gradient-to-r from-primary/5 to-secondary/5',
+        'border-border/50 from-primary/5 to-secondary/5 flex flex-col space-y-2 border-b bg-gradient-to-r p-8',
         className
       )}
       {...props}
@@ -39,27 +42,36 @@ const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
 );
 CardHeader.displayName = 'CardHeader';
 
-const CardTitle = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLHeadingElement>>(
-  ({ className, ...props }, ref: ForwardedRef<HTMLParagraphElement>) => (
-    <h3
-      ref={ref}
-      className={cn('text-2xl font-semibold leading-tight tracking-tight text-foreground', className)}
-      {...props}
-    />
-  )
-);
+const CardTitle = forwardRef<
+  HTMLParagraphElement,
+  HTMLAttributes<HTMLHeadingElement>
+>(({ className, ...props }, ref: ForwardedRef<HTMLParagraphElement>) => (
+  <h3
+    ref={ref}
+    className={cn(
+      'text-foreground text-2xl leading-tight font-semibold tracking-tight',
+      className
+    )}
+    {...props}
+  />
+));
 CardTitle.displayName = 'CardTitle';
 
-const CardDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>(
-  ({ className, ...props }, ref: ForwardedRef<HTMLParagraphElement>) => (
-    <p ref={ref} className={cn('text-sm text-muted-foreground', className)} {...props} />
-  )
-);
+const CardDescription = forwardRef<
+  HTMLParagraphElement,
+  HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref: ForwardedRef<HTMLParagraphElement>) => (
+  <p
+    ref={ref}
+    className={cn('text-muted-foreground text-sm', className)}
+    {...props}
+  />
+));
 CardDescription.displayName = 'CardDescription';
 
 const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref: ForwardedRef<HTMLDivElement>) => (
-    <div ref={ref} className={cn('px-8 pb-8 pt-4', className)} {...props} />
+    <div ref={ref} className={cn('px-8 pt-4 pb-8', className)} {...props} />
   )
 );
 CardContent.displayName = 'CardContent';
@@ -69,7 +81,7 @@ const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        'flex items-center p-8 pt-0 border-t border-border/30 bg-gradient-to-r from-primary/3 to-secondary/3',
+        'border-border/30 from-primary/3 to-secondary/3 flex items-center border-t bg-gradient-to-r p-8 pt-0',
         className
       )}
       {...props}
@@ -78,4 +90,11 @@ const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
 );
 CardFooter.displayName = 'CardFooter';
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+};

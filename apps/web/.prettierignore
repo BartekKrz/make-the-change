@@ -1,0 +1,38 @@
+# Build outputs
+.next/
+dist/
+build/
+out/
+
+# Dependencies
+node_modules/
+
+# Generated files
+*.d.ts
+!src/**/*.d.ts
+
+# Coverage
+coverage/
+
+# Test outputs
+test-results/
+playwright-report/
+
+# Cache
+.turbo/
+.eslintcache
+
+# Public assets
+public/
+
+# Package files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment files
+.env*
+
+# IDE
+.vscode/
+.idea/

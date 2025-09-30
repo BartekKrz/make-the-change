@@ -17,10 +17,10 @@ export function LanguageSwitcher() {
 
   return (
     <div className="flex items-center gap-2">
-      {routing.locales.map((loc) => (
+      {routing.locales.map(loc => (
         <button
           key={loc}
-          className={`px-2 py-1 text-sm rounded border ${
+          className={`rounded border px-2 py-1 text-sm ${
             locale === loc
               ? 'bg-primary text-primary-foreground'
               : 'bg-background text-foreground hover:bg-accent'

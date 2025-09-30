@@ -7,17 +7,19 @@ const nextConfig = {
   typedRoutes: true, // Type-safe routing
 
   // Exclude test files from pages
-  pageExtensions: ['tsx', 'ts', 'jsx', 'js'].filter(ext => !['test', 'spec', 'setup'].includes(ext.split('.')[0])),
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'].filter(
+    ext => !['test', 'spec', 'setup'].includes(ext.split('.')[0])
+  ),
 
   // Existing configuration
-  transpilePackages: ["@make-the-change/shared"],
-  
+  transpilePackages: ['@make-the-change/shared'],
+
   // Environment variables
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   },
-  
+
   // Image optimizations (15.3+ improvements)
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -43,15 +45,15 @@ const nextConfig = {
     ],
     // Fallback pour compatibilité
     domains: [
-      'images.unsplash.com', 
+      'images.unsplash.com',
       'ebmjxinsyyjwshnynwwu.supabase.co',
       // Ajout de domaines génériques
-      'supabase.co'
+      'supabase.co',
     ],
   },
-  
+
   // Webpack configuration
-  webpack: (config) => {
+  webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': require('path').resolve(__dirname, 'src'),
@@ -65,6 +67,6 @@ const nextConfig = {
 
     return config;
   },
-}
+};
 
-module.exports = withNextIntl(nextConfig)
+module.exports = withNextIntl(nextConfig);

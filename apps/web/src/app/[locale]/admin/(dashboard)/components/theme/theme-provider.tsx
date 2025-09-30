@@ -1,6 +1,13 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, type FC, type PropsWithChildren } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type FC,
+  type PropsWithChildren,
+} from 'react';
 
 type Theme = 'dark' | 'light' | 'system';
 
@@ -16,10 +23,11 @@ type ThemeProviderState = {
 
 const initialState: ThemeProviderState = {
   theme: 'system',
-  setTheme: () => null
+  setTheme: () => null,
 };
 
-export const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
+export const ThemeProviderContext =
+  createContext<ThemeProviderState>(initialState);
 
 export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   children,
@@ -45,7 +53,10 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
     root.classList.remove('light', 'dark');
 
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
+        .matches
+        ? 'dark'
+        : 'light';
 
       root.classList.add(systemTheme);
       return;
@@ -59,7 +70,7 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
     setTheme: (theme: Theme) => {
       localStorage.setItem(storageKey, theme);
       setTheme(theme);
-    }
+    },
   };
 
   return (
@@ -72,7 +83,8 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext);
 
-  if (context === undefined) throw new Error('useTheme must be used within a ThemeProvider');
+  if (context === undefined)
+    throw new Error('useTheme must be used within a ThemeProvider');
 
   return context;
 };
